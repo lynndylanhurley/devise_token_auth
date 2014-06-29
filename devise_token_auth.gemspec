@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 4.1.2"
   s.add_dependency "devise"
-  s.add_dependency 'omniauth-github'
 
   s.add_development_dependency "sqlite3"
 end

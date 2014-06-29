@@ -1,9 +1,31 @@
+GIT
+  remote: git://github.com/intridea/omniauth-github.git
+  revision: 21fa5e1a7295a11eae42846690b1eee88e57c23a
+  specs:
+    omniauth-github (1.1.2)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.1)
+
+GIT
+  remote: git://github.com/mkdynamic/omniauth-facebook.git
+  revision: 4dbd5f0f40df0366ac6f9b477cfb8e22b4154341
+  specs:
+    omniauth-facebook (2.0.0.pre1)
+      omniauth-oauth2 (~> 1.1)
+
+GIT
+  remote: git://github.com/zquestz/omniauth-google-oauth2.git
+  revision: 4b95e5a4af1cae01188e4e03bdace434aaadbd9f
+  specs:
+    omniauth-google-oauth2 (0.2.4)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.1)
+
 PATH
   remote: .
   specs:
     devise_token_auth (0.0.1)
       devise
-      omniauth-github
       rails (~> 4.1.2)
 
 GEM
@@ -48,6 +70,9 @@ GEM
     erubis (2.7.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
+    figaro (0.7.0)
+      bundler (~> 1.0)
+      rails (>= 3, < 5)
     hashie (2.1.2)
     hike (1.2.3)
     i18n (0.6.9)
@@ -71,9 +96,6 @@ GEM
     omniauth (1.2.1)
       hashie (>= 1.2, < 3)
       rack (~> 1.0)
-    omniauth-github (1.1.2)
-      omniauth (~> 1.0)
-      omniauth-oauth2 (~> 1.1)
     omniauth-oauth2 (1.1.2)
       faraday (>= 0.8, < 0.10)
       multi_json (~> 1.3)
@@ -132,6 +154,10 @@ PLATFORMS
 
 DEPENDENCIES
   devise_token_auth!
+  figaro
+  omniauth-facebook!
+  omniauth-github!
+  omniauth-google-oauth2!
   pry
   rack-cors
   sqlite3

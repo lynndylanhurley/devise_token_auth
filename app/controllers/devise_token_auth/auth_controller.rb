@@ -44,7 +44,7 @@ module DeviseTokenAuth
 
       # render user info to javascript postMessage communication window
       respond_to do |format|
-        format.html { render :layout => "oauth_response", :template => "users/auth/oauth_success" }
+        format.html { render :layout => "omniauth_response", :template => "devise_token_auth/omniauth_success" }
       end
     end
 

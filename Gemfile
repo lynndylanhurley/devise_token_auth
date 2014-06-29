@@ -13,6 +13,11 @@ gemspec
 # To use debugger
 # gem 'debugger'
 
-gem 'rack-cors', :require => 'rack/cors'
-
-gem "pry", :group => :development
+group :development do
+  gem "pry"
+  gem "figaro"
+  gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
+  gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'
+  gem 'omniauth-google-oauth2', :git => 'git://github.com/zquestz/omniauth-google-oauth2.git'
+  gem 'rack-cors',              :require => 'rack/cors'
+end
