@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      window.addEventListener("message", function(ev) {
+        if (ev.data === "requestCredentials") {
+          ev.source.postMessage({
+            <%= yield %>
+          }, '*');
+          window.close();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <pre>
+      Redirecting...
+    </pre>
+  </body>
+</html>
