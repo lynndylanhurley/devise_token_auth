@@ -123,7 +123,7 @@ This may not be possible with older browsers (IE8, IE9). I usually set up a prox
 
 # Usage
 
-The following routes are available for use by your client. These routes rest relative to the path at which this engine is mounted (`/auth` in the example above).
+The following routes are available for use by your client. These routes live relative to the path at which this engine is mounted (`/auth` in the example above).
 
 | path | method | purpose |
 |:-----|:-------|:--------|
