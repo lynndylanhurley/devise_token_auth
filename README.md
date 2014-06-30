@@ -108,7 +108,7 @@ The following routes are available for use by your client. These routes rest rel
 | /validate_token | POST | use this route to validate tokens on return visits to the client. accepts **uid** and **auth_token** as params. these values should correspond to the columns in your `User` table of the same names. |
 
 # Contributing
-Just send a pull request. I will grant you commit access if you consistently send quality pull requests.
+Just send a pull request. I will grant you commit access if you send quality pull requests.
 
 Guidelines will be posted if the need arises.
 
