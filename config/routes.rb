@@ -8,7 +8,7 @@ DeviseTokenAuth::Engine.routes.draw do
                      :passwords     => "devise_token_auth/passwords",
                      :confirmations => "devise_token_auth/confirmations"}
 
-  post "validate_token",    to: "auth#validate_token"
+  get "validate_token",    to: "auth#validate_token"
   get "failure",            to: "auth#omniauth_failure"
   get ":provider/callback", to: "auth#omniauth_success"
 end

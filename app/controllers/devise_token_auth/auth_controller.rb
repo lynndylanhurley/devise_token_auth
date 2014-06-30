@@ -1,14 +1,15 @@
 module DeviseTokenAuth
-  class AuthController < ApplicationController
+  class AuthController < DeviseTokenAuth::ApplicationController
     respond_to :json
 
-    def validate_token
-      user = User.where(uid: params[:uid], auth_token: params[:auth_token]).first
+    skip_after_filter :update_auth_header, :only => [:omniauth_success, :omniauth_failure]
 
-      if not user.nil?
+    def validate_token
+      # @user will have been set by set_user_token concern
+      if @user
         render json: {
           success: true,
-          data: user.as_json
+          data: @user.as_json
         }
       else
         render json: {
