@@ -197,7 +197,8 @@ These measures were taken from [this stackoverflow post](http://stackoverflow.co
 
 # TODO
 
-* implement expiration dates
+* implement expiration dates for tokens
+* add support for multiple clients to connect simultaneously
 
 # Contributing
 Just send a pull request. I will grant you commit access if you send quality pull requests.
