@@ -147,6 +147,8 @@ Replace `xxxxx` with the user's `auth_token` and `yyyyy` with the user's `uid`.
 
 This will happen by default when using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth).
 
+### DeviseTokenAuth::Concerns::SetUserByToken
+
 This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) that can be used to identify users by the `Authorization` header. This concern runs as a [before_action](http://guides.rubyonrails.org/action_controller_overview.html#filters), setting the `@user` variable for use in your controllers. The user will be signed in via devise for the duration of the request.
 
 It is recommended to include the concern in your base `ApplicationController` so that all children of that controller include the concern as well.
