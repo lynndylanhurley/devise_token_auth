@@ -91,7 +91,7 @@ In `config/routes.rb`, add the following line:
 mount DeviseTokenAuth::Engine => "/auth"
 ~~~
 
-Note that you can mount to any route that you like. `/auth` is used to conform to the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
+Note that you can mount this engien to any route that you like. `/auth` is used to conform to the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
 
 ## CORS
 
