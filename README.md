@@ -134,7 +134,7 @@ The following routes are available for use by your client. These routes live rel
 | /:provider/callback | GET/POST | destination for the oauth2 provider's callback uri. `postMessage` events containing the authenticated user's data will be sent back to the main client window from this page. |
 | /validate_token | POST | use this route to validate tokens on return visits to the client. accepts **uid** and **auth_token** as params. these values should correspond to the columns in your `User` table of the same names. |
 
-If you're using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then your client is ready to go.
+If you're using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then your client is ready to go.
 
 ## Identifying users in controllers
 
