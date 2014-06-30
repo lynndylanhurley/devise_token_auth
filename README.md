@@ -37,7 +37,7 @@ rake db:migrate
 
 ## Omniauth authentication
 
-If you wish to use omniauth authentication, add each of the authentication provider gems as well.
+If you wish to use omniauth authentication, add all of your desired authentication provider gems as well.
 
 ##### Omniauth example using github, facebook, and google:
 ~~~ruby
@@ -47,6 +47,8 @@ gem 'omniauth-google-oauth2', :git => 'git://github.com/zquestz/omniauth-google-
 ~~~
 
 Then run `bundle install`.
+
+[List of oauth2 providers](https://github.com/intridea/omniauth/wiki/List-of-Strategies)
 
 #### Provider settings
 In `config/initializers/omniauth.rb`, add the settings for each of your providers.
