@@ -27,20 +27,15 @@ module DeviseTokenAuth
         email:    auth_hash['info']['email'],
       }).first_or_initialize
 
-      # set crazy password for new oauth users. this is only used to prevent
-      # access via email sign-in.
-      unless @user.id
-        p = SecureRandom.urlsafe_base64(nil, false)
-        @user.password = p
-        @user.password_confirmation = p
-      end
+      @token = SecureRandom.urlsafe_base64(nil, false)
 
       # sync user info with provider, update/generate auth token
       @user.update_attributes({
-        nickname:   auth_hash['info']['nickname'],
-        name:       auth_hash['info']['name'],
-        image:      auth_hash['info']['image'],
-        auth_token: SecureRandom.urlsafe_base64(nil, false)
+        nickname:              auth_hash['info']['nickname'],
+        name:                  auth_hash['info']['name'],
+        image:                 auth_hash['info']['image'],
+        password:              @token,
+        password_confirmation: @token
       })
 
       # render user info to javascript postMessage communication window

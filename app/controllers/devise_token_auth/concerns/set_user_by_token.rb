@@ -19,7 +19,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # mitigate timing attacks by finding by uid instead of auth token
     @user = @current_user = uid && User.find_by_uid(uid)
 
-    if @user && Devise.secure_compare(@user.auth_token, token)
+    if @user && @user.valid_password?(token)
       sign_in(@user, store: false)
     else
       @user = @current_user = nil
@@ -29,11 +29,13 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   def update_auth_header
     if @user
       # update user's auth token (should happen on each request)
-      @user.auth_token = SecureRandom.urlsafe_base64(nil, false)
+      token                       = SecureRandom.urlsafe_base64(nil, false)
+      @user.password              = token
+      @user.password_confirmation = token
       @user.save!
 
       # update Authorization response header with new token
-      response.headers["Authorization"] = "token=#{@user.auth_token} uid=#{@user.uid}"
+      response.headers["Authorization"] = "token=#{token} uid=#{@user.uid}"
     end
   end
 end

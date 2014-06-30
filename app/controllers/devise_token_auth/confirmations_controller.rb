@@ -6,9 +6,18 @@ module DeviseTokenAuth
       @user = User.confirm_by_token(params[:confirmation_token])
       if @user
         sign_in @user
+
+        # generate new auth token
+        token = SecureRandom.urlsafe_base64(nil, false)
+
+        # set new token as user password
+        @user.password = token
+        @user.password_confirmation = token
+        @user.save
+
         redirect_to generate_url(@user.confirm_success_url, {
-          token: @user.auth_token,
-          email: @user.email
+          email: @user.email,
+          auth_token: token
         })
       else
         raise ActionController::RoutingError.new('Not Found')
