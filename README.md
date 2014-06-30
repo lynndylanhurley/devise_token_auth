@@ -179,10 +179,25 @@ class TestController < ApplicationController
 end
 ~~~
 
-# TODO
-* [This post](http://stackoverflow.com/questions/18605294/is-devises-token-authenticatable-secure) has excellent recommendations on how this should work. The first 3 steps have been implemented in this gem. The rest will be implemented ASAP.
-* Implement [this gist](https://gist.github.com/josevalim/fb706b1e933ef01e4fb6)
+# Security
 
+This gem takes the following steps to ensure security.
+
+This gem uses auth tokens that are:
+* changed after every request,
+* cryptographic strength one-time random,
+* not stored directly to the database,
+* securely compared
+
+This gem mitigates timing attacks by following [this advice](https://gist.github.com/josevalim/fb706b1e933ef01e4fb6).
+
+But the most important step is to use HTTPS. You are on the hook for that.
+
+These measures were taken from [this stackoverflow post](http://stackoverflow.com/questions/18605294/is-devises-token-authenticatable-secure).
+
+# TODO
+
+* implement expiration dates
 
 # Contributing
 Just send a pull request. I will grant you commit access if you send quality pull requests.
