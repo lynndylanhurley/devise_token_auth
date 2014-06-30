@@ -122,7 +122,6 @@ end
 This may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) for more information.
 
 # Usage
-If you're using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then your client is ready to go.
 
 The following routes are available for use by your client. These routes rest relative to the path at which this engine is mounted (`/auth` in the example above).
 
@@ -134,6 +133,8 @@ The following routes are available for use by your client. These routes rest rel
 | /:provider | GET | set this route as the destination for client authentication. ideally this will happen in an external window or popup. |
 | /:provider/callback | GET/POST | destination for the oauth2 provider's callback uri. `postMessage` events containing the authenticated user's data will be sent back to the main client window from this page. |
 | /validate_token | POST | use this route to validate tokens on return visits to the client. accepts **uid** and **auth_token** as params. these values should correspond to the columns in your `User` table of the same names. |
+
+If you're using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then your client is ready to go.
 
 ## Identifying users in controllers
 
