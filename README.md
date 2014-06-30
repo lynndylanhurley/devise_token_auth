@@ -1,4 +1,4 @@
-# DeviseTokenAuth
+# Devise Token Auth
 This module handles the boilerplate of configuring a token based authentication API for rails. 
 
 This gem was designed to work with the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
@@ -57,6 +57,7 @@ These settings must be obtained from the providers themselves. More information 
 
 ##### Example using github, facebook, and google:
 ~~~ruby
+# config/initializers/omniauth.rb
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :github,        ENV['GITHUB_KEY'],   ENV['GITHUB_SECRET'],   scope: 'email,profile'
   provider :facebook,      ENV['FACEBOOK_KEY'], ENV['FACEBOOK_SECRET']
@@ -88,6 +89,7 @@ The authentication routes must be mounted to your project.
 In `config/routes.rb`, add the following line:
 
 ~~~ruby
+# config/routes.rb
 mount DeviseTokenAuth::Engine => "/auth"
 ~~~
 
@@ -120,7 +122,7 @@ end
 This may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) for more information.
 
 # Usage
-If you're using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then you're already done.
+If you're using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then your client is ready to go.
 
 The following routes are available for use by your client. These routes rest relative to the path at which this engine is mounted (`/auth` in the example above).
 
@@ -132,6 +134,47 @@ The following routes are available for use by your client. These routes rest rel
 | /:provider | GET | set this route as the destination for client authentication. ideally this will happen in an external window or popup. |
 | /:provider/callback | GET/POST | destination for the oauth2 provider's callback uri. `postMessage` events containing the authenticated user's data will be sent back to the main client window from this page. |
 | /validate_token | POST | use this route to validate tokens on return visits to the client. accepts **uid** and **auth_token** as params. these values should correspond to the columns in your `User` table of the same names. |
+
+## Identifying users in controllers
+
+The authentication information should be included by the client in the `Authorization` header of each request. The header should follow this format:
+
+~~~
+token=xxxxx uid=yyyyy
+~~~
+
+Replace `xxxxx` with the user's `auth_token` and `yyyyy` with the user's `uid`.
+
+This will happen by default when using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth).
+
+This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) that can be used to identify users by the `Authorization` header. This concern runs as a [before_action](http://guides.rubyonrails.org/action_controller_overview.html#filters), setting the `@user` variable for use in your controllers. The user will be signed in via devise for the duration of the request.
+
+It is recommended to include the concern in your base `ApplicationController` so that all children of that controller include the concern as well.
+
+~~~ruby
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::Base
+  include DeviseTokenAuth::Concerns::SetUserByToken
+end
+
+# app/controllers/test_controller.rb
+class TestController < ApplicationController
+  def members_only
+    if @user
+      render json: {
+        data: {
+          message: "Welcome #{@user.name}",
+          user: @user
+        }
+      }, status: 200
+    else
+      render json: {
+        errors: ["Authorized users only."]
+      }, status: 401
+    end
+  end
+end
+~~~
 
 # Contributing
 Just send a pull request. I will grant you commit access if you send quality pull requests.
