@@ -24,9 +24,9 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.0.1)
-      devise
-      rails (~> 4.1.2)
+    devise_token_auth (0.1.1)
+      devise (~> 3.2)
+      rails (~> 4.1)
 
 GEM
   remote: https://rubygems.org/
@@ -160,4 +160,4 @@ DEPENDENCIES
   omniauth-google-oauth2!
   pry
   rack-cors
-  sqlite3
+  sqlite3 (~> 1.3)
