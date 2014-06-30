@@ -185,4 +185,4 @@ Just send a pull request. I will grant you commit access if you send quality pul
 Guidelines will be posted if the need arises.
 
 # License
-This project rocks and uses MIT-LICENSE.
+This project uses the WTFPL
