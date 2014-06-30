@@ -26,7 +26,7 @@ bundle install
 You will need to create a user model. Run the following to generate and run the `User` model migration:
 
 ~~~bash
-rails generate devise_token_auth:install:migrations
+rake devise_token_auth:install:migrations
 ~~~
 
 Then run the migration:
