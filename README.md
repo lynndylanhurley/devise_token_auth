@@ -1,13 +1,13 @@
 # DeviseTokenAuth
 This module handles the boilerplate of configuring a token based authentication API for rails. 
 
+This gem was designed to work with the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
+
 # Dependencies
 This project leverages the following gems:
 
 * [Devise](https://github.com/plataformatec/devise)
 * [Omniauth](https://github.com/intridea/omniauth)
-
-This gem was designed to work with the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
 
 # Installation
 Add the following to your `Gemfile`:
