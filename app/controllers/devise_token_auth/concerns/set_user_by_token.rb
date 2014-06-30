@@ -15,14 +15,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     token = auth_header[/token=(.*?) /,1]
     uid   = auth_header[/uid=(.*?)$/,1]
 
-    @user = @current_user = User.where(
-      uid:        uid,
-      auth_token: token
-    ).first
+    # mitigate timing attacks by finding by uid instead of auth token
+    @user = @current_user = uid && User.find_by_uid(uid)
 
     # invalid auth token
     return if not @user
-    return if not @user.auth_token
+    return if not @user.auth_token == token
 
     # sign in user, don't create session
     sign_in(@user, store: false)
