@@ -93,6 +93,32 @@ mount DeviseTokenAuth::Engine => "/auth"
 
 Note that you can mount to any route that you like. `/auth` is used to conform to the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
 
+## CORS
+
+If your API and client live on different domains, you will need to configure your Rails API to allow cross origin requests. The [rack-cors](https://github.com/cyu/rack-cors) gem can be used to accomplish this.
+
+The following example will allow cross domain requests from any domain.
+
+##### Example rack-cors configuration:
+~~~ruby
+# gemfile
+gem 'rack-cors', :require => 'rack/cors'
+
+# config/application.rb
+module YourApp
+  class Application < Rails::Application
+    config.middleware.use Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :post, :options, :delete, :put]
+      end
+    end
+  end
+end
+~~~
+
+This may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) for more information.
+
 # Usage
 If you're using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then you're already done.
 
