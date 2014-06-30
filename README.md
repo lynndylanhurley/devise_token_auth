@@ -96,7 +96,7 @@ Note that you can mount to any route that you like. `/auth` is used to conform t
 # Usage
 If you're using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then you're already done.
 
-The following routes are available for use by your client. These routes are relative to the path at which this engine is mounted (`/auth` in the example above).
+The following routes are available for use by your client. These routes rest relative to the path at which this engine is mounted (`/auth` in the example above).
 
 | path | method | purpose |
 |:-----|:-------|:--------|
