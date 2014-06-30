@@ -179,6 +179,16 @@ class TestController < ApplicationController
 end
 ~~~
 
+# TODO
+
+* This post has excellent recommendations on how this should work:
+  http://stackoverflow.com/questions/18605294/is-devises-token-authenticatable-secure
+  The first 3 steps have been implemented in this gem. The rest will be implemented ASAP.
+
+* Implement this gist:
+  https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
+
+
 # Contributing
 Just send a pull request. I will grant you commit access if you send quality pull requests.
 
