@@ -192,7 +192,7 @@ This gem uses auth tokens that are:
 
 These measures were inspired by [this stackoverflow post](http://stackoverflow.com/questions/18605294/is-devises-token-authenticatable-secure).
 
-This gem mitigates timing attacks by using [this technique](https://gist.github.com/josevalim/fb706b1e933ef01e4fb6).
+This gem further mitigates timing attacks by using [this technique](https://gist.github.com/josevalim/fb706b1e933ef01e4fb6).
 
 But the most important step is to use HTTPS. You are on the hook for that.
 
