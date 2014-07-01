@@ -24,8 +24,8 @@ module Dummy
     config.middleware.use Rack::Cors do
       allow do
         origins '*'
-        resource '*', 
-          :headers => :any, 
+        resource '*',
+          :headers => :any,
           :expose => ['Authorization'],
           :methods => [:get, :post, :options, :delete, :put]
       end

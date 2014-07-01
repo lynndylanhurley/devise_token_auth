@@ -1,5 +1,5 @@
 # Devise Token Auth
-This module handles the boilerplate of configuring a token based authentication API for rails. 
+This gem provides simple, secure token based authentication.
 
 This gem was designed to work with the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
 
@@ -112,14 +112,19 @@ module YourApp
     config.middleware.use Rack::Cors do
       allow do
         origins '*'
-        resource '*', :headers => :any, :methods => [:get, :post, :options, :delete, :put]
+        resource '*',
+          :headers => :any,
+          :expose => ['Authorization'], # <-- important!
+          :methods => [:get, :post, :options, :delete, :put]
       end
     end
   end
 end
 ~~~
 
-This may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) for more information.
+Make extra sure that the `Access-Control-Expose-Headers` includes `Authorization` (as is set in the example above by the`:expose` param). If your client experiences erroneous 401 responses, this is likely the cause.
+
+CORS may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) for more information.
 
 # Usage
 
