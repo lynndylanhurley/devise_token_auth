@@ -53,7 +53,7 @@ Then run `bundle install`.
 #### Provider settings
 In `config/initializers/omniauth.rb`, add the settings for each of your providers.
 
-These settings must be obtained from the providers themselves. More information about providers can be found [here](https://github.com/intridea/omniauth/wiki/List-of-Strategies).
+These settings must be obtained from the providers themselves.
 
 ##### Example using github, facebook, and google:
 ~~~ruby
