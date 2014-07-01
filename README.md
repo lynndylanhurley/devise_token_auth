@@ -151,7 +151,7 @@ token=xxxxx client=yyyyy uid=zzzzz
 
 Replace `xxxxx` with the user's `auth_token` and `zzzzz` with the user's `uid`. The `client` field exists to allow for multiple simultaneous sessions per user. The client field defaults to `default` if omitted.
 
-This will happen by default when using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth).
+This all happens effortlessly and invisibly when using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth).
 
 ### DeviseTokenAuth::Concerns::SetUserByToken
 
