@@ -27,15 +27,26 @@ module DeviseTokenAuth
         email:    auth_hash['info']['email'],
       }).first_or_initialize
 
-      @token = SecureRandom.urlsafe_base64(nil, false)
+      # create client id
+      @client_id = SecureRandom.urlsafe_base64(nil, false)
+      @token     = SecureRandom.urlsafe_base64(nil, false)
+
+      # set crazy password for new oauth users. this is only used to prevent
+      # access via email sign-in.
+      unless @user.id
+        p = SecureRandom.urlsafe_base64(nil, false)
+        @user.password = p
+        @user.password_confirmation = p
+      end
+
+      @user.tokens[@client_id] = BCrypt::Password.create(@token)
+      @user.save
 
       # sync user info with provider, update/generate auth token
       @user.update_attributes({
         nickname:              auth_hash['info']['nickname'],
         name:                  auth_hash['info']['name'],
-        image:                 auth_hash['info']['image'],
-        password:              @token,
-        password_confirmation: @token
+        image:                 auth_hash['info']['image']
       })
 
       # render user info to javascript postMessage communication window

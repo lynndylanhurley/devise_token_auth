@@ -4,5 +4,9 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
         :recoverable, :rememberable, :trackable, :validatable
 
-  attr_encryptor :auth_token, key: proc { Devise.secret_key }
+  serialize :tokens, JSON
+
+  def valid_token?(client_id, token)
+    BCrypt::Password.new(self.tokens[client_id]) == token
+  end
 end

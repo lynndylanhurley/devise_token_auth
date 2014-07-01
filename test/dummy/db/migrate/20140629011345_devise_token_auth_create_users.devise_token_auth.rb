@@ -33,7 +33,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       # t.datetime :locked_at
 
       ## Token auth
-      t.string :auth_token, :default => "", :null => false
+      t.text :tokens, default: "{}"
 
       ## User Info
       t.string :name
@@ -47,7 +47,6 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :users, :auth_token
     add_index :users, :uid,                  :unique => true
     add_index :users, :email,                :unique => true
     add_index :users, :reset_password_token, :unique => true
