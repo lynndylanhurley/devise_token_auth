@@ -3,6 +3,7 @@ module DeviseTokenAuth
   class SessionsController < Devise::SessionsController
     prepend_before_filter :require_no_authentication, :only => [:create]
     include Devise::Controllers::Helpers
+    include DeviseTokenAuth::Concerns::SetUserByToken
 
     respond_to :json
 
@@ -16,7 +17,19 @@ module DeviseTokenAuth
         }, status: 401
 
       else
-        sign_in(:user, resource, store: false)
+        @user = resource
+
+        sign_in(:user, @user, store: false)
+
+        # create client id
+        @client_id = SecureRandom.urlsafe_base64(nil, false)
+        @token     = SecureRandom.urlsafe_base64(nil, false)
+
+        @user.tokens[@client_id] = {
+          token: BCrypt::Password.create(@token),
+          expiry: Time.now + 2.weeks
+        }
+        @user.save
 
         render json: {
           success: true,

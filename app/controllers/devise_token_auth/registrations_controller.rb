@@ -10,7 +10,6 @@ module DeviseTokenAuth
       @resource            = User.new(resource_params)
       @resource.uid        = resource_params[:email]
       @resource.provider   = "email"
-      @resource.auth_token = SecureRandom.urlsafe_base64(nil, false)
 
       if @resource.save
         render json: {
