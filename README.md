@@ -141,10 +141,10 @@ If you're using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth
 The authentication information should be included by the client in the `Authorization` header of each request. The header should follow this format:
 
 ~~~
-token=xxxxx uid=yyyyy
+token=xxxxx client=yyyyy uid=zzzzz
 ~~~
 
-Replace `xxxxx` with the user's `auth_token` and `yyyyy` with the user's `uid`.
+Replace `xxxxx` with the user's `auth_token` and `zzzzz` with the user's `uid`. The `client` field exists to allow for multiple simultaneous sessions per user. The client field defaults to `default` if not included.
 
 This will happen by default when using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth).
 
@@ -198,7 +198,6 @@ These measures were taken from [this stackoverflow post](http://stackoverflow.co
 # TODO
 
 * implement expiration dates for tokens
-* add support for multiple clients to connect simultaneously
 
 # Contributing
 Just send a pull request. I will grant you commit access if you send quality pull requests.

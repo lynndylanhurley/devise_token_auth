@@ -39,7 +39,10 @@ module DeviseTokenAuth
         @user.password_confirmation = p
       end
 
-      @user.tokens[@client_id] = BCrypt::Password.create(@token)
+      @user.tokens[@client_id] = {
+        token: BCrypt::Password.create(@token),
+        expiry: Time.now + 2.weeks
+      }
       @user.save
 
       # sync user info with provider, update/generate auth token
