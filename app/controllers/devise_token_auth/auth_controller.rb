@@ -59,10 +59,11 @@ module DeviseTokenAuth
     end
 
     def omniauth_failure
-      render json: {
-        success: false,
-        errors: [params[:message]]
-      }, status: 500
+      @error = params[:message]
+
+      respond_to do |format|
+        format.html { render :layout => "omniauth_response", :template => "devise_token_auth/omniauth_failure" }
+      end
     end
 
     def auth_hash
