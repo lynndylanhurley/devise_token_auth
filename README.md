@@ -65,7 +65,22 @@ Rails.application.config.middleware.use OmniAuth::Builder do
 end
 ~~~
 
-The above example assumes that your provider keys and secrets are stored in environmental variables. Use the [figaro](https://github.com/laserlemon/figaro) gem (or equivalent) to accomplish this.
+The above example assumes that your provider keys and secrets are stored in environmental variables. Use the [figaro](https://github.com/laserlemon/figaro) gem (or [dotenv](https://github.com/bkeepers/dotenv) or [secrets.yml](https://github.com/rails/rails/blob/v4.1.0/railties/lib/rails/generators/rails/app/templates/config/secrets.yml) or equivalent) to accomplish this.
+
+
+**Note for [pow](http://pow.cx/) and [xip.io](http://xip.io) users**: if you receive `redirect-uri-mismatch` errors from your provider when using pow or xip.io urls, set the following in your development config:
+
+~~~ruby
+# config/environments/development.rb
+
+# when using pow
+OmniAuth.config.full_host = "http://app-name.dev"
+
+# when using xip.io
+OmniAuth.config.full_host = "http://xxx.xxx.xxx.app-name.xip.io"
+~~~
+
+There may be a better way to accomplish this. Please post an issue if you have any suggestions.
 
 ## Email authentication
 If you wish to use email authentication, you must configure your Rails application to send email. [Read here](http://guides.rubyonrails.org/action_mailer_basics.html) for more information.
