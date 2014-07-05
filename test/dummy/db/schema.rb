@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140629011345) do
+ActiveRecord::Schema.define(version: 20140705000006) do
 
   create_table "users", force: true do |t|
     t.string   "email"
@@ -28,12 +28,13 @@ ActiveRecord::Schema.define(version: 20140629011345) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "confirm_success_url"
-    t.text     "tokens",                 default: "{}"
+    t.string   "unconfirmed_email"
     t.string   "name"
     t.string   "nickname"
     t.string   "image"
     t.string   "provider"
     t.string   "uid",                    default: "",   null: false
+    t.text     "tokens",                 default: "{}"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
