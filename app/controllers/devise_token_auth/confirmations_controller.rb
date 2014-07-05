@@ -5,23 +5,21 @@ module DeviseTokenAuth
     def show
       @user = User.confirm_by_token(params[:confirmation_token])
       if @user
-        sign_in @user
-
         # create client id
-        @client_id = SecureRandom.urlsafe_base64(nil, false)
-        @token     = SecureRandom.urlsafe_base64(nil, false)
+        client_id  = SecureRandom.urlsafe_base64(nil, false)
 
-        @user.tokens[@client_id] = {
-          token: BCrypt::Password.create(@token),
+        token      = SecureRandom.urlsafe_base64(nil, false)
+        token_hash = BCrypt::Password.create(token)
+        @user.tokens[client_id] = {
+          token:  token_hash,
           expiry: Time.now + 2.weeks
         }
-
-        @user.save
+        @user.save!
 
         redirect_to generate_url(@user.confirm_success_url, {
-          token:     @token,
-          client_id: @client_id,
-          email:     @user.email
+          token:     token,
+          client_id: client_id,
+          uid:       @user.uid
         })
       else
         raise ActionController::RoutingError.new('Not Found')

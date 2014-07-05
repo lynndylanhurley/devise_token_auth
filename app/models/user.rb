@@ -13,4 +13,10 @@ class User < ActiveRecord::Base
 
     return true
   end
+
+  def serializable_hash(options={})
+    options ||= {}
+    options[:except] ||= [:tokens]
+    super(options)
+  end
 end
