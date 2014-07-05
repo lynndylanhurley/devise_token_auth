@@ -1,4 +1,4 @@
-class TestController < ApplicationController
+class DemoController < ApplicationController
   def members_only
     if @user
       render json: {

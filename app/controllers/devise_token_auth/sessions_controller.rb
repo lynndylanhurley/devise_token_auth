@@ -19,8 +19,6 @@ module DeviseTokenAuth
       else
         @user = resource
 
-        sign_in(:user, @user, store: false)
-
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)

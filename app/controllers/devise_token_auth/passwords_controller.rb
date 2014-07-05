@@ -6,6 +6,8 @@ module DeviseTokenAuth
       self.resource = resource_class.send_reset_password_instructions(resource_params)
       yield resource if block_given?
 
+      throw "Not implemented"
+
       if resource.errors.empty?
         render json: {
           success: true 
@@ -23,19 +25,15 @@ module DeviseTokenAuth
       self.resource = resource_class.reset_password_by_token(resource_params)
       yield resource if block_given?
 
+      throw "Not implemented"
+
       if resource.errors.empty?
         resource.unlock_access! if unlockable?(resource)
-        sign_in(resource_name, resource)
-
-        user_data = resource.as_json(methods: :can_score)
-        user_data[:permissions] = resource.all_permissions
-        user_data[:scoring_admin] = resource.scoring_admin
 
         render json: {
           success: true,
           data: {
-            user: user_data,
-            auth_token: resource.authentication_token
+            user: self.resource
           }
         }
       else

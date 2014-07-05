@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
   mount DeviseTokenAuth::Engine => "/auth"
 
-  get 'test/members_only', to: 'test#members_only'
+  get 'demo/members_only', to: 'demo#members_only'
 end

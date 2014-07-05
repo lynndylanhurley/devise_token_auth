@@ -15,6 +15,7 @@ gemspec
 
 group :development do
   gem "pry"
+  gem "pry-remote"
   gem "figaro"
   gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
   gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'

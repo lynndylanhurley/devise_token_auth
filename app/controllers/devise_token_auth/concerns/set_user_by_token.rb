@@ -23,7 +23,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @user = @current_user = uid && User.find_by_uid(uid)
 
     if @user && @user.valid_token?(@client_id, token)
-      sign_in(@user, store: false)
+      sign_in(:user, @user, store: false, bypass: true)
     else
       @user = @current_user = nil
     end
