@@ -22,8 +22,7 @@ module DeviseTokenAuth
       # find or create user by provider and provider uid
       @user = User.where({
         uid:      auth_hash['uid'],
-        provider: auth_hash['provider'],
-        email:    auth_hash['info']['email'],
+        provider: auth_hash['provider']
       }).first_or_initialize
 
       # don't send confirmation email!!!
@@ -49,9 +48,10 @@ module DeviseTokenAuth
 
       # sync user info with provider, update/generate auth token
       @user.update_attributes({
-        nickname:              auth_hash['info']['nickname'],
-        name:                  auth_hash['info']['name'],
-        image:                 auth_hash['info']['image']
+        nickname: auth_hash['info']['nickname'],
+        name:     auth_hash['info']['name'],
+        image:    auth_hash['info']['image'],
+        email:    auth_hash['info']['email']
       })
 
       # render user info to javascript postMessage communication window
