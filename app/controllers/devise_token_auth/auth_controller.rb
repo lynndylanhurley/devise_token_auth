@@ -25,9 +25,6 @@ module DeviseTokenAuth
         provider: auth_hash['provider']
       }).first_or_initialize
 
-      # don't send confirmation email!!!
-      @user.skip_confirmation!
-
       # create client id
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
@@ -44,15 +41,19 @@ module DeviseTokenAuth
         token: BCrypt::Password.create(@token),
         expiry: Time.now + 2.weeks
       }
-      @user.save
 
       # sync user info with provider, update/generate auth token
-      @user.update_attributes({
+      @user.assign_attributes({
         nickname: auth_hash['info']['nickname'],
         name:     auth_hash['info']['name'],
         image:    auth_hash['info']['image'],
         email:    auth_hash['info']['email']
       })
+
+      # don't send confirmation email!!!
+      @user.skip_confirmation!
+
+      @user.save!
 
       # render user info to javascript postMessage communication window
       respond_to do |format|

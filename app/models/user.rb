@@ -7,6 +7,9 @@ class User < ActiveRecord::Base
 
   serialize :tokens, JSON
 
+  # only validate unique emails among email registration users
+  validates_uniqueness_of :email, conditions: -> { where(provider: 'email') }
+
   def valid_token?(client_id, token)
     return false unless self.tokens[client_id]['expiry'] > 2.weeks.ago
     return false unless BCrypt::Password.new(self.tokens[client_id]['token']) == token
@@ -18,5 +21,10 @@ class User < ActiveRecord::Base
     options ||= {}
     options[:except] ||= [:tokens]
     super(options)
+  end
+
+  # don't use default devise email validation
+  def email_changed?
+    false
   end
 end
