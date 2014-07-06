@@ -3,6 +3,10 @@ This gem provides simple, secure token based authentication.
 
 This gem was designed to work with the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
 
+# Demo
+
+[Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
+
 # Dependencies
 This project leverages the following gems:
 
