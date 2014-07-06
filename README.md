@@ -7,6 +7,8 @@ This gem was designed to work with the venerable [ng-token-auth](https://github.
 
 [Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
 
+The fully configured api used in the demo can be found [here](https://github.com/lynndylanhurley/devise_token_auth_demo).
+
 # Dependencies
 This project leverages the following gems:
 
