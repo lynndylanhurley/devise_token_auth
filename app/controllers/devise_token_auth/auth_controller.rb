@@ -26,6 +26,9 @@ module DeviseTokenAuth
         email:    auth_hash['info']['email'],
       }).first_or_initialize
 
+      # don't send confirmation email!!!
+      @user.skip_confirmation!
+
       # create client id
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
