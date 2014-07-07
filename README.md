@@ -176,7 +176,11 @@ This all happens effortlessly and invisibly when using [ng-token-auth](https://g
 
 ### DeviseTokenAuth::Concerns::SetUserByToken
 
-This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) that can be used to identify users by the `Authorization` header. This concern runs as a [before_action](http://guides.rubyonrails.org/action_controller_overview.html#filters), setting the `@user` variable for use in your controllers. The user will be signed in via devise for the duration of the request.
+This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) that can be used to identify users by the `Authorization` header.
+
+This concern runs a [before_action](http://guides.rubyonrails.org/action_controller_overview.html#filters), setting the `@user` variable for use in your controllers. The user will be signed in via devise for the duration of the request.
+
+The concern also runs an [after_action](http://guides.rubyonrails.org/action_controller_overview.html#filters) that changes the auth token after each request.
 
 It is recommended to include the concern in your base `ApplicationController` so that all children of that controller include the concern as well.
 
