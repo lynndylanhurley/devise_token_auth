@@ -14,12 +14,22 @@ gemspec
 # gem 'debugger'
 
 group :development, :test do
-  gem "pry"
-  gem "pry-remote"
   gem "figaro"
   gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
   gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'
   gem 'omniauth-google-oauth2', :git => 'git://github.com/zquestz/omniauth-google-oauth2.git'
   gem 'rack-cors',              :require => 'rack/cors'
   gem 'attr_encrypted'
+
+  # testing
+  gem 'spring'
+  gem "pry"
+  gem "pry-remote"
+  gem 'minitest'
+  gem 'minitest-rails'
+  gem 'minitest-focus'
+  gem 'minitest-reporters'
+  gem 'guard'
+  gem 'guard-minitest'
+  gem 'faker'
 end

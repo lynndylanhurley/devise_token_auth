@@ -11,18 +11,27 @@ module DeviseTokenAuth
       @resource.uid        = resource_params[:email]
       @resource.provider   = "email"
 
-      if @resource.save
-        render json: {
-          status: 'success',
-          data:   @resource.as_json
-        }
-      else
+      begin
+        if @resource.save
+          render json: {
+            status: 'success',
+            data:   @resource.as_json
+          }
+        else
+          clean_up_passwords @resource
+          render json: {
+            status: 'error',
+            data:   @resource,
+            errors: ["An account already exists for #{@resource.email}"]
+          }, status: 403
+        end
+      rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
-        render status: 403, json: {
+        render json: {
           status: 'error',
-          data:   @resource.as_json,
-          errors: @resource.errors.full_messages
-        }
+          data:   @resource,
+          errors: ["An account already exists for #{@resource.email}"]
+        }, status: 403
       end
     end
 

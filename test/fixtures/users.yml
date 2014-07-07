@@ -1,0 +1,13 @@
+<% @email = Faker::Internet.email %>
+confirmed_email_user:
+  uid:          "<%= @email %>"
+  email:        "<%= @email %>"
+  provider:     'email'
+  confirmed_at: <% 2.weeks.ago %>
+
+<% @fb_email = Faker::Internet.email %>
+duplicate_email_facebook_user:
+  uid:          "<%= Faker::Number.number(10) %>"
+  email:        "<%= @fb_email %>"
+  provider:     'facebook'
+  confirmed_at: <% 2.weeks.ago %>

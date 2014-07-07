@@ -12,9 +12,9 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/lynndylanhurley/devise_token_auth"
   s.summary     = "Token based authentication for rails. Uses Devies + Omniauth."
   s.description = "For use with client side single page apps such as the venerable https://github.com/lynndylanhurley/ng-token-auth."
-  s.license     = "MIT"
+  s.license     = "WTFPL"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files      = Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.1"
