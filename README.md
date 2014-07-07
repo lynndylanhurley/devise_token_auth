@@ -1,4 +1,7 @@
 # Devise Token Auth
+
+![build](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg)
+
 This gem provides simple, secure token based authentication.
 
 This gem was designed to work with the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).

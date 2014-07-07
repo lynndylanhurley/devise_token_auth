@@ -13,7 +13,7 @@ gemspec
 # To use debugger
 # gem 'debugger'
 
-group :development do
+group :development, :test do
   gem "pry"
   gem "pry-remote"
   gem "figaro"
