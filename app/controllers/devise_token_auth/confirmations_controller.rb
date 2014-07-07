@@ -4,16 +4,17 @@ module DeviseTokenAuth
 
     def show
       @user = User.confirm_by_token(params[:confirmation_token])
-      if @user
+
+      if @user.id
         # create client id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
-
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
         @user.tokens[client_id] = {
           token:  token_hash,
           expiry: Time.now + 2.weeks
         }
+
         @user.save!
 
         redirect_to generate_url(@user.confirm_success_url, {

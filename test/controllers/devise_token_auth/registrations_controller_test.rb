@@ -7,17 +7,17 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
-
   describe DeviseTokenAuth::RegistrationsController, "Successful registration" do
     before do
       post :create, {
-        email: "test@test.com",
+        email: -> { Faker::Internet.email },
         password: "secret123",
         password_confirmation: "secret123"
       }, method: :json
 
       @user = assigns(:resource)
       @data = JSON.parse(response.body)
+      @mail = ActionMailer::Base.deliveries.last
     end
 
     test "request should be successful" do
@@ -36,6 +36,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       assert @data['data']['email']
     end
 
+    test "new user should receive confirmation email" do
+      assert_equal @user.email, @mail['to'].to_s
+    end
+
     test "new user password should not be returned" do
       assert_nil @data['data']['password']
     end
@@ -44,7 +48,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::RegistrationsController, "Mismatched passwords" do
     before do
       post :create, {
-        email: "test@test.com",
+        email: -> { Faker::Internet.email },
         password: "secret123",
         password_confirmation: "bogus"
       }, method: :json

@@ -1,13 +1,22 @@
 <% @email = Faker::Internet.email %>
 confirmed_email_user:
-  uid:          "<%= @email %>"
-  email:        "<%= @email %>"
-  provider:     'email'
-  confirmed_at: <% 2.weeks.ago %>
+  uid:                 "<%= @email %>"
+  email:               "<%= @email %>"
+  provider:            'email'
+  confirmed_at:        '<% 2.weeks.ago %>'
+  confirm_success_url: '<%= Faker::Internet.url %>'
 
 <% @fb_email = Faker::Internet.email %>
 duplicate_email_facebook_user:
-  uid:          "<%= Faker::Number.number(10) %>"
-  email:        "<%= @fb_email %>"
-  provider:     'facebook'
-  confirmed_at: <% 2.weeks.ago %>
+  uid:                 "<%= Faker::Number.number(10) %>"
+  email:               "<%= @fb_email %>"
+  provider:            'facebook'
+  confirmed_at:        '<% 2.weeks.ago %>'
+  confirm_success_url: '<%= Faker::Internet.url %>'
+
+<% @unconfirmed_email = Faker::Internet.email %>
+unconfirmed_email_user:
+  uid:                 "<%= @unconfirmed_email %>"
+  email:               "<%= @unconfirmed_email %>"
+  provider:            'email'
+  confirm_success_url: '<%= Faker::Internet.url %>'
