@@ -5,6 +5,7 @@ confirmed_email_user:
   provider:            'email'
   confirmed_at:        '<% 2.weeks.ago %>'
   confirm_success_url: '<%= Faker::Internet.url %>'
+  encrypted_password:  <%= User.new.send(:password_digest, 'secret123') %>
 
 <% @fb_email = Faker::Internet.email %>
 duplicate_email_facebook_user:
@@ -13,6 +14,7 @@ duplicate_email_facebook_user:
   provider:            'facebook'
   confirmed_at:        '<% 2.weeks.ago %>'
   confirm_success_url: '<%= Faker::Internet.url %>'
+  encrypted_password:  <%= User.new.send(:password_digest, 'secret123') %>
 
 <% @unconfirmed_email = Faker::Internet.email %>
 unconfirmed_email_user:
@@ -20,3 +22,4 @@ unconfirmed_email_user:
   email:               "<%= @unconfirmed_email %>"
   provider:            'email'
   confirm_success_url: '<%= Faker::Internet.url %>'
+  encrypted_password:  <%= User.new.send(:password_digest, 'secret123') %>

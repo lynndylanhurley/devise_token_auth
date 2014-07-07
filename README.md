@@ -233,7 +233,7 @@ But the most important step is to use HTTPS. You are on the hook for that.
 
 * Write tests
 * `User` model is currently baked into this gem. Allow for dynamic definition using concerns (or other means).
-* Find a way to expose devise + omniauth configs, using generators perhaps.
+* Find a way to expose devise + omniauth configs, maybe using generators.
 
 # Contributing
 Just send a pull request. I will grant you commit access if you send quality pull requests.

@@ -8,17 +8,9 @@ module DeviseTokenAuth
     respond_to :json
 
     def create
-      resource = User.find_by_email(resource_params[:email])
+      @user = User.find_by_email(resource_params[:email])
 
-      unless resource and valid_params? and resource.valid_password?(params[:password])
-        render json: {
-          success: false,
-          errors: ["Invalid login credentials. Please try again."]
-        }, status: 401
-
-      else
-        @user = resource
-
+      if @user and valid_params? and @user.valid_password?(resource_params[:password]) and @user.confirmed?
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
@@ -31,8 +23,24 @@ module DeviseTokenAuth
 
         render json: {
           success: true,
-          data: resource.as_json
+          data: @user.as_json
         }
+
+      elsif @user and not @user.confirmed?
+        render json: {
+          success: false,
+          errors: [
+            "A confirmation email was sent to your account at #{@user.email}. "+
+            "You must follow the instructions in the email before your account "+
+            "can be activated"
+          ]
+        }, status: 401
+
+      else
+        render json: {
+          success: false,
+          errors: ["Invalid login credentials. Please try again."]
+        }, status: 401
       end
     end
 
@@ -45,7 +53,7 @@ module DeviseTokenAuth
     end
 
     def valid_params?
-      params[:password] && params[:email]
+      resource_params[:password] && resource_params[:email]
     end
 
     def resource_params

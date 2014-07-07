@@ -9,12 +9,12 @@ require 'test_helper'
 class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::RegistrationsController, "Successful registration" do
     before do
-      post :create, {
+      xhr :post, :create, {
         email: -> { Faker::Internet.email },
         password: "secret123",
         password_confirmation: "secret123",
         confirm_success_url: -> { Faker::Internet.url }
-      }, method: :json
+      }
 
       @user = assigns(:resource)
       @data = JSON.parse(response.body)
@@ -48,12 +48,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
   describe DeviseTokenAuth::RegistrationsController, "Mismatched passwords" do
     before do
-      post :create, {
+      xhr :post, :create, {
         email: -> { Faker::Internet.email },
         password: "secret123",
         password_confirmation: "bogus",
         confirm_success_url: -> { Faker::Internet.url }
-      }, method: :json
+      }
 
       @user = assigns(:resource)
       @data = JSON.parse(response.body)
@@ -78,12 +78,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     before do
       @existing_user = users(:confirmed_email_user)
 
-      post :create, {
+      xhr :post, :create, {
         email: @existing_user.email,
         password: "secret123",
         password_confirmation: "secret123",
         confirm_success_url: -> { Faker::Internet.url }
-      }, method: :json
+      }
 
       @user = assigns(:resource)
       @data = JSON.parse(response.body)
@@ -109,12 +109,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     before do
       @existing_user = users(:duplicate_email_facebook_user)
 
-      post :create, {
+      xhr :post, :create, {
         email: @existing_user.email,
         password: "secret123",
         password_confirmation: "secret123",
         confirm_success_url: -> { Faker::Internet.url }
-      }, method: :json
+      }
 
       @user = assigns(:resource)
       @data = JSON.parse(response.body)
