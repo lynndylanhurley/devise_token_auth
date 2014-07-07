@@ -12,7 +12,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       post :create, {
         email: -> { Faker::Internet.email },
         password: "secret123",
-        password_confirmation: "secret123"
+        password_confirmation: "secret123",
+        confirm_success_url: -> { Faker::Internet.url }
       }, method: :json
 
       @user = assigns(:resource)
@@ -50,7 +51,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       post :create, {
         email: -> { Faker::Internet.email },
         password: "secret123",
-        password_confirmation: "bogus"
+        password_confirmation: "bogus",
+        confirm_success_url: -> { Faker::Internet.url }
       }, method: :json
 
       @user = assigns(:resource)
@@ -79,7 +81,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       post :create, {
         email: @existing_user.email,
         password: "secret123",
-        password_confirmation: "secret123"
+        password_confirmation: "secret123",
+        confirm_success_url: -> { Faker::Internet.url }
       }, method: :json
 
       @user = assigns(:resource)
@@ -109,7 +112,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       post :create, {
         email: @existing_user.email,
         password: "secret123",
-        password_confirmation: "secret123"
+        password_confirmation: "secret123",
+        confirm_success_url: -> { Faker::Internet.url }
       }, method: :json
 
       @user = assigns(:resource)
