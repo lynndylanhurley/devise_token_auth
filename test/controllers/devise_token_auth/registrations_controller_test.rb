@@ -121,7 +121,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     end
 
     test "request should be successful" do
-      binding.pry
       assert_equal 200, response.status
     end
 
