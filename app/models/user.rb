@@ -8,7 +8,8 @@ class User < ActiveRecord::Base
   serialize :tokens, JSON
 
   # only validate unique emails among email registration users
-  validates_uniqueness_of :email, conditions: -> { where(provider: 'email') }
+  validates_uniqueness_of :email, if: Proc.new { |u| u.provider == 'email' }
+  validates_presence_of :email, if: Proc.new { |u| u.provider == 'email' }
   validates_presence_of :confirm_success_url, if: Proc.new {|u| u.provider == 'email'}
 
   def valid_token?(client_id, token)
@@ -27,5 +28,9 @@ class User < ActiveRecord::Base
   # don't use default devise email validation
   def email_changed?
     false
+  end
+
+  def email_required?
+    provider == 'email'
   end
 end

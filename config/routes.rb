@@ -10,5 +10,6 @@ DeviseTokenAuth::Engine.routes.draw do
 
   get "validate_token",     to: "auth#validate_token"
   get "failure",            to: "auth#omniauth_failure"
-  get ":provider/callback", to: "auth#omniauth_success"
+  get ":provider/callback",  to: "auth#omniauth_success"
+  post ":provider/callback", to: "auth#omniauth_success"
 end
