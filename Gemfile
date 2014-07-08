@@ -15,7 +15,7 @@ gemspec
 
 group :development, :test do
   gem 'thor'
-  gem "figaro"
+  gem "figaro",                 :github => 'laserlemon/figaro'
   gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
   gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'
   gem 'omniauth-google-oauth2', :git => 'git://github.com/zquestz/omniauth-google-oauth2.git'

@@ -2,14 +2,31 @@
 <html>
   <head>
     <script>
-      window.addEventListener("message", function(ev) {
-        if (ev.data === "requestCredentials") {
-          ev.source.postMessage({
-            <%= yield %>
-          }, '*');
-          window.close();
+      var usingExternalWindow = function() {
+        var out = true;
+        var nav = navigator.userAgent.toLowerCase();
+        if (nav && nav.indexOf('msie') != -1) {
+          var version = parseInt(nav.split('msie')[1]);
+          if (version < 10) {
+            out = false;
+          }
         }
-      });
+
+        return out;
+      }
+
+      if (usingExternalWindow()) {
+        window.addEventListener("message", function(ev) {
+          if (ev.data === "requestCredentials") {
+            ev.source.postMessage({
+              <%= yield %>
+            }, '*');
+            window.close();
+          }
+        });
+      } else {
+        window.location.href = "<%= @auth_origin_url %>";
+      }
     </script>
   </head>
   <body>

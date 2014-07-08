@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 
   # only validate unique emails among email registration users
   validates_uniqueness_of :email, conditions: -> { where(provider: 'email') }
-  validates_presence_of :confirm_success_url
+  validates_presence_of :confirm_success_url, if: Proc.new {|u| u.provider == 'email'}
 
   def valid_token?(client_id, token)
     return false unless self.tokens[client_id]['expiry'] > 2.weeks.ago

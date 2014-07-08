@@ -40,5 +40,5 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  OmniAuth.config.full_host = "http://localhost:3000"
+  OmniAuth.config.full_host = "http://devise-token-auth.192.168.1.102.xip.io"
 end

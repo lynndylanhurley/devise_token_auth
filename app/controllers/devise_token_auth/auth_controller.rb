@@ -29,6 +29,12 @@ module DeviseTokenAuth
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
 
+      @auth_origin_url = generate_url(request.env['omniauth.params']['auth_origin_url'], {
+        token:     @token,
+        client_id: @client_id,
+        uid:       @user.uid
+      })
+
       # set crazy password for new oauth users. this is only used to prevent
       # access via email sign-in.
       unless @user.id
@@ -71,6 +77,12 @@ module DeviseTokenAuth
 
     def auth_hash
       request.env['omniauth.auth']
+    end
+
+    def generate_url(url, params = {})
+      uri = URI(url)
+      uri.query = params.to_query
+      uri.to_s
     end
   end
 end
