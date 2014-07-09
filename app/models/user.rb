@@ -40,4 +40,8 @@ class User < ActiveRecord::Base
   def email_required?
     provider == 'email'
   end
+
+  def tokens
+    self[:tokens].blank? ? {} : self[:tokens]
+  end
 end
