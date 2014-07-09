@@ -22,7 +22,7 @@ module DeviseTokenAuth
           render json: {
             status: 'error',
             data:   @resource,
-            errors: ["An account already exists for #{@resource.email}"]
+            errors: @resource.errors
           }, status: 403
         end
       rescue ActiveRecord::RecordNotUnique
