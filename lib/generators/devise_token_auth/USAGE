@@ -1,8 +1,8 @@
 Description:
-    Explain the generator
+    This generator will install all the necessary configuration files for the devies_token_auth gem
 
 Example:
-    rails generate devise_token_auth Thing
+    rails generate devise_token_auth config
 
     This will create:
-        what/will/it/create
+        config/initializers/devise_token_auth.rb

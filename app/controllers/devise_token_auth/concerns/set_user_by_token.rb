@@ -30,18 +30,11 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   end
 
   def update_auth_header
-    if @user
-      # update user's auth token (should happen on each request)
-      token                    = SecureRandom.urlsafe_base64(nil, false)
-      token_hash               = BCrypt::Password.create(token)
-      @user.tokens[@client_id] = {
-        token:  token_hash,
-        expiry: Time.now + 2.weeks
-      }
-      @user.save
+    if @user and @client_id
+      auth_header = @user.create_new_auth_token(@client_id)
 
       # update Authorization response header with new token
-      response.headers["Authorization"] = "token=#{token} client=#{@client_id} uid=#{@user.uid}"
+      response.headers["Authorization"] = auth_header
     end
   end
 end
