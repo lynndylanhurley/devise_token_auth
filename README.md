@@ -31,18 +31,24 @@ Then install the gem using bundle:
 bundle install
 ~~~
 
-## Migrations
-You will need to create a user model. Run the following to generate and run the `User` model migration:
+## Configuration
+You will need to create a user model, and you may want to alter some of the default settings. Run the following to generate the migrations and initializer files:
 
 ~~~bash
-rake devise_token_auth:install:migrations
+rails g devise_token_auth:install
 ~~~
 
-Then run the migration:
+This will create a migrations file in the `db/migrate` directory. Inspect the migrations file and add additional columns if necessary, then run the migration:
 
 ~~~bash
 rake db:migrate
 ~~~
+
+There will also be an initializer file at `config/initializers/devise_token_auth.rb`. The following settings are provided:
+
+* **`change_headers_on_each_request`** _Default: true_. By default the authorization headers will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `Authorization` header from changing after each request.
+*  **`token_lifespan`** _Default: 2.weeks_. Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login.
+
 
 ## Omniauth authentication
 
