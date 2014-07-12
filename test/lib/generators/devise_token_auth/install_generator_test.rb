@@ -1,9 +1,9 @@
 require 'test_helper'
-require 'generators/devise_token_auth/devise_token_auth_generator'
+require 'generators/devise_token_auth/install_generator'
 
 module DeviseTokenAuth
-  class DeviseTokenAuthGeneratorTest < Rails::Generators::TestCase
-    tests DeviseTokenAuthGenerator
+  class InstallGeneratorTest < Rails::Generators::TestCase
+    tests InstallGenerator
     destination Rails.root.join('tmp/generators')
     setup :prepare_destination
 

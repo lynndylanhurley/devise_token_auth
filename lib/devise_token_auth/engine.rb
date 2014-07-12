@@ -1,12 +1,12 @@
 module DeviseTokenAuth
   class Engine < ::Rails::Engine
     isolate_namespace DeviseTokenAuth
+  end
 
-    mattr_accessor :change_headers_on_each_request
-    self.change_headers_on_each_request = true
+  mattr_accessor :change_headers_on_each_request
+  self.change_headers_on_each_request = true
 
-    def self.setup(&block)
-      yield self
-    end
+  def self.setup(&block)
+    yield self
   end
 end

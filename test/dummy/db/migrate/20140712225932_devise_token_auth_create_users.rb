@@ -1,4 +1,3 @@
-# This migration comes from devise_token_auth (originally 20140628234942)
 class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
   def change
     create_table(:users) do |t|
