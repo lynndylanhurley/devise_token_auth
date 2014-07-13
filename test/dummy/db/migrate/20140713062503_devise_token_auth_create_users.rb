@@ -41,7 +41,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       t.string :uid, :null => false, :default => ""
 
       ## Tokens
-      t.text :tokens
+      t.string :tokens, default: "{}"
 
       t.timestamps
     end

@@ -13,9 +13,6 @@ class User < ActiveRecord::Base
   # only validate unique emails among email registration users
   validate :unique_email_user, on: :create
 
-  before_save :set_token_default
-
-
   def valid_token?(client_id, token)
     return true if (
       # ensure that expiry and token are set
@@ -69,11 +66,6 @@ class User < ActiveRecord::Base
   def email_required?
     provider == 'email'
   end
-
-  def set_token_default
-    self.tokens ||= "{}"
-  end
-
 
   # update user's auth token (should happen on each request)
   def create_new_auth_token(client_id=nil)
