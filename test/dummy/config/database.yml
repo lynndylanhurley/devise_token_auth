@@ -1,25 +1,31 @@
-# SQLite version 3.x
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem 'sqlite3'
-#
-default: &default
+sqlite: &sqlite
   adapter: sqlite3
+  database: db/<%= Rails.env %>.sqlite3
+
+mysql: &mysql
+  adapter: mysql2
+  username: root
+  password:
+  database: "devise_token_auth_<%= Rails.env %>"
+
+postgresql: &postgresql
+  adapter: postgresql
+  username: postgres
+  password:
+  database: "devise_token_auth_<%= Rails.env %>"
+  min_messages: ERROR
+
+defaults: &defaults
   pool: 5
   timeout: 5000
+  host: localhost
+  <<: *<%= ENV['DB'] || "sqlite" %>
 
 development:
-  <<: *default
-  database: db/development.sqlite3
+  <<: *defaults
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: db/test.sqlite3
+  <<: *defaults
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+  <<: *defaults

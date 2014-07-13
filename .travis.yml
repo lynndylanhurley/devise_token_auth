@@ -1,4 +1,17 @@
 language: ruby
 cache: bundler
+
 rvm:
   - 2.1.1
+
+env:
+  - DB=sqlite
+  - DB=mysql
+  - DB=postgresql
+
+script:
+  - RAILS_ENV=test bundle exec rake --trace db:migrate test
+
+before_script:
+  - mysql -e 'create database devise_token_auth_test'
+  - psql -c 'create database devise_token_auth_test' -U postgres
