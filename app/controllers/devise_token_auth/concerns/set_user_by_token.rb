@@ -40,11 +40,14 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
 
   def update_auth_header
+
     auth_header = nil
+    if not DeviseTokenAuth.change_headers_on_each_request
+      auth_header = @user.build_auth_header(@token, @client_id)
 
     # extend expiration of batch buffer to account for the duration of
     # this request
-    if @is_batch_request and @client_id and @user
+    elsif @is_batch_request and @client_id and @user
       auth_header = @user.extend_batch_buffer(@token, @client_id)
 
     # update Authorization response header with new token

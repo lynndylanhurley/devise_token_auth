@@ -95,6 +95,62 @@ class DemoControllerTest < ActionController::TestCase
       end
     end
 
+    describe 'disable change_headers_on_each_request' do
+      before do
+        DeviseTokenAuth.change_headers_on_each_request = false
+        @user.reload
+        age_token(@user, @client_id)
+
+        request.headers['Authorization'] = @auth_header
+        xhr :get, :members_only
+
+        @first_is_batch_request = assigns(:is_batch_request)
+        @first_user = assigns(:user).dup
+        @first_auth_headers = response.headers['Authorization'].clone
+        @first_response_status = response.status
+
+        @user.reload
+        age_token(@user, @client_id)
+
+        # use expired auth header
+        request.headers['Authorization'] = @auth_header
+        xhr :get, :members_only
+
+        @second_is_batch_request = assigns(:is_batch_request)
+        @second_user = assigns(:user)
+        @second_auth_headers = response.headers['Authorization']
+        @second_response_status = response.status
+      end
+
+      after do
+        DeviseTokenAuth.change_headers_on_each_request = true
+      end
+
+      it 'should allow the first request through' do
+        assert_equal 200, @first_response_status
+      end
+
+      it 'should allow the second request through' do
+        assert_equal 200, @second_response_status
+      end
+
+      it 'should return auth headers from the first request' do
+        assert @first_auth_headers
+      end
+
+      it 'should return auth headers from the second request' do
+        assert @second_auth_headers
+      end
+
+      it 'should define user during first request' do
+        assert @first_user
+      end
+
+      it 'should define user during second request' do
+        assert @second_user
+      end
+    end
+
     describe 'batch requests' do
       describe 'success' do
         before do
