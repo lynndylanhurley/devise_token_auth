@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
   # only validate unique emails among email registration users
   validate :unique_email_user, on: :create
 
+  before_save :set_token_default
+
 
   def valid_token?(client_id, token)
     return true if (
@@ -66,6 +68,10 @@ class User < ActiveRecord::Base
 
   def email_required?
     provider == 'email'
+  end
+
+  def set_token_default
+    self.tokens ||= "{}"
   end
 
 
