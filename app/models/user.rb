@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
       self.tokens[client_id]['token'] and
 
       # ensure that the token was created within the last two weeks
-      self.tokens[client_id]['expiry'] > DeviseTokenAuth.token_lifespan.ago.to_f * 1000 and
+      Time.parse(self.tokens[client_id]['expiry']) > DeviseTokenAuth.token_lifespan.ago and
 
       # ensure that the token is valid
       BCrypt::Password.new(self.tokens[client_id]['token']) == token
@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = BCrypt::Password.create(token)
-    expiry       = (Time.now.to_f + DeviseTokenAuth.token_lifespan).to_i * 1000
+    expiry       = Time.now + DeviseTokenAuth.token_lifespan
 
     if self.tokens[client_id] and self.tokens[client_id]['token']
       last_token = self.tokens[client_id]['token']

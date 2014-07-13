@@ -42,7 +42,7 @@ class ActiveSupport::TestCase
   end
 
   def expire_token(user, client_id)
-    user.tokens[client_id]['expiry'] = (Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)).to_f * 1000
+    user.tokens[client_id]['expiry'] = Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)
     user.save
   end
 end
