@@ -18,8 +18,10 @@ class DemoControllerTest < ActionController::TestCase
       @user.save!
 
       @auth_header = @user.create_new_auth_token
+
       @token       = @auth_header[/token=(.*?) /,1]
       @client_id   = @auth_header[/client=(.*?) /,1]
+      @expiry      = @auth_header[/expiry=(.*?) /,1]
     end
 
     describe 'successful request' do
@@ -30,6 +32,7 @@ class DemoControllerTest < ActionController::TestCase
         @resp_auth_header = response.headers['Authorization']
         @resp_token       = @resp_auth_header[/token=(.*?) /,1]
         @resp_client_id   = @resp_auth_header[/client=(.*?) /,1]
+        @resp_expiry      = @resp_auth_header[/expiry=(.*?) /,1]
         @resp_uid         = @resp_auth_header[/uid=(.*?)$/,1]
       end
 
@@ -47,6 +50,10 @@ class DemoControllerTest < ActionController::TestCase
 
       it "should return the user's uid in the auth header" do
         assert_equal @user.uid, @resp_uid
+      end
+
+      it "should return the token expiry in the auth header" do
+        assert_equal @expiry, @resp_expiry
       end
 
       it "should allow a new request to be made using new token" do

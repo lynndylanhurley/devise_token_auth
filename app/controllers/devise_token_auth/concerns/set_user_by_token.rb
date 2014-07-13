@@ -13,8 +13,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # missing auth token
     return false unless auth_header
 
-    token      = auth_header[/token=(.*?) /,1]
     uid        = auth_header[/uid=(.*?)$/,1]
+    token      = auth_header[/token=(.*?) /,1]
     @client_id = auth_header[/client=(.*?) /,1]
 
     @client_id ||= 'default'

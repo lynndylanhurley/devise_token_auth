@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
 
   def valid_token?(client_id, token)
     # ensure token was created within last two weeks
-    return false unless self.tokens[client_id]['expiry'] > DeviseTokenAuth.token_lifespan.ago
+    return false unless self.tokens[client_id]['expiry'] > DeviseTokenAuth.token_lifespan.ago.to_f * 1000
 
     # ensure token is valid
     return false unless BCrypt::Password.new(self.tokens[client_id]['token']) == token
@@ -49,18 +49,19 @@ class User < ActiveRecord::Base
     client_id  ||= SecureRandom.urlsafe_base64(nil, false)
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = BCrypt::Password.create(token)
+    expiry       = (Time.now.to_f + DeviseTokenAuth.token_lifespan).to_i * 1000
 
     self.tokens[client_id] = {
       token:  token_hash,
-      expiry: Time.now + DeviseTokenAuth.token_lifespan
+      expiry: expiry
     }
     self.save
 
-    return "token=#{token} client=#{client_id} uid=#{self.uid}"
+    return "token=#{token} client=#{client_id} expiry=#{expiry} uid=#{self.uid}"
   end
 
   def get_auth_header(client_id)
     token_info = self.tokens[client_id]
-    return "token=#{token_info.token} client=#{client_id} uid=#{self.uid}"
+    return "token=#{token_info.token} client=#{client_id} expiry=#{token_info.expiry} uid=#{self.uid}"
   end
 end
