@@ -44,7 +44,7 @@ This will create a migrations file in the `db/migrate` directory. Inspect the mi
 rake db:migrate
 ~~~
 
-There will also be an initializer file at `config/initializers/devise_token_auth.rb`. The following settings are available for configuration:
+An initializer will also be created at `config/initializers/devise_token_auth.rb`. The following settings are available for configuration:
 
 * **`change_headers_on_each_request`** _Default: true_. By default the authorization headers will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `Authorization` header from changing after each request.
 *  **`token_lifespan`** _Default: 2.weeks_. Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login.
@@ -183,8 +183,8 @@ token=wwwww client=xxxxx expiry=yyyyy uid=zzzzz
 
 The `Authorization` header is made up of the following components:
 
-* **`token`**: A unique string that serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request.
-* **`client`**: This param enables the use of multiple simultaneous sessions on different clients. (For example, a user may want to be authenticated on both their phone and their laptop at the same time.)
+* **`token`**: This serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request.
+* **`client`**: This enables the use of multiple simultaneous sessions on different clients. (For example, a user may want to be authenticated on both their phone and their laptop at the same time.)
 * **`expiry`**: The date at which the current session will expire. This can be used by clients to invalidate expired tokens without the need for an API request.
 * **`uid`**: A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will open the API up to timing attacks.
 
@@ -193,10 +193,10 @@ The `Authorization` header required for each request will be available in the re
 
 ## The `User` model
 
-The user model will contain the following public methods:
-* **`valid_token?`**: check if an authentication token is valid. Accepts `token` and `client_id` as arguments. Returns a boolean.
-* **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client_id` as an optional argument. Will generate a new `client_id` if none is provided. Returns the `Authorization` header that should be sent by the client as a string.
-* **`build_auth_header`**: generates the auth header that should be sent to the client with the next request. Accepts `token` and `client_id` as arguments. Returns a string.
+The user model will contain the following public methods (read the above section for context on `token` and `client`):
+* **`valid_token?`**: check if an authentication token is valid. Accepts `token` and `client` as arguments. Returns a boolean.
+* **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client` as an optional argument. Will generate a new `client` if none is provided. Returns the `Authorization` header that should be sent by the client as a string.
+* **`build_auth_header`**: generates the auth header that should be sent to the client with the next request. Accepts `token` and `client` as arguments. Returns a string.
 
 ## DeviseTokenAuth::Concerns::SetUserByToken
 
