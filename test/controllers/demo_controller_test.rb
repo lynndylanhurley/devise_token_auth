@@ -55,10 +55,6 @@ class DemoControllerTest < ActionController::TestCase
         assert_equal @user.uid, @resp_uid
       end
 
-      it "should return the token expiry in the auth header" do
-        assert_equal @expiry.to_i, @resp_expiry.to_i
-      end
-
       it 'should not treat this request as a batch request' do
         refute assigns(:is_batch_request)
       end
