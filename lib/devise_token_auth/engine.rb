@@ -8,6 +8,7 @@ module DeviseTokenAuth
 
   self.change_headers_on_each_request = true
   self.token_lifespan                 = 2.weeks
+  self.batch_request_throttle         = 2.seconds
 
   def self.setup(&block)
     yield self
