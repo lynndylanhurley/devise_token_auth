@@ -13,9 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20140713062503) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "users", force: true do |t|
     t.string   "email"
     t.string   "encrypted_password",     default: "",   null: false
@@ -42,8 +39,8 @@ ActiveRecord::Schema.define(version: 20140713062503) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-  add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
+  add_index "users", ["email"], name: "index_users_on_email"
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["uid"], name: "index_users_on_uid", unique: true
 
 end
