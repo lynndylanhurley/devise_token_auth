@@ -25,7 +25,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # mitigate timing attacks by finding by uid instead of auth token
     @user = @current_user = uid && User.find_by_uid(uid)
 
-    if @user && @user.valid_token?(@client_id, @token)
+    if @user && @user.valid_token?(@token, @client_id)
       sign_in(:user, @user, store: false, bypass: true)
 
       # check this now so that the duration of the request itself doesn't eat
@@ -45,7 +45,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # extend expiration of batch buffer to account for the duration of
     # this request
     if @is_batch_request and @client_id and @user
-      auth_header = @user.extend_batch_buffer(@client_id, @token)
+      auth_header = @user.extend_batch_buffer(@token, @client_id)
 
     # update Authorization response header with new token
     elsif @user and @client_id

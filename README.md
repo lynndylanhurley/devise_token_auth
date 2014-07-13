@@ -44,11 +44,11 @@ This will create a migrations file in the `db/migrate` directory. Inspect the mi
 rake db:migrate
 ~~~
 
-There will also be an initializer file at `config/initializers/devise_token_auth.rb`. The following settings are provided:
+There will also be an initializer file at `config/initializers/devise_token_auth.rb`. The following settings are available for configuration:
 
 * **`change_headers_on_each_request`** _Default: true_. By default the authorization headers will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `Authorization` header from changing after each request.
 *  **`token_lifespan`** _Default: 2.weeks_. Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login.
-
+*  **`batch_request_buffer_throttle`** _Default: 2.seconds_. Sometimes it's necessary to make several requests to the API at the same time. In this case, each request in the batch will need to share the same auth token. This setting determines how far apart the requests can be while still using the same auth token.
 
 ## Omniauth authentication
 
@@ -171,19 +171,34 @@ The following routes are available for use by your client. These routes live rel
 
 If you're using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for angular.js, then your client is ready to go.
 
+
 ## Identifying users in controllers
 
 The authentication information should be included by the client in the `Authorization` header of each request. The header should follow this format:
 
+##### Authorization header example:
 ~~~
-token=xxxxx client=yyyyy uid=zzzzz
+token=wwwww client=xxxxx expiry=yyyyy uid=zzzzz
 ~~~
 
-Replace `xxxxx` with the user's `auth_token` and `zzzzz` with the user's `uid`. The `client` field exists to allow for multiple simultaneous sessions per user. The client field defaults to `default` if omitted.
+The `Authorization` header is made up of the following components:
 
-This all happens effortlessly and invisibly when using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth).
+* **`token`**: A unique string that serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request.
+* **`client`**: This param enables the use of multiple simultaneous sessions on different clients. (For example, a user may want to be authenticated on both their phone and their laptop at the same time.)
+* **`expiry`**: The date at which the current session will expire. This can be used by clients to invalidate expired tokens without the need for an API request.
+* **`uid`**: A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will open the API up to timing attacks.
 
-### DeviseTokenAuth::Concerns::SetUserByToken
+The `Authorization` header required for each request will be available in the response from the previous request. If you are using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js, this functionality is already provided.
+
+
+## The `User` model
+
+The user model will contain the following public methods:
+* **`valid_token?`**: check if an authentication token is valid. Accepts `token` and `client_id` as arguments. Returns a boolean.
+* **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client_id` as an optional argument. Will generate a new `client_id` if none is provided. Returns the `Authorization` header that should be sent by the client as a string.
+* **`build_auth_header`**: generates the auth header that should be sent to the client with the next request. Accepts `token` and `client_id` as arguments. Returns a string.
+
+## DeviseTokenAuth::Concerns::SetUserByToken
 
 This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) that can be used to identify users by the `Authorization` header.
 

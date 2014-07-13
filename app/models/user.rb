@@ -13,7 +13,9 @@ class User < ActiveRecord::Base
   # only validate unique emails among email registration users
   validate :unique_email_user, on: :create
 
-  def valid_token?(client_id, token)
+  def valid_token?(token, client_id='default')
+    client_id ||= 'default'
+
     return true if (
       # ensure that expiry and token are set
       self.tokens[client_id]['expiry'] and
@@ -43,6 +45,52 @@ class User < ActiveRecord::Base
   end
 
 
+  # update user's auth token (should happen on each request)
+  def create_new_auth_token(client_id=nil)
+    client_id  ||= SecureRandom.urlsafe_base64(nil, false)
+    last_token ||= nil
+    token        = SecureRandom.urlsafe_base64(nil, false)
+    token_hash   = BCrypt::Password.create(token)
+    expiry       = (Time.now.to_f + DeviseTokenAuth.token_lifespan).to_i * 1000
+
+    if self.tokens[client_id] and self.tokens[client_id]['token']
+      last_token = self.tokens[client_id]['token']
+    end
+
+    self.tokens[client_id] = {
+      token:      token_hash,
+      expiry:     expiry,
+      last_token: last_token,
+      updated_at: Time.now
+   }
+
+    self.save!
+
+    return build_auth_header(token, client_id)
+  end
+
+
+  def build_auth_header(token, client_id='default')
+    client_id ||= 'default'
+
+    # client may use expiry to prevent validation request if expired
+    expiry = self.tokens[client_id]['expiry']
+
+    return "token=#{token} client=#{client_id} expiry=#{expiry} uid=#{self.uid}"
+  end
+
+
+  def extend_batch_buffer(token, client_id)
+    self.tokens[client_id]['updated_at'] = Time.now
+    self.save!
+
+    return build_auth_header(token, client_id)
+  end
+
+
+  private
+
+
   def serializable_hash(options={})
     options ||= {}
     options[:except] ||= [:tokens]
@@ -65,45 +113,5 @@ class User < ActiveRecord::Base
 
   def email_required?
     provider == 'email'
-  end
-
-  # update user's auth token (should happen on each request)
-  def create_new_auth_token(client_id=nil)
-    client_id  ||= SecureRandom.urlsafe_base64(nil, false)
-    last_token ||= nil
-    token        = SecureRandom.urlsafe_base64(nil, false)
-    token_hash   = BCrypt::Password.create(token)
-    expiry       = (Time.now.to_f + DeviseTokenAuth.token_lifespan).to_i * 1000
-
-    if self.tokens[client_id] and self.tokens[client_id]['token']
-      last_token = self.tokens[client_id]['token']
-    end
-
-    self.tokens[client_id] = {
-      token:      token_hash,
-      expiry:     expiry,
-      last_token: last_token,
-      updated_at: Time.now
-   }
-
-    self.save!
-
-    return build_auth_header(client_id, token)
-  end
-
-
-  def extend_batch_buffer(client_id, token)
-    self.tokens[client_id]['updated_at'] = Time.now
-    self.save!
-
-    return build_auth_header(client_id, token)
-  end
-
-
-  def build_auth_header(client_id, token)
-    # client may use expiry to save validation request if expired
-    expiry = self.tokens[client_id]['expiry']
-
-    return "token=#{token} client=#{client_id} expiry=#{expiry} uid=#{self.uid}"
   end
 end
