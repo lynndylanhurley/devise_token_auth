@@ -26,6 +26,9 @@ class DemoControllerTest < ActionController::TestCase
 
     describe 'successful request' do
       before do
+        # ensure that request is not treated as batch request
+        age_token(@user, @client_id)
+
         request.headers['Authorization'] = @auth_header
         xhr :get, :members_only
 
@@ -53,14 +56,31 @@ class DemoControllerTest < ActionController::TestCase
       end
 
       it "should return the token expiry in the auth header" do
-        assert_equal @expiry, @resp_expiry
+        assert_equal @expiry.to_i, @resp_expiry.to_i
       end
 
-      it "should allow a new request to be made using new token" do
-        request.headers['Authorization'] = @resp_auth_header
-        xhr :get, :members_only
+      it 'should not treat this request as a batch request' do
+        refute assigns(:is_batch_request)
+      end
 
-        assert_equal 200, response.status
+      describe 'succesive requests' do
+        before do
+          @user.reload
+          # ensure that request is not treated as batch request
+          age_token(@user, @client_id)
+
+          request.headers['Authorization'] = @resp_auth_header
+
+          xhr :get, :members_only
+        end
+
+        it 'should not treat this request as a batch request' do
+          refute assigns(:is_batch_request)
+        end
+
+        it "should allow a new request to be made using new token" do
+          assert_equal 200, response.status
+        end
       end
     end
 
@@ -79,15 +99,82 @@ class DemoControllerTest < ActionController::TestCase
       end
     end
 
-    describe 'rapid succession of requests using same token' do
-      before do
-        request.headers['Authorization'] = @auth_header
-        xhr :get, :members_only
-        xhr :get, :members_only
+    describe 'batch requests' do
+      describe 'success' do
+        before do
+          request.headers['Authorization'] = @auth_header
+          xhr :get, :members_only
+
+          @first_is_batch_request = assigns(:is_batch_request)
+          @first_user = assigns(:user)
+          @first_auth_headers = response.headers['Authorization']
+
+          request.headers['Authorization'] = @auth_header
+          xhr :get, :members_only
+
+          @second_is_batch_request = assigns(:is_batch_request)
+          @second_user = assigns(:user)
+          @second_auth_headers = response.headers['Authorization']
+        end
+
+        it 'should allow both requests through' do
+          assert_equal 200, response.status
+        end
+
+        it 'should return the same auth headers for both requests' do
+          assert_equal @first_auth_headers, @second_auth_headers
+        end
       end
 
-      it 'should allow both requests through' do
-        assert_equal 200, response.status
+      describe 'time out' do
+        before do
+          @user.reload
+          age_token(@user, @client_id)
+
+          request.headers['Authorization'] = @auth_header
+          xhr :get, :members_only
+
+          @first_is_batch_request = assigns(:is_batch_request)
+          @first_user = assigns(:user).dup
+          @first_auth_headers = response.headers['Authorization'].clone
+          @first_response_status = response.status
+
+          @user.reload
+          age_token(@user, @client_id)
+
+          # use expired auth header
+          request.headers['Authorization'] = @auth_header
+          xhr :get, :members_only
+
+          @second_is_batch_request = assigns(:is_batch_request)
+          @second_user = assigns(:user)
+          @second_auth_headers = response.headers['Authorization']
+          @second_response_status = response.status
+        end
+
+        it 'should allow the first request through' do
+          assert_equal 200, @first_response_status
+        end
+
+        it 'should not allow the second request through' do
+          assert_equal 401, @second_response_status
+        end
+
+        it 'should return auth headers from the first request' do
+          assert @first_auth_headers
+        end
+
+        it 'should not return auth headers from the second request' do
+          refute @second_auth_headers
+        end
+
+        it 'should define user during first request' do
+          assert @first_user
+        end
+
+        it 'should not define user during second request' do
+          refute @second_user
+        end
       end
     end
   end

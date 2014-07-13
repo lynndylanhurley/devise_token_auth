@@ -12,6 +12,9 @@ require "minitest/pride"
 
 ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__) 
 
+# I hate the default reporter. Use ProgressReporter instead.
+Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
+
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!
 
@@ -31,5 +34,15 @@ class ActiveSupport::TestCase
 
   before do
     @request.env["devise.mapping"] = Devise.mappings[:user]
+  end
+
+  def age_token(user, client_id)
+    user.tokens[client_id]['updated_at'] = Time.now - (DeviseTokenAuth.batch_request_buffer_throttle + 10.seconds)
+    user.save
+  end
+
+  def expire_token(user, client_id)
+    user.tokens[client_id]['expiry'] = (Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)).to_f * 1000
+    user.save
   end
 end

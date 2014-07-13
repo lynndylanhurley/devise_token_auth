@@ -16,5 +16,5 @@ DeviseTokenAuth.setup do |config|
   # succession of requests from a single client to be a single batch request.
   # The default time buffer for what is considered to be a batch request is
   # 2 seconds. Change that setting here.
-  #config.batch_request_throttle = 2.seconds
+  #config.batch_request_buffer_throttle = 2.seconds
 end
