@@ -13,6 +13,9 @@ class User < ActiveRecord::Base
   # only validate unique emails among email registration users
   validate :unique_email_user, on: :create
 
+  # can't set default on text fields in mysql, simulate here instead.
+  before_create :set_empty_token_hash
+
   def valid_token?(token, client_id='default')
     client_id ||= 'default'
 
@@ -130,5 +133,9 @@ class User < ActiveRecord::Base
 
   def email_required?
     provider == 'email'
+  end
+
+  def set_empty_token_hash
+    self.tokens = {}
   end
 end
