@@ -14,7 +14,8 @@ class User < ActiveRecord::Base
   validate :unique_email_user, on: :create
 
   # can't set default on text fields in mysql, simulate here instead.
-  before_create :set_empty_token_hash
+  after_save :set_empty_token_hash
+  after_initialize :set_empty_token_hash
 
   def valid_token?(token, client_id='default')
     client_id ||= 'default'
@@ -136,6 +137,6 @@ class User < ActiveRecord::Base
   end
 
   def set_empty_token_hash
-    self.tokens = {}
+    self.tokens ||= {}
   end
 end
