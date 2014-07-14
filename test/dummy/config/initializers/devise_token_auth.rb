@@ -9,12 +9,9 @@ DeviseTokenAuth.setup do |config|
   # determines how long tokens will remain valid after they are issued.
   #config.token_lifespan = 2.weeks
 
-  # Sometimes it's necessary to make multiple requests in rapid succession.
-  # It's impossible to update the auth header for each of these requests
-  # because the client may have initiated all of them simultaneously (before
-  # the first request has finished). The solution is to consider a rapid
-  # succession of requests from a single client to be a single batch request.
-  # The default time buffer for what is considered to be a batch request is
-  # 2 seconds. Change that setting here.
-  #config.batch_request_buffer_throttle = 2.seconds
+  # Sometimes it's necessary to make several requests to the API at the same
+  # time. In this case, each request in the batch will need to share the same
+  # auth token. This setting determines how far apart the requests can be while
+  # still using the same auth token.
+  #config.batch_request_buffer_throttle = 5.seconds
 end

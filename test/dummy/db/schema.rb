@@ -11,15 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140713062503) do
+ActiveRecord::Schema.define(version: 20140714021615) do
 
   create_table "users", force: true do |t|
     t.string   "email"
-    t.string   "encrypted_password",     default: "",   null: false
+    t.string   "encrypted_password",          default: "",   null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
+    t.string   "reset_password_redirect_url"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,    null: false
+    t.integer  "sign_in_count",               default: 0,    null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -33,8 +34,8 @@ ActiveRecord::Schema.define(version: 20140713062503) do
     t.string   "nickname"
     t.string   "image"
     t.string   "provider"
-    t.string   "uid",                    default: "",   null: false
-    t.string   "tokens",                 default: "{}"
+    t.string   "uid",                         default: "",   null: false
+    t.string   "tokens",                      default: "{}"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

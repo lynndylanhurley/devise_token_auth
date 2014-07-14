@@ -82,6 +82,21 @@ class User < ActiveRecord::Base
   end
 
 
+  def build_auth_url(base_url, args)
+    args[:uid]    = self.uid
+    args[:expiry] = self.tokens[args[:client_id]]['expiry']
+
+    generate_url(base_url, args)
+  end
+
+
+  def generate_url(url, params = {})
+    uri = URI(url)
+    uri.query = params.to_query
+    uri.to_s
+  end
+
+
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
     self.save!

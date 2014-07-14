@@ -19,9 +19,9 @@ class DemoControllerTest < ActionController::TestCase
 
       @auth_header = @user.create_new_auth_token
 
-      @token       = @auth_header[/token=(.*?) /,1]
-      @client_id   = @auth_header[/client=(.*?) /,1]
-      @expiry      = @auth_header[/expiry=(.*?) /,1]
+      @token     = @auth_header[/token=(.*?) /,1]
+      @client_id = @auth_header[/client=(.*?) /,1]
+      @expiry    = @auth_header[/expiry=(.*?) /,1]
     end
 
     describe 'successful request' do
