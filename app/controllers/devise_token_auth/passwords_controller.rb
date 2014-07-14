@@ -9,25 +9,40 @@ module DeviseTokenAuth
     # this action is responsible for generating password reset tokens and
     # sending emails
     def create
-      @user = User.send_reset_password_instructions({
+      @user = User.where({
         email: resource_params[:email],
         provider: 'email'
-      })
+      }).first
 
-      if @user.errors.empty?
+      errors = nil
+
+      if @user
         @user.update_attributes({
           reset_password_redirect_url: resource_params[:redirect_url]
         })
 
-        render json: {
-          success: true,
-          message: "An email has been sent to #{@user.email} containing "+
-            "instructions for resetting your password."
-        }
+        @user = User.send_reset_password_instructions({
+          email: resource_params[:email],
+          provider: 'email'
+        })
+
+        if @user.errors.empty?
+          render json: {
+            success: true,
+            message: "An email has been sent to #{@user.email} containing "+
+              "instructions for resetting your password."
+          }
+        else
+          errors = @user.errors
+        end
       else
+        errors = ["Unable to find user with email '#{resource_params[:email]}'."]
+      end
+
+      if errors
         render json: {
           success: false,
-          errors: @user.errors
+          errors: errors
         }, status: 400
       end
     end
@@ -36,15 +51,14 @@ module DeviseTokenAuth
     # this is where users arrive after visiting the email confirmation link
     def edit
       @user = User.reset_password_by_token({
-        password_reset_token: resource_params[:password_reset_token]
+        reset_password_token: resource_params[:reset_password_token]
       })
 
-      if @user
-        # create client id
+      if @user and @user.id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
-        expiry     = Time.now + DeviseTokenAuth.token_lifespan
+        expiry     = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
         @user.tokens[client_id] = {
           token:  token_hash,
@@ -64,9 +78,17 @@ module DeviseTokenAuth
     end
 
     def update
+      # make sure user is authorized
+      unless @user
+        return render json: {
+          success: false,
+          errors: ['Unauthorized']
+        }, status: 401
+      end
+
       # make sure account doesn't use oauth2 provider
       unless @user.provider == 'email'
-        render json: {
+        return render json: {
           success: false,
           errors: ["This account does not require a password. Sign in using "+
                    "your #{@user.provider.humanize} account instead."]
@@ -74,8 +96,8 @@ module DeviseTokenAuth
       end
 
       # ensure that password params were sent
-      unless resource_params[:password] and resource_params[:password_confirmaiton]
-        render json: {
+      unless resource_params[:password] and resource_params[:password_confirmation]
+        return render json: {
           success: false,
           errors: ['You must fill out the fields labeled "password" and "password confirmation".']
         }, status: 401
@@ -84,7 +106,7 @@ module DeviseTokenAuth
       @user.update_attributes(resource_params)
 
       if @user.errors.empty?
-        render json: {
+        return render json: {
           success: true,
           data: {
             user: @user,
@@ -92,7 +114,7 @@ module DeviseTokenAuth
           }
         }
       else
-        render json: {
+        return render json: {
           success: false,
           errors: @user.errors
         }, status: 401
