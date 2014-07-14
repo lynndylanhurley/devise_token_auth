@@ -40,7 +40,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
 
   def update_auth_header
-
     auth_header = nil
     if not DeviseTokenAuth.change_headers_on_each_request
       auth_header = @user.build_auth_header(@token, @client_id)

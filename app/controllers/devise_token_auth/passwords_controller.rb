@@ -1,17 +1,24 @@
 module DeviseTokenAuth
-  class PasswordsController < DeviseTokenAuth::ApplicationController
+  class PasswordsController < Devise::PasswordsController
     include Devise::Controllers::Helpers
-    skip_before_filter :set_user_by_token, :only => [:create]
-    skip_after_filter :update_auth_header, :only => [:create]
+    include DeviseTokenAuth::Concerns::SetUserByToken
 
+    skip_before_filter :set_user_by_token, :only => [:create, :edit]
+    skip_after_filter :update_auth_header, :only => [:create, :edit]
+
+    # this action is responsible for generating password reset tokens and
+    # sending emails
     def create
-      # send the confirmation email
       @user = User.send_reset_password_instructions({
         email: resource_params[:email],
         provider: 'email'
       })
 
       if @user.errors.empty?
+        @user.update_attributes({
+          reset_password_redirect_url: resource_params[:redirect_url]
+        })
+
         render json: {
           success: true,
           message: "An email has been sent to #{@user.email} containing "+
@@ -21,10 +28,40 @@ module DeviseTokenAuth
         render json: {
           success: false,
           errors: @user.errors
-        }, status: 401
+        }, status: 400
       end
     end
 
+
+    # this is where users arrive after visiting the email confirmation link
+    def edit
+      @user = User.reset_password_by_token({
+        password_reset_token: resource_params[:password_reset_token]
+      })
+
+      if @user
+        # create client id
+        client_id  = SecureRandom.urlsafe_base64(nil, false)
+        token      = SecureRandom.urlsafe_base64(nil, false)
+        token_hash = BCrypt::Password.create(token)
+        expiry     = Time.now + DeviseTokenAuth.token_lifespan
+
+        @user.tokens[client_id] = {
+          token:  token_hash,
+          expiry: expiry
+        }
+
+        @user.save!
+
+        redirect_to(@user.build_auth_url(resource_params[:redirect_url], {
+          token:          token,
+          client_id:      client_id,
+          reset_password: true
+        }))
+      else
+        raise ActionController::RoutingError.new('Not Found')
+      end
+    end
 
     def update
       # make sure account doesn't use oauth2 provider
@@ -64,7 +101,7 @@ module DeviseTokenAuth
 
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation)
+      params.permit(:email, :password, :password_confirmation, :reset_password_token, :redirect_url)
     end
   end
 end
