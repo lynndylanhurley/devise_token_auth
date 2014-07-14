@@ -134,15 +134,15 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           @auth_header = @user.create_new_auth_token
           request.headers['Authorization'] = @auth_header
           @new_password = Faker::Internet.password
+
+          xhr :put, :update, {
+            password: 'chong',
+            password_confirmation: 'bong'
+          }
         end
 
         test 'response should fail' do
-          assert_raises(ActiveRecord::RecordInvalid) {
-            xhr :put, :update, {
-              password: 'chong',
-              password_confirmation: 'bong'
-            }
-          }
+          assert_equal 422, response.status
         end
       end
 

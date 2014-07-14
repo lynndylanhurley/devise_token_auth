@@ -9,6 +9,20 @@ module DeviseTokenAuth
     # this action is responsible for generating password reset tokens and
     # sending emails
     def create
+      unless resource_params[:email]
+        return render json: {
+          success: false,
+          errors: ['You must provide an email address.']
+        }, status: 401
+      end
+
+      unless resource_params[:redirect_url]
+        return render json: {
+          success: false,
+          errors: ['Missing redirect url.']
+        }, status: 401
+      end
+
       @user = User.where({
         email: resource_params[:email],
         provider: 'email'
@@ -92,7 +106,7 @@ module DeviseTokenAuth
           success: false,
           errors: ["This account does not require a password. Sign in using "+
                    "your #{@user.provider.humanize} account instead."]
-        }, status: 401
+        }, status: 422
       end
 
       # ensure that password params were sent
@@ -100,12 +114,10 @@ module DeviseTokenAuth
         return render json: {
           success: false,
           errors: ['You must fill out the fields labeled "password" and "password confirmation".']
-        }, status: 401
+        }, status: 422
       end
 
-      @user.update_attributes(resource_params)
-
-      if @user.errors.empty?
+      if @user.update_attributes(resource_params)
         return render json: {
           success: true,
           data: {
@@ -117,7 +129,7 @@ module DeviseTokenAuth
         return render json: {
           success: false,
           errors: @user.errors
-        }, status: 401
+        }, status: 422
       end
     end
 

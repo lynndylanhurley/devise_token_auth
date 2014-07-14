@@ -40,17 +40,21 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
 
   def update_auth_header
+    # cannot save object if model has invalid params
+    return unless @user and @user.valid? and @client_id
+
     auth_header = nil
+
     if not DeviseTokenAuth.change_headers_on_each_request
       auth_header = @user.build_auth_header(@token, @client_id)
 
     # extend expiration of batch buffer to account for the duration of
     # this request
-    elsif @is_batch_request and @client_id and @user
+    elsif @is_batch_request
       auth_header = @user.extend_batch_buffer(@token, @client_id)
 
     # update Authorization response header with new token
-    elsif @user and @client_id
+    else
       auth_header = @user.create_new_auth_token(@client_id)
     end
 
