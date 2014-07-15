@@ -1,6 +1,6 @@
 DeviseTokenAuth::Engine.routes.draw do
   begin
-    devise_for :users,
+    devise_for DeviseTokenAuth.user_class.name.pluralize.underscore.to_sym,
       :class_name  => DeviseTokenAuth.user_class.to_s,
       :module      => :devise,
       :path        => "",
