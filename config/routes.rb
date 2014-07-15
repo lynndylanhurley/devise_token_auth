@@ -1,6 +1,6 @@
 DeviseTokenAuth::Engine.routes.draw do
   devise_for :users,
-    :class_name  => "User",
+    :class_name  => DeviseTokenAuth.user_class.name,
     :module      => :devise,
     :path        => "",
     :controllers => {:sessions      => "devise_token_auth/sessions",

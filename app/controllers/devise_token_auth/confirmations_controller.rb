@@ -3,7 +3,7 @@ module DeviseTokenAuth
     include Devise::Controllers::Helpers
 
     def show
-      @user = User.confirm_by_token(params[:confirmation_token])
+      @user = DeviseTokenAuth.user_class.confirm_by_token(params[:confirmation_token])
 
       if @user and @user.id
         # create client id

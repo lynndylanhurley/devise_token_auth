@@ -7,7 +7,7 @@ module DeviseTokenAuth
     respond_to :json
 
     def create
-      @resource            = User.new(resource_params)
+      @resource            = DeviseTokenAuth.user_class.new(resource_params)
       @resource.uid        = resource_params[:email]
       @resource.provider   = "email"
 

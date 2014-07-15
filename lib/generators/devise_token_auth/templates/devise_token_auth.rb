@@ -14,4 +14,7 @@ DeviseTokenAuth.setup do |config|
   # auth token. This setting determines how far apart the requests can be while
   # still using the same auth token.
   #config.batch_request_buffer_throttle = 5.seconds
+
+  # Specify the model that will act as the User model (Admin, Member, etc.)
+  #config.user_class = 'User'
 end

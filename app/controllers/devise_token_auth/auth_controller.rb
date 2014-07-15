@@ -20,7 +20,7 @@ module DeviseTokenAuth
 
     def omniauth_success
       # find or create user by provider and provider uid
-      @user = User.where({
+      @user = DeviseTokenAuth.user_class.where({
         uid:      auth_hash['uid'],
         provider: auth_hash['provider']
       }).first_or_initialize
