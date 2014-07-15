@@ -50,4 +50,27 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       end
     end
   end
+
+  describe DeviseTokenAuth::ConfirmationsController, "Alternate user class" do
+    setup do
+      @routes = Dummy::Application.routes
+      DeviseTokenAuth.user_class = 'Mang'
+    end
+
+    before do
+      @new_user = mangs(:unconfirmed_email_user)
+      binding.pry
+      @new_user.send_confirmation_instructions
+      @mail  = ActionMailer::Base.deliveries.last
+      @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
+
+      xhr :get, :show, {confirmation_token: @token}
+      @user = assigns(:user)
+    end
+
+    focus
+    test "user should now be confirmed" do
+      assert @user.confirmed?
+    end
+  end
 end

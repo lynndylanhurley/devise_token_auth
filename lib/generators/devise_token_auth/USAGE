@@ -7,3 +7,4 @@ Example:
     This will create:
         config/initializers/devise_token_auth.rb
         db/migrate/xxxxxxxx_create_devise_token_auth_user.rb
+        app/models/<%= user_class %>.rb

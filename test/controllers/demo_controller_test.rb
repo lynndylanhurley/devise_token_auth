@@ -230,4 +230,40 @@ class DemoControllerTest < ActionController::TestCase
       end
     end
   end
+
+  # minimal testing for alternate user class
+  describe DemoController, "Alternate user class" do
+    setup do
+      @routes = Dummy::Application.routes
+      DeviseTokenAuth.user_class = 'Mang'
+    end
+
+    before do
+      @user = mangs(:confirmed_email_user)
+      @user.skip_confirmation!
+      @user.save!
+
+      @auth_header = @user.create_new_auth_token
+
+      @token     = @auth_header[/token=(.*?) /,1]
+      @client_id = @auth_header[/client=(.*?) /,1]
+      @expiry    = @auth_header[/expiry=(.*?) /,1]
+
+      # ensure that request is not treated as batch request
+      age_token(@user, @client_id)
+
+      request.headers['Authorization'] = @auth_header
+      xhr :get, :members_only
+
+      @resp_auth_header = response.headers['Authorization']
+      @resp_token       = @resp_auth_header[/token=(.*?) /,1]
+      @resp_client_id   = @resp_auth_header[/client=(.*?) /,1]
+      @resp_expiry      = @resp_auth_header[/expiry=(.*?) /,1]
+      @resp_uid         = @resp_auth_header[/uid=(.*?)$/,1]
+    end
+
+    it 'should return success status' do
+      assert_equal 200, response.status
+    end
+  end
 end

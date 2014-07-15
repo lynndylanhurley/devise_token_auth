@@ -131,7 +131,7 @@ module DeviseTokenAuth::Concerns::User
 
 
   def unique_email_user
-    if provider == 'email' and User.where(provider: 'email', email: email).count > 0
+    if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
       errors.add(:email, "This email address is already in use")
     end
   end
