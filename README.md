@@ -305,7 +305,7 @@ Typical use of this gem will not require the use of any of the following model m
 
 Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will have access to the following public methods (read the above section for context on `token` and `client`):
 
-* **`valid_token?`**: check if an authentication token is valid. Accepts `token` and `client` as arguments. Returns a boolean.
+* **`valid_token?`**: check if an authentication token is valid. Accepts a `token` and `client` as arguments. Returns a boolean.
 
   **Example**:
   ~~~ruby
@@ -334,7 +334,7 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
 
   **Example**:
   ~~~ruby
-  # create client id
+  # create client id and token
   client_id = SecureRandom.urlsafe_base64(nil, false)
   token     = SecureRandom.urlsafe_base64(nil, false)
 
