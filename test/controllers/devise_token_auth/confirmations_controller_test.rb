@@ -8,8 +8,6 @@ require 'test_helper'
 
 class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::ConfirmationsController, "Confirmation" do
-    fixtures :users
-
     before do
       @new_user = users(:unconfirmed_email_user)
       @new_user.send_confirmation_instructions
@@ -47,6 +45,43 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         }
         @user = assigns(:user)
         refute @user.confirmed?
+      end
+    end
+  end
+
+  # test with non-standard user class
+  describe DeviseTokenAuth::ConfirmationsController, "Alternate user class" do
+    setup do
+      @request.env['devise.mapping'] = Devise.mappings[:mang]
+    end
+
+    teardown do
+      @request.env['devise.mapping'] = Devise.mappings[:user]
+    end
+
+    before do
+      @new_user = mangs(:unconfirmed_email_user)
+      @new_user.send_confirmation_instructions
+      @mail  = ActionMailer::Base.deliveries.last
+      @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
+    end
+
+    test 'should generate raw token' do
+      assert @token
+    end
+
+    test "should store token hash in user" do
+      assert @new_user.confirmation_token
+    end
+
+    describe "success" do
+      before do
+        xhr :get, :show, {confirmation_token: @token}
+        @user = assigns(:user)
+      end
+
+      test "user should now be confirmed" do
+        assert @user.confirmed?
       end
     end
   end

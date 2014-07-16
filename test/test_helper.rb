@@ -29,11 +29,8 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 
   setup do
-    @routes = DeviseTokenAuth::Engine.routes
-  end
-
-  before do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
+    @routes = Dummy::Application.routes
+    @request.env['devise.mapping'] = Devise.mappings[:user]
   end
 
   def age_token(user, client_id)
@@ -42,7 +39,7 @@ class ActiveSupport::TestCase
   end
 
   def expire_token(user, client_id)
-    user.tokens[client_id]['expiry'] = Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)
+    user.tokens[client_id]['expiry'] = (Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)).to_i
     user.save
   end
 end

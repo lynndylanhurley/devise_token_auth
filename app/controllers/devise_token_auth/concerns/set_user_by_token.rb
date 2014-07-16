@@ -6,13 +6,15 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     after_action :update_auth_header
   end
 
-
   # user auth
   def set_user_by_token
     auth_header = request.headers["Authorization"]
 
     # missing auth token
     return false unless auth_header
+
+    # no default user defined
+    return false unless resource_class
 
     # parse header for values necessary for authentication
     uid        = auth_header[/uid=(.*?)$/,1]
@@ -23,7 +25,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @client_id ||= 'default'
 
     # mitigate timing attacks by finding by uid instead of auth token
-    @user = @current_user = uid && DeviseTokenAuth.user_class.find_by_uid(uid)
+    @user = @current_user = uid && resource_class.find_by_uid(uid)
 
     if @user && @user.valid_token?(@token, @client_id)
       sign_in(:user, @user, store: false, bypass: true)
@@ -61,6 +63,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     response.headers["Authorization"] = auth_header if auth_header
   end
 
+  def resource_class
+    mapping = request.env['devise.mapping'] || Devise.mappings.values.first
+    mapping.to
+  end
 
   private
 

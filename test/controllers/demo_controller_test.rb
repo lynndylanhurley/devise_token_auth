@@ -8,10 +8,6 @@ require 'test_helper'
 
 class DemoControllerTest < ActionController::TestCase
   describe DemoController, "Token access" do
-    setup do
-      @routes = Dummy::Application.routes
-    end
-
     before do
       @user = users(:confirmed_email_user)
       @user.skip_confirmation!
@@ -228,6 +224,45 @@ class DemoControllerTest < ActionController::TestCase
           refute @second_user
         end
       end
+    end
+  end
+
+  # test with non-standard user class
+  describe DemoController, "Alternate user class" do
+    setup do
+      @request.env['devise.mapping'] = Devise.mappings[:mang]
+    end
+
+    teardown do
+      @request.env['devise.mapping'] = Devise.mappings[:user]
+    end
+
+    before do
+      @user = mangs(:confirmed_email_user)
+      @user.skip_confirmation!
+      @user.save!
+
+      @auth_header = @user.create_new_auth_token
+
+      @token     = @auth_header[/token=(.*?) /,1]
+      @client_id = @auth_header[/client=(.*?) /,1]
+      @expiry    = @auth_header[/expiry=(.*?) /,1]
+
+      # ensure that request is not treated as batch request
+      age_token(@user, @client_id)
+
+      request.headers['Authorization'] = @auth_header
+      xhr :get, :members_only
+
+      @resp_auth_header = response.headers['Authorization']
+      @resp_token       = @resp_auth_header[/token=(.*?) /,1]
+      @resp_client_id   = @resp_auth_header[/client=(.*?) /,1]
+      @resp_expiry      = @resp_auth_header[/expiry=(.*?) /,1]
+      @resp_uid         = @resp_auth_header[/uid=(.*?)$/,1]
+    end
+
+    it 'should return success status' do
+      assert_equal 200, response.status
     end
   end
 end

@@ -8,8 +8,6 @@ require 'test_helper'
 
 class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::PasswordsController, "Password reset" do
-    fixtures :users
-
     before do
       @user = users(:confirmed_email_user)
       @redirect_url = 'http://ng-token-auth.dev'
@@ -161,6 +159,44 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           assert_equal 401, response.status
         end
       end
+    end
+  end
+
+  describe DeviseTokenAuth::PasswordsController, "Alternate user class" do
+    setup do
+      @request.env['devise.mapping'] = Devise.mappings[:mang]
+    end
+
+    teardown do
+      @request.env['devise.mapping'] = Devise.mappings[:user]
+    end
+
+    before do
+      @user = mangs(:confirmed_email_user)
+      @redirect_url = 'http://ng-token-auth.dev'
+
+      xhr :post, :create, {
+        email:        @user.email,
+        redirect_url: @redirect_url
+      }
+
+      @mail = ActionMailer::Base.deliveries.last
+      @user.reload
+
+      @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+      @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
+    end
+
+    test 'response should return success status' do
+      assert_equal 200, response.status
+    end
+
+    test 'the email body should contain a link with reset token as a query param' do
+      user = Mang.reset_password_by_token({
+        reset_password_token: @mail_reset_token
+      })
+
+      assert_equal user.id, @user.id
     end
   end
 end
