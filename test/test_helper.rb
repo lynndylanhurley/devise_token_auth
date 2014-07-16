@@ -10,15 +10,14 @@ require "minitest/rails"
 # Uncomment for awesome colorful output
 require "minitest/pride"
 
-ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__) 
+ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)
+ActionDispatch::IntegrationTest.fixture_path = File.expand_path("../fixtures", __FILE__)
 
 # I hate the default reporter. Use ProgressReporter instead.
 Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
 
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!
-
-  include Devise::TestHelpers
 
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
   #
@@ -27,6 +26,10 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+end
+
+class ActionController::TestCase
+  include Devise::TestHelpers
 
   setup do
     @routes = Dummy::Application.routes
