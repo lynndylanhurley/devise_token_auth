@@ -19,8 +19,11 @@ module DeviseTokenAuth
     end
 
     def omniauth_success
+      # pull resource class from omniauth return
+      resource = request.env['omniauth.params']['resource_class'].constantize
+
       # find or create user by provider and provider uid
-      @user = User.where({
+      @user = resource.where({
         uid:      auth_hash['uid'],
         provider: auth_hash['provider']
       }).first_or_initialize

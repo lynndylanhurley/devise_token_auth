@@ -4,17 +4,63 @@ module DeviseTokenAuth
 
     source_root File.expand_path('../templates', __FILE__)
 
-    desc "This generator creates an initializer file at config/initializers/devise_token_auth.rb"
+    argument :user_class, type: :string, default: "User"
+    argument :mount_path, type: :string, default: '/auth'
+
     def create_initializer_file
       copy_file("devise_token_auth.rb", "config/initializers/devise_token_auth.rb")
     end
 
-    desc "This generator creates a user migration file at db/migrate/<%= migration_id %>_devise_token_auth_create_users.rb"
     def copy_migrations
-      if self.class.migration_exists?("db/migrate", "devise_token_auth_create_users")
-        say_status("skipped", "Migration 'devise_token_auth' already exists")
+      if self.class.migration_exists?("db/migrate", "devise_token_auth_create_#{ user_class.underscore }")
+        say_status("skipped", "Migration 'devise_token_auth_create_#{ user_class.underscore }' already exists")
       else
-        migration_template("devise_token_auth_create_users.rb", "db/migrate/devise_token_auth_create_users.rb")
+        migration_template(
+          "devise_token_auth_create_users.rb.erb",
+          "db/migrate/devise_token_auth_create_#{ user_class.pluralize.underscore }.rb"
+        )
+      end
+    end
+
+    def create_user_model
+      fname = "app/models/#{ user_class.underscore }.rb"
+      unless File.exist?(fname)
+        template("user.rb", fname)
+      else
+        inclusion = "include DeviseTokenAuth::Concerns::User"
+        unless parse_file_for_line(fname, inclusion)
+          inject_into_file fname, after: "class #{user_class} < ActiveRecord::Base\n" do <<-'RUBY'
+  include DeviseTokenAuth::Concerns::User
+          RUBY
+          end
+        end
+      end
+    end
+
+    def add_route_mount
+      f    = "config/routes.rb"
+      str  = "mount_devise_token_auth_for '#{user_class}', at: '#{mount_path}'"
+      line = parse_file_for_line(f, "mount_devise_token_auth_for")
+
+      unless line
+        line = "Rails.application.routes.draw do"
+        existing_user_class = false
+      else
+        existing_user_class = true
+      end
+
+      if parse_file_for_line(f, str)
+        say_status("skipped", "Routes already exist for #{user_class} at #{mount_path}")
+      else
+        insert_after_line(f, line, str)
+
+        if existing_user_class
+          scoped_routes = ""+
+            "as :#{user_class.underscore} do\n"+
+            "    # Define routes for #{user_class} within this block.\n"+
+            "  end\n"
+          insert_after_line(f, str, scoped_routes)
+        end
       end
     end
 
@@ -22,6 +68,24 @@ module DeviseTokenAuth
 
     def self.next_migration_number(path)
       Time.now.utc.strftime("%Y%m%d%H%M%S")
+    end
+
+    def insert_after_line(filename, line, str)
+      gsub_file filename, /(#{Regexp.escape(line)})/mi do |match|
+        "#{match}\n  #{str}"
+      end
+    end
+
+    def parse_file_for_line(filename, str)
+      match = false
+      File.open(filename) do |f|
+        f.each_line do |line|
+          if line =~ /(#{Regexp.escape(str)})/mi
+            match = line
+          end
+        end
+      end
+      match
     end
   end
 end

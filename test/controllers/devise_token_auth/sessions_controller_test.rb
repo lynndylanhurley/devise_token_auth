@@ -93,4 +93,36 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       assert @data['errors']
     end
   end
+
+  describe DeviseTokenAuth::SessionsController, "Alternate user class" do
+    setup do
+      @request.env['devise.mapping'] = Devise.mappings[:mang]
+    end
+
+    teardown do
+      @request.env['devise.mapping'] = Devise.mappings[:user]
+    end
+
+    before do
+      @existing_user = mangs(:confirmed_email_user)
+      @existing_user.skip_confirmation!
+      @existing_user.save!
+
+      xhr :post, :create, {
+        email: @existing_user.email,
+        password: 'secret123'
+      }
+
+      @user = assigns(:user)
+      @data = JSON.parse(response.body)
+    end
+
+    test "request should succeed" do
+      assert_equal 200, response.status
+    end
+
+    test "request should return user data" do
+      assert_equal @existing_user.email, @data['data']['email']
+    end
+  end
 end

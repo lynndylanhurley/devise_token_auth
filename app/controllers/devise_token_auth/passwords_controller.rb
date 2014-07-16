@@ -23,7 +23,7 @@ module DeviseTokenAuth
         }, status: 401
       end
 
-      @user = User.where({
+      @user = resource_class.where({
         email: resource_params[:email],
         provider: 'email'
       }).first
@@ -35,7 +35,7 @@ module DeviseTokenAuth
           reset_password_redirect_url: resource_params[:redirect_url]
         })
 
-        @user = User.send_reset_password_instructions({
+        @user = resource_class.send_reset_password_instructions({
           email: resource_params[:email],
           provider: 'email'
         })
@@ -64,7 +64,7 @@ module DeviseTokenAuth
 
     # this is where users arrive after visiting the email confirmation link
     def edit
-      @user = User.reset_password_by_token({
+      @user = resource_class.reset_password_by_token({
         reset_password_token: resource_params[:reset_password_token]
       })
 

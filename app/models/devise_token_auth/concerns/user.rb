@@ -1,21 +1,26 @@
-class User < ActiveRecord::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-        :recoverable, :rememberable, :trackable, :validatable,
-        :confirmable
+module DeviseTokenAuth::Concerns::User
+  extend ActiveSupport::Concern
 
-  serialize :tokens, JSON
+  included do
+    # Include default devise modules. Others available are:
+    # :confirmable, :lockable, :timeoutable and :omniauthable
+    devise :database_authenticatable, :registerable,
+          :recoverable, :rememberable, :trackable, :validatable,
+          :confirmable
 
-  validates_presence_of :email, if: Proc.new { |u| u.provider == 'email' }
-  validates_presence_of :confirm_success_url, if: Proc.new {|u| u.provider == 'email'}
+    serialize :tokens, JSON
 
-  # only validate unique emails among email registration users
-  validate :unique_email_user, on: :create
+    validates_presence_of :email, if: Proc.new { |u| u.provider == 'email' }
+    validates_presence_of :confirm_success_url, if: Proc.new {|u| u.provider == 'email'}
 
-  # can't set default on text fields in mysql, simulate here instead.
-  after_save :set_empty_token_hash
-  after_initialize :set_empty_token_hash
+    # only validate unique emails among email registration users
+    validate :unique_email_user, on: :create
+
+    # can't set default on text fields in mysql, simulate here instead.
+    after_save :set_empty_token_hash
+    after_initialize :set_empty_token_hash
+  end
+
 
   def valid_token?(token, client_id='default')
     client_id ||= 'default'
@@ -94,13 +99,6 @@ class User < ActiveRecord::Base
   end
 
 
-  def generate_url(url, params = {})
-    uri = URI(url)
-    uri.query = params.to_query
-    uri.to_s
-  end
-
-
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
     self.save!
@@ -109,7 +107,14 @@ class User < ActiveRecord::Base
   end
 
 
-  private
+  protected
+
+
+  def generate_url(url, params = {})
+    uri = URI(url)
+    uri.query = params.to_query
+    uri.to_s
+  end
 
 
   def serializable_hash(options={})
@@ -126,7 +131,7 @@ class User < ActiveRecord::Base
 
 
   def unique_email_user
-    if provider == 'email' and User.where(provider: 'email', email: email).count > 0
+    if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
       errors.add(:email, "This email address is already in use")
     end
   end

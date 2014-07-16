@@ -10,15 +10,14 @@ require "minitest/rails"
 # Uncomment for awesome colorful output
 require "minitest/pride"
 
-ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__) 
+ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)
+ActionDispatch::IntegrationTest.fixture_path = File.expand_path("../fixtures", __FILE__)
 
 # I hate the default reporter. Use ProgressReporter instead.
 Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
 
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!
-
-  include Devise::TestHelpers
 
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
   #
@@ -27,13 +26,14 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+end
+
+class ActionController::TestCase
+  include Devise::TestHelpers
 
   setup do
-    @routes = DeviseTokenAuth::Engine.routes
-  end
-
-  before do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
+    @routes = Dummy::Application.routes
+    @request.env['devise.mapping'] = Devise.mappings[:user]
   end
 
   def age_token(user, client_id)
@@ -42,7 +42,7 @@ class ActiveSupport::TestCase
   end
 
   def expire_token(user, client_id)
-    user.tokens[client_id]['expiry'] = Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)
+    user.tokens[client_id]['expiry'] = (Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)).to_i
     user.save
   end
 end

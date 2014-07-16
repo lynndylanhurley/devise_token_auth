@@ -73,8 +73,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
   end
 
   describe DeviseTokenAuth::RegistrationsController, "Existing users" do
-    fixtures :users
-
     before do
       @existing_user = users(:confirmed_email_user)
 
@@ -104,8 +102,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
 
   describe DeviseTokenAuth::RegistrationsController, "Ouath user has existing email" do
-    fixtures :users
-
     before do
       @existing_user = users(:duplicate_email_facebook_user)
 
@@ -130,6 +126,37 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
     test "new user data should be returned as json" do
       assert @data['data']['email']
+    end
+  end
+
+  describe DeviseTokenAuth::RegistrationsController, "Alternate user class" do
+    setup do
+      @request.env['devise.mapping'] = Devise.mappings[:mang]
+    end
+
+    teardown do
+      @request.env['devise.mapping'] = Devise.mappings[:user]
+    end
+
+    before do
+      xhr :post, :create, {
+        email: -> { Faker::Internet.email },
+        password: "secret123",
+        password_confirmation: "secret123",
+        confirm_success_url: -> { Faker::Internet.url }
+      }
+
+      @user = assigns(:resource)
+      @data = JSON.parse(response.body)
+      @mail = ActionMailer::Base.deliveries.last
+    end
+
+    test "request should be successful" do
+      assert_equal 200, response.status
+    end
+
+    test "use should be a Mang" do
+      assert_equal "Mang", @user.class.name
     end
   end
 end

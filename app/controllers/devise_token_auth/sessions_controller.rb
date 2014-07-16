@@ -8,7 +8,7 @@ module DeviseTokenAuth
     respond_to :json
 
     def create
-      @user = User.find_by_email(resource_params[:email])
+      @user = resource_class.find_by_email(resource_params[:email])
 
       if @user and valid_params? and @user.valid_password?(resource_params[:password]) and @user.confirmed?
         # create client id
