@@ -127,10 +127,25 @@ end
 
 The above example assumes that your provider keys and secrets are stored in environmental variables. Use the [figaro](https://github.com/laserlemon/figaro) gem (or [dotenv](https://github.com/bkeepers/dotenv) or [secrets.yml](https://github.com/rails/rails/blob/v4.1.0/railties/lib/rails/generators/rails/app/templates/config/secrets.yml) or equivalent) to accomplish this.
 
-**Important**: The "Callback URL" setting that you set with your provider must correspond to the `omniauth_prefix` setting defined by this app. **This will be different than the omniauth route that is used by your client application**. For example, the demo app uses the default `omniauth_prefix` setting `/omniauth`, so the "Authorization callback URL" for github must be set to `http://devise-token-auth-demo.herokuapp.com/omniauth/github/callback`.
+#### Omniauth callback settings
+
+The "Callback URL" setting that you set with your provider must correspond to the [omniauth prefix](#initializer-settings) setting defined by this app. **This will be different than the omniauth route that is used by your client application**. 
+
+For example, the demo app uses the default `omniauth_prefix` setting `/omniauth`, so the "Authorization callback URL" for github must be set to "http://devise-token-auth-demo.herokuapp.com**/omniauth**/github/callback".
 
 **Github example for the demo site**:
 ![password reset flow](https://github.com/lynndylanhurley/devise_token_auth/raw/master/test/dummy/app/assets/images/omniauth-provider-settings.png)
+
+The url for github authentication will be different for the client. The client should visit the API at `/[MOUNT_PATH]/:provider` for omniauth authentication.
+
+For example, given that the app is mounted using the following settings:
+
+~~~ruby
+# config/routes.rb
+mount_devise_token_auth_for 'User', at: '/auth'
+~~~
+
+The client configuration for github should look like this:
 
 **Angular.js setting for authenticating using github**:
 ~~~javascript
@@ -139,7 +154,7 @@ angular.module('myApp', ['ng-token-auth'])
     $authProvider.configure({
       apiUrl: 'http://api.example.com'
       authProviderPaths: {
-        github: '/auth/github' # note that this is different than what was set with github
+        github: '/auth/github' // <-- note that this is different than what was set with github
       }
     });
   });
@@ -147,7 +162,9 @@ angular.module('myApp', ['ng-token-auth'])
 
 This incongruence is necessary to support multiple user classes and mounting points. 
 
-**Note for [pow](http://pow.cx/) and [xip.io](http://xip.io) users**: if you receive `redirect-uri-mismatch` errors from your provider when using pow or xip.io urls, set the following in your development config:
+#### Note for [pow](http://pow.cx/) and [xip.io](http://xip.io) users
+
+If you receive `redirect-uri-mismatch` errors from your provider when using pow or xip.io urls, set the following in your development config:
 
 ~~~ruby
 # config/environments/development.rb
