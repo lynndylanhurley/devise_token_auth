@@ -67,9 +67,9 @@ The following events will take place when using the install generator:
 
 You will also need to configure the following features that are external to this gem:
 
-* [Omniauth providers](#omniauth-authentication) for 3rd party oauth2 authentication.
-* [Cross Origin Request Settings](#cors) when using cross-domain clients.
-* [Email](#email-authentication) for email registration.
+* **Omniauth providers** when using 3rd party oauth2 authentication. [Read more](#omniauth-authentication).
+* **Cross Origin Request Settings** when using cross-domain clients. [Read more](#cors).
+* **Email** when using email registration. [Read more](#email-authentication).
 
 [Jump here](#configuration-cont) for more configuration information.
 
@@ -241,16 +241,18 @@ The authentication routes must be mounted to your project. This gem includes a r
 
 **`mount_devise_token_auth_for`** - similar to `devise_for`, this method is used to append the routes necessary for user authentication. This method accepts the following arguments:
 
-| Argument | Type | Description |
-|---|---|---|
-|`class_name`| string | The name of the class to use for authentication. This class must include the [model concern described here](#model-concerns). |
-| `options` | object | The [routes to be used for authentication](#usage) will be prefixed by the path specified in the `at` param of this object. |
+| Argument | Type | Default | Description |
+|---|---|---|---|
+|`class_name`| string | 'User' | The name of the class to use for authentication. This class must include the [model concern described here](#model-concerns). |
+| `options` | object | {at: '/auth'} | The [routes to be used for authentication](#usage) will be prefixed by the path specified in the `at` param of this object. |
 
 **Example**:
 ~~~ruby
 # config/routes.rb
 mount_devise_token_auth_for 'User', at: '/auth'
 ~~~
+
+Any model class can be used, but the class will need to include [`DeviseTokenAuth::Concerns::SetUserByToken`](#model-concerns) for authentication to work properly.
 
 You can mount this engine to any route that you like. `/auth` is used by default to conform with the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
 
@@ -364,7 +366,7 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
 
 ## Using multiple models
 
-This gem supports the use of multiple user models. One possible use case is to authorize visitors using a model called `User`, and to authorize administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
+This gem supports the use of multiple user models. One possible use case is to authenticate visitors using a model called `User`, and to authenticate administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
 
 1. Run the install generator for the new model.
   ~~~
