@@ -34,7 +34,7 @@ Then install the gem using bundle:
 bundle install
 ~~~
 
-# Configuration TLDR;
+# Configuration TL;DR
 
 You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-concerns), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following to append the routes and generate the model, migration, and initializer files:
 
@@ -73,7 +73,7 @@ You will also need to configure the following features that are external to this
 
 [Jump here](#configuration-cont) for more configuration information.
 
-# Usage TLDR;
+# Usage TL;DR
 
 The following routes are available for use by your client. These routes live relative to the path at which this engine is mounted (`/auth` by default). These routes correspond to the defaults used by the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js.
 
