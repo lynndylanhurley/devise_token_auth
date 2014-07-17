@@ -356,7 +356,7 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
   }
 
   # update token, generate updated auth headers for response
-  new_auth_header = @user.create_new_auth_token(token, client_id)
+  new_auth_header = @user.build_auth_header(token, client_id)
 
   # update response with the header that will be required by the next request
   response.headers["Authorization"] = new_auth_header
