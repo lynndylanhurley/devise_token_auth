@@ -38,5 +38,4 @@ end
 # code coverage, metrics
 group :test do
   gem "codeclimate-test-reporter", require: nil
-  gem 'simplecov', '~> 0.7.1'
 end

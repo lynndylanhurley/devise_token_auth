@@ -232,7 +232,6 @@ DEPENDENCIES
   pry
   pry-remote
   rack-cors
-  simplecov (~> 0.7.1)
   spring
   sqlite3 (~> 1.3)
   thor
