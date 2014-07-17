@@ -65,11 +65,12 @@ The following events will take place when using the install generator:
   rake db:migrate
   ~~~
 
-You will also need to configure the following features that are external to this gem:
+You may also need to configure the following items:
 
 * **Omniauth providers** when using 3rd party oauth2 authentication. [Read more](#omniauth-authentication).
 * **Cross Origin Request Settings** when using cross-domain clients. [Read more](#cors).
 * **Email** when using email registration. [Read more](#email-authentication).
+* **Multiple model support** if you're into that sort of thing. [Read more](#using-multiple-models).
 
 [Jump here](#configuration-cont) for more configuration information.
 
