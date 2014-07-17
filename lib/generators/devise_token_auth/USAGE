@@ -22,6 +22,10 @@ Example:
   after the class definition:
       include DeviseTokenAuth::Concerns::User
 
+  The following line will be inserted into your application controller at
+  app/controllers/application_controller.rb:
+      include DeviseTokenAuth::Concerns::SetUserByToken
+
   The following line will be inserted at the top of 'config/routes.rb' if it
   does not already exist:
       mount_devise_token_auth_for "User", at: '/auth'

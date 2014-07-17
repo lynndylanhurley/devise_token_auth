@@ -37,6 +37,20 @@ module DeviseTokenAuth
       end
     end
 
+    def include_controller_concerns
+      fname = "app/controllers/application_controller.rb"
+      line  = "include DeviseTokenAuth::Concerns::SetUserByToken"
+
+      if parse_file_for_line(fname, line)
+        say_status("skipped", "Concern is already included in the application controller.")
+      else
+        inject_into_file fname, after: "class ApplicationController < ActionController::Base\n" do <<-'RUBY'
+  include DeviseTokenAuth::Concerns::SetUserByToken
+        RUBY
+        end
+      end
+    end
+
     def add_route_mount
       f    = "config/routes.rb"
       str  = "mount_devise_token_auth_for '#{user_class}', at: '#{mount_path}'"

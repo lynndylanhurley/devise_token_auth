@@ -51,11 +51,13 @@ This generator accepts the following optional arguments:
 
 The following events will take place when using the install generator:
 
-* An initializer will be created at `config/initializers/devise_token_auth.rb`. [Read more](#initializer-settings). 
+* An initializer will be created at `config/initializers/devise_token_auth.rb`. [Read more](#initializer-settings).
 
 * A model will be created in the `app/models` directory. If the model already exists, a concern will be included at the top of the file. [Read more](#model-concerns).
 
 * Routes will be appended to file at `config/routes.rb`. [Read more](#mounting-routes).
+
+* A concern will be included by your application controller at `app/controllers/application_controller.rb`. [Read more](#controller-concerns).
 
 * A migration file will be created in the `db/migrate` directory. Inspect the migrations file, add additional columns if necessary, and then run the migration:
 
