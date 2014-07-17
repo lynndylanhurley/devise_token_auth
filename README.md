@@ -36,7 +36,7 @@ bundle install
 
 # Configuration TLDR;
 
-You will need to create a user model, define routes, and you may want to alter some of the default settings for this gem. Run the following to append the routes and generate the model, migration, and initializer files:
+You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-concerns), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following to append the routes and generate the model, migration, and initializer files:
 
 ~~~bash
 rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
@@ -64,6 +64,12 @@ The following events will take place when using the install generator:
   ~~~bash
   rake db:migrate
   ~~~
+
+You will also need to configure the following features that are external to this gem:
+
+* [Omniauth providers](#omniauth-authentication) for 3rd party oauth2 authentication.
+* [Cross Origin Request Settings](#cors) when using cross-domain clients.
+* [Email](#email-authentication) for email registration.
 
 [Jump here](#configuration-cont) for more configuration information.
 
