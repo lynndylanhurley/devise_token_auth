@@ -355,7 +355,7 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
     expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
   }
 
-  # update token, generate updated auth headers for response
+  # generate auth headers for response
   new_auth_header = @user.build_auth_header(token, client_id)
 
   # update response with the header that will be required by the next request
