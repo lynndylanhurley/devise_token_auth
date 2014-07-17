@@ -7,81 +7,83 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
-  describe DeviseTokenAuth::ConfirmationsController, "Confirmation" do
-    before do
-      @new_user = users(:unconfirmed_email_user)
-      @new_user.send_confirmation_instructions
-      @mail  = ActionMailer::Base.deliveries.last
-      @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
-    end
-
-    test 'should generate raw token' do
-      assert @token
-    end
-
-    test "should store token hash in user" do
-      assert @new_user.confirmation_token
-    end
-
-    describe "success" do
+  describe DeviseTokenAuth::ConfirmationsController do
+    describe "Confirmation" do
       before do
-        xhr :get, :show, {confirmation_token: @token}
-        @user = assigns(:user)
+        @new_user = users(:unconfirmed_email_user)
+        @new_user.send_confirmation_instructions
+        @mail  = ActionMailer::Base.deliveries.last
+        @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
       end
 
-      test "user should now be confirmed" do
-        assert @user.confirmed?
+      test 'should generate raw token' do
+        assert @token
       end
 
-      test "should redirect to success url" do
-        assert_redirected_to(/^#{@user.confirm_success_url}/)
+      test "should store token hash in user" do
+        assert @new_user.confirmation_token
+      end
+
+      describe "success" do
+        before do
+          xhr :get, :show, {confirmation_token: @token}
+          @user = assigns(:user)
+        end
+
+        test "user should now be confirmed" do
+          assert @user.confirmed?
+        end
+
+        test "should redirect to success url" do
+          assert_redirected_to(/^#{@user.confirm_success_url}/)
+        end
+      end
+
+      describe "failure" do
+        test "user should not be confirmed" do
+          assert_raises(ActionController::RoutingError) {
+            xhr :get, :show, {confirmation_token: "bogus"}
+          }
+          @user = assigns(:user)
+          refute @user.confirmed?
+        end
       end
     end
 
-    describe "failure" do
-      test "user should not be confirmed" do
-        assert_raises(ActionController::RoutingError) {
-          xhr :get, :show, {confirmation_token: "bogus"}
-        }
-        @user = assigns(:user)
-        refute @user.confirmed?
+    # test with non-standard user class
+    describe "Alternate user model" do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:mang]
       end
-    end
-  end
 
-  # test with non-standard user class
-  describe DeviseTokenAuth::ConfirmationsController, "Alternate user class" do
-    setup do
-      @request.env['devise.mapping'] = Devise.mappings[:mang]
-    end
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
 
-    teardown do
-      @request.env['devise.mapping'] = Devise.mappings[:user]
-    end
-
-    before do
-      @new_user = mangs(:unconfirmed_email_user)
-      @new_user.send_confirmation_instructions
-      @mail  = ActionMailer::Base.deliveries.last
-      @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
-    end
-
-    test 'should generate raw token' do
-      assert @token
-    end
-
-    test "should store token hash in user" do
-      assert @new_user.confirmation_token
-    end
-
-    describe "success" do
       before do
-        xhr :get, :show, {confirmation_token: @token}
-        @user = assigns(:user)
+        @new_user = mangs(:unconfirmed_email_user)
+        @new_user.send_confirmation_instructions
+        @mail  = ActionMailer::Base.deliveries.last
+        @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
       end
 
-      test "user should now be confirmed" do
-        assert @user.confirmed?
+      test 'should generate raw token' do
+        assert @token
+      end
+
+      test "should store token hash in user" do
+        assert @new_user.confirmation_token
+      end
+
+      describe "success" do
+        before do
+          xhr :get, :show, {confirmation_token: @token}
+          @user = assigns(:user)
+        end
+
+        test "user should now be confirmed" do
+          assert @user.confirmed?
+        end
       end
     end
   end

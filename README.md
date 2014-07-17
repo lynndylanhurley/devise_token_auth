@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg?branch=master)](https://travis-ci.org/lynndylanhurley/devise_token_auth)
 [![Code Climate](https://codeclimate.com/github/lynndylanhurley/devise_token_auth.png)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Test Coverage](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/coverage.png)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
+[![Dependency Status](https://gemnasium.com/lynndylanhurley/devise_token_auth.svg)](https://gemnasium.com/lynndylanhurley/devise_token_auth)
 
 This gem provides simple, secure token based authentication.
 
