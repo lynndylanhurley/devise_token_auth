@@ -1,6 +1,8 @@
 # Devise Token Auth
 
 ![build](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg)
+[![Code Climate](https://codeclimate.com/github/lynndylanhurley/devise_token_auth.png)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
+[![Test Coverage](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/coverage.png)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 
 This gem provides simple, secure token based authentication.
 

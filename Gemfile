@@ -34,3 +34,7 @@ group :development, :test do
   gem 'guard-minitest'
   gem 'faker'
 end
+
+group :test do
+  gem "codeclimate-test-reporter", require: nil
+end

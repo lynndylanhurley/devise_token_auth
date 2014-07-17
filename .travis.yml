@@ -10,7 +10,7 @@ env:
   - DB=postgresql
 
 script:
-  - RAILS_ENV=test bundle exec rake --trace db:migrate test
+  - CODECLIMATE_REPO_TOKEN=44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d RAILS_ENV=test bundle exec rake --trace db:migrate test
 
 before_script:
   - mysql -e 'create database devise_token_auth_test'
