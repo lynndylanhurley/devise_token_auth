@@ -364,7 +364,7 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
 
 ## Using multiple models
 
-This gem supports the use of multiple user models. One possible use case is to authorize visitors using a model called `User`, and to authorize administrators with a model called `Admin` from the same app. Take the following steps to add another authentication model to your app:
+This gem supports the use of multiple user models. One possible use case is to authorize visitors using a model called `User`, and to authorize administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
 
 1. Run the install generator for the new model.
   ~~~
@@ -377,26 +377,26 @@ This gem supports the use of multiple user models. One possible use case is to a
 
   **Example**:
   ~~~ruby
-Rails.application.routes.draw do
-  # when using multiple models, controllers will default to the first available
-  # devise mapping. routes for subsequent devise mappings will need to defined
-  # within a `devise_scope` block
+  Rails.application.routes.draw do
+    # when using multiple models, controllers will default to the first available
+    # devise mapping. routes for subsequent devise mappings will need to defined
+    # within a `devise_scope` block
 
-  # define :users as the first devise mapping:
-  mount_devise_token_auth_for 'User', at: '/auth'
+    # define :users as the first devise mapping:
+    mount_devise_token_auth_for 'User', at: '/auth'
 
-  # define :admins as the second devise mapping. routes using this class will
-  # need to be defined within a devise_scope as shown below
-  mount_devise_token_auth_for "Admin", at: '/admin_auth'
+    # define :admins as the second devise mapping. routes using this class will
+    # need to be defined within a devise_scope as shown below
+    mount_devise_token_auth_for "Admin", at: '/admin_auth'
 
-  # this route will authorize visitors using the User class
-  get 'demo/members_only', to: 'demo#members_only'
+    # this route will authorize visitors using the User class
+    get 'demo/members_only', to: 'demo#members_only'
 
-  # routes within this block will authorize visitors using the Admin class
-  devise_scope :admin do
-    get 'demo/admins_only', to: 'demo#admins_only'
+    # routes within this block will authorize visitors using the Admin class
+    devise_scope :admin do
+      get 'demo/admins_only', to: 'demo#admins_only'
+    end
   end
-end
   ~~~
 
 # Conceptual
