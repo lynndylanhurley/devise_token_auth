@@ -1,8 +1,8 @@
 # Devise Token Auth
 
 [![Build Status](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg?branch=master)](https://travis-ci.org/lynndylanhurley/devise_token_auth)
-[![Code Climate](https://codeclimate.com/github/lynndylanhurley/devise_token_auth.png)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
-[![Test Coverage](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/coverage.png)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
+[![Code Climate](http://img.shields.io/codeclimate/github/lynndylanhurley/devise_token_auth.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
+[![Test Coverage](http://img.shields.io/codeclimate/coverage/github/lynndylanhurley/devise_token_auth.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Dependency Status](https://gemnasium.com/lynndylanhurley/devise_token_auth.svg)](https://gemnasium.com/lynndylanhurley/devise_token_auth)
 
 This gem provides simple, secure token based authentication.
@@ -19,7 +19,7 @@ The fully configured api used in the demo can be found [here](https://github.com
 This project leverages the following gems:
 
 * [Devise](https://github.com/plataformatec/devise)
-* [Omniauth](https://github.com/intridea/omniauth)
+* [OmniAuth](https://github.com/intridea/omniauth)
 
 # Installation
 Add the following to your `Gemfile`:
@@ -67,10 +67,10 @@ The following events will take place when using the install generator:
 
 You may also need to configure the following items:
 
-* **Omniauth providers** when using 3rd party oauth2 authentication. [Read more](#omniauth-authentication).
+* **OmniAuth providers** when using 3rd party oauth2 authentication. [Read more](#omniauth-authentication).
 * **Cross Origin Request Settings** when using cross-domain clients. [Read more](#cors).
 * **Email** when using email registration. [Read more](#email-authentication).
-* **Multiple model support** if you're into that sort of thing. [Read more](#using-multiple-models).
+* **Multiple model support** may require additional steps. [Read more](#using-multiple-models).
 
 [Jump here](#configuration-cont) for more configuration information.
 
@@ -106,22 +106,22 @@ The following settings are available for configuration in `config/initializers/d
 | **`omniauth_prefix`** | `"/omniauth"` | This route will be the prefix for all oauth2 redirect callbacks. For example, using the default '/omniauth' setting, the github oauth2 provider will redirect successful authentications to '/omniauth/github/callback'. [Read more](#omniauth-provider-settings). |
 
 
-## Omniauth authentication
+## OmniAuth authentication
 
 If you wish to use omniauth authentication, add all of your desired authentication provider gems to your `Gemfile`.
 
-**Omniauth example using github, facebook, and google**:
+**OmniAuth example using github, facebook, and google**:
 ~~~ruby
-gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
-gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'
-gem 'omniauth-google-oauth2', :git => 'git://github.com/zquestz/omniauth-google-oauth2.git'
+gem 'omniauth-github'
+gem 'omniauth-facebook'
+gem 'omniauth-google-oauth2'
 ~~~
 
 Then run `bundle install`.
 
 [List of oauth2 providers](https://github.com/intridea/omniauth/wiki/List-of-Strategies)
 
-## Omniauth provider settings
+## OmniAuth provider settings
 
 In `config/initializers/omniauth.rb`, add the settings for each of your providers.
 
@@ -139,9 +139,9 @@ end
 
 The above example assumes that your provider keys and secrets are stored in environmental variables. Use the [figaro](https://github.com/laserlemon/figaro) gem (or [dotenv](https://github.com/bkeepers/dotenv) or [secrets.yml](https://github.com/rails/rails/blob/v4.1.0/railties/lib/rails/generators/rails/app/templates/config/secrets.yml) or equivalent) to accomplish this.
 
-#### Omniauth callback settings
+#### OmniAuth callback settings
 
-The "Callback URL" setting that you set with your provider must correspond to the [omniauth prefix](#initializer-settings) setting defined by this app. **This will be different than the omniauth route that is used by your client application**. 
+The "Callback URL" setting that you set with your provider must correspond to the [omniauth prefix](#initializer-settings) setting defined by this app. **This will be different than the omniauth route that is used by your client application**.
 
 For example, the demo app uses the default `omniauth_prefix` setting `/omniauth`, so the "Authorization callback URL" for github must be set to "http://devise-token-auth-demo.herokuapp.com**/omniauth**/github/callback".
 
@@ -172,7 +172,7 @@ angular.module('myApp', ['ng-token-auth'])
   });
 ~~~
 
-This incongruence is necessary to support multiple user classes and mounting points. 
+This incongruence is necessary to support multiple user classes and mounting points.
 
 #### Note for [pow](http://pow.cx/) and [xip.io](http://xip.io) users
 
@@ -205,9 +205,9 @@ end
 
 ## CORS
 
-If your API and client live on different domains, you will need to configure your Rails API to allow cross origin requests. The [rack-cors](https://github.com/cyu/rack-cors) gem can be used to accomplish this.
+If your API and client live on different domains, you will need to configure your Rails API to allow [cross origin requests](http://en.wikipedia.org/wiki/Cross-origin_resource_sharing). The [rack-cors](https://github.com/cyu/rack-cors) gem can be used to accomplish this.
 
-The following example will allow cross domain requests from any domain.
+The following **dangerous** example will allow cross domain requests from **any** domain. Make sure to whitelist only the needed domains.
 
 ##### Example rack-cors configuration:
 ~~~ruby
@@ -262,7 +262,7 @@ You can mount this engine to any route that you like. `/auth` is used by default
 
 ##### DeviseTokenAuth::Concerns::SetUserByToken
 
-This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. This concern can be used can be used in controllers to identify users by their `Authorization` header.
+This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. This concern can be used in controllers to identify users by their `Authorization` header.
 
 This concern runs a [before_action](http://guides.rubyonrails.org/action_controller_overview.html#filters), setting the `@user` variable for use in your controllers. The user will be signed in via devise for the duration of the request.
 
@@ -307,7 +307,7 @@ The `Authorization` header is made up of the following components:
 * **`token`**: This serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request.
 * **`client`**: This enables the use of multiple simultaneous sessions on different clients. (For example, a user may want to be authenticated on both their phone and their laptop at the same time.)
 * **`expiry`**: The date at which the current session will expire. This can be used by clients to invalidate expired tokens without the need for an API request.
-* **`uid`**: A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will open the API up to timing attacks.
+* **`uid`**: A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will open the API up to [timing attacks](http://codahale.com/a-lesson-in-timing-attacks/).
 
 The `Authorization` header required for each request will be available in the response from the previous request. If you are using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js, this functionality is already provided.
 
@@ -331,12 +331,12 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
   ~~~
 
 * **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client` as an optional argument. Will generate a new `client` if none is provided. Returns the `Authorization` header that should be sent by the client as a string.
-  
+
   **Example**:
   ~~~ruby
   # extract client_id from auth header
   client_id = request.headers['Authorization'][/client=(.*?) /,1]
-  
+
   # update token, generate updated auth headers for response
   new_auth_header = @user.create_new_auth_token(client_id)
 
@@ -462,7 +462,7 @@ This gem uses auth tokens that are:
 * [of cryptographic strength](http://ruby-doc.org/stdlib-2.1.0/libdoc/securerandom/rdoc/SecureRandom.html),
 * hashed using [BCrypt](https://github.com/codahale/bcrypt-ruby) (not stored in plain-text),
 * securely compared (to protect against timing attacks),
-* invalidated after 2 weeks
+* invalidated after 2 weeks (thus requiring users to login again)
 
 These measures were inspired by [this stackoverflow post](http://stackoverflow.com/questions/18605294/is-devises-token-authenticatable-secure).
 
