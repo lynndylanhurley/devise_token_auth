@@ -36,7 +36,7 @@ bundle install
 
 # Configuration TL;DR
 
-You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-concerns), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following to append the routes and generate the model, migration, and initializer files:
+You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-concerns), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following command for an easy one-step installation:
 
 ~~~bash
 rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
