@@ -10,8 +10,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   def set_user_by_token
     auth_header = request.headers["Authorization"]
 
-    #binding.pry_remote
-
     # missing auth token
     return false unless auth_header
 
