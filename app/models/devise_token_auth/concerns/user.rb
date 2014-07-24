@@ -19,6 +19,15 @@ module DeviseTokenAuth::Concerns::User
     # can't set default on text fields in mysql, simulate here instead.
     after_save :set_empty_token_hash
     after_initialize :set_empty_token_hash
+
+    # don't use default devise email validation
+    def email_required?
+      false
+    end
+
+    def email_changed?
+      false
+    end
   end
 
 
@@ -116,7 +125,6 @@ module DeviseTokenAuth::Concerns::User
     return build_auth_header(token, client_id)
   end
 
-
   protected
 
 
@@ -134,21 +142,11 @@ module DeviseTokenAuth::Concerns::User
   end
 
 
-  # don't use default devise email validation
-  def email_changed?
-    false
-  end
-
-
+  # only validate unique email among users that registered by email
   def unique_email_user
     if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
       errors.add(:email, "This email address is already in use")
     end
-  end
-
-
-  def email_required?
-    provider == 'email'
   end
 
   def set_empty_token_hash
