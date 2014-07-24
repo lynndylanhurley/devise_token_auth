@@ -27,6 +27,15 @@ module DeviseTokenAuth::Concerns::User
 
     return false unless self.tokens[client_id]
 
+    return true if token_is_current?(token, client_id)
+    return true if token_can_be_reused?(token, client_id)
+
+    # return false if none of the above conditions are met
+    return false
+  end
+
+
+  def token_is_current?(token, client_id)
     return true if (
       # ensure that expiry and token are set
       self.tokens[client_id]['expiry'] and
@@ -38,7 +47,11 @@ module DeviseTokenAuth::Concerns::User
       # ensure that the token is valid
       BCrypt::Password.new(self.tokens[client_id]['token']) == token
     )
+  end
 
+
+  # allow batch requests to use the previous token
+  def token_can_be_reused?(token, client_id)
     return true if (
       # ensure that the last token and its creation time exist
       self.tokens[client_id]['updated_at'] and
@@ -50,9 +63,6 @@ module DeviseTokenAuth::Concerns::User
       # ensure that the token is valid
       BCrypt::Password.new(self.tokens[client_id]['last_token']) == token
     )
-
-    # return false if none of the above conditions are met
-    return false
   end
 
 
