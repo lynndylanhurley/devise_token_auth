@@ -17,7 +17,7 @@ module DeviseTokenAuth
 
         @user.tokens[@client_id] = {
           token: BCrypt::Password.create(@token),
-          expiry: Time.now + DeviseTokenAuth.token_lifespan
+          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
         }
         @user.save
 
