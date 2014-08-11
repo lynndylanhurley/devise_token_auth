@@ -16,9 +16,9 @@ class DemoControllerTest < ActionController::TestCase
 
         @auth_headers = @user.create_new_auth_token
 
-        @token     = @auth_headers[:access_token]
-        @client_id = @auth_headers[:client]
-        @expiry    = @auth_headers[:expiry]
+        @token     = @auth_headers['access-token']
+        @client_id = @auth_headers['client']
+        @expiry    = @auth_headers['expiry']
       end
 
       describe 'successful request' do
@@ -29,10 +29,10 @@ class DemoControllerTest < ActionController::TestCase
           request.headers.merge!(@auth_headers)
           xhr :get, :members_only
 
-          @resp_token       = response.headers[:access_token]
-          @resp_client_id   = response.headers[:client]
-          @resp_expiry      = response.headers[:expiry]
-          @resp_uid         = response.headers[:uid]
+          @resp_token       = response.headers['access-token']
+          @resp_client_id   = response.headers['client']
+          @resp_expiry      = response.headers['expiry']
+          @resp_uid         = response.headers['uid']
         end
 
         it 'should return success status' do
@@ -61,7 +61,7 @@ class DemoControllerTest < ActionController::TestCase
             # ensure that request is not treated as batch request
             age_token(@user, @client_id)
 
-            request.headers[:access_token] = @resp_token
+            request.headers['access-token'] = @resp_token
 
             xhr :get, :members_only
           end
@@ -78,12 +78,12 @@ class DemoControllerTest < ActionController::TestCase
 
       describe 'failed request' do
         before do
-          request.headers['access_token'] = "bogus"
+          request.headers['access-token'] = "bogus"
           xhr :get, :members_only
         end
 
         it 'should not return any auth headers' do
-          refute response.headers['access_token']
+          refute response.headers['access-token']
         end
 
         it 'should return error: unauthorized status' do
@@ -102,7 +102,7 @@ class DemoControllerTest < ActionController::TestCase
 
           @first_is_batch_request = assigns(:is_batch_request)
           @first_user = assigns(:user).dup
-          @first_access_token = response.headers[:access_token]
+          @first_access_token = response.headers['access-token']
           @first_response_status = response.status
 
           @user.reload
@@ -114,7 +114,7 @@ class DemoControllerTest < ActionController::TestCase
 
           @second_is_batch_request = assigns(:is_batch_request)
           @second_user = assigns(:user)
-          @second_access_token = response.headers[:access_token]
+          @second_access_token = response.headers['access-token']
           @second_response_status = response.status
         end
 
@@ -155,14 +155,14 @@ class DemoControllerTest < ActionController::TestCase
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:user)
-            @first_access_token = response.headers[:access_token]
+            @first_access_token = response.headers['access-token']
 
             request.headers.merge!(@auth_headers)
             xhr :get, :members_only
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:user)
-            @second_access_token = response.headers[:access_token]
+            @second_access_token = response.headers['access-token']
           end
 
           it 'should allow both requests through' do
@@ -184,7 +184,7 @@ class DemoControllerTest < ActionController::TestCase
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:user).dup
-            @first_access_token = response.headers[:access_token]
+            @first_access_token = response.headers['access-token']
             @first_response_status = response.status
 
             @user.reload
@@ -196,7 +196,7 @@ class DemoControllerTest < ActionController::TestCase
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:user)
-            @second_access_token = response.headers[:access_token]
+            @second_access_token = response.headers['access-token']
             @second_response_status = response.status
           end
 
@@ -244,9 +244,9 @@ class DemoControllerTest < ActionController::TestCase
 
         @auth_headers = @user.create_new_auth_token
 
-        @token     = @auth_headers[:access_token]
-        @client_id = @auth_headers[:client]
-        @expiry    = @auth_headers[:expiry]
+        @token     = @auth_headers['access-token']
+        @client_id = @auth_headers['client']
+        @expiry    = @auth_headers['expiry']
 
         # ensure that request is not treated as batch request
         age_token(@user, @client_id)
@@ -254,10 +254,10 @@ class DemoControllerTest < ActionController::TestCase
         request.headers.merge!(@auth_headers)
         xhr :get, :members_only
 
-        @resp_token       = response.headers[:access_token]
-        @resp_client_id   = response.headers[:client]
-        @resp_expiry      = response.headers[:expiry]
-        @resp_uid         = response.headers[:uid]
+        @resp_token       = response.headers['access-token']
+        @resp_client_id   = response.headers['client']
+        @resp_expiry      = response.headers['expiry']
+        @resp_uid         = response.headers['uid']
       end
 
       it 'should return success status' do

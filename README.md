@@ -101,7 +101,7 @@ The following settings are available for configuration in `config/initializers/d
 
 | Name | Default | Description|
 |---|---|---|
-| **`change_headers_on_each_request`** | `true` | By default the authorization headers will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `Authorization` header from changing after each request. [Read more](#about-token-management). |
+| **`change_headers_on_each_request`** | `true` | By default the access_token header will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `access_token` header from changing after each request. [Read more](#about-token-management). |
 | **`token_lifespan`** | `2.weeks` | Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login. |
 | **`batch_request_buffer_throttle`** | `5.seconds` | Sometimes it's necessary to make several requests to the API at the same time. In this case, each request in the batch will need to share the same auth token. This setting determines how far apart the requests can be while still using the same auth token. [Read more](#about-batch-requests). |
 | **`omniauth_prefix`** | `"/omniauth"` | This route will be the prefix for all oauth2 redirect callbacks. For example, using the default '/omniauth' setting, the github oauth2 provider will redirect successful authentications to '/omniauth/github/callback'. [Read more](#omniauth-provider-settings). |
@@ -223,7 +223,7 @@ module YourApp
         origins '*'
         resource '*',
           :headers => :any,
-          :expose => ['Authorization'], # <-- important!
+          :expose  => ['access-token', 'expiry', 'token-type', 'uid', 'client'],
           :methods => [:get, :post, :options, :delete, :put]
       end
     end
@@ -231,7 +231,7 @@ module YourApp
 end
 ~~~
 
-Make extra sure that the `Access-Control-Expose-Headers` includes `Authorization` (as is set in the example above by the`:expose` param). If your client experiences erroneous 401 responses, this is likely the cause.
+Make extra sure that the `Access-Control-Expose-Headers` includes `access-token`, `expiry`, `token-type`, `uid`, and `client` (as is set in the example above by the`:expose` param). If your client experiences erroneous 401 responses, this is likely the cause.
 
 CORS may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) for more information.
 
@@ -263,7 +263,7 @@ You can mount this engine to any route that you like. `/auth` is used by default
 
 ##### DeviseTokenAuth::Concerns::SetUserByToken
 
-This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. This concern can be used in controllers to identify users by their `Authorization` header.
+This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. This concern can be used in controllers to identify users by their authentication headers.
 
 This concern runs a [before_action](http://guides.rubyonrails.org/action_controller_overview.html#filters), setting the `@user` variable for use in your controllers. The user will be signed in via devise for the duration of the request.
 
@@ -296,21 +296,27 @@ class TestController < ApplicationController
 end
 ~~~
 
-The authentication information should be included by the client in the `Authorization` header of each request. The header should follow this format:
+The authentication information should be included by the client in the headers of each request. The headers follow the [RFC 6750 Bearer Token](http://tools.ietf.org/html/rfc6750) format:
 
-##### Authorization header example:
+##### Authentication headers example:
 ~~~
-token=wwwww client=xxxxx expiry=yyyyy uid=zzzzz
+"access_token": "wwwww",
+"token_type":   "Bearer",
+"client":       "xxxxx",
+"expiry":       "yyyyy",
+"uid":          "zzzzz"
 ~~~
 
-The `Authorization` header is made up of the following components:
+The authentication headers consists of the following params:
 
-* **`token`**: This serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request.
-* **`client`**: This enables the use of multiple simultaneous sessions on different clients. (For example, a user may want to be authenticated on both their phone and their laptop at the same time.)
-* **`expiry`**: The date at which the current session will expire. This can be used by clients to invalidate expired tokens without the need for an API request.
-* **`uid`**: A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will open the API up to [timing attacks](http://codahale.com/a-lesson-in-timing-attacks/).
+| param | description |
+|---|---|
+| **`access_token`** | This serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request. |
+| **`client`** | This enables the use of multiple simultaneous sessions on different clients. (For example, a user may want to be authenticated on both their phone and their laptop at the same time.) |
+| **`expiry`** | The date at which the current session will expire. This can be used by clients to invalidate expired tokens without the need for an API request. |
+| **`uid`** | A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will make the API susceptible to [timing attacks](http://codahale.com/a-lesson-in-timing-attacks/). |
 
-The `Authorization` header required for each request will be available in the response from the previous request. If you are using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js, this functionality is already provided.
+The authentication headers required for each request will be available in the response from the previous request. If you are using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js, this functionality is already provided.
 
 ## Model Concerns
 
@@ -325,24 +331,24 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
   **Example**:
   ~~~ruby
   # extract token + client_id from auth header
-  client_id = request.headers['Authorization'][/client=(.*?) /,1]
-  token = request.headers['Authorization'][/token=(.*?) /,1]
+  client_id = request.headers['client']
+  token = request.headers['access_token']
 
   @user.valid_token?(token, client_id)
   ~~~
 
-* **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client` as an optional argument. Will generate a new `client` if none is provided. Returns the `Authorization` header that should be sent by the client as a string.
+* **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client` as an optional argument. Will generate a new `client` if none is provided. Returns the authentication headers that should be sent by the client as an object.
 
   **Example**:
   ~~~ruby
   # extract client_id from auth header
-  client_id = request.headers['Authorization'][/client=(.*?) /,1]
+  client_id = request.headers['client']
 
   # update token, generate updated auth headers for response
   new_auth_header = @user.create_new_auth_token(client_id)
 
   # update response with the header that will be required by the next request
-  response.headers["Authorization"] = new_auth_header
+  response.headers.merge!(new_auth_header)
   ~~~
 
 * **`build_auth_header`**: generates the auth header that should be sent to the client with the next request. Accepts `token` and `client` as arguments. Returns a string.
@@ -363,7 +369,7 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
   new_auth_header = @user.build_auth_header(token, client_id)
 
   # update response with the header that will be required by the next request
-  response.headers["Authorization"] = new_auth_header
+  response.headers.merge!(new_auth_header)
   ~~~
 
 ## Using multiple models
@@ -413,7 +419,7 @@ Tokens should be invalidated after each request to the API. The following diagra
 
 ![password reset flow](https://github.com/lynndylanhurley/ng-token-auth/raw/master/test/app/images/flow/token-update-detail.jpg)
 
-During each request, a new token is generated. The `Authorization` header that should be used in the next request is returned in the `Authorization` header of the response to the previous request. The last request in the diagram fails because it tries to use a token that was invalidated by the previous request.
+During each request, a new token is generated. The `access_token` header that should be used in the next request is returned in the `access_token` header of the response to the previous request. The last request in the diagram fails because it tries to use a token that was invalidated by the previous request.
 
 The only case where an expired token is allowed is during [batch requests](#about-batch-requests).
 
@@ -439,7 +445,7 @@ $scope.getResourceData = function() {
 };
 ~~~
 
-In this case, it's impossible to update the `Authorization` header for the second request with the `Authorization` header of the first response because the second request will begin before the first one is complete. The server must allow these batches of concurrent requests to share the same auth token. This diagram illustrates how batch requests are identified by the server:
+In this case, it's impossible to update the `access_token` header for the second request with the `access_token` header of the first response because the second request will begin before the first one is complete. The server must allow these batches of concurrent requests to share the same auth token. This diagram illustrates how batch requests are identified by the server:
 
 ![batch request overview](https://github.com/lynndylanhurley/ng-token-auth/raw/master/test/app/images/flow/batch-request-overview.jpg)
 
