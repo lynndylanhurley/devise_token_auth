@@ -13,7 +13,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     # parse header for values necessary for authentication
     uid        = request.headers['uid']
-    @token     = request.headers['access_token']
+    @token     = request.headers['access-token']
     @client_id = request.headers['client']
 
     return false unless @token
@@ -30,7 +30,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # check this now so that the duration of the request itself doesn't eat
       # away the buffer
       @is_batch_request = is_batch_request?(@user, @client_id)
-
     else
       # zero all values previously set values
       @user = @current_user = @is_batch_request = nil
@@ -42,7 +41,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # cannot save object if model has invalid params
     return unless @user and @user.valid? and @client_id
 
-    auth_header = nil
+    auth_header = {}
 
     if not DeviseTokenAuth.change_headers_on_each_request
       auth_header = @user.build_auth_header(@token, @client_id)
@@ -57,7 +56,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       auth_header = @user.create_new_auth_token(@client_id)
     end
 
-    response.headers = response.headers.merge(auth_header) if auth_header
+    # make sure all values in auth_header are strings!!!
+    response.headers.merge!(auth_header)
   end
 
   def resource_class

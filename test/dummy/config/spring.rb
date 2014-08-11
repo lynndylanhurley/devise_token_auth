@@ -1,1 +1,1 @@
-Spring.application_root = './'
+Spring.application_root = './test/dummy'

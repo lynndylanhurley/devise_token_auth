@@ -22,8 +22,7 @@ module DeviseTokenAuth
         @user.save
 
         render json: {
-          success: true,
-          data: @user.as_json
+          data: @user.as_json(except: :tokens)
         }
 
       elsif @user and not @user.confirmed?
@@ -38,7 +37,6 @@ module DeviseTokenAuth
 
       else
         render json: {
-          success: false,
           errors: ["Invalid login credentials. Please try again."]
         }, status: 401
       end
