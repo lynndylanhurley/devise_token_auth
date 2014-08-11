@@ -8,18 +8,15 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   # user auth
   def set_user_by_token
-    auth_header = request.headers["Authorization"]
-
-    # missing auth token
-    return false unless auth_header
-
     # no default user defined
     return false unless resource_class
 
     # parse header for values necessary for authentication
-    uid        = auth_header[/uid=(.*?)$/,1]
-    @token     = auth_header[/token=(.*?) /,1]
-    @client_id = auth_header[/client=(.*?) /,1]
+    uid        = request.headers['uid']
+    @token     = request.headers['access_token']
+    @client_id = request.headers['client']
+
+    return false unless @token
 
     # client_id isn't required, set to 'default' if absent
     @client_id ||= 'default'
@@ -60,7 +57,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       auth_header = @user.create_new_auth_token(@client_id)
     end
 
-    response.headers["Authorization"] = auth_header if auth_header
+    response.headers = response.headers.merge(auth_header) if auth_header
   end
 
   def resource_class

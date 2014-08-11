@@ -107,8 +107,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       describe "change password" do
         describe 'success' do
           before do
-            @auth_header = @user.create_new_auth_token
-            request.headers['Authorization'] = @auth_header
+            @auth_headers = @user.create_new_auth_token
+            request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
             xhr :put, :update, {
@@ -130,8 +130,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'password mismatch error' do
           before do
-            @auth_header = @user.create_new_auth_token
-            request.headers['Authorization'] = @auth_header
+            @auth_headers = @user.create_new_auth_token
+            request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
             xhr :put, :update, {
@@ -147,7 +147,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'unauthorized user' do
           before do
-            @auth_header = @user.create_new_auth_token
+            @auth_headers = @user.create_new_auth_token
             @new_password = Faker::Internet.password
 
             xhr :put, :update, {

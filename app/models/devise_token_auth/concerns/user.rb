@@ -106,7 +106,13 @@ module DeviseTokenAuth::Concerns::User
     # client may use expiry to prevent validation request if expired
     expiry = self.tokens[client_id]['expiry']
 
-    return "token=#{token} client=#{client_id} expiry=#{expiry} uid=#{self.uid}"
+    return {
+      access_token: token,
+      token_type: "Bearer",
+      client: client_id,
+      expiry: expiry,
+      uid: self.uid
+    }
   end
 
 

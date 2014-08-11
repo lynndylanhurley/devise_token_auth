@@ -14,11 +14,11 @@ class DemoControllerTest < ActionController::TestCase
         @user.skip_confirmation!
         @user.save!
 
-        @auth_header = @user.create_new_auth_token
+        @auth_headers = @user.create_new_auth_token
 
-        @token     = @auth_header[/token=(.*?) /,1]
-        @client_id = @auth_header[/client=(.*?) /,1]
-        @expiry    = @auth_header[/expiry=(.*?) /,1]
+        @token     = @auth_headers[:access_token]
+        @client_id = @auth_headers[:client]
+        @expiry    = @auth_headers[:expiry]
       end
 
       describe 'successful request' do
@@ -26,14 +26,13 @@ class DemoControllerTest < ActionController::TestCase
           # ensure that request is not treated as batch request
           age_token(@user, @client_id)
 
-          request.headers['Authorization'] = @auth_header
+          request.headers.merge!(@auth_headers)
           xhr :get, :members_only
 
-          @resp_auth_header = response.headers['Authorization']
-          @resp_token       = @resp_auth_header[/token=(.*?) /,1]
-          @resp_client_id   = @resp_auth_header[/client=(.*?) /,1]
-          @resp_expiry      = @resp_auth_header[/expiry=(.*?) /,1]
-          @resp_uid         = @resp_auth_header[/uid=(.*?)$/,1]
+          @resp_token       = response.headers[:access_token]
+          @resp_client_id   = response.headers[:client]
+          @resp_expiry      = response.headers[:expiry]
+          @resp_uid         = response.headers[:uid]
         end
 
         it 'should return success status' do
@@ -56,13 +55,13 @@ class DemoControllerTest < ActionController::TestCase
           refute assigns(:is_batch_request)
         end
 
-        describe 'succesive requests' do
+        describe 'subsequent requests' do
           before do
             @user.reload
             # ensure that request is not treated as batch request
             age_token(@user, @client_id)
 
-            request.headers['Authorization'] = @resp_auth_header
+            request.headers[:access_token] = @resp_token
 
             xhr :get, :members_only
           end
@@ -79,12 +78,12 @@ class DemoControllerTest < ActionController::TestCase
 
       describe 'failed request' do
         before do
-          request.headers['Authorization'] = "token=bogus client=#{@client_id} uid=#{@user.uid}"
+          request.headers['access_token'] = "bogus"
           xhr :get, :members_only
         end
 
         it 'should not return any auth headers' do
-          refute response.headers['Authorization']
+          refute response.headers['access_token']
         end
 
         it 'should return error: unauthorized status' do
@@ -98,24 +97,24 @@ class DemoControllerTest < ActionController::TestCase
           @user.reload
           age_token(@user, @client_id)
 
-          request.headers['Authorization'] = @auth_header
+          request.headers.merge!(@auth_headers)
           xhr :get, :members_only
 
           @first_is_batch_request = assigns(:is_batch_request)
           @first_user = assigns(:user).dup
-          @first_auth_headers = response.headers['Authorization'].clone
+          @first_access_token = response.headers[:access_token]
           @first_response_status = response.status
 
           @user.reload
           age_token(@user, @client_id)
 
           # use expired auth header
-          request.headers['Authorization'] = @auth_header
+          request.headers.merge!(@auth_headers)
           xhr :get, :members_only
 
           @second_is_batch_request = assigns(:is_batch_request)
           @second_user = assigns(:user)
-          @second_auth_headers = response.headers['Authorization']
+          @second_access_token = response.headers[:access_token]
           @second_response_status = response.status
         end
 
@@ -132,11 +131,11 @@ class DemoControllerTest < ActionController::TestCase
         end
 
         it 'should return auth headers from the first request' do
-          assert @first_auth_headers
+          assert @first_access_token
         end
 
         it 'should return auth headers from the second request' do
-          assert @second_auth_headers
+          assert @second_access_token
         end
 
         it 'should define user during first request' do
@@ -151,19 +150,19 @@ class DemoControllerTest < ActionController::TestCase
       describe 'batch requests' do
         describe 'success' do
           before do
-            request.headers['Authorization'] = @auth_header
+            request.headers.merge!(@auth_headers)
             xhr :get, :members_only
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:user)
-            @first_auth_headers = response.headers['Authorization']
+            @first_access_token = response.headers[:access_token]
 
-            request.headers['Authorization'] = @auth_header
+            request.headers.merge!(@auth_headers)
             xhr :get, :members_only
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:user)
-            @second_auth_headers = response.headers['Authorization']
+            @second_access_token = response.headers[:access_token]
           end
 
           it 'should allow both requests through' do
@@ -171,7 +170,7 @@ class DemoControllerTest < ActionController::TestCase
           end
 
           it 'should return the same auth headers for both requests' do
-            assert_equal @first_auth_headers, @second_auth_headers
+            assert_equal @first_access_token, @second_access_token
           end
         end
 
@@ -180,24 +179,24 @@ class DemoControllerTest < ActionController::TestCase
             @user.reload
             age_token(@user, @client_id)
 
-            request.headers['Authorization'] = @auth_header
+            request.headers.merge!(@auth_headers)
             xhr :get, :members_only
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:user).dup
-            @first_auth_headers = response.headers['Authorization'].clone
+            @first_access_token = response.headers[:access_token]
             @first_response_status = response.status
 
             @user.reload
             age_token(@user, @client_id)
 
             # use expired auth header
-            request.headers['Authorization'] = @auth_header
+            request.headers.merge!(@auth_headers)
             xhr :get, :members_only
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:user)
-            @second_auth_headers = response.headers['Authorization']
+            @second_access_token = response.headers[:access_token]
             @second_response_status = response.status
           end
 
@@ -210,11 +209,11 @@ class DemoControllerTest < ActionController::TestCase
           end
 
           it 'should return auth headers from the first request' do
-            assert @first_auth_headers
+            assert @first_access_token
           end
 
           it 'should not return auth headers from the second request' do
-            refute @second_auth_headers
+            refute @second_access_token
           end
 
           it 'should define user during first request' do
@@ -243,23 +242,22 @@ class DemoControllerTest < ActionController::TestCase
         @user.skip_confirmation!
         @user.save!
 
-        @auth_header = @user.create_new_auth_token
+        @auth_headers = @user.create_new_auth_token
 
-        @token     = @auth_header[/token=(.*?) /,1]
-        @client_id = @auth_header[/client=(.*?) /,1]
-        @expiry    = @auth_header[/expiry=(.*?) /,1]
+        @token     = @auth_headers[:access_token]
+        @client_id = @auth_headers[:client]
+        @expiry    = @auth_headers[:expiry]
 
         # ensure that request is not treated as batch request
         age_token(@user, @client_id)
 
-        request.headers['Authorization'] = @auth_header
+        request.headers.merge!(@auth_headers)
         xhr :get, :members_only
 
-        @resp_auth_header = response.headers['Authorization']
-        @resp_token       = @resp_auth_header[/token=(.*?) /,1]
-        @resp_client_id   = @resp_auth_header[/client=(.*?) /,1]
-        @resp_expiry      = @resp_auth_header[/expiry=(.*?) /,1]
-        @resp_uid         = @resp_auth_header[/uid=(.*?)$/,1]
+        @resp_token       = response.headers[:access_token]
+        @resp_client_id   = response.headers[:client]
+        @resp_expiry      = response.headers[:expiry]
+        @resp_uid         = response.headers[:uid]
       end
 
       it 'should return success status' do
