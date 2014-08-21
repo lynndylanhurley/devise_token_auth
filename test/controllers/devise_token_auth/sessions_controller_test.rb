@@ -35,6 +35,34 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
       end
 
+      describe 'authed user sign out' do
+        before do
+          @auth_headers = @existing_user.create_new_auth_token
+          request.headers.merge!(@auth_headers)
+          xhr :delete, :destroy
+        end
+
+        test "user is successfully logged out" do
+          assert_equal 200, response.status
+        end
+
+        test "token was destroyed" do
+          @existing_user.reload
+          refute @existing_user.tokens[@auth_headers["client"]]
+        end
+      end
+
+      describe 'unauthed user sign out' do
+        before do
+          @auth_headers = @existing_user.create_new_auth_token
+          xhr :delete, :destroy
+        end
+
+        test "unauthed request returns 404" do
+          assert_equal 404, response.status
+        end
+      end
+
       describe 'failure' do
         before do
           xhr :post, :create, {

@@ -43,11 +43,23 @@ module DeviseTokenAuth
     end
 
     def destroy
-      sign_out(resource_name)
+      # remove auth instance variables so that after_filter does not run
+      user = remove_instance_variable(:@user) if @user
+      client_id = remove_instance_variable(:@client_id) if @client_id
+      remove_instance_variable(:@token) if @token
 
-      render json: {
-        success:true
-      }
+      if user and client_id and user.tokens[client_id]
+        user.tokens.delete(client_id)
+        user.save!
+
+        render json: {
+          success:true
+        }
+      else
+        render json: {
+          errors: ["User was not found or was not logged in."]
+        }, status: 404
+      end
     end
 
     def valid_params?
