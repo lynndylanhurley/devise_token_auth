@@ -8,7 +8,9 @@ module DeviseTokenAuth
       if @user
         render json: {
           success: true,
-          data: @user.as_json
+          data: @user.as_json(except: [
+            :tokens, :confirm_success_url, :reset_password_redirect_url, :created_at, :updated_at
+          ])
         }
       else
         render json: {

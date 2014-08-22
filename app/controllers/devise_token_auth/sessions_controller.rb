@@ -20,7 +20,9 @@ module DeviseTokenAuth
         @user.save
 
         render json: {
-          data: @user.as_json(except: :tokens)
+          data: @user.as_json(except: [
+            :tokens, :confirm_success_url, :reset_password_redirect_url, :created_at, :updated_at
+          ])
         }
 
       elsif @user and not @user.confirmed?
