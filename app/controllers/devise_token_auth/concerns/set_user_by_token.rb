@@ -45,19 +45,18 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     if not DeviseTokenAuth.change_headers_on_each_request
       auth_header = @user.build_auth_header(@token, @client_id)
+      response.headers.merge!(auth_header)
 
     # extend expiration of batch buffer to account for the duration of
     # this request
     elsif @is_batch_request
-      auth_header = @user.extend_batch_buffer(@token, @client_id)
+      @user.extend_batch_buffer(@token, @client_id)
 
     # update Authorization response header with new token
     else
       auth_header = @user.create_new_auth_token(@client_id)
+      response.headers.merge!(auth_header)
     end
-
-    # make sure all values in auth_header are strings!!!
-    response.headers.merge!(auth_header)
   end
 
   def resource_class

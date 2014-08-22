@@ -8,21 +8,21 @@ GIT
 
 GIT
   remote: git://github.com/laserlemon/figaro.git
-  revision: ae200e44e8f2770ce1037753865985b02ee0048f
+  revision: 9f54872dfc1a972b4a971211706272f0f38495f4
   specs:
     figaro (1.0.0.rc1)
       thor (~> 0.14)
 
 GIT
   remote: git://github.com/mkdynamic/omniauth-facebook.git
-  revision: 4dbd5f0f40df0366ac6f9b477cfb8e22b4154341
+  revision: ee4fb4dd6f664b3223974c229fda36169309e9ec
   specs:
-    omniauth-facebook (2.0.0.pre1)
-      omniauth-oauth2 (~> 1.1)
+    omniauth-facebook (2.0.0)
+      omniauth-oauth2 (~> 1.2)
 
 GIT
   remote: git://github.com/zquestz/omniauth-google-oauth2.git
-  revision: 15f2fc1178c49d148db466ca5b0c77cf8b29f447
+  revision: a40a748be080cd3a83808ef98afcbf590d7ffbba
   specs:
     omniauth-google-oauth2 (0.2.5)
       omniauth (> 1.0)
@@ -32,33 +32,33 @@ PATH
   remote: .
   specs:
     devise_token_auth (0.1.26.beta1)
-      devise (~> 3.2)
+      devise (~> 3.2.4)
       rails (~> 4.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    actionmailer (4.1.4)
-      actionpack (= 4.1.4)
-      actionview (= 4.1.4)
+    actionmailer (4.1.5)
+      actionpack (= 4.1.5)
+      actionview (= 4.1.5)
       mail (~> 2.5.4)
-    actionpack (4.1.4)
-      actionview (= 4.1.4)
-      activesupport (= 4.1.4)
+    actionpack (4.1.5)
+      actionview (= 4.1.5)
+      activesupport (= 4.1.5)
       rack (~> 1.5.2)
       rack-test (~> 0.6.2)
-    actionview (4.1.4)
-      activesupport (= 4.1.4)
+    actionview (4.1.5)
+      activesupport (= 4.1.5)
       builder (~> 3.1)
       erubis (~> 2.7.0)
-    activemodel (4.1.4)
-      activesupport (= 4.1.4)
+    activemodel (4.1.5)
+      activesupport (= 4.1.5)
       builder (~> 3.1)
-    activerecord (4.1.4)
-      activemodel (= 4.1.4)
-      activesupport (= 4.1.4)
+    activerecord (4.1.5)
+      activemodel (= 4.1.5)
+      activesupport (= 4.1.5)
       arel (~> 5.0.0)
-    activesupport (4.1.4)
+    activesupport (4.1.5)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -72,7 +72,7 @@ GEM
     builder (3.2.2)
     celluloid (0.15.2)
       timers (~> 1.1.0)
-    codeclimate-test-reporter (0.3.0)
+    codeclimate-test-reporter (0.4.0)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
     devise (3.2.4)
@@ -84,7 +84,7 @@ GEM
     docile (1.1.5)
     encryptor (1.3.0)
     erubis (2.7.0)
-    faker (1.4.2)
+    faker (1.4.3)
       i18n (~> 0.5)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
@@ -146,7 +146,7 @@ GEM
     orm_adapter (0.5.0)
     pg (0.17.1)
     polyglot (0.3.5)
-    pry (0.10.0)
+    pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
@@ -157,19 +157,19 @@ GEM
     rack-cors (0.2.9)
     rack-test (0.6.2)
       rack (>= 1.0)
-    rails (4.1.4)
-      actionmailer (= 4.1.4)
-      actionpack (= 4.1.4)
-      actionview (= 4.1.4)
-      activemodel (= 4.1.4)
-      activerecord (= 4.1.4)
-      activesupport (= 4.1.4)
+    rails (4.1.5)
+      actionmailer (= 4.1.5)
+      actionpack (= 4.1.5)
+      actionview (= 4.1.5)
+      activemodel (= 4.1.5)
+      activerecord (= 4.1.5)
+      activesupport (= 4.1.5)
       bundler (>= 1.3.0, < 2.0)
-      railties (= 4.1.4)
+      railties (= 4.1.5)
       sprockets-rails (~> 2.0)
-    railties (4.1.4)
-      actionpack (= 4.1.4)
-      activesupport (= 4.1.4)
+    railties (4.1.5)
+      actionpack (= 4.1.5)
+      activesupport (= 4.1.5)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.3.2)
@@ -177,12 +177,12 @@ GEM
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
     ruby-progressbar (1.5.1)
-    simplecov (0.8.2)
+    simplecov (0.9.0)
       docile (~> 1.1.0)
       multi_json
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
-    slop (3.5.0)
+    slop (3.6.0)
     spring (1.1.3)
     sprockets (2.12.1)
       hike (~> 1.2)
@@ -201,7 +201,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (1.2.1)
+    tzinfo (1.2.2)
       thread_safe (~> 0.1)
     warden (1.2.3)
       rack (>= 1.0)

@@ -5,8 +5,6 @@ module DeviseTokenAuth
     include Devise::Controllers::Helpers
     include DeviseTokenAuth::Concerns::SetUserByToken
 
-    respond_to :json
-
     def create
       @user = resource_class.find_by_email(resource_params[:email])
 
@@ -54,7 +52,8 @@ module DeviseTokenAuth
 
         render json: {
           success:true
-        }
+        }, status: 200
+
       else
         render json: {
           errors: ["User was not found or was not logged in."]

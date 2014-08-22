@@ -113,7 +113,7 @@ class DemoControllerTest < ActionController::TestCase
           xhr :get, :members_only
 
           @second_is_batch_request = assigns(:is_batch_request)
-          @second_user = assigns(:user)
+          @second_user = assigns(:user).dup
           @second_access_token = response.headers['access-token']
           @second_response_status = response.status
         end
@@ -134,6 +134,11 @@ class DemoControllerTest < ActionController::TestCase
           assert @first_access_token
         end
 
+        it 'should not treat either requests as batch requests' do
+          refute @first_is_batch_request
+          refute @second_is_batch_request
+        end
+
         it 'should return auth headers from the second request' do
           assert @second_access_token
         end
@@ -150,6 +155,8 @@ class DemoControllerTest < ActionController::TestCase
       describe 'batch requests' do
         describe 'success' do
           before do
+            age_token(@user, @client_id)
+
             request.headers.merge!(@auth_headers)
             xhr :get, :members_only
 
@@ -157,7 +164,6 @@ class DemoControllerTest < ActionController::TestCase
             @first_user = assigns(:user)
             @first_access_token = response.headers['access-token']
 
-            request.headers.merge!(@auth_headers)
             xhr :get, :members_only
 
             @second_is_batch_request = assigns(:is_batch_request)
@@ -169,8 +175,16 @@ class DemoControllerTest < ActionController::TestCase
             assert_equal 200, response.status
           end
 
-          it 'should return the same auth headers for both requests' do
-            assert_equal @first_access_token, @second_access_token
+          it 'should not treat the first request as a batch request' do
+            refute @first_is_batch_request
+          end
+
+          it 'should return access token for first (non-batch) request' do
+            assert @first_access_token
+          end
+
+          it 'should NOT return auth headers for second (batched) requests' do
+            refute @second_access_token
           end
         end
 
@@ -208,8 +222,16 @@ class DemoControllerTest < ActionController::TestCase
             assert_equal 401, @second_response_status
           end
 
+          it 'should not treat first request as batch request' do
+            refute @secord_is_batch_request
+          end
+
           it 'should return auth headers from the first request' do
             assert @first_access_token
+          end
+
+          it 'should not treat second request as batch request' do
+            refute @secord_is_batch_request
           end
 
           it 'should not return auth headers from the second request' do

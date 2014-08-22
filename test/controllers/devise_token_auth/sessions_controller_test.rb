@@ -39,7 +39,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           @auth_headers = @existing_user.create_new_auth_token
           request.headers.merge!(@auth_headers)
-          xhr :delete, :destroy
+          xhr :delete, :destroy, format: :json
         end
 
         test "user is successfully logged out" do
@@ -55,7 +55,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       describe 'unauthed user sign out' do
         before do
           @auth_headers = @existing_user.create_new_auth_token
-          xhr :delete, :destroy
+          xhr :delete, :destroy, format: :json
         end
 
         test "unauthed request returns 404" do
