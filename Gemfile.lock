@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.1.26.beta3)
+    devise_token_auth (0.1.26)
       devise (~> 3.2.4)
       rails (~> 4.1)
 
