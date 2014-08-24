@@ -18,6 +18,7 @@ This gem provides the following features:
   * User registration
   * Password reset
 * Support for [multiple user models](https://github.com/lynndylanhurley/devise_token_auth#using-multiple-models).
+* 
 
 
 
