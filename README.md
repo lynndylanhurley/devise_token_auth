@@ -1,14 +1,26 @@
 # Devise Token Auth
 
+![Serious Trust](https://github.com/lynndylanhurley/devise_token_auth/raw/master/test/dummy/app/assets/images/logo.jpg "Serious Trust")
+
 [![Gem Version](https://badge.fury.io/rb/devise_token_auth.svg)](http://badge.fury.io/rb/devise_token_auth)
 [![Build Status](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg?branch=master)](https://travis-ci.org/lynndylanhurley/devise_token_auth)
 [![Code Climate](http://img.shields.io/codeclimate/github/lynndylanhurley/devise_token_auth.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Test Coverage](http://img.shields.io/codeclimate/coverage/github/lynndylanhurley/devise_token_auth.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Dependency Status](https://gemnasium.com/lynndylanhurley/devise_token_auth.svg)](https://gemnasium.com/lynndylanhurley/devise_token_auth)
 
-This gem provides simple, secure token based authentication.
+## Simple, secure token based authentication for Rails.
 
-This gem was designed to work with the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
+This gem provides the following features:
+
+* Seamless integration with the the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
+* Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
+* Email authentication using [Devise](https://github.com/plataformatec/devise), including:
+  * User registration
+  * Password reset
+* Support for [multiple user models](https://github.com/lynndylanhurley/devise_token_auth#using-multiple-models).
+
+
+
 
 # Demo
 
