@@ -165,6 +165,6 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def set_empty_token_hash
-    self.tokens ||= {}
+    self.tokens ||= {} if has_attribute?(:tokens)
   end
 end
