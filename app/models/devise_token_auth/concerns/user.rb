@@ -135,10 +135,18 @@ module DeviseTokenAuth::Concerns::User
   protected
 
 
+  # ensure that fragment comes AFTER querystring for proper $location
+  # parsing using AngularJS.
   def generate_url(url, params = {})
     uri = URI(url)
-    uri.query = params.to_query
-    uri.to_s
+
+    res = "#{uri.scheme}://#{uri.host}"
+    res += ":#{uri.port}" if (uri.port and uri.port != 80 and uri.port != 443)
+    res += "#{uri.path}" if uri.path
+    res += "##{uri.fragment}" if uri.fragment
+    res += "?#{params.to_query}"
+
+    return res
   end
 
 
