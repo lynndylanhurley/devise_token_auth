@@ -127,6 +127,46 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     end
 
 
+    describe "Destroy user account" do
+      describe "success" do
+        before do
+          @existing_user = users(:confirmed_email_user)
+          @auth_headers  = @existing_user.create_new_auth_token
+          @client_id     = @auth_headers['client']
+
+          # ensure request is not treated as batch request
+          age_token(@existing_user, @client_id)
+
+          # add auth headers for user identification
+          request.headers.merge!(@auth_headers)
+
+          xhr :delete, :destroy
+
+          @data = JSON.parse(response.body)
+        end
+
+        test 'request is successful' do
+          assert_equal 200, response.status
+        end
+
+        test "existing user should be deleted" do
+          refute User.where(id: @existing_user.id).first
+        end
+      end
+
+      describe 'failure: no auth headers' do
+        before do
+          xhr :delete, :destroy
+          @data = JSON.parse(response.body)
+        end
+
+        test 'request returns 404 (not found) status' do
+          assert_equal 404, response.status
+        end
+      end
+    end
+
+
     describe "Ouath user has existing email" do
       before do
         @existing_user = users(:duplicate_email_facebook_user)

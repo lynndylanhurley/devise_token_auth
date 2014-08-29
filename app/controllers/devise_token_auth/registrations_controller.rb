@@ -1,9 +1,14 @@
 module DeviseTokenAuth
   class RegistrationsController < Devise::RegistrationsController
     include Devise::Controllers::Helpers
+    include DeviseTokenAuth::Concerns::SetUserByToken
 
-    prepend_before_filter :require_no_authentication, :only => [ :create ]
+    prepend_before_filter :require_no_authentication, :only => [ :create, :destroy ]
     before_action :configure_devise_token_auth_permitted_parameters
+
+    skip_before_filter :set_user_by_token, :only => [:create]
+    skip_before_filter :authenticate_scope!, :only => [:destroy]
+    skip_after_filter :update_auth_header, :only => [:create, :destroy]
 
     respond_to :json
 
@@ -33,6 +38,22 @@ module DeviseTokenAuth
           data:   @resource,
           errors: ["An account already exists for #{@resource.email}"]
         }, status: 403
+      end
+    end
+
+    def destroy
+      if @user
+        @user.destroy
+
+        render json: {
+          status: 'success',
+          message: "Account with uid #{@user.uid} has been destroyed."
+        }
+      else
+        render json: {
+          status: 'error',
+          errors: ["Unable to locate account for destruction."]
+        }, status: 404
       end
     end
 
