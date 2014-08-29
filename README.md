@@ -15,6 +15,7 @@ This gem provides the following features:
 * Email authentication using [Devise](https://github.com/plataformatec/devise), including:
   * User registration
   * Password reset
+  * Account deletion
 * Support for [multiple user models](https://github.com/lynndylanhurley/devise_token_auth#using-multiple-models).
 * It is [secure](#security).
 
@@ -89,8 +90,9 @@ The following routes are available for use by your client. These routes live rel
 
 | path | method | purpose |
 |:-----|:-------|:--------|
-| /    | POST   | Email registration. Accepts **`email`**, **`password`**, and **`password_confirmation`** params. A verification email will be sent to the email address provided. |
+| /    | POST   | Email registration. Accepts **`email`**, **`password`**, and **`password_confirmation`** params. A verification email will be sent to the email address provided. Accepted params can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. |
 | / | DELETE | Account deletion. This route will destroy users identified by their **`uid`** and **`auth_token`** headers. |
+| / | PUT | Account updates. This route will update an existing user's account settings. The default accepted params are **`password`** and **`password_confirmation`**, but this can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. |
 | /sign_in | POST | Email authentication. Accepts **`email`** and **`password`** as params. This route will return a JSON representation of the `User` model on successful login. |
 | /sign_out | DELETE | Use this route to end the user's current session. This route will invalidate the user's authentication token. |
 | /:provider | GET | Set this route as the destination for client authentication. Ideally this will happen in an external window or popup. [Read more](#omniauth-authentication). |

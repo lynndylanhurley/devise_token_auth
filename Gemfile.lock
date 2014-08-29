@@ -32,7 +32,7 @@ PATH
   remote: .
   specs:
     devise_token_auth (0.1.27.beta2)
-      devise (~> 3.2.4)
+      devise (~> 3.2)
       rails (~> 4.1)
 
 GEM
@@ -75,7 +75,7 @@ GEM
     codeclimate-test-reporter (0.4.0)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
-    devise (3.2.4)
+    devise (3.3.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)

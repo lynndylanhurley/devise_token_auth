@@ -1,7 +1,9 @@
 # see http://www.emilsoman.com/blog/2013/05/18/building-a-tested/
 module DeviseTokenAuth
   class SessionsController < Devise::SessionsController
-    prepend_before_filter :require_no_authentication, :only => [:create]
+    prepend_before_filter :require_no_authentication, :only => [:create, :destroy]
+    skip_before_filter :verify_signed_out_user, only: :destroy
+
     include Devise::Controllers::Helpers
     include DeviseTokenAuth::Concerns::SetUserByToken
 

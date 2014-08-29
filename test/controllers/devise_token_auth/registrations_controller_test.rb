@@ -167,6 +167,99 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     end
 
 
+    describe "Update user account" do
+      describe "existing user" do
+        before do
+          @existing_user = users(:confirmed_email_user)
+          @auth_headers  = @existing_user.create_new_auth_token
+          @client_id     = @auth_headers['client']
+
+
+          # ensure request is not treated as batch request
+          age_token(@existing_user, @client_id)
+
+          # add auth headers for user identification
+          request.headers.merge!(@auth_headers)
+
+        end
+
+        describe "success" do
+          before do
+            # test valid update param
+            @new_operating_thetan = 1000000
+
+            xhr :put, :update, {
+              operating_thetan: @new_operating_thetan
+            }
+
+            @data = JSON.parse(response.body)
+            @existing_user.reload
+          end
+
+          test "Request was successful" do
+            assert_equal 200, response.status
+          end
+
+          test "User attribute was updated" do
+            assert_equal @new_operating_thetan, @existing_user.operating_thetan
+          end
+        end
+
+        describe "error" do
+          before do
+            # test invalid update param
+            @new_operating_thetan = "blegh"
+            xhr :put, :update, {
+              operating_thetan: @new_operating_thetan
+            }
+
+            @data = JSON.parse(response.body)
+            @existing_user.reload
+          end
+
+          test "Request was NOT successful" do
+            assert_equal 403, response.status
+          end
+
+          test "Errors were provided with response" do
+            assert @data["errors"].length
+          end
+        end
+      end
+
+      describe "invalid user" do
+        before do
+          @existing_user = users(:confirmed_email_user)
+          @auth_headers  = @existing_user.create_new_auth_token
+          @client_id     = @auth_headers['client']
+
+          # ensure request is not treated as batch request
+          expire_token(@existing_user, @client_id)
+
+          # add auth headers for user identification
+          request.headers.merge!(@auth_headers)
+
+          # test valid update param
+          @new_operating_thetan = 3
+
+          xhr :put, :update, {
+            operating_thetan: @new_operating_thetan
+          }
+
+          @data = JSON.parse(response.body)
+          @existing_user.reload
+        end
+
+        test "Response should return 404 status" do
+          assert_equal 404, response.status
+        end
+
+        test "User should not be updated" do
+          refute_equal @new_operating_thetan, @existing_user.operating_thetan
+        end
+      end
+    end
+
     describe "Ouath user has existing email" do
       before do
         @existing_user = users(:duplicate_email_facebook_user)

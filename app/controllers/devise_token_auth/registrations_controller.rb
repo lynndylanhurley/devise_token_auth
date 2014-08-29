@@ -3,18 +3,18 @@ module DeviseTokenAuth
     include Devise::Controllers::Helpers
     include DeviseTokenAuth::Concerns::SetUserByToken
 
-    prepend_before_filter :require_no_authentication, :only => [ :create, :destroy ]
+    prepend_before_filter :require_no_authentication, :only => [ :create, :destroy, :update ]
     before_action :configure_devise_token_auth_permitted_parameters
 
     skip_before_filter :set_user_by_token, :only => [:create]
-    skip_before_filter :authenticate_scope!, :only => [:destroy]
+    skip_before_filter :authenticate_scope!, :only => [:destroy, :update]
     skip_after_filter :update_auth_header, :only => [:create, :destroy]
 
     respond_to :json
 
     def create
-      @resource            = resource_class.new(resource_params)
-      @resource.uid        = resource_params[:email]
+      @resource            = resource_class.new(sign_up_params)
+      @resource.uid        = sign_up_params[:email]
       @resource.provider   = "email"
 
       begin
@@ -41,6 +41,27 @@ module DeviseTokenAuth
       end
     end
 
+    def update
+      if @user
+        if @user.update_attributes(account_update_params)
+          render json: {
+            status: 'success',
+            data:   @user.as_json
+          }
+        else
+          render json: {
+            status: 'error',
+            errors: @user.errors
+          }, status: 403
+        end
+      else
+        render json: {
+          status: 'error',
+          errors: ["User not found."]
+        }, status: 404
+      end
+    end
+
     def destroy
       if @user
         @user.destroy
@@ -57,8 +78,12 @@ module DeviseTokenAuth
       end
     end
 
-    def resource_params
+    def sign_up_params
       params.permit(devise_parameter_sanitizer.for(:sign_up))
+    end
+
+    def account_update_params
+      params.permit(devise_parameter_sanitizer.for(:account_update))
     end
 
     def configure_devise_token_auth_permitted_parameters
