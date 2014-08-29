@@ -224,6 +224,22 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       test "use should be a Mang" do
         assert_equal "Mang", @user.class.name
       end
+
+      test "Mang should be destroyed" do
+        @auth_headers  = @user.create_new_auth_token
+        @client_id     = @auth_headers['client']
+
+        # ensure request is not treated as batch request
+        age_token(@user, @client_id)
+
+        # add auth headers for user identification
+        request.headers.merge!(@auth_headers)
+
+        xhr :delete, :destroy
+
+        assert_equal 200, response.status
+        refute Mang.where(id: @user.id).first
+      end
     end
   end
 end
