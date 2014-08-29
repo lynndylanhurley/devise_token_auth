@@ -15,6 +15,7 @@ This gem provides the following features:
 * Email authentication using [Devise](https://github.com/plataformatec/devise), including:
   * User registration
   * Password reset
+  * Account updates
   * Account deletion
 * Support for [multiple user models](https://github.com/lynndylanhurley/devise_token_auth#using-multiple-models).
 * It is [secure](#security).
