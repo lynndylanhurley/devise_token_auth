@@ -110,14 +110,14 @@ module DeviseTokenAuth
       end
 
       # ensure that password params were sent
-      unless resource_params[:password] and resource_params[:password_confirmation]
+      unless password_resource_params[:password] and password_resource_params[:password_confirmation]
         return render json: {
           success: false,
           errors: ['You must fill out the fields labeled "password" and "password confirmation".']
         }, status: 422
       end
 
-      if @user.update_attributes(resource_params)
+      if @user.update_attributes(password_resource_params)
         return render json: {
           success: true,
           data: {
@@ -133,6 +133,9 @@ module DeviseTokenAuth
       end
     end
 
+    def password_resource_params
+      params.permit(devise_parameter_sanitizer.for(:account_update))
+    end
 
     def resource_params
       params.permit(:email, :password, :password_confirmation, :reset_password_token, :redirect_url)

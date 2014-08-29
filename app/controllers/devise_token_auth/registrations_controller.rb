@@ -3,6 +3,7 @@ module DeviseTokenAuth
     include Devise::Controllers::Helpers
 
     prepend_before_filter :require_no_authentication, :only => [ :create ]
+    before_action :configure_devise_token_auth_permitted_parameters
 
     respond_to :json
 
@@ -36,7 +37,11 @@ module DeviseTokenAuth
     end
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :confirm_success_url, :confirm_error_url)
+      params.permit(devise_parameter_sanitizer.for(:sign_up))
+    end
+
+    def configure_devise_token_auth_permitted_parameters
+      devise_parameter_sanitizer.for(:sign_up) << :confirm_success_url
     end
   end
 end

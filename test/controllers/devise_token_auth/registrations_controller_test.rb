@@ -11,10 +11,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     describe "Successful registration" do
       before do
         xhr :post, :create, {
-          email: -> { Faker::Internet.email },
+          email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
-          confirm_success_url: -> { Faker::Internet.url }
+          confirm_success_url: Faker::Internet.url,
+          unpermitted_param: '(x_x)'
         }
 
         @user = assigns(:resource)
@@ -38,6 +39,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
         assert @data['data']['email']
       end
 
+      test "confirm_success_url be allowed by strong params" do
+        assert @data['data']['confirm_success_url']
+      end
+
       test "new user should receive confirmation email" do
         assert_equal @user.email, @mail['to'].to_s
       end
@@ -47,13 +52,33 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       end
     end
 
+    describe "Adding extra params" do
+      before do
+        xhr :post, :create, {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url,
+          operating_thetan: 2
+        }
+
+        @user = assigns(:resource)
+        @data = JSON.parse(response.body)
+        @mail = ActionMailer::Base.deliveries.last
+      end
+
+      test "Additional sign_up params should be considered" do
+        assert_equal 2, @user.operating_thetan
+      end
+    end
+
     describe "Mismatched passwords" do
       before do
         xhr :post, :create, {
-          email: -> { Faker::Internet.email },
+          email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "bogus",
-          confirm_success_url: -> { Faker::Internet.url }
+          confirm_success_url: Faker::Internet.url
         }
 
         @user = assigns(:resource)
@@ -81,7 +106,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
           email: @existing_user.email,
           password: "secret123",
           password_confirmation: "secret123",
-          confirm_success_url: -> { Faker::Internet.url }
+          confirm_success_url: Faker::Internet.url
         }
 
         @user = assigns(:resource)
@@ -110,7 +135,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
           email: @existing_user.email,
           password: "secret123",
           password_confirmation: "secret123",
-          confirm_success_url: -> { Faker::Internet.url }
+          confirm_success_url: Faker::Internet.url
         }
 
         @user = assigns(:resource)
@@ -141,10 +166,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
       before do
         xhr :post, :create, {
-          email: -> { Faker::Internet.email },
+          email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
-          confirm_success_url: -> { Faker::Internet.url }
+          confirm_success_url: Faker::Internet.url
         }
 
         @user = assigns(:resource)
