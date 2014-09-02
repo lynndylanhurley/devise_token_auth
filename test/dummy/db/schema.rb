@@ -69,7 +69,10 @@ ActiveRecord::Schema.define(version: 20140829044006) do
     t.text     "tokens"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "favorite_number"
+    t.string   "favorite_taco"
     t.integer  "operating_thetan"
+    t.string   "favorite_color"
   end
 
   add_index "users", ["email"], name: "index_users_on_email"

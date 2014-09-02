@@ -23,7 +23,7 @@ group :development, :test do
   gem 'attr_encrypted'
 
   # testing
-  gem 'spring'
+  #gem 'spring'
   gem "pry"
   gem "pry-remote"
   gem 'minitest'
@@ -33,6 +33,7 @@ group :development, :test do
   gem 'guard'
   gem 'guard-minitest'
   gem 'faker'
+  gem 'fuzz_ball'
 end
 
 # code coverage, metrics
