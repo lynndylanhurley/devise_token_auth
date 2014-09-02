@@ -60,7 +60,7 @@ module ApplicationHelper
     "Beaver",
     "Beige",
     "B'dazzled blue",
-    "Big dip o’ruby",
+    "Big dip o'ruby",
     "Bisque",
     "Bistre",
     "Bistre brown",
