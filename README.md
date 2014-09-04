@@ -36,7 +36,7 @@ This project leverages the following gems:
 Add the following to your `Gemfile`:
 
 ~~~ruby
-gem devise_token_auth
+gem 'devise_token_auth'
 ~~~
 
 Then install the gem using bundle:
