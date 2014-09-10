@@ -9,6 +9,12 @@ class UserTest < ActiveSupport::TestCase
       @user        = User.new()
     end
 
+    describe 'serialization' do
+      test 'hash should not include sensitive info' do
+        refute @user.as_json[:tokens]
+      end
+    end
+
     describe 'email registration' do
       test 'model should not save if email is blank' do
         @user.provider              = 'email'

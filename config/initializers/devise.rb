@@ -191,6 +191,9 @@ Devise.setup do |config|
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
 
+  # don't serialize tokens
+  Devise::Models::Authenticatable::BLACKLIST_FOR_SERIALIZATION << :tokens
+
   # mounted routes will point to this
   Rails.application.config.after_initialize do
     ::OmniAuth::config.path_prefix = config.omniauth_path_prefix = DeviseTokenAuth.omniauth_prefix

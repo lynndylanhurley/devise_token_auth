@@ -2,6 +2,8 @@ module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
   included do
+    BLACKLIST_FOR_SERIALIZATION = [:tokens]
+
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable and :omniauthable
     devise :database_authenticatable, :registerable,
@@ -132,6 +134,7 @@ module DeviseTokenAuth::Concerns::User
     return build_auth_header(token, client_id)
   end
 
+
   protected
 
 
@@ -147,13 +150,6 @@ module DeviseTokenAuth::Concerns::User
     res += "?#{params.to_query}"
 
     return res
-  end
-
-
-  def serializable_hash(options={})
-    options ||= {}
-    options[:except] ||= [:tokens]
-    super(options)
   end
 
 
