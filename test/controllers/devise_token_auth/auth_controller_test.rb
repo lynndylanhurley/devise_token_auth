@@ -57,6 +57,32 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         assert_equal User, @user.class
       end
     end
+
+    describe 'pass additional params' do
+      before do
+        @fav_color = 'alizarin crimson'
+        @unpermitted_param = "M. Bison"
+        get_via_redirect '/auth/facebook', {
+          auth_origin_url: @redirect_url,
+          favorite_color: @fav_color,
+          name: @unpermitted_param
+        }
+
+        @user = assigns(:user)
+      end
+
+      test 'status shows success' do
+        assert_equal 200, response.status
+      end
+
+      test 'additional attribute was passed' do
+        assert_equal @fav_color, @user.favorite_color
+      end
+
+      test 'non-whitelisted attributes are ignored' do
+        refute_equal @unpermitted_param, @user.name
+      end
+    end
   end
 
 

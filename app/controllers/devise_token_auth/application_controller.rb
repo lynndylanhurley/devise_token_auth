@@ -1,5 +1,5 @@
 module DeviseTokenAuth
-  class ApplicationController < ActionController::Base
+  class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
   end
 end

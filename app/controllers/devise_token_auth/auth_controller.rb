@@ -21,11 +21,9 @@ module DeviseTokenAuth
     end
 
     def omniauth_success
-      # pull resource class from omniauth return
-      resource = request.env['omniauth.params']['resource_class'].constantize
 
       # find or create user by provider and provider uid
-      @user = resource.where({
+      @user = resource_name.where({
         uid:      auth_hash['uid'],
         provider: auth_hash['provider']
       }).first_or_initialize
@@ -61,6 +59,10 @@ module DeviseTokenAuth
         email:    auth_hash['info']['email']
       })
 
+      # assign any additional (whitelisted) attributes
+      extra_params = whitelisted_params
+      @user.assign_attributes(extra_params) if extra_params
+
       # don't send confirmation email!!!
       @user.skip_confirmation!
 
@@ -82,6 +84,32 @@ module DeviseTokenAuth
 
     def auth_hash
       request.env['omniauth.auth']
+    end
+
+    def whitelisted_params
+      whitelist = devise_parameter_sanitizer.for(:sign_up)
+
+      whitelist.inject({}){|coll, key|
+        param = request.env['omniauth.params'][key.to_s]
+        if param
+          coll[key] = param
+        end
+        coll
+      }
+    end
+
+    def devise_controller?
+      true
+    end
+
+    # pull resource class from omniauth return
+    def resource_name
+      request.env['omniauth.params']['resource_class'].constantize
+    end
+
+    # necessary for access to devise_parameter_sanitizers
+    def devise_mapping
+      Devise.mappings[request.env['omniauth.params']['resource_class'].underscore.to_sym]
     end
 
     def generate_url(url, params = {})
