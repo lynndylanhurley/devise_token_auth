@@ -2,6 +2,7 @@ module DeviseTokenAuth
   class AuthController < DeviseTokenAuth::ApplicationController
     respond_to :json
     skip_after_filter :update_auth_header, :only => [:omniauth_success, :omniauth_failure]
+    skip_before_filter :assert_is_devise_resource!, :only => [:validate_token]
 
     def validate_token
       # @user will have been set by set_user_token concern
@@ -104,12 +105,20 @@ module DeviseTokenAuth
 
     # pull resource class from omniauth return
     def resource_name
-      request.env['omniauth.params']['resource_class'].constantize
+      if request.env['omniauth.params']
+        request.env['omniauth.params']['resource_class'].constantize
+      else
+        super
+      end
     end
 
     # necessary for access to devise_parameter_sanitizers
     def devise_mapping
-      Devise.mappings[request.env['omniauth.params']['resource_class'].underscore.to_sym]
+      if request.env['omniauth.params']
+        Devise.mappings[request.env['omniauth.params']['resource_class'].underscore.to_sym]
+      else
+        request.env['devise.mapping']
+      end
     end
 
     def generate_url(url, params = {})
