@@ -67,6 +67,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         assert post_message["favorite_color"]
         assert post_message["message"]
         assert post_message["client_id"]
+        assert post_message["auth_token"]
         refute post_message["tokens"]
         refute post_message["password"]
       end
