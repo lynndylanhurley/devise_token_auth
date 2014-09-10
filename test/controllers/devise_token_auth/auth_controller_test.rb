@@ -56,6 +56,20 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       test 'user should be of the correct class' do
         assert_equal User, @user.class
       end
+
+      test 'response contains all serializable attributes for user' do
+        post_message = JSON.parse(/postMessage\((?<data>.*), '\*'\);/m.match(response.body)[:data])
+
+        assert post_message["id"]
+        assert post_message["email"]
+        assert post_message["uid"]
+        assert post_message["name"]
+        assert post_message["favorite_color"]
+        assert post_message["message"]
+        assert post_message["client_id"]
+        refute post_message["tokens"]
+        refute post_message["password"]
+      end
     end
 
     describe 'pass additional params' do
