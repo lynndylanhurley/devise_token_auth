@@ -196,6 +196,8 @@ Devise.setup do |config|
 
   # mounted routes will point to this
   Rails.application.config.after_initialize do
-    ::OmniAuth::config.path_prefix = config.omniauth_path_prefix = DeviseTokenAuth.omniauth_prefix
+    if defined?(::OmniAuth)
+      ::OmniAuth::config.path_prefix = config.omniauth_path_prefix = DeviseTokenAuth.omniauth_prefix
+    end
   end
 end
