@@ -20,11 +20,33 @@ This gem provides the following features:
 * Support for [multiple user models](https://github.com/lynndylanhurley/devise_token_auth#using-multiple-models).
 * It is [secure](#security).
 
-# Demo
+# [Live Demo](http://ng-token-auth-demo.herokuapp.com/)
 
 [Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
 
 The fully configured api used in the demo can be found [here](https://github.com/lynndylanhurley/devise_token_auth_demo).
+
+# Table of Contents
+
+* [Dependencies](#dependencies)
+* [Configuration TL;DR](#configuration-tldr)
+* [Usage TL;DR](#usage-tldr)
+* [Configuration Continued](#configuration-cont)
+  * [Initializer Settings](#initializer-settings)
+  * [OmniAuth Authentication](#omniauth-authentication)
+  * [OmniAuth Provider Settings](#omniauth-provider-settings)
+  * [Email Authentication](#email-authentication)
+  * [Cross Origin Requests (CORS)](#cors)
+* [Usage Continued](#usage-cont)
+  * [Mounting Routes](#mounting-routes)
+  * [Controller Integration](#controller-concerns)
+  * [Model Integration](#model-concerns)
+  * [Using Multiple User Classes](#using-multiple-models)
+* [Conceptual Diagrams](#conceptual)
+  * [Token Management](#about-token-management)
+  * [Batch Requests](#about-batch-requests)
+  * [Security](#security)
+  * [Contribution Guidelines](#contributing)
 
 # Dependencies
 This project leverages the following gems:
