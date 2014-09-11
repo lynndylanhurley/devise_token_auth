@@ -45,8 +45,8 @@ The fully configured api used in the demo can be found [here](https://github.com
 * [Conceptual Diagrams](#conceptual)
   * [Token Management](#about-token-management)
   * [Batch Requests](#about-batch-requests)
-  * [Security](#security)
-  * [Contribution Guidelines](#contributing)
+* [Security](#security)
+* [Contribution Guidelines](#contributing)
 
 # Dependencies
 This project leverages the following gems:
