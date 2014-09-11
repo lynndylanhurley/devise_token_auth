@@ -76,14 +76,14 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
             @user.reload
 
-            @uri = URI.parse(response.location)
-            @qs = CGI::parse(@uri.query)
+            raw_qs = response.location.split('?')[1]
+            @qs = Rack::Utils.parse_nested_query(raw_qs)
 
-            @client_id      = @qs["client_id"].first
-            @expiry         = @qs["expiry"].first
-            @reset_password = @qs["reset_password"].first
-            @token          = @qs["token"].first
-            @uid            = @qs["uid"].first
+            @client_id      = @qs["client_id"]
+            @expiry         = @qs["expiry"]
+            @reset_password = @qs["reset_password"]
+            @token          = @qs["token"]
+            @uid            = @qs["uid"]
           end
 
           test 'respones should have success redirect status' do
