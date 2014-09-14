@@ -3,16 +3,10 @@
   <head>
     <script>
       var usingExternalWindow = function() {
-        var out = true;
-        var nav = navigator.userAgent.toLowerCase();
-        if (nav && nav.indexOf('msie') != -1) {
-          var version = parseInt(nav.split('msie')[1]);
-          if (version < 10) {
-            out = false;
-          }
-        }
-
-        return out;
+        var nav     = navigator.userAgent.toLowerCase(),
+            ieLTE10 = (nav && nav.indexOf('msie') != -1),
+            ie11    = !!navigator.userAgent.match(/Trident.*rv\:11\./);
+        return !(ieLTE10 || ie11);
       }
 
       if (usingExternalWindow()) {
