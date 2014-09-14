@@ -3,7 +3,8 @@ module DeviseTokenAuth
     include Devise::Controllers::Helpers
     include DeviseTokenAuth::Concerns::SetUserByToken
 
-    prepend_before_filter :require_no_authentication, :only => [ :create, :destroy, :update ]
+    #prepend_before_filter :require_no_authentication, :only => [ :create, :destroy, :update ]
+    skip_before_filter :require_no_authentication
     before_action :configure_devise_token_auth_permitted_parameters
 
     skip_before_filter :set_user_by_token, :only => [:create]

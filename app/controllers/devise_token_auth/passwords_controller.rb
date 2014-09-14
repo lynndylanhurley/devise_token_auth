@@ -3,6 +3,7 @@ module DeviseTokenAuth
     include Devise::Controllers::Helpers
     include DeviseTokenAuth::Concerns::SetUserByToken
 
+    skip_before_filter :require_no_authentication
     skip_before_filter :set_user_by_token, :only => [:create, :edit]
     skip_after_filter :update_auth_header, :only => [:create, :edit]
 
