@@ -121,10 +121,9 @@ module DeviseTokenAuth
       end
     end
 
+    # ensure that anchor is present BEFORE querystring for angularjs
     def generate_url(url, params = {})
-      uri = URI(url)
-      uri.query = params.to_query
-      uri.to_s
+      "#{url}#?#{params.to_query}"
     end
   end
 end
