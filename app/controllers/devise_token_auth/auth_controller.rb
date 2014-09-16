@@ -121,9 +121,18 @@ module DeviseTokenAuth
       end
     end
 
-    # ensure that anchor is present BEFORE querystring for angularjs
     def generate_url(url, params = {})
-      "#{url}#?#{params.to_query}"
+      auth_url = url
+
+      # ensure that hash-bang is present BEFORE querystring for angularjs
+      unless url.match(/#/)
+        auth_url += '#'
+      end
+
+      # add query AFTER hash-bang
+      auth_url += "?#{params.to_query}"
+
+      return auth_url
     end
   end
 end
