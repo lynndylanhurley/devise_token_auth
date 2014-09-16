@@ -200,5 +200,34 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         assert_equal user.id, @user.id
       end
     end
+
+    describe 'unconfirmed user' do
+      before do
+        @user = users(:unconfirmed_email_user)
+        @redirect_url = 'http://ng-token-auth.dev'
+
+        xhr :post, :create, {
+          email:        @user.email,
+          redirect_url: @redirect_url
+        }
+
+        @mail = ActionMailer::Base.deliveries.last
+        @user.reload
+
+        @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
+
+        xhr :get, :edit, {
+          reset_password_token: @mail_reset_token,
+          redirect_url: @mail_redirect_url
+        }
+
+        @user.reload
+      end
+
+      test 'unconfirmed email user should now be confirmed' do
+        assert @user.confirmed_at
+      end
+    end
   end
 end

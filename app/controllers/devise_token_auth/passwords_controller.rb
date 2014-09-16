@@ -80,6 +80,8 @@ module DeviseTokenAuth
           expiry: expiry
         }
 
+        @user.skip_confirmation! unless @user.confirmed_at
+
         @user.save!
 
         redirect_to(@user.build_auth_url(resource_params[:redirect_url], {
