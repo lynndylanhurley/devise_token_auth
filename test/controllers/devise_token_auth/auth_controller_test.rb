@@ -104,7 +104,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
   describe 'alternate user model' do
     describe 'from api to provider' do
       before do
-        get_via_redirect '/bong/facebook', {
+        get_via_redirect '/mangs/facebook', {
           auth_origin_url: @redirect_url
         }
 

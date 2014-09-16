@@ -334,5 +334,43 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
         refute Mang.where(id: @user.id).first
       end
     end
+
+
+    describe "Alternate user class - passing client config name" do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:mang]
+      end
+
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
+
+      before do
+        @config_name = 'altUser'
+
+        xhr :post, :create, {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url,
+          config_name: @config_name
+        }
+
+        @user = assigns(:resource)
+        @data = JSON.parse(response.body)
+        @mail = ActionMailer::Base.deliveries.last
+
+        @mail = ActionMailer::Base.deliveries.last
+        @user.reload
+
+        @mail_reset_token  = @mail.body.match(/confirmation_token=(.*)\"/)[1]
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=(.*)&amp;/)[1])
+      end
+
+      test 'config_name param is included in the confirmation email link' do
+        assert_equal @config_name, @mail_config_name
+      end
+    end
   end
 end

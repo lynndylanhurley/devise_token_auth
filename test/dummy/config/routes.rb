@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   # define :mangs as the second devise mapping. routes using this class will
   # need to be defined within a devise_scope as shown below
-  mount_devise_token_auth_for "Mang", at: '/bong'
+  mount_devise_token_auth_for "Mang", at: '/mangs'
 
   # this route will authorize visitors using the User class
   get 'demo/members_only', to: 'demo#members_only'

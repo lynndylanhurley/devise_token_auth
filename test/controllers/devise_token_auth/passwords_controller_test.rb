@@ -229,5 +229,30 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         assert @user.confirmed_at
       end
     end
+
+    describe 'alternate user type' do
+      before do
+        @user         = users(:confirmed_email_user)
+        @redirect_url = 'http://ng-token-auth.dev'
+        @config_name  = "altUser"
+
+        xhr :post, :create, {
+          email:        @user.email,
+          redirect_url: @redirect_url,
+          config_name:  @config_name
+        }
+
+        @mail = ActionMailer::Base.deliveries.last
+        @user.reload
+
+        @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=(.*)&amp;/)[1])
+      end
+
+      test 'config_name param is included in the confirmation email link' do
+        assert_equal @config_name, @mail_config_name
+      end
+    end
   end
 end
