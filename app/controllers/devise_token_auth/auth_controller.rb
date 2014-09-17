@@ -22,7 +22,6 @@ module DeviseTokenAuth
     end
 
     def omniauth_success
-
       # find or create user by provider and provider uid
       @user = resource_name.where({
         uid:      auth_hash['uid'],

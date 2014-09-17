@@ -17,7 +17,7 @@ module DeviseTokenAuth
         }, status: 401
       end
 
-      unless resource_params[:redirect_url]
+      unless params[:redirect_url]
         return render json: {
           success: false,
           errors: ['Missing redirect url.']
@@ -32,13 +32,11 @@ module DeviseTokenAuth
       errors = nil
 
       if @user
-        @user.update_attributes({
-          reset_password_redirect_url: resource_params[:redirect_url]
-        })
-
-        @user = resource_class.send_reset_password_instructions({
+        @user.send_reset_password_instructions({
           email: resource_params[:email],
-          provider: 'email'
+          provider: 'email',
+          redirect_url: params[:redirect_url],
+          client_config: params[:config_name]
         })
 
         if @user.errors.empty?
@@ -80,11 +78,12 @@ module DeviseTokenAuth
           expiry: expiry
         }
 
+        # ensure that user is confirmed
         @user.skip_confirmation! unless @user.confirmed_at
 
         @user.save!
 
-        redirect_to(@user.build_auth_url(resource_params[:redirect_url], {
+        redirect_to(@user.build_auth_url(params[:redirect_url], {
           token:          token,
           client_id:      client_id,
           reset_password: true
@@ -141,7 +140,7 @@ module DeviseTokenAuth
     end
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :reset_password_token, :redirect_url)
+      params.permit(:email, :password, :password_confirmation, :reset_password_token)
     end
   end
 end

@@ -39,10 +39,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
         assert @data['data']['email']
       end
 
-      test "confirm_success_url be allowed by strong params" do
-        assert @data['data']['confirm_success_url']
-      end
-
       test "new user should receive confirmation email" do
         assert_equal @user.email, @mail['to'].to_s
       end
@@ -54,21 +50,41 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
     describe "Adding extra params" do
       before do
+        @redirect_url     = Faker::Internet.url
+        @operating_thetan = 2
+
         xhr :post, :create, {
           email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
-          confirm_success_url: Faker::Internet.url,
-          operating_thetan: 2
+          confirm_success_url: @redirect_url,
+          favorite_color: @fav_color,
+          operating_thetan: @operating_thetan
         }
 
         @user = assigns(:resource)
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
+
+        @mail_reset_token  = @mail.body.match(/confirmation_token=([^&]*)&/)[1]
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)\"/)[1])
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
       end
 
-      test "Additional sign_up params should be considered" do
-        assert_equal 2, @user.operating_thetan
+      test 'redirect_url is included as param in email' do
+        assert_equal @redirect_url, @mail_redirect_url
+      end
+
+      test "additional sign_up params should be considered" do
+        assert_equal @operating_thetan, @user.operating_thetan
+      end
+
+      test 'config_name param is included in the confirmation email link' do
+        assert @mail_config_name
+      end
+
+      test "client config name falls back to 'default'" do
+        assert_equal "default", @mail_config_name
       end
     end
 
@@ -336,7 +352,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     end
 
 
-    describe "Alternate user class - passing client config name" do
+    describe "Passing client config name" do
       setup do
         @request.env['devise.mapping'] = Devise.mappings[:mang]
       end
@@ -360,12 +376,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
 
-        @mail = ActionMailer::Base.deliveries.last
         @user.reload
 
-        @mail_reset_token  = @mail.body.match(/confirmation_token=(.*)\"/)[1]
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
-        @mail_config_name  = CGI.unescape(@mail.body.match(/config=(.*)&amp;/)[1])
+        @mail_reset_token  = @mail.body.match(/confirmation_token=([^&]*)&/)[1]
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)\"/)[1])
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
       end
 
       test 'config_name param is included in the confirmation email link' do

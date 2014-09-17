@@ -24,16 +24,13 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           @mail = ActionMailer::Base.deliveries.last
           @user.reload
 
+          @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
+          @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
           @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
-          @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
         end
 
         test 'response should return success status' do
           assert_equal 200, response.status
-        end
-
-        test 'action should save password_reset_redirect_url to user table' do
-          assert_equal @redirect_url, @user.reset_password_redirect_url
         end
 
         test 'action should send an email' do
@@ -46,6 +43,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         test 'the email body should contain a link with redirect url as a query param' do
           assert_equal @redirect_url, @mail_redirect_url
+        end
+
+        test 'the client config name should fall back to "default"' do
+          assert_equal 'default', @mail_config_name
         end
 
         test 'the email body should contain a link with reset token as a query param' do
@@ -184,8 +185,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @mail = ActionMailer::Base.deliveries.last
         @user.reload
 
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
         @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
       end
 
       test 'response should return success status' do
@@ -214,8 +216,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @mail = ActionMailer::Base.deliveries.last
         @user.reload
 
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
         @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
 
         xhr :get, :edit, {
           reset_password_token: @mail_reset_token,
@@ -245,9 +248,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @mail = ActionMailer::Base.deliveries.last
         @user.reload
 
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
         @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)&amp;/)[1])
-        @mail_config_name  = CGI.unescape(@mail.body.match(/config=(.*)&amp;/)[1])
       end
 
       test 'config_name param is included in the confirmation email link' do

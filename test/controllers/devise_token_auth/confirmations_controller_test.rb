@@ -12,12 +12,17 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       before do
         @new_user = users(:unconfirmed_email_user)
         @new_user.send_confirmation_instructions
-        @mail  = ActionMailer::Base.deliveries.last
-        @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
+        @mail          = ActionMailer::Base.deliveries.last
+        @token         = @mail.body.match(/confirmation_token=(.*)\"/)[1]
+        @client_config = @mail.body.match(/config=(.*)\&/)[1]
       end
 
       test 'should generate raw token' do
         assert @token
+      end
+
+      test "should include config name as 'default' in confirmation link" do
+        assert_equal "default", @client_config
       end
 
       test "should store token hash in user" do
@@ -61,14 +66,22 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       end
 
       before do
-        @new_user = mangs(:unconfirmed_email_user)
-        @new_user.send_confirmation_instructions
-        @mail  = ActionMailer::Base.deliveries.last
-        @token = @mail.body.match(/confirmation_token=(.*)\"/)[1]
+        @config_name = "altUser"
+        @new_user    = mangs(:unconfirmed_email_user)
+
+        @new_user.send_confirmation_instructions(client_config: @config_name)
+
+        @mail          = ActionMailer::Base.deliveries.last
+        @token         = @mail.body.match(/confirmation_token=(.*)\"/)[1]
+        @client_config = @mail.body.match(/config=(.*)\&/)[1]
       end
 
       test 'should generate raw token' do
         assert @token
+      end
+
+      test "should include config name in confirmation link" do
+        assert_equal @config_name, @client_config
       end
 
       test "should store token hash in user" do

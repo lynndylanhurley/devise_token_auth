@@ -5,7 +5,6 @@ module DeviseTokenAuth
 
     #prepend_before_filter :require_no_authentication, :only => [ :create, :destroy, :update ]
     skip_before_filter :require_no_authentication
-    before_action :configure_devise_token_auth_permitted_parameters
 
     skip_before_filter :set_user_by_token, :only => [:create]
     skip_before_filter :authenticate_scope!, :only => [:destroy, :update]
@@ -18,8 +17,22 @@ module DeviseTokenAuth
       @resource.uid        = sign_up_params[:email]
       @resource.provider   = "email"
 
+      # success redirect url is required
+      unless params[:confirm_success_url]
+        return render json: {
+          status: 'error',
+          data:   @resource,
+          errors: ["Missing `confirm_success_url` param."]
+        }, status: 403
+      end
+
       begin
         if @resource.save
+          @resource.send_confirmation_instructions({
+            client_config: params[:config_name],
+            redirect_url: params[:confirm_success_url]
+          })
+
           render json: {
             status: 'success',
             data:   @resource.as_json
@@ -85,10 +98,6 @@ module DeviseTokenAuth
 
     def account_update_params
       params.permit(devise_parameter_sanitizer.for(:account_update))
-    end
-
-    def configure_devise_token_auth_permitted_parameters
-      devise_parameter_sanitizer.for(:sign_up) << :confirm_success_url
     end
   end
 end
