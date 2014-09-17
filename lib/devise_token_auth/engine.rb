@@ -3,6 +3,10 @@ require 'devise_token_auth/rails/routes'
 module DeviseTokenAuth
   class Engine < ::Rails::Engine
     isolate_namespace DeviseTokenAuth
+
+    initializer "devise_token_auth.url_helpers" do
+      Devise.helpers << DeviseTokenAuth::Controllers::Helpers
+    end
   end
 
   mattr_accessor :change_headers_on_each_request,

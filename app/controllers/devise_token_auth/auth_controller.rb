@@ -1,6 +1,5 @@
 module DeviseTokenAuth
   class AuthController < DeviseTokenAuth::ApplicationController
-    respond_to :json
     skip_after_filter :update_auth_header, :only => [:omniauth_success, :omniauth_failure]
     skip_before_filter :assert_is_devise_resource!, :only => [:validate_token]
 

@@ -1,13 +1,6 @@
 module DeviseTokenAuth
-  class RegistrationsController < Devise::RegistrationsController
-    include Devise::Controllers::Helpers
-    include DeviseTokenAuth::Concerns::SetUserByToken
-
-    #prepend_before_filter :require_no_authentication, :only => [ :create, :destroy, :update ]
-    skip_before_filter :require_no_authentication
-
-    skip_before_filter :set_user_by_token, :only => [:create]
-    skip_before_filter :authenticate_scope!, :only => [:destroy, :update]
+  class RegistrationsController < DeviseTokenAuth::ApplicationController
+    before_filter :set_user_by_token, :only => [:destroy, :update]
     skip_after_filter :update_auth_header, :only => [:create, :destroy]
 
     respond_to :json

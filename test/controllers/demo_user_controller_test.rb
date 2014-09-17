@@ -6,8 +6,8 @@ require 'test_helper'
 #  was the correct object stored in the response?
 #  was the appropriate message delivered in the json payload?
 
-class DemoControllerTest < ActionController::TestCase
-  describe DemoController do
+class DemoUserControllerTest < ActionDispatch::IntegrationTest
+  describe DemoUserController do
     describe "Token access" do
       before do
         @user = users(:confirmed_email_user)
@@ -26,13 +26,26 @@ class DemoControllerTest < ActionController::TestCase
           # ensure that request is not treated as batch request
           age_token(@user, @client_id)
 
-          request.headers.merge!(@auth_headers)
-          xhr :get, :members_only
+          get '/demo/members_only', {}, @auth_headers
 
           @resp_token       = response.headers['access-token']
           @resp_client_id   = response.headers['client']
           @resp_expiry      = response.headers['expiry']
           @resp_uid         = response.headers['uid']
+        end
+
+        describe 'devise mappings' do
+          it 'should define current_user' do
+            assert_equal @user, @controller.current_user
+          end
+
+          it 'should define user_signed_in?' do
+            assert @controller.user_signed_in?
+          end
+
+          it 'should not define current_mang' do
+            refute_equal @user, @controller.current_mang
+          end
         end
 
         it 'should return success status' do
@@ -61,9 +74,7 @@ class DemoControllerTest < ActionController::TestCase
             # ensure that request is not treated as batch request
             age_token(@user, @client_id)
 
-            request.headers['access-token'] = @resp_token
-
-            xhr :get, :members_only
+            get '/demo/members_only', {}, @auth_headers.merge({'access-token' => @resp_token})
           end
 
           it 'should not treat this request as a batch request' do
@@ -78,8 +89,7 @@ class DemoControllerTest < ActionController::TestCase
 
       describe 'failed request' do
         before do
-          request.headers['access-token'] = "bogus"
-          xhr :get, :members_only
+          get '/demo/members_only', {}, @auth_headers.merge({'access-token' => "bogus"})
         end
 
         it 'should not return any auth headers' do
@@ -97,8 +107,7 @@ class DemoControllerTest < ActionController::TestCase
           @user.reload
           age_token(@user, @client_id)
 
-          request.headers.merge!(@auth_headers)
-          xhr :get, :members_only
+          get '/demo/members_only', {}, @auth_headers
 
           @first_is_batch_request = assigns(:is_batch_request)
           @first_user = assigns(:user).dup
@@ -109,8 +118,7 @@ class DemoControllerTest < ActionController::TestCase
           age_token(@user, @client_id)
 
           # use expired auth header
-          request.headers.merge!(@auth_headers)
-          xhr :get, :members_only
+          get '/demo/members_only', {}, @auth_headers
 
           @second_is_batch_request = assigns(:is_batch_request)
           @second_user = assigns(:user).dup
@@ -156,15 +164,15 @@ class DemoControllerTest < ActionController::TestCase
         describe 'success' do
           before do
             age_token(@user, @client_id)
+            #request.headers.merge!(@auth_headers)
 
-            request.headers.merge!(@auth_headers)
-            xhr :get, :members_only
+            get '/demo/members_only', {}, @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:user)
             @first_access_token = response.headers['access-token']
 
-            xhr :get, :members_only
+            get '/demo/members_only', {}, @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:user)
@@ -177,6 +185,10 @@ class DemoControllerTest < ActionController::TestCase
 
           it 'should not treat the first request as a batch request' do
             refute @first_is_batch_request
+          end
+
+          it 'should treat the second request as a batch request' do
+            assert @second_is_batch_request
           end
 
           it 'should return access token for first (non-batch) request' do
@@ -193,8 +205,7 @@ class DemoControllerTest < ActionController::TestCase
             @user.reload
             age_token(@user, @client_id)
 
-            request.headers.merge!(@auth_headers)
-            xhr :get, :members_only
+            get '/demo/members_only', {}, @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:user).dup
@@ -205,8 +216,7 @@ class DemoControllerTest < ActionController::TestCase
             age_token(@user, @client_id)
 
             # use expired auth header
-            request.headers.merge!(@auth_headers)
-            xhr :get, :members_only
+            get '/demo/members_only', {}, @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:user)
@@ -246,44 +256,6 @@ class DemoControllerTest < ActionController::TestCase
             refute @second_user
           end
         end
-      end
-    end
-
-    # test with non-standard user class
-    describe "Alternate user class" do
-      setup do
-        @request.env['devise.mapping'] = Devise.mappings[:mang]
-      end
-
-      teardown do
-        @request.env['devise.mapping'] = Devise.mappings[:user]
-      end
-
-      before do
-        @user = mangs(:confirmed_email_user)
-        @user.skip_confirmation!
-        @user.save!
-
-        @auth_headers = @user.create_new_auth_token
-
-        @token     = @auth_headers['access-token']
-        @client_id = @auth_headers['client']
-        @expiry    = @auth_headers['expiry']
-
-        # ensure that request is not treated as batch request
-        age_token(@user, @client_id)
-
-        request.headers.merge!(@auth_headers)
-        xhr :get, :members_only
-
-        @resp_token       = response.headers['access-token']
-        @resp_client_id   = response.headers['client']
-        @resp_expiry      = response.headers['expiry']
-        @resp_uid         = response.headers['uid']
-      end
-
-      it 'should return success status' do
-        assert_equal 200, response.status
       end
     end
   end

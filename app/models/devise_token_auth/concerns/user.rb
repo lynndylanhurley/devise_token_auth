@@ -48,6 +48,7 @@ module DeviseTokenAuth::Concerns::User
       send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
     end
 
+
     # override devise method to include additional info as opts hash
     def send_reset_password_instructions(opts=nil)
       token = set_reset_password_token

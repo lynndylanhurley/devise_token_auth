@@ -1,7 +1,5 @@
 module DeviseTokenAuth
-  class ConfirmationsController < Devise::ConfirmationsController
-    include Devise::Controllers::Helpers
-
+  class ConfirmationsController < DeviseTokenAuth::ApplicationController
     def show
       @user = resource_class.confirm_by_token(params[:confirmation_token])
 

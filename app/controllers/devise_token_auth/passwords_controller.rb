@@ -1,10 +1,6 @@
 module DeviseTokenAuth
-  class PasswordsController < Devise::PasswordsController
-    include Devise::Controllers::Helpers
-    include DeviseTokenAuth::Concerns::SetUserByToken
-
-    skip_before_filter :require_no_authentication
-    skip_before_filter :set_user_by_token, :only => [:create, :edit]
+  class PasswordsController < DeviseTokenAuth::ApplicationController
+    before_filter :set_user_by_token, :only => [:update]
     skip_after_filter :update_auth_header, :only => [:create, :edit]
 
     # this action is responsible for generating password reset tokens and
@@ -142,5 +138,6 @@ module DeviseTokenAuth
     def resource_params
       params.permit(:email, :password, :password_confirmation, :reset_password_token)
     end
+
   end
 end

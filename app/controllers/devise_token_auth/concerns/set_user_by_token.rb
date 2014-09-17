@@ -1,15 +1,21 @@
 module DeviseTokenAuth::Concerns::SetUserByToken
   extend ActiveSupport::Concern
+  include DeviseTokenAuth::Controllers::Helpers
 
   included do
-    before_action :set_user_by_token
     after_action :update_auth_header
   end
 
   # user auth
-  def set_user_by_token
+  def set_user_by_token(mapping=nil)
+    # determine target authentication class
+    rc = resource_class(mapping)
+
     # no default user defined
-    return false unless resource_class
+    return unless rc
+
+    # user has already been found and authenticated
+    return @user if @user and @user.class == rc
 
     # parse header for values necessary for authentication
     uid        = request.headers['uid']
@@ -22,17 +28,19 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @client_id ||= 'default'
 
     # mitigate timing attacks by finding by uid instead of auth token
-    @user = @current_user = uid && resource_class.find_by_uid(uid)
+    user = uid && rc.find_by_uid(uid)
 
-    if @user && @user.valid_token?(@token, @client_id)
-      sign_in(:user, @user, store: false, bypass: true)
+    if user && user.valid_token?(@token, @client_id)
+      sign_in(:user, user, store: false, bypass: true)
 
       # check this now so that the duration of the request itself doesn't eat
       # away the buffer
-      @is_batch_request = is_batch_request?(@user, @client_id)
+      @is_batch_request = is_batch_request?(user, @client_id)
+
+      return @user = user
     else
       # zero all values previously set values
-      @user = @current_user = @is_batch_request = nil
+      return @user = @is_batch_request = nil
     end
   end
 
@@ -59,12 +67,20 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
   end
 
-  def resource_class
-    mapping = request.env['devise.mapping'] || Devise.mappings.values.first
+
+  def resource_class(m=nil)
+    if m
+      mapping = Devise.mappings[m]
+    else
+      mapping = Devise.mappings[resource_name] || Devise.mappings.values.first
+    end
+
     mapping.to
   end
 
+
   private
+
 
   def is_batch_request?(user, client_id)
     user.tokens[client_id] and
