@@ -427,6 +427,8 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
 
 ## Using multiple models
 
+### [View Live Multi-User Demo](http://ng-token-auth-demo.herokuapp.com/multi-user)
+
 This gem supports the use of multiple user models. One possible use case is to authenticate visitors using a model called `User`, and to authenticate administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
 
 1. Run the install generator for the new model.
