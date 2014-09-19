@@ -288,7 +288,7 @@ The authentication routes must be mounted to your project. This gem includes a r
 mount_devise_token_auth_for 'User', at: '/auth'
 ~~~
 
-Any model class can be used, but the class will need to include [`DeviseTokenAuth::Concerns::SetUserByToken`](#model-concerns) for authentication to work properly.
+Any model class can be used, but the class will need to include [`DeviseTokenAuth::Concerns::User`](#model-concerns) for authentication to work properly.
 
 You can mount this engine to any route that you like. `/auth` is used by default to conform with the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
 
@@ -339,8 +339,8 @@ class TestController < ApplicationController
   def members_only
     render json: {
       data: {
-        message: "Welcome #{@user.name}",
-        user: @user
+        message: "Welcome #{current_user.name}",
+        user: current_user
       }
     }, status: 200
   end
@@ -373,11 +373,11 @@ The authentication headers required for each request will be available in the re
 
 ## Model Concerns
 
-##### DeviseTokenAuth::Concerns::SetUserByToken
+##### DeviseTokenAuth::Concerns::User
 
 Typical use of this gem will not require the use of any of the following model methods. All authentication should be handled invisibly by the [controller concerns](#controller-concerns) described above.
 
-Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will have access to the following public methods (read the above section for context on `token` and `client`):
+Models that include the `DeviseTokenAuth::Concerns::User` concern will have access to the following public methods (read the above section for context on `token` and `client`):
 
 * **`valid_token?`**: check if an authentication token is valid. Accepts a `token` and `client` as arguments. Returns a boolean.
 
@@ -426,6 +426,8 @@ Models that include the `DeviseTokenAuth::Concerns::SetUserByToken` concern will
   ~~~
 
 ## Using multiple models
+
+### [View Live Multi-User Demo](http://ng-token-auth-demo.herokuapp.com/multi-user)
 
 This gem supports the use of multiple user models. One possible use case is to authenticate visitors using a model called `User`, and to authenticate administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
 
