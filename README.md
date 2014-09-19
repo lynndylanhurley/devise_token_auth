@@ -293,42 +293,61 @@ Any model class can be used, but the class will need to include [`DeviseTokenAut
 You can mount this engine to any route that you like. `/auth` is used by default to conform with the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
 
 
-## Controller Concerns
+## Controller Methods
 
-##### DeviseTokenAuth::Concerns::SetUserByToken
+### Concerns
 
-This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. This concern can be used in controllers to identify users by their authentication headers.
-
-This concern runs a [before_action](http://guides.rubyonrails.org/action_controller_overview.html#filters), setting the `@user` variable for use in your controllers. The user will be signed in via devise for the duration of the request.
+This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. Include this concern to provide access to [controller methods](#controller-methods) such as [`authenticate_user!`](#authenticate-user), [`user_signed_in?`](#user-signed-in), etc.
 
 The concern also runs an [after_action](http://guides.rubyonrails.org/action_controller_overview.html#filters) that changes the auth token after each request.
 
 It is recommended to include the concern in your base `ApplicationController` so that all children of that controller include the concern as well.
+
+##### Concern example:
 
 ~~~ruby
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
   include DeviseTokenAuth::Concerns::SetUserByToken
 end
+~~~
 
+### Methods
+
+This gem provides access to all of the following [devise helpers](https://github.com/plataformatec/devise#controller-filters-and-helpers):
+
+| Method | Description |
+|---|---|
+| **`before_action :authenticate_user!`** | Returns a 401 error unless a `User` is signed-in. |
+| **`current_user`** | Returns the currently signed-in `User`, or `nil` if unavailable. |
+| **`user_signed_in?`** | Returns `true` if a `User` is signed in, otherwise `false`. |
+| **`devise_token_auth_group`** | Operate on multiple user classes as a group. [Read more](#group-access) |
+
+Note that if the model that you're trying to access isn't called `User`, the helper method names will change. For example, if the user model is called `Admin`, the methods would look like this:
+
+* `before_action :authenticate_admin!`
+* `admin_signed_in?`
+* `current_admin`
+
+
+##### Example: limit access to authenticated users
+~~~ruby
 # app/controllers/test_controller.rb
 class TestController < ApplicationController
+  before_action :authenticate_user!
+  
   def members_only
-    if @user
-      render json: {
-        data: {
-          message: "Welcome #{@user.name}",
-          user: @user
-        }
-      }, status: 200
-    else
-      render json: {
-        errors: ["Authorized users only."]
-      }, status: 401
-    end
+    render json: {
+      data: {
+        message: "Welcome #{@user.name}",
+        user: @user
+      }
+    }, status: 200
   end
 end
 ~~~
+
+### Token Header Format
 
 The authentication information should be included by the client in the headers of each request. The headers follow the [RFC 6750 Bearer Token](http://tools.ietf.org/html/rfc6750) format:
 
@@ -442,6 +461,40 @@ This gem supports the use of multiple user models. One possible use case is to a
     end
   end
   ~~~
+  
+1. Configure any `Admin` restricted controllers. Controllers will now have access to the methods [described here](#methods):
+  * `before_action: :authenticate_admin!`
+  * `current_admin`
+  * `admin_signed_in?`
+
+
+### Group access
+
+It is also possible to control access to multiple user types at the same time using groups. The following example shows how to limit controller access to both `User` and `Admin` users.
+
+##### Example: group authentication
+
+~~~ruby
+class DemoGroupController < ApplicationController
+  devise_token_auth_group :member, contains: [:user, :admin]
+  before_action :authenticate_member!
+  
+  def members_only
+    render json: {
+      data: {
+        message: "Welcome #{current_member.name}",
+        user: current_member
+      }
+    }, status: 200
+  end
+end
+~~~
+
+In the above example, the following methods will be available (in addition to `current_user`, `current_admin`, etc.):
+
+  * `before_action: :authenticate_member!`
+  * `current_member`
+  * `member_signed_in?`
 
 # Conceptual
 
