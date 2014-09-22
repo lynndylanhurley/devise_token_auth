@@ -20,7 +20,8 @@ module DeviseTokenAuth
         redirect_to(@user.build_auth_url(params[:redirect_url], {
           token:                        token,
           client_id:                    client_id,
-          account_confirmation_success: true
+          account_confirmation_success: true,
+          config:                       params[:config]
         }))
       else
         raise ActionController::RoutingError.new('Not Found')

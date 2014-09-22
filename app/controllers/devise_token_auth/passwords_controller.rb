@@ -82,7 +82,8 @@ module DeviseTokenAuth
         redirect_to(@user.build_auth_url(params[:redirect_url], {
           token:          token,
           client_id:      client_id,
-          reset_password: true
+          reset_password: true,
+          config:         params[:config]
         }))
       else
         raise ActionController::RoutingError.new('Not Found')
