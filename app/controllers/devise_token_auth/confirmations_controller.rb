@@ -17,7 +17,7 @@ module DeviseTokenAuth
 
         @user.save!
 
-        redirect_to(@user.build_auth_url(@user.confirm_success_url, {
+        redirect_to(@user.build_auth_url(params[:redirect_url], {
           token:                        token,
           client_id:                    client_id,
           account_confirmation_success: true
