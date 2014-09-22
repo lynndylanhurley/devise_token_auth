@@ -10,11 +10,14 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::ConfirmationsController do
     describe "Confirmation" do
       before do
+        @redirect_url = Faker::Internet.url
         @new_user = users(:unconfirmed_email_user)
-        @new_user.send_confirmation_instructions
+        @new_user.send_confirmation_instructions({
+          redirect_url: @redirect_url
+        })
         @mail          = ActionMailer::Base.deliveries.last
-        @token         = @mail.body.match(/confirmation_token=(.*)\"/)[1]
-        @client_config = @mail.body.match(/config=(.*)\&/)[1]
+        @token         = @mail.body.match(/confirmation_token=([^&]*)&/)[1]
+        @client_config = @mail.body.match(/config=([^&]*)&/)[1]
       end
 
       test 'should generate raw token' do
@@ -31,7 +34,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
 
       describe "success" do
         before do
-          xhr :get, :show, {confirmation_token: @token}
+          xhr :get, :show, {confirmation_token: @token, redirect_url: @redirect_url}
           @user = assigns(:user)
         end
 
@@ -40,7 +43,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         end
 
         test "should redirect to success url" do
-          assert_redirected_to(/^#{@user.confirm_success_url}/)
+          assert_redirected_to(/^#{@redirect_url}/)
         end
       end
 
@@ -90,7 +93,8 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
 
       describe "success" do
         before do
-          xhr :get, :show, {confirmation_token: @token}
+          @redirect_url = Faker::Internet.url
+          xhr :get, :show, {confirmation_token: @token, redirect_url: @redirect_url}
           @user = assigns(:user)
         end
 
