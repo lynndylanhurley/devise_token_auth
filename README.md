@@ -73,6 +73,7 @@ You will need to create a [user model](#model-concerns), [define routes](#mounti
 
 ~~~bash
 rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
+rails g devise_token_auth:intall User /auth # <-- Example
 ~~~
 
 This generator accepts the following optional arguments:
