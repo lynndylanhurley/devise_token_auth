@@ -1,25 +1,6 @@
 module DeviseTokenAuth
-  class AuthController < DeviseTokenAuth::ApplicationController
+  class OmniauthCallbacksController < DeviseTokenAuth::ApplicationController
     skip_after_filter :update_auth_header, :only => [:omniauth_success, :omniauth_failure]
-    skip_before_filter :assert_is_devise_resource!, :only => [:validate_token]
-    before_filter :set_user_by_token, :only => [:validate_token]
-
-    def validate_token
-      # @user will have been set by set_user_token concern
-      if @user
-        render json: {
-          success: true,
-          data: @user.as_json(except: [
-            :tokens, :confirm_success_url, :reset_password_redirect_url, :created_at, :updated_at
-          ])
-        }
-      else
-        render json: {
-          success: false,
-          errors: ["Invalid login credentials"]
-        }, status: 401
-      end
-    end
 
     def omniauth_success
       # find or create user by provider and provider uid
