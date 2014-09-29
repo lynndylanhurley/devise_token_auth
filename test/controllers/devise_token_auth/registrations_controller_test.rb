@@ -10,6 +10,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::RegistrationsController do
     describe "Successful registration" do
       before do
+        @mails_sent = ActionMailer::Base.deliveries.count
+
         xhr :post, :create, {
           email: Faker::Internet.email,
           password: "secret123",
@@ -45,6 +47,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
       test "new user password should not be returned" do
         assert_nil @data['data']['password']
+      end
+
+      test "only one email was sent" do
+        assert_equal @mails_sent + 1, ActionMailer::Base.deliveries.count
       end
     end
 

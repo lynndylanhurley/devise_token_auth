@@ -20,6 +20,8 @@ module DeviseTokenAuth
       end
 
       begin
+        # override email confirmation, must be sent manually from ctrl
+        User.skip_callback("create", :after, :send_on_create_confirmation_instructions)
         if @resource.save
           @resource.send_confirmation_instructions({
             client_config: params[:config_name],
