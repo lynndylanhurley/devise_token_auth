@@ -7,6 +7,14 @@ module DeviseTokenAuth
     initializer "devise_token_auth.url_helpers" do
       Devise.helpers << DeviseTokenAuth::Controllers::Helpers
     end
+
+    initializer "devise_token_auth.omniauth_strategy" do
+      if defined?(::OmniAuth)
+        Devise.with_options model: true do |d|
+          d.add_module(:dta_omniauthable, controller: :omniauth_callbacks, route: :omniauth_callbacks)
+        end
+      end
+    end
   end
 
   mattr_accessor :change_headers_on_each_request,

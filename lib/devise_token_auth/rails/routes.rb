@@ -14,10 +14,11 @@ module ActionDispatch::Routing
       omniauth_ctrl          = opts[:controllers][:omniauth_callbacks] || "devise_token_auth/omniauth_callbacks"
 
       # define devise controller mappings
-      controllers = {:sessions      => sessions_ctrl,
-                     :registrations => registrations_ctrl,
-                     :passwords     => passwords_ctrl,
-                     :confirmations => confirmations_ctrl}
+      controllers = {:sessions           => sessions_ctrl,
+                     :registrations      => registrations_ctrl,
+                     :passwords          => passwords_ctrl,
+                     :confirmations      => confirmations_ctrl,
+                     :omniauth_callbacks => omniauth_ctrl}
 
       # remove any unwanted devise modules
       opts[:skip].each{|item| controllers.delete(item)}
@@ -33,10 +34,10 @@ module ActionDispatch::Routing
           # path to verify token validity
           get "validate_token", to: "#{token_validations_ctrl}#validate_token"
 
+          # omniauth routes. only define if omniauth is installed and not skipped.
           if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
             get "failure",             to: "#{omniauth_ctrl}#omniauth_failure"
             get ":provider/callback",  to: "#{omniauth_ctrl}#omniauth_success"
-            post ":provider/callback", to: "#{omniauth_ctrl}#omniauth_success"
 
             # preserve the resource class thru oauth authentication by setting name of
             # resource as "resource_class" param
@@ -52,10 +53,6 @@ module ActionDispatch::Routing
             }, via: [:get]
           end
         end
-      end
-
-      if defined?(::OmniAuth)
-        get "#{::OmniAuth::config.path_prefix}/:provider/callback", to: "#{omniauth_ctrl}#omniauth_success"
       end
     end
   end

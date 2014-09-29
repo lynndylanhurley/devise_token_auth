@@ -10,6 +10,15 @@ Rails.application.routes.draw do
   # need to be defined within a devise_scope as shown below
   mount_devise_token_auth_for "Mang", at: '/mangs'
 
+  mount_devise_token_auth_for 'EvilUser', at: '/evil_user_auth', controllers: {
+    confirmations:      'overrides/confirmations',
+    passwords:          'overrides/passwords',
+    omniauth_callbacks: 'overrides/omniauth_callbacks',
+    registrations:      'overrides/registrations',
+    sessions:           'overrides/sessions',
+    token_validations:  'overrides/token_validations'
+  }
+
   # this route will authorize visitors using the User class
   get 'demo/members_only', to: 'demo_user#members_only'
 

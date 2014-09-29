@@ -1,0 +1,44 @@
+require 'test_helper'
+
+#  was the web request successful?
+#  was the user redirected to the right page?
+#  was the user successfully authenticated?
+#  was the correct object stored in the response?
+#  was the appropriate message delivered in the json payload?
+
+class Overrides::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
+  describe Overrides::OmniauthCallbacksController do
+    setup do
+      OmniAuth.config.test_mode = true
+      OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
+        :provider => 'facebook',
+        :uid => '123545',
+        :info => {
+          name: 'chong',
+          email: 'chongbong@aol.com'
+        }
+      })
+
+      @favorite_color = "gray"
+
+      get_via_redirect '/evil_user_auth/facebook', {
+        auth_origin_url: Faker::Internet.url,
+        favorite_color: @favorite_color
+      }
+
+      @user = assigns(:user)
+    end
+
+    test 'request is successful' do
+      assert_equal 200, response.status
+    end
+
+    test 'controller was overridden' do
+      assert_equal @user.nickname, Overrides::OmniauthCallbacksController::DEFAULT_NICKNAME
+    end
+
+    test 'whitelisted param was allowed' do
+      assert_equal @favorite_color, @user.favorite_color
+    end
+  end
+end

@@ -7,7 +7,6 @@ confirmed_email_user:
   confirmed_at:        '<%= timestamp %>'
   created_at:          '<%= timestamp %>'
   updated_at:          '<%= timestamp %>'
-  confirm_success_url: '<%= Faker::Internet.url %>'
   encrypted_password:  <%= Mang.new.send(:password_digest, 'secret123') %>
 
 <% @fb_email = Faker::Internet.email %>
@@ -25,7 +24,6 @@ unconfirmed_email_user:
   uid:                 "<%= @unconfirmed_email %>"
   email:               "<%= @unconfirmed_email %>"
   provider:            'email'
-  confirm_success_url: '<%= Faker::Internet.url %>'
   created_at:          '<%= timestamp %>'
   updated_at:          '<%= timestamp %>'
   encrypted_password:  <%= Mang.new.send(:password_digest, 'secret123') %>

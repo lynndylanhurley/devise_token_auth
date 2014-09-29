@@ -1,6 +1,6 @@
-class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
+class DeviseTokenAuthCreateEvilUsers < ActiveRecord::Migration
   def change
-    create_table(:<%= user_class.pluralize.underscore %>) do |t|
+    create_table(:evil_users) do |t|
       ## Database authenticatable
       t.string :email
       t.string :encrypted_password, :null => false, :default => ""
@@ -42,13 +42,16 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
       ## Tokens
       t.text :tokens
 
+      ## etc.
+      t.string :favorite_color
+
       t.timestamps
     end
 
-    add_index :<%= user_class.pluralize.underscore %>, :email
-    add_index :<%= user_class.pluralize.underscore %>, :uid,                  :unique => true
-    add_index :<%= user_class.pluralize.underscore %>, :reset_password_token, :unique => true
-    # add_index :<%= user_class.pluralize.underscore %>, :confirmation_token,   :unique => true
-    # add_index :<%= user_class.pluralize.underscore %>, :unlock_token,         :unique => true
+    add_index :evil_users, :email
+    add_index :evil_users, :uid,                  :unique => true
+    add_index :evil_users, :reset_password_token, :unique => true
+    # add_index :evil_users, :confirmation_token,   :unique => true
+    # add_index :evil_users, :unlock_token,         :unique => true
   end
 end

@@ -38,11 +38,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request should determine the correct resource_class' do
-        assert_equal 'User', request.env['omniauth.params']['resource_class']
+        assert_equal 'User', controller.auth_params['resource_class']
       end
 
       test 'request should pass correct redirect_url' do
-        assert_equal @redirect_url, request.env['omniauth.params']['auth_origin_url']
+        assert_equal @redirect_url, controller.auth_params['auth_origin_url']
       end
 
       test 'user should have been created' do
@@ -116,11 +116,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request should determine the correct resource_class' do
-        assert_equal 'Mang', request.env['omniauth.params']['resource_class']
+        assert_equal 'Mang', controller.auth_params['resource_class']
       end
 
       test 'request should pass correct redirect_url' do
-        assert_equal @redirect_url, request.env['omniauth.params']['auth_origin_url']
+        assert_equal @redirect_url, controller.auth_params['auth_origin_url']
       end
 
       test 'user should have been created' do

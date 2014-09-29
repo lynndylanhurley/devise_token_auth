@@ -1,7 +1,6 @@
-# see http://www.emilsoman.com/blog/2013/05/18/building-a-tested/
-module DeviseTokenAuth
-  class SessionsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:destroy]
+module Overrides
+  class SessionsController < DeviseTokenAuth::SessionsController
+    OVERRIDE_PROOF = "(^^,)"
 
     def create
       @user = resource_class.find_by_email(resource_params[:email])
@@ -20,7 +19,8 @@ module DeviseTokenAuth
         render json: {
           data: @user.as_json(except: [
             :tokens, :created_at, :updated_at
-          ])
+          ]),
+          override_proof: OVERRIDE_PROOF
         }
 
       elsif @user and not @user.confirmed?
@@ -38,35 +38,6 @@ module DeviseTokenAuth
           errors: ["Invalid login credentials. Please try again."]
         }, status: 401
       end
-    end
-
-    def destroy
-      # remove auth instance variables so that after_filter does not run
-      user = remove_instance_variable(:@user) if @user
-      client_id = remove_instance_variable(:@client_id) if @client_id
-      remove_instance_variable(:@token) if @token
-
-      if user and client_id and user.tokens[client_id]
-        user.tokens.delete(client_id)
-        user.save!
-
-        render json: {
-          success:true
-        }, status: 200
-
-      else
-        render json: {
-          errors: ["User was not found or was not logged in."]
-        }, status: 404
-      end
-    end
-
-    def valid_params?
-      resource_params[:password] && resource_params[:email]
-    end
-
-    def resource_params
-      params.permit(devise_parameter_sanitizer.for(:sign_in))
     end
   end
 end

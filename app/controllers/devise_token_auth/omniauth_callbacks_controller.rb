@@ -13,7 +13,7 @@ module DeviseTokenAuth
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
 
-      @auth_origin_url = generate_url(request.env['omniauth.params']['auth_origin_url'], {
+      @auth_origin_url = generate_url(auth_params['auth_origin_url'], {
         token:     @token,
         client_id: @client_id,
         uid:       @user.uid
@@ -33,12 +33,7 @@ module DeviseTokenAuth
       }
 
       # sync user info with provider, update/generate auth token
-      @user.assign_attributes({
-        nickname: auth_hash['info']['nickname'],
-        name:     auth_hash['info']['name'],
-        image:    auth_hash['info']['image'],
-        email:    auth_hash['info']['email']
-      })
+      assign_provider_attrs(@user, auth_hash)
 
       # assign any additional (whitelisted) attributes
       extra_params = whitelisted_params
@@ -55,6 +50,15 @@ module DeviseTokenAuth
       end
     end
 
+    def assign_provider_attrs(user, auth_hash)
+      user.assign_attributes({
+        nickname: auth_hash['info']['nickname'],
+        name:     auth_hash['info']['name'],
+        image:    auth_hash['info']['image'],
+        email:    auth_hash['info']['email']
+      })
+    end
+
     def omniauth_failure
       @error = params[:message]
 
@@ -64,14 +68,18 @@ module DeviseTokenAuth
     end
 
     def auth_hash
-      request.env['omniauth.auth']
+      params["auth_hash"]
+    end
+
+    def auth_params
+      params["auth_params"]
     end
 
     def whitelisted_params
       whitelist = devise_parameter_sanitizer.for(:sign_up)
 
       whitelist.inject({}){|coll, key|
-        param = request.env['omniauth.params'][key.to_s]
+        param = auth_params[key.to_s]
         if param
           coll[key] = param
         end
@@ -85,8 +93,8 @@ module DeviseTokenAuth
 
     # pull resource class from omniauth return
     def resource_name
-      if request.env['omniauth.params']
-        request.env['omniauth.params']['resource_class'].constantize
+      if auth_params
+        auth_params['resource_class'].constantize
       else
         super
       end
@@ -94,8 +102,8 @@ module DeviseTokenAuth
 
     # necessary for access to devise_parameter_sanitizers
     def devise_mapping
-      if request.env['omniauth.params']
-        Devise.mappings[request.env['omniauth.params']['resource_class'].underscore.to_sym]
+      if auth_params
+        Devise.mappings[auth_params['resource_class'].underscore.to_sym]
       else
         request.env['devise.mapping']
       end
