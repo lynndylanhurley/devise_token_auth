@@ -75,12 +75,18 @@ You will need to create a [user model](#model-concerns), [define routes](#mounti
 rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
 ~~~
 
+**Example**:
+
+~~~bash
+rails g devise_token_auth:install User /auth
+~~~
+
 This generator accepts the following optional arguments:
 
 | Argument | Default | Description |
 |---|---|---|
 | USER_CLASS | `User` | The name of the class to use for user authentication. |
-| MOUNT_PATH | `auth` | The path at which to mount the authentication routes. [Read more](#usage). |
+| MOUNT_PATH | `/auth` | The path at which to mount the authentication routes. [Read more](#usage). |
 
 The following events will take place when using the install generator:
 
