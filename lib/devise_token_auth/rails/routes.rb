@@ -55,5 +55,10 @@ module ActionDispatch::Routing
         end
       end
     end
+
+    # ignore error about omniauth/multiple model support
+    def set_omniauth_path_prefix!(path_prefix)
+      ::OmniAuth.config.path_prefix = path_prefix
+    end
   end
 end
