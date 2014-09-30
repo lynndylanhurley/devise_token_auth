@@ -1,10 +1,23 @@
 module DeviseTokenAuth
   class OmniauthCallbacksController < DeviseTokenAuth::ApplicationController
-    skip_after_filter :update_auth_header, :only => [:omniauth_success, :omniauth_failure]
+    skip_before_filter :set_user_by_token
+    skip_after_filter :update_auth_header
+
+    def redirect_callbacks
+      # derive redirect_to path
+      devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
+      redirect_route = "#{Devise.mappings[devise_mapping].as_json["path_prefix"]}/#{params[:provider]}/callback"
+
+      # preserve omniauth info for success route
+      session['dta.omniauth.auth'] = request.env['omniauth.auth']
+      session['dta.omniauth.params'] = request.env['omniauth.params']
+
+      redirect_to redirect_route
+    end
 
     def omniauth_success
       # find or create user by provider and provider uid
-      @user = resource_name.where({
+      @user = resource_class.where({
         uid:      auth_hash['uid'],
         provider: auth_hash['provider']
       }).first_or_initialize
@@ -13,7 +26,7 @@ module DeviseTokenAuth
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
 
-      @auth_origin_url = generate_url(auth_params['auth_origin_url'], {
+      @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], {
         token:     @token,
         client_id: @client_id,
         uid:       @user.uid
@@ -68,18 +81,14 @@ module DeviseTokenAuth
     end
 
     def auth_hash
-      params["auth_hash"]
-    end
-
-    def auth_params
-      params["auth_params"]
+      request.env['omniauth.auth']
     end
 
     def whitelisted_params
       whitelist = devise_parameter_sanitizer.for(:sign_up)
 
       whitelist.inject({}){|coll, key|
-        param = auth_params[key.to_s]
+        param = omniauth_params[key.to_s]
         if param
           coll[key] = param
         end
@@ -87,23 +96,39 @@ module DeviseTokenAuth
       }
     end
 
-    def devise_controller?
-      true
+    # pull resource class from omniauth return
+    def resource_class
+      if omniauth_params
+        omniauth_params['resource_class'].constantize
+      end
     end
 
-    # pull resource class from omniauth return
     def resource_name
-      if auth_params
-        auth_params['resource_class'].constantize
+      resource_class
+    end
+
+    def omniauth_params
+      if request.env['omniauth.params']
+        request.env['omniauth.params']
       else
-        super
+        @_omniauth_params ||= session.delete('dta.omniauth.params')
+        @_omniauth_params
       end
+    end
+
+    def auth_hash
+      @_auth_hash ||= session.delete('dta.omniauth.auth')
+      @_auth_hash
+    end
+
+    def assert_is_devise_resource!
+      true
     end
 
     # necessary for access to devise_parameter_sanitizers
     def devise_mapping
-      if auth_params
-        Devise.mappings[auth_params['resource_class'].underscore.to_sym]
+      if omniauth_params
+        Devise.mappings[omniauth_params['resource_class'].underscore.to_sym]
       else
         request.env['devise.mapping']
       end

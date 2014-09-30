@@ -38,11 +38,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request should determine the correct resource_class' do
-        assert_equal 'User', controller.auth_params['resource_class']
+        assert_equal 'User', controller.omniauth_params['resource_class']
       end
 
       test 'request should pass correct redirect_url' do
-        assert_equal @redirect_url, controller.auth_params['auth_origin_url']
+        assert_equal @redirect_url, controller.omniauth_params['auth_origin_url']
       end
 
       test 'user should have been created' do
@@ -70,6 +70,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         assert post_message["auth_token"]
         refute post_message["tokens"]
         refute post_message["password"]
+      end
+
+      test 'session vars have been cleared' do
+        refute request.session['dta.omniauth.auth']
+        refute request.session['dta.omniauth.params']
       end
     end
 
@@ -116,11 +121,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request should determine the correct resource_class' do
-        assert_equal 'Mang', controller.auth_params['resource_class']
+        assert_equal 'Mang', controller.omniauth_params['resource_class']
       end
 
       test 'request should pass correct redirect_url' do
-        assert_equal @redirect_url, controller.auth_params['auth_origin_url']
+        assert_equal @redirect_url, controller.omniauth_params['auth_origin_url']
       end
 
       test 'user should have been created' do
