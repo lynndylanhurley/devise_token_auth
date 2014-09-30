@@ -581,7 +581,7 @@ mount_devise_token_auth_for 'User', at: '/auth', controllers: {
 
 ## Email Template Overrides
 
-You will probably want to override the default email templates for sign-up and password-reset confirmation. Run the following command to copy the email templates into your app:
+You will probably want to override the default email templates for email sign-up and password-reset confirmation. Run the following command to copy the email templates into your app:
 
 ~~~bash
 rails generate devise_token_auth:install_views
@@ -592,7 +592,9 @@ This will create two new files:
 * `app/views/devise/mailer/reset_password_instructions.html.erb`
 * `app/views/devise/mailer/confirmation_instructions.html.erb`
 
-**Note:** if you choose to modify these templates, do not mody the `link_to` blocks unless you absolutely know what you are doing.
+These files may be edited to suit your taste.
+
+**Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
 
 # Conceptual
 
