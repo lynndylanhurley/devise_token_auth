@@ -3,7 +3,7 @@ module Overrides
     OVERRIDE_PROOF = '(^^,)'
 
     def validate_token
-      # @user will have been set by set_user_token concern
+      # @user will have been set by set_user_by_token concern
       if @user
         render json: {
           success: true,

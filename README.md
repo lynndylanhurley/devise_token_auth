@@ -42,6 +42,7 @@ The fully configured api used in the demo can be found [here](https://github.com
   * [Controller Integration](#controller-concerns)
   * [Model Integration](#model-concerns)
   * [Using Multiple User Classes](#using-multiple-models)
+  * [Custom Controller Overrides](#custom-controller-overrides)
 * [Conceptual Diagrams](#conceptual)
   * [Token Management](#about-token-management)
   * [Batch Requests](#about-batch-requests)
@@ -503,6 +504,59 @@ In the above example, the following methods will be available (in addition to `c
   * `before_action: :authenticate_member!`
   * `current_member`
   * `member_signed_in?`
+
+## Custom Controller Overrides
+
+The built-in controllers can be overridden with your own custom controllers. 
+
+For example, the default behavior of the [`validate_token`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb#L6) method of the [`TokenValidationController`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb) is to return the `User` object as json (sans password and token data). The following example shows how to override the `validate_token` action to include a model method as well.
+
+##### Example: controller overrides
+
+~~~ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  ...  
+  mount_devise_token_auth_for 'User', at: '/auth', controllers: {
+    token_validations:  'overrides/token_validations'
+  }
+end
+
+# app/controllers/overrides/token_validations_controller.rb
+module Overrides
+  class TokenValidationsController < DeviseTokenAuth::TokenValidationsController
+
+    def validate_token
+      # @user will have been set by set_user_by_token concern
+      if @user
+        render json: {
+          data: @user.as_json(methods: :calculate_operating_thetan)
+        }
+      else
+        render json: {
+          success: false,
+          errors: ["Invalid login credentials"]
+        }, status: 401
+      end
+    end
+  end
+end
+~~~
+
+##### Example: all :controller options with default settings:
+
+~~~ruby
+mount_devise_token_auth_for 'User', at: '/auth', controllers: {
+  confirmations:      'devise_token_auth/confirmations',
+  passwords:          'devise_token_auth/passwords',
+  omniauth_callbacks: 'devise_token_auth/omniauth_callbacks',
+  registrations:      'devise_token_auth/registrations',
+  sessions:           'devise_token_auth/sessions',
+  token_validations:  'devise_token_auth/token_validations'
+}
+~~~
+
+**Note:** Controller overrides must implement the expected actions of the controllers that they replace.
 
 # Conceptual
 
