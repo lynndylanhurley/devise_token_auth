@@ -3,8 +3,11 @@ module DeviseTokenAuth
     skip_before_filter :set_user_by_token
     skip_after_filter :update_auth_header
 
+    # intermediary route for successful omniauth authentication. omniauth does
+    # not support multiple models, so we must resort to this terrible hack.
     def redirect_callbacks
-      # derive redirect_to path
+      # derive target redirect route from 'resource_class' param, which was set
+      # before authentication.
       devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
       redirect_route = "#{Devise.mappings[devise_mapping].as_json["path_prefix"]}/#{params[:provider]}/callback"
 
@@ -63,6 +66,8 @@ module DeviseTokenAuth
       end
     end
 
+
+    # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user, auth_hash)
       user.assign_attributes({
         nickname: auth_hash['info']['nickname'],
@@ -72,6 +77,7 @@ module DeviseTokenAuth
       })
     end
 
+
     def omniauth_failure
       @error = params[:message]
 
@@ -80,10 +86,8 @@ module DeviseTokenAuth
       end
     end
 
-    def auth_hash
-      request.env['omniauth.auth']
-    end
 
+    # derive allowed params from the standard devise parameter sanitizer
     def whitelisted_params
       whitelist = devise_parameter_sanitizer.for(:sign_up)
 
@@ -107,6 +111,13 @@ module DeviseTokenAuth
       resource_class
     end
 
+    # this will be determined differently depending on the action that calls
+    # it. redirect_callbacks is called upon returning from successful omniauth
+    # authentication, and the target params live in an omniauth-specific
+    # request.env variable. this variable is then persisted thru the redirect
+    # using our own dta.omniauth.params session var. the omniauth_success
+    # method will access that session var and then destroy it immediately
+    # after use.
     def omniauth_params
       if request.env['omniauth.params']
         request.env['omniauth.params']
@@ -116,11 +127,16 @@ module DeviseTokenAuth
       end
     end
 
+    # this sesison value is set by the redirect_callbacks method. its purpose
+    # is to persist the omniauth auth hash value thru a redirect. the value
+    # must be destroyed immediatly after it is accessed by omniauth_success
     def auth_hash
       @_auth_hash ||= session.delete('dta.omniauth.auth')
       @_auth_hash
     end
 
+    # ensure that this controller responds to :devise_controller? conditionals.
+    # this is used primarily for access to the parameter sanitizers.
     def assert_is_devise_resource!
       true
     end
