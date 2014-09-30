@@ -42,6 +42,7 @@ The fully configured api used in the demo can be found [here](https://github.com
   * [Controller Integration](#controller-concerns)
   * [Model Integration](#model-concerns)
   * [Using Multiple User Classes](#using-multiple-models)
+  * [Skip Confirmation Upon Email Registration](#skip-confirmation-upon-registration)
   * [Custom Controller Overrides](#custom-controller-overrides)
 * [Conceptual Diagrams](#conceptual)
   * [Token Management](#about-token-management)
@@ -504,6 +505,25 @@ In the above example, the following methods will be available (in addition to `c
   * `before_action: :authenticate_member!`
   * `current_member`
   * `member_signed_in?`
+
+## Skip Confirmation Upon Email Registration
+
+By default, an email is sent containing a link that the user must visit to activate their account. This measure is in place to ensure that users cannot register other people for accounts.
+
+To bypass this measure, add `before_create :skip_confirmation!` to your `User` model (or equivalent).
+
+##### Example: bypass email confirmation
+
+~~~ruby
+class User < ActiveRecord::Base
+  include DeviseTokenAuth::Concerns::User
+  before_create :skip_confirmation!
+end
+~~~
+
+##### Note for ng-token-auth users:
+
+If this `before_create :skip_confirmation!` callback is in place, the `$auth.submitRegistration` method will both register and authenticate users in a single step.
 
 ## Custom Controller Overrides
 

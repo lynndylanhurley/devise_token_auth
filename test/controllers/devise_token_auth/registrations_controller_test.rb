@@ -6,13 +6,14 @@ require 'test_helper'
 #  was the correct object stored in the response?
 #  was the appropriate message delivered in the json payload?
 
-class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
+
+class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   describe DeviseTokenAuth::RegistrationsController do
     describe "Successful registration" do
       before do
         @mails_sent = ActionMailer::Base.deliveries.count
 
-        xhr :post, :create, {
+        post '/auth', {
           email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
@@ -59,7 +60,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
         @redirect_url     = Faker::Internet.url
         @operating_thetan = 2
 
-        xhr :post, :create, {
+        post '/auth', {
           email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
@@ -96,7 +97,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
     describe "Mismatched passwords" do
       before do
-        xhr :post, :create, {
+        post '/auth', {
           email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "bogus",
@@ -124,7 +125,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       before do
         @existing_user = users(:confirmed_email_user)
 
-        xhr :post, :create, {
+        post "/auth", {
           email: @existing_user.email,
           password: "secret123",
           password_confirmation: "secret123",
@@ -159,10 +160,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
           # ensure request is not treated as batch request
           age_token(@existing_user, @client_id)
 
-          # add auth headers for user identification
-          request.headers.merge!(@auth_headers)
-
-          xhr :delete, :destroy
+          delete "/auth", {}, @auth_headers
 
           @data = JSON.parse(response.body)
         end
@@ -178,7 +176,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
       describe 'failure: no auth headers' do
         before do
-          xhr :delete, :destroy
+          delete "/auth"
           @data = JSON.parse(response.body)
         end
 
@@ -196,13 +194,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
           @auth_headers  = @existing_user.create_new_auth_token
           @client_id     = @auth_headers['client']
 
-
           # ensure request is not treated as batch request
           age_token(@existing_user, @client_id)
-
-          # add auth headers for user identification
-          request.headers.merge!(@auth_headers)
-
         end
 
         describe "success" do
@@ -210,9 +203,9 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
             # test valid update param
             @new_operating_thetan = 1000000
 
-            xhr :put, :update, {
+            put "/auth", {
               operating_thetan: @new_operating_thetan
-            }
+            }, @auth_headers
 
             @data = JSON.parse(response.body)
             @existing_user.reload
@@ -231,9 +224,9 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
           before do
             # test invalid update param
             @new_operating_thetan = "blegh"
-            xhr :put, :update, {
+            put "/auth", {
               operating_thetan: @new_operating_thetan
-            }
+            }, @auth_headers
 
             @data = JSON.parse(response.body)
             @existing_user.reload
@@ -258,15 +251,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
           # ensure request is not treated as batch request
           expire_token(@existing_user, @client_id)
 
-          # add auth headers for user identification
-          request.headers.merge!(@auth_headers)
-
           # test valid update param
           @new_operating_thetan = 3
 
-          xhr :put, :update, {
+          put "/auth", {
             operating_thetan: @new_operating_thetan
-          }
+          }, @auth_headers
 
           @data = JSON.parse(response.body)
           @existing_user.reload
@@ -286,7 +276,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
       before do
         @existing_user = users(:duplicate_email_facebook_user)
 
-        xhr :post, :create, {
+        post "/auth", {
           email: @existing_user.email,
           password: "secret123",
           password_confirmation: "secret123",
@@ -311,16 +301,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
     end
 
     describe "Alternate user class" do
-      setup do
-        @request.env['devise.mapping'] = Devise.mappings[:mang]
-      end
-
-      teardown do
-        @request.env['devise.mapping'] = Devise.mappings[:user]
-      end
-
       before do
-        xhr :post, :create, {
+        post "/mangs", {
           email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
@@ -347,30 +329,18 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
         # ensure request is not treated as batch request
         age_token(@user, @client_id)
 
-        # add auth headers for user identification
-        request.headers.merge!(@auth_headers)
-
-        xhr :delete, :destroy
+        delete "/mangs", {}, @auth_headers
 
         assert_equal 200, response.status
         refute Mang.where(id: @user.id).first
       end
     end
 
-
     describe "Passing client config name" do
-      setup do
-        @request.env['devise.mapping'] = Devise.mappings[:mang]
-      end
-
-      teardown do
-        @request.env['devise.mapping'] = Devise.mappings[:user]
-      end
-
       before do
         @config_name = 'altUser'
 
-        xhr :post, :create, {
+        post "/mangs", {
           email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
@@ -391,6 +361,47 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionController::TestCase
 
       test 'config_name param is included in the confirmation email link' do
         assert_equal @config_name, @mail_config_name
+      end
+    end
+
+    describe "Skipped confirmation" do
+      setup do
+        User.set_callback(:create, :before, :skip_confirmation!)
+
+        post "/auth", {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+
+        @user      = assigns(:user)
+        @token     = response.headers["access-token"]
+        @client_id = response.headers["client"]
+      end
+
+      teardown do
+        User.skip_callback(:create, :before, :skip_confirmation!)
+      end
+
+      test "user was created" do
+        assert @user
+      end
+
+      test "user was confirmed" do
+        assert @user.confirmed?
+      end
+
+      test "auth headers were returned in response" do
+        assert response.headers["access-token"]
+        assert response.headers["token-type"]
+        assert response.headers["client"]
+        assert response.headers["expiry"]
+        assert response.headers["uid"]
+      end
+
+      test "response token is valid" do
+        assert @user.valid_token?(@token, @client_id)
       end
     end
   end
