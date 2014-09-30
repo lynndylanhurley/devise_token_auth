@@ -44,6 +44,7 @@ The fully configured api used in the demo can be found [here](https://github.com
   * [Using Multiple User Classes](#using-multiple-models)
   * [Skip Confirmation Upon Email Registration](#skip-confirmation-upon-registration)
   * [Custom Controller Overrides](#custom-controller-overrides)
+  * [Email Template Overrides](#email-template-overrides)
 * [Conceptual Diagrams](#conceptual)
   * [Token Management](#about-token-management)
   * [Batch Requests](#about-batch-requests)
@@ -577,6 +578,21 @@ mount_devise_token_auth_for 'User', at: '/auth', controllers: {
 ~~~
 
 **Note:** Controller overrides must implement the expected actions of the controllers that they replace.
+
+## Email Template Overrides
+
+You will probably want to override the default email templates for sign-up and password-reset confirmation. Run the following command to copy the email templates into your app:
+
+~~~bash
+rails generate devise_token_auth:install_views
+~~~
+
+This will create two new files:
+
+* `app/views/devise/mailer/reset_password_instructions.html.erb`
+* `app/views/devise/mailer/confirmation_instructions.html.erb`
+
+**Note:** if you choose to modify these templates, do not mody the `link_to` blocks unless you absolutely know what you are doing.
 
 # Conceptual
 
