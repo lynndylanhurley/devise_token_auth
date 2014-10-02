@@ -25,14 +25,16 @@ module DeviseTokenAuth
         provider: auth_hash['provider']
       }).first_or_initialize
 
-      # create client id
+      # create token info
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
+      @expiry    = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
       @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], {
         token:     @token,
         client_id: @client_id,
-        uid:       @user.uid
+        uid:       @user.uid,
+        expiry:    @expiry
       })
 
       # set crazy password for new oauth users. this is only used to prevent
@@ -45,7 +47,7 @@ module DeviseTokenAuth
 
       @user.tokens[@client_id] = {
         token: BCrypt::Password.create(@token),
-        expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+        expiry: @expiry
       }
 
       # sync user info with provider, update/generate auth token
