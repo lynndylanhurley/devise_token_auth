@@ -36,5 +36,25 @@ class UserTest < ActiveSupport::TestCase
         refute @user.errors.messages[:email]
       end
     end
+
+    describe 'expired tokens are destroyed on save' do
+      before do
+        @user = users(:confirmed_email_user)
+        @user.skip_confirmation!
+        @user.save!
+
+        @old_auth_headers = @user.create_new_auth_token
+        @new_auth_headers = @user.create_new_auth_token
+        expire_token(@user, @old_auth_headers['client'])
+      end
+
+      test 'expired token was removed' do
+        refute @user.tokens[@old_auth_headers['client']]
+      end
+
+      test 'current token was not removed' do
+        assert @user.tokens[@new_auth_headers['client']]
+      end
+    end
   end
 end

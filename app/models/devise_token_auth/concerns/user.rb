@@ -19,6 +19,9 @@ module DeviseTokenAuth::Concerns::User
     after_save :set_empty_token_hash
     after_initialize :set_empty_token_hash
 
+    # get rid of dead tokens
+    before_save :destroy_expired_tokens
+
 
     # don't use default devise email validation
     def email_required?
@@ -207,5 +210,12 @@ module DeviseTokenAuth::Concerns::User
 
   def set_empty_token_hash
     self.tokens ||= {} if has_attribute?(:tokens)
+  end
+
+  def destroy_expired_tokens
+    self.tokens.delete_if{|cid,v|
+      expiry = v[:expiry] || v["expiry"]
+      DateTime.strptime(expiry.to_s, '%s') < Time.now
+    }
   end
 end
