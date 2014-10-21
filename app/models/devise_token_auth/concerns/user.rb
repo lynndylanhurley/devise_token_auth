@@ -99,8 +99,8 @@ module DeviseTokenAuth::Concerns::User
       self.tokens[client_id]['expiry'] and
       self.tokens[client_id]['token'] and
 
-      # ensure that the token was created within the last two weeks
-      DateTime.strptime(self.tokens[client_id]['expiry'].to_s, '%s') > DeviseTokenAuth.token_lifespan.ago and
+      # ensure that the token has not yet expired
+      DateTime.strptime(self.tokens[client_id]['expiry'].to_s, '%s') > Time.now and
 
       # ensure that the token is valid
       BCrypt::Password.new(self.tokens[client_id]['token']) == token
