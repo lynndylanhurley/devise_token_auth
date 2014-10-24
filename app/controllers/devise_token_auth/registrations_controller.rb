@@ -56,7 +56,7 @@ module DeviseTokenAuth
           render json: {
             status: 'error',
             data:   @resource,
-            errors: @resource.errors
+            errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
           }, status: 403
         end
       rescue ActiveRecord::RecordNotUnique

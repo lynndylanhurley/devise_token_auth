@@ -119,6 +119,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       test "error should be returned in the response" do
         assert @data['errors'].length
       end
+
+      test "full_messages should be included in error hash" do
+        assert @data['errors']['full_messages'].length
+      end
     end
 
     describe "Existing users" do
