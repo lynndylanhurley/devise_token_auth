@@ -15,10 +15,17 @@ module DeviseTokenAuth
       if self.class.migration_exists?("db/migrate", "devise_token_auth_create_#{ user_class.underscore }")
         say_status("skipped", "Migration 'devise_token_auth_create_#{ user_class.underscore }' already exists")
       else
+        if model_exists?(user_class)
         migration_template(
+          "add_devise_token_auth_to.rb.erb",
+          "db/migrate/add_devise_token_auth_to#{ user_class.pluralize.underscore }.rb"
+        )
+        else 
+         migration_template(
           "devise_token_auth_create_users.rb.erb",
           "db/migrate/devise_token_auth_create_#{ user_class.pluralize.underscore }.rb"
-        )
+        ) 
+        end
       end
     end
 
@@ -89,6 +96,11 @@ module DeviseTokenAuth
 
     private
 
+    def model_exists?(model)
+      model_path = "app/models/#{ model.underscore }.rb"
+      File.exist?(File.join(destination_root, model_path))
+    end
+    
     def self.next_migration_number(path)
       Time.now.utc.strftime("%Y%m%d%H%M%S")
     end
