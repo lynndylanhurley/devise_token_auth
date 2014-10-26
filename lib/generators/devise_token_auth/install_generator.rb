@@ -17,8 +17,8 @@ module DeviseTokenAuth
       else
         if model_exists?(user_class)
         migration_template(
-          "add_devise_token_auth_to.rb.erb",
-          "db/migrate/add_devise_token_auth_to#{ user_class.pluralize.underscore }.rb"
+          "add_devise_token_auth_to_users.rb.erb",
+          "db/migrate/add_devise_token_auth_to_#{ user_class.pluralize.underscore }.rb"
         )
         else 
          migration_template(
@@ -92,6 +92,52 @@ module DeviseTokenAuth
       else
         say_status("skipped", "config/routes.rb not found. Add \"mount_devise_token_auth_for '#{user_class}', at: '#{mount_path}'\" to your routes file.")
       end
+    end
+
+    def migration_data
+<<RUBY
+      ## Database authenticatable
+      t.string :email
+      t.string :encrypted_password, :null => false, :default => ""
+
+      ## Recoverable
+      t.string   :reset_password_token
+      t.datetime :reset_password_sent_at
+
+      ## Rememberable
+      t.datetime :remember_created_at
+
+      ## Trackable
+      t.integer  :sign_in_count, :default => 0, :null => false
+      t.datetime :current_sign_in_at
+      t.datetime :last_sign_in_at
+      t.string   :current_sign_in_ip
+      t.string   :last_sign_in_ip
+
+      ## Confirmable
+      t.string   :confirmation_token
+      t.datetime :confirmed_at
+      t.datetime :confirmation_sent_at
+      t.string   :unconfirmed_email # Only if using reconfirmable
+
+      ## Lockable
+      # t.integer  :failed_attempts, :default => 0, :null => false # Only if lock strategy is :failed_attempts
+      # t.string   :unlock_token # Only if unlock strategy is :email or :both
+      # t.datetime :locked_at
+
+      ## User Info
+      t.string :name
+      t.string :nickname
+      t.string :image
+
+      ## unique oauth id
+      t.string :provider
+      t.string :uid, :null => false, :default => ""
+
+      ## Tokens
+      t.text :tokens
+
+RUBY
     end
 
     private
