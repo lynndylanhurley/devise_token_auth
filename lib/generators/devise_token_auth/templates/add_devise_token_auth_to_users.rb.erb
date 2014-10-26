@@ -1,5 +1,5 @@
 class AddDeviseTokenAuthTo<%= user_class.pluralize.camelize %> < ActiveRecord::Migration
-  def self.up
+  def change
     change_table(:<%= user_class.pluralize.underscore %>) do |t|
       <%= migration_data %>
     
@@ -12,6 +12,4 @@ class AddDeviseTokenAuthTo<%= user_class.pluralize.camelize %> < ActiveRecord::M
     # add_index :<%= user_class.pluralize.underscore %>, :unlock_token,         :unique => true
   end
 
-  def self.down
-  end
 end
