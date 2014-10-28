@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.1.29)
+    devise_token_auth (0.1.30.beta1)
       devise (~> 3.2)
       rails (~> 4.1)
 
@@ -114,7 +114,7 @@ GEM
     mail (2.6.1)
       mime-types (>= 1.16, < 3)
     method_source (0.8.2)
-    mime-types (2.3)
+    mime-types (2.4.2)
     minitest (5.4.2)
     minitest-focus (1.1.0)
       minitest (>= 4, < 6)
