@@ -3,11 +3,18 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   include DeviseTokenAuth::Controllers::Helpers
 
   included do
+    before_action :set_request_start
     after_action :update_auth_header
+  end
+
+  # keep track of request duration
+  def set_request_start
+    @request_started_at = Time.now
   end
 
   # user auth
   def set_user_by_token(mapping=nil)
+
     # determine target authentication class
     rc = resource_class(mapping)
 
@@ -32,41 +39,48 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     if user && user.valid_token?(@token, @client_id)
       sign_in(:user, user, store: false, bypass: true)
-
-      # check this now so that the duration of the request itself doesn't eat
-      # away the buffer
-      @is_batch_request = is_batch_request?(user, @client_id)
-
       return @user = user
     else
       # zero all values previously set values
-      return @user = @is_batch_request = nil
+      return @user = nil
     end
   end
 
 
   def update_auth_header
+
     # cannot save object if model has invalid params
     return unless @user and @user.valid? and @client_id
 
-    auth_header = {}
+    # Lock the user record during any auth_header updates to ensure 
+    # we don't have write contention from multiple threads
+    @user.with_lock do
+      
+      # determine batch request status after request processing, in case 
+      # another processes has updated it during that processing
+      @is_batch_request = is_batch_request?(@user, @client_id)
 
-    if not DeviseTokenAuth.change_headers_on_each_request
-      auth_header = @user.build_auth_header(@token, @client_id)
+      auth_header = {}
+
+      if not DeviseTokenAuth.change_headers_on_each_request
+        auth_header = @user.build_auth_header(@token, @client_id)
+
+      # extend expiration of batch buffer to account for the duration of
+      # this request
+      elsif @is_batch_request
+        auth_header = @user.extend_batch_buffer(@token, @client_id)
+
+      # update Authorization response header with new token
+      else
+        auth_header = @user.create_new_auth_token(@client_id)
+      end
+
+      # update the response header
       response.headers.merge!(auth_header)
 
-    # extend expiration of batch buffer to account for the duration of
-    # this request
-    elsif @is_batch_request
-      @user.extend_batch_buffer(@token, @client_id)
+    end # end lock
 
-    # update Authorization response header with new token
-    else
-      auth_header = @user.create_new_auth_token(@client_id)
-      response.headers.merge!(auth_header)
-    end
   end
-
 
   def resource_class(m=nil)
     if m
@@ -85,6 +99,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   def is_batch_request?(user, client_id)
     user.tokens[client_id] and
     user.tokens[client_id]['updated_at'] and
-    Time.parse(user.tokens[client_id]['updated_at']) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle
+    Time.parse(user.tokens[client_id]['updated_at']) > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle
   end
 end
