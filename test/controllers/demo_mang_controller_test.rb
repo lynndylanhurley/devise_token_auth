@@ -195,8 +195,8 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
             assert @first_access_token
           end
 
-          it 'should also return auth headers for second (batched) requests' do
-            assert @second_access_token
+          it 'should not return auth headers for second (batched) requests' do
+            refute @second_access_token
           end
         end
 

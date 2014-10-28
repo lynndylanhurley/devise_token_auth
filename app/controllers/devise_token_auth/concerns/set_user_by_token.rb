@@ -65,6 +65,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       if not DeviseTokenAuth.change_headers_on_each_request
         auth_header = @user.build_auth_header(@token, @client_id)
 
+        # update the response header
+        response.headers.merge!(auth_header)
+
       # extend expiration of batch buffer to account for the duration of
       # this request
       elsif @is_batch_request
