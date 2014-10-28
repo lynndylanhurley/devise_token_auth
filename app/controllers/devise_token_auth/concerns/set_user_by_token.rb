@@ -18,8 +18,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # determine target authentication class
     rc = resource_class(mapping)
 
-    logger.debug "@-->setting user by token for #{mapping}"
-
     # no default user defined
     return unless rc
 
@@ -30,8 +28,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     uid        = request.headers['uid']
     @token     = request.headers['access-token']
     @client_id = request.headers['client']
-
-    logger.debug "@-->token #{@token}"
 
     return false unless @token
 
@@ -63,8 +59,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # determine batch request status after request processing, in case
       # another processes has updated it during that processing
       @is_batch_request = is_batch_request?(@user, @client_id)
-
-      logger.debug "@-->is batched request #{@is_batch_request.to_s}"
 
       auth_header = {}
 

@@ -143,8 +143,6 @@ module DeviseTokenAuth::Concerns::User
       updated_at: Time.now
     }
 
-    logger.debug "@-->created new auth token #{token}"
-
     self.save!
 
     return build_auth_header(token, client_id)
