@@ -141,7 +141,9 @@ module DeviseTokenAuth::Concerns::User
       expiry:     expiry,
       last_token: last_token,
       updated_at: Time.now
-   }
+    }
+
+    logger.debug "@-->created new auth token #{token}"
 
     self.save!
 
@@ -185,7 +187,7 @@ module DeviseTokenAuth::Concerns::User
   protected
 
 
-  # ensure that fragment comes AFTER querystring for proper $location
+  # NOTE: ensure that fragment comes AFTER querystring for proper $location
   # parsing using AngularJS.
   def generate_url(url, params = {})
     uri = URI(url)

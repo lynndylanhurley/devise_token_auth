@@ -18,6 +18,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # determine target authentication class
     rc = resource_class(mapping)
 
+    logger.debug "@-->setting user by token for #{mapping}"
+
     # no default user defined
     return unless rc
 
@@ -28,6 +30,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     uid        = request.headers['uid']
     @token     = request.headers['access-token']
     @client_id = request.headers['client']
+
+    logger.debug "@-->token #{@token}"
 
     return false unless @token
 
@@ -52,13 +56,15 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # cannot save object if model has invalid params
     return unless @user and @user.valid? and @client_id
 
-    # Lock the user record during any auth_header updates to ensure 
+    # Lock the user record during any auth_header updates to ensure
     # we don't have write contention from multiple threads
     @user.with_lock do
-      
-      # determine batch request status after request processing, in case 
+
+      # determine batch request status after request processing, in case
       # another processes has updated it during that processing
       @is_batch_request = is_batch_request?(@user, @client_id)
+
+      logger.debug "@-->is batched request #{@is_batch_request.to_s}"
 
       auth_header = {}
 
@@ -73,10 +79,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # update Authorization response header with new token
       else
         auth_header = @user.create_new_auth_token(@client_id)
-      end
 
-      # update the response header
-      response.headers.merge!(auth_header)
+        # update the response header
+        response.headers.merge!(auth_header)
+      end
 
     end # end lock
 
