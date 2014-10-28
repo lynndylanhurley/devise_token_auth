@@ -1,9 +1,8 @@
-class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
+class AddDeviseTokenAuthTo<%= user_class.pluralize.camelize %> < ActiveRecord::Migration
   def change
-    create_table(:<%= user_class.pluralize.underscore %>) do |t|
+    change_table(:<%= user_class.pluralize.underscore %>) do |t|
       <%= migration_data %>
-
-      t.timestamps
+    
     end
 
     add_index :<%= user_class.pluralize.underscore %>, :email
@@ -12,4 +11,5 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
     # add_index :<%= user_class.pluralize.underscore %>, :confirmation_token,   :unique => true
     # add_index :<%= user_class.pluralize.underscore %>, :unlock_token,         :unique => true
   end
+
 end
