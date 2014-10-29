@@ -4,7 +4,13 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, :only => [:destroy]
 
     def create
-      @resource = resource_class.find_by_email(resource_params[:email])
+      # honor devise configuration for case_insensitive_keys
+      if resource_class.case_insensitive_keys.include?(:email)
+        email = resource_params[:email].downcase
+      else
+        email = resource_params[:email]
+      end
+      @resource = resource_class.find_by_email(email)
 
       if @resource and valid_params? and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id
