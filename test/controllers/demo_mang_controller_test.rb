@@ -10,11 +10,11 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
   describe DemoMangController do
     describe "Token access" do
       before do
-        @user = mangs(:confirmed_email_user)
-        @user.skip_confirmation!
-        @user.save!
+        @resource = mangs(:confirmed_email_user)
+        @resource.skip_confirmation!
+        @resource.save!
 
-        @auth_headers = @user.create_new_auth_token
+        @auth_headers = @resource.create_new_auth_token
 
         @token     = @auth_headers['access-token']
         @client_id = @auth_headers['client']
@@ -24,7 +24,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
       describe 'successful request' do
         before do
           # ensure that request is not treated as batch request
-          age_token(@user, @client_id)
+          age_token(@resource, @client_id)
 
           get '/demo/members_only_mang', {}, @auth_headers
 
@@ -36,7 +36,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
 
         describe 'devise mappings' do
           it 'should define current_mang' do
-            assert_equal @user, @controller.current_mang
+            assert_equal @resource, @controller.current_mang
           end
 
           it 'should define mang_signed_in?' do
@@ -44,7 +44,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not define current_user' do
-            refute_equal @user, @controller.current_user
+            refute_equal @resource, @controller.current_user
           end
         end
 
@@ -61,7 +61,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
         end
 
         it "should return the user's uid in the auth header" do
-          assert_equal @user.uid, @resp_uid
+          assert_equal @resource.uid, @resp_uid
         end
 
         it 'should not treat this request as a batch request' do
@@ -70,9 +70,9 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
 
         describe 'subsequent requests' do
           before do
-            @user.reload
+            @resource.reload
             # ensure that request is not treated as batch request
-            age_token(@user, @client_id)
+            age_token(@resource, @client_id)
 
             get '/demo/members_only_mang', {}, @auth_headers.merge({'access-token' => @resp_token})
           end
@@ -104,24 +104,24 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
       describe 'disable change_headers_on_each_request' do
         before do
           DeviseTokenAuth.change_headers_on_each_request = false
-          @user.reload
-          age_token(@user, @client_id)
+          @resource.reload
+          age_token(@resource, @client_id)
 
           get '/demo/members_only_mang', {}, @auth_headers
 
           @first_is_batch_request = assigns(:is_batch_request)
-          @first_user = assigns(:user).dup
+          @first_user = assigns(:resource).dup
           @first_access_token = response.headers['access-token']
           @first_response_status = response.status
 
-          @user.reload
-          age_token(@user, @client_id)
+          @resource.reload
+          age_token(@resource, @client_id)
 
           # use expired auth header
           get '/demo/members_only_mang', {}, @auth_headers
 
           @second_is_batch_request = assigns(:is_batch_request)
-          @second_user = assigns(:user).dup
+          @second_user = assigns(:resource).dup
           @second_access_token = response.headers['access-token']
           @second_response_status = response.status
         end
@@ -163,19 +163,19 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
       describe 'batch requests' do
         describe 'success' do
           before do
-            age_token(@user, @client_id)
+            age_token(@resource, @client_id)
             #request.headers.merge!(@auth_headers)
 
             get '/demo/members_only_mang', {}, @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
-            @first_user = assigns(:user)
+            @first_user = assigns(:resource)
             @first_access_token = response.headers['access-token']
 
             get '/demo/members_only_mang', {}, @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
-            @second_user = assigns(:user)
+            @second_user = assigns(:resource)
             @second_access_token = response.headers['access-token']
           end
 
@@ -202,24 +202,24 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
 
         describe 'time out' do
           before do
-            @user.reload
-            age_token(@user, @client_id)
+            @resource.reload
+            age_token(@resource, @client_id)
 
             get '/demo/members_only_mang', {}, @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
-            @first_user = assigns(:user).dup
+            @first_user = assigns(:resource).dup
             @first_access_token = response.headers['access-token']
             @first_response_status = response.status
 
-            @user.reload
-            age_token(@user, @client_id)
+            @resource.reload
+            age_token(@resource, @client_id)
 
             # use expired auth header
             get '/demo/members_only_mang', {}, @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
-            @second_user = assigns(:user)
+            @second_user = assigns(:resource)
             @second_access_token = response.headers['access-token']
             @second_response_status = response.status
           end

@@ -4,8 +4,8 @@ class DemoUserController < ApplicationController
   def members_only
     render json: {
       data: {
-        message: "Welcome #{@user.name}",
-        user: @user
+        message: "Welcome #{current_user.name}",
+        user: current_user
       }
     }, status: 200
   end

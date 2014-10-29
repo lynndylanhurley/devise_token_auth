@@ -3,11 +3,11 @@ module Overrides
     OVERRIDE_PROOF = '(^^,)'
 
     def validate_token
-      # @user will have been set by set_user_by_token concern
-      if @user
+      # @resource will have been set by set_user_by_token concern
+      if @resource
         render json: {
           success: true,
-          data: @user.as_json(except: [
+          data: @resource.as_json(except: [
             :tokens, :created_at, :updated_at
           ]),
           override_proof: OVERRIDE_PROOF

@@ -21,7 +21,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           unpermitted_param: '(x_x)'
         }
 
-        @user = assigns(:resource)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
       end
@@ -31,11 +31,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "user should have been created" do
-        assert @user.id
+        assert @resource.id
       end
 
       test "user should not be confirmed" do
-        assert_nil @user.confirmed_at
+        assert_nil @resource.confirmed_at
       end
 
       test "new user data should be returned as json" do
@@ -43,7 +43,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "new user should receive confirmation email" do
-        assert_equal @user.email, @mail['to'].to_s
+        assert_equal @resource.email, @mail['to'].to_s
       end
 
       test "new user password should not be returned" do
@@ -69,7 +69,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           operating_thetan: @operating_thetan
         }
 
-        @user = assigns(:resource)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
 
@@ -83,7 +83,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "additional sign_up params should be considered" do
-        assert_equal @operating_thetan, @user.operating_thetan
+        assert_equal @operating_thetan, @resource.operating_thetan
       end
 
       test 'config_name param is included in the confirmation email link' do
@@ -104,7 +104,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           confirm_success_url: Faker::Internet.url
         }
 
-        @user = assigns(:resource)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
 
@@ -113,7 +113,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "user should have been created" do
-        assert_nil @user.id
+        assert_nil @resource.id
       end
 
       test "error should be returned in the response" do
@@ -136,7 +136,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           confirm_success_url: Faker::Internet.url
         }
 
-        @user = assigns(:resource)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
 
@@ -145,7 +145,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "user should have been created" do
-        assert_nil @user.id
+        assert_nil @resource.id
       end
 
       test "error should be returned in the response" do
@@ -287,7 +287,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           confirm_success_url: Faker::Internet.url
         }
 
-        @user = assigns(:resource)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
 
@@ -296,7 +296,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "user should have been created" do
-        assert @user.id
+        assert @resource.id
       end
 
       test "new user data should be returned as json" do
@@ -313,7 +313,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           confirm_success_url: Faker::Internet.url
         }
 
-        @user = assigns(:resource)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
       end
@@ -323,20 +323,20 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "use should be a Mang" do
-        assert_equal "Mang", @user.class.name
+        assert_equal "Mang", @resource.class.name
       end
 
       test "Mang should be destroyed" do
-        @auth_headers  = @user.create_new_auth_token
+        @auth_headers  = @resource.create_new_auth_token
         @client_id     = @auth_headers['client']
 
         # ensure request is not treated as batch request
-        age_token(@user, @client_id)
+        age_token(@resource, @client_id)
 
         delete "/mangs", {}, @auth_headers
 
         assert_equal 200, response.status
-        refute Mang.where(id: @user.id).first
+        refute Mang.where(id: @resource.id).first
       end
     end
 
@@ -352,11 +352,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           config_name: @config_name
         }
 
-        @user = assigns(:resource)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
 
-        @user.reload
+        @resource.reload
 
         @mail_reset_token  = @mail.body.match(/confirmation_token=([^&]*)&/)[1]
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)\"/)[1])
@@ -379,7 +379,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           confirm_success_url: Faker::Internet.url
         }
 
-        @user      = assigns(:user)
+        @resource  = assigns(:resource)
         @token     = response.headers["access-token"]
         @client_id = response.headers["client"]
       end
@@ -389,11 +389,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "user was created" do
-        assert @user
+        assert @resource
       end
 
       test "user was confirmed" do
-        assert @user.confirmed?
+        assert @resource.confirmed?
       end
 
       test "auth headers were returned in response" do
@@ -405,7 +405,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "response token is valid" do
-        assert @user.valid_token?(@token, @client_id)
+        assert @resource.valid_token?(@token, @client_id)
       end
     end
   end

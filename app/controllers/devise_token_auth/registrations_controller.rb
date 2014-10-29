@@ -33,16 +33,15 @@ module DeviseTokenAuth
 
           else
             # email auth has been bypassed, authenticate user
-            @user      = @resource
             @client_id = SecureRandom.urlsafe_base64(nil, false)
             @token     = SecureRandom.urlsafe_base64(nil, false)
 
-            @user.tokens[@client_id] = {
+            @resource.tokens[@client_id] = {
               token: BCrypt::Password.create(@token),
               expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
             }
 
-            @user.save!
+            @resource.save!
 
             update_auth_header
           end
@@ -70,16 +69,16 @@ module DeviseTokenAuth
     end
 
     def update
-      if @user
-        if @user.update_attributes(account_update_params)
+      if @resource
+        if @resource.update_attributes(account_update_params)
           render json: {
             status: 'success',
-            data:   @user.as_json
+            data:   @resource.as_json
           }
         else
           render json: {
             status: 'error',
-            errors: @user.errors
+            errors: @resource.errors
           }, status: 403
         end
       else
@@ -91,12 +90,12 @@ module DeviseTokenAuth
     end
 
     def destroy
-      if @user
-        @user.destroy
+      if @resource
+        @resource.destroy
 
         render json: {
           status: 'success',
-          message: "Account with uid #{@user.uid} has been destroyed."
+          message: "Account with uid #{@resource.uid} has been destroyed."
         }
       else
         render json: {

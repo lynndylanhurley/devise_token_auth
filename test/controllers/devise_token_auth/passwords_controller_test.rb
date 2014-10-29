@@ -10,19 +10,19 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::PasswordsController do
     describe "Password reset" do
       before do
-        @user = users(:confirmed_email_user)
+        @resource = users(:confirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
       end
 
       describe 'request password reset' do
         before do
           xhr :post, :create, {
-            email:        @user.email,
+            email:        @resource.email,
             redirect_url: @redirect_url
           }
 
           @mail = ActionMailer::Base.deliveries.last
-          @user.reload
+          @resource.reload
 
           @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
           @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
@@ -38,7 +38,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         end
 
         test 'the email should be addressed to the user' do
-          assert_equal @mail.to.first, @user.email
+          assert_equal @mail.to.first, @resource.email
         end
 
         test 'the email body should contain a link with redirect url as a query param' do
@@ -54,7 +54,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             reset_password_token: @mail_reset_token
           })
 
-          assert_equal user.id, @user.id
+          assert_equal user.id, @resource.id
         end
 
         describe 'password reset link failure' do
@@ -75,7 +75,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               redirect_url: @mail_redirect_url
             }
 
-            @user.reload
+            @resource.reload
 
             raw_qs = response.location.split('?')[1]
             @qs = Rack::Utils.parse_nested_query(raw_qs)
@@ -100,7 +100,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           test 'response auth params should be valid' do
-            assert @user.valid_token?(@token, @client_id)
+            assert @resource.valid_token?(@token, @client_id)
           end
         end
       end
@@ -108,7 +108,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       describe "change password" do
         describe 'success' do
           before do
-            @auth_headers = @user.create_new_auth_token
+            @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
@@ -117,7 +117,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               password_confirmation: @new_password
             }
 
-            @user.reload
+            @resource.reload
           end
 
           test "request should be successful" do
@@ -125,13 +125,13 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           test "new password should authenticate user" do
-            assert @user.valid_password?(@new_password)
+            assert @resource.valid_password?(@new_password)
           end
         end
 
         describe 'password mismatch error' do
           before do
-            @auth_headers = @user.create_new_auth_token
+            @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
@@ -148,7 +148,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'unauthorized user' do
           before do
-            @auth_headers = @user.create_new_auth_token
+            @auth_headers = @resource.create_new_auth_token
             @new_password = Faker::Internet.password
 
             xhr :put, :update, {
@@ -174,16 +174,16 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       before do
-        @user = mangs(:confirmed_email_user)
+        @resource = mangs(:confirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
 
         xhr :post, :create, {
-          email:        @user.email,
+          email:        @resource.email,
           redirect_url: @redirect_url
         }
 
         @mail = ActionMailer::Base.deliveries.last
-        @user.reload
+        @resource.reload
 
         @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
@@ -199,22 +199,22 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           reset_password_token: @mail_reset_token
         })
 
-        assert_equal user.id, @user.id
+        assert_equal user.id, @resource.id
       end
     end
 
     describe 'unconfirmed user' do
       before do
-        @user = users(:unconfirmed_email_user)
+        @resource = users(:unconfirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
 
         xhr :post, :create, {
-          email:        @user.email,
+          email:        @resource.email,
           redirect_url: @redirect_url
         }
 
         @mail = ActionMailer::Base.deliveries.last
-        @user.reload
+        @resource.reload
 
         @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
@@ -225,28 +225,28 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           redirect_url: @mail_redirect_url
         }
 
-        @user.reload
+        @resource.reload
       end
 
       test 'unconfirmed email user should now be confirmed' do
-        assert @user.confirmed_at
+        assert @resource.confirmed_at
       end
     end
 
     describe 'alternate user type' do
       before do
-        @user         = users(:confirmed_email_user)
+        @resource         = users(:confirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
         @config_name  = "altUser"
 
         xhr :post, :create, {
-          email:        @user.email,
+          email:        @resource.email,
           redirect_url: @redirect_url,
           config_name:  @config_name
         }
 
         @mail = ActionMailer::Base.deliveries.last
-        @user.reload
+        @resource.reload
 
         @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])

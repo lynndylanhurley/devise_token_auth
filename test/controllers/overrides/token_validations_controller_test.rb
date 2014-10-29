@@ -9,18 +9,18 @@ require 'test_helper'
 class Overrides::TokenValidationsControllerTest < ActionDispatch::IntegrationTest
   describe Overrides::TokenValidationsController do
     before do
-      @user = evil_users(:confirmed_email_user)
-      @user.skip_confirmation!
-      @user.save!
+      @resource = evil_users(:confirmed_email_user)
+      @resource.skip_confirmation!
+      @resource.save!
 
-      @auth_headers = @user.create_new_auth_token
+      @auth_headers = @resource.create_new_auth_token
 
       @token     = @auth_headers['access-token']
       @client_id = @auth_headers['client']
       @expiry    = @auth_headers['expiry']
 
       # ensure that request is not treated as batch request
-      age_token(@user, @client_id)
+      age_token(@resource, @client_id)
 
       get '/evil_user_auth/validate_token', {}, @auth_headers
 

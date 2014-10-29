@@ -22,7 +22,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             password: 'secret123'
           }
 
-          @user = assigns(:user)
+          @resource = assigns(:resource)
           @data = JSON.parse(response.body)
         end
 
@@ -70,7 +70,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             password: 'bogus'
           }
 
-          @user = assigns(:user)
+          @resource = assigns(:resource)
           @data = JSON.parse(response.body)
         end
 
@@ -91,7 +91,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           email: @unconfirmed_user.email,
           password: 'secret123'
         }
-        @user = assigns(:user)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
 
@@ -110,7 +110,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           email: -> { Faker::Internet.email },
           password: -> { Faker::Number.number(10) }
         }
-        @user = assigns(:user)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
 
@@ -142,7 +142,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           password: 'secret123'
         }
 
-        @user = assigns(:user)
+        @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
 

@@ -4,11 +4,11 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, :only => [:validate_token]
 
     def validate_token
-      # @user will have been set by set_user_token concern
-      if @user
+      # @resource will have been set by set_user_token concern
+      if @resource
         render json: {
           success: true,
-          data: @user.as_json(except: [
+          data: @resource.as_json(except: [
             :tokens, :created_at, :updated_at
           ])
         }

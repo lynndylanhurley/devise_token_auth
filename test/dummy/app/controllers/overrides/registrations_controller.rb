@@ -3,17 +3,17 @@ module Overrides
     OVERRIDE_PROOF = "(^^,)"
 
     def update
-      if @user
-        if @user.update_attributes(account_update_params)
+      if @resource
+        if @resource.update_attributes(account_update_params)
           render json: {
             status: 'success',
-            data:   @user.as_json,
+            data:   @resource.as_json,
             override_proof: OVERRIDE_PROOF
           }
         else
           render json: {
             status: 'error',
-            errors: @user.errors
+            errors: @resource.errors
           }, status: 403
         end
       else

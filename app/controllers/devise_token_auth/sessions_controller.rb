@@ -4,30 +4,30 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, :only => [:destroy]
 
     def create
-      @user = resource_class.find_by_email(resource_params[:email])
+      @resource = resource_class.find_by_email(resource_params[:email])
 
-      if @user and valid_params? and @user.valid_password?(resource_params[:password]) and @user.confirmed?
+      if @resource and valid_params? and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
 
-        @user.tokens[@client_id] = {
+        @resource.tokens[@client_id] = {
           token: BCrypt::Password.create(@token),
           expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
         }
-        @user.save
+        @resource.save
 
         render json: {
-          data: @user.as_json(except: [
+          data: @resource.as_json(except: [
             :tokens, :created_at, :updated_at
           ])
         }
 
-      elsif @user and not @user.confirmed?
+      elsif @resource and not @resource.confirmed?
         render json: {
           success: false,
           errors: [
-            "A confirmation email was sent to your account at #{@user.email}. "+
+            "A confirmation email was sent to your account at #{@resource.email}. "+
             "You must follow the instructions in the email before your account "+
             "can be activated"
           ]
@@ -42,7 +42,7 @@ module DeviseTokenAuth
 
     def destroy
       # remove auth instance variables so that after_filter does not run
-      user = remove_instance_variable(:@user) if @user
+      user = remove_instance_variable(:@resource) if @resource
       client_id = remove_instance_variable(:@client_id) if @client_id
       remove_instance_variable(:@token) if @token
 

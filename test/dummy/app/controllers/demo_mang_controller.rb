@@ -4,8 +4,8 @@ class DemoMangController < ApplicationController
   def members_only
     render json: {
       data: {
-        message: "Welcome #{@user.name}",
-        user: @user
+        message: "Welcome #{current_mang.name}",
+        user: current_mang
       }
     }, status: 200
   end

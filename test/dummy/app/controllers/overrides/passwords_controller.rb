@@ -4,27 +4,27 @@ module Overrides
 
     # this is where users arrive after visiting the email confirmation link
     def edit
-      @user = resource_class.reset_password_by_token({
+      @resource = resource_class.reset_password_by_token({
         reset_password_token: resource_params[:reset_password_token]
       })
 
-      if @user and @user.id
+      if @resource and @resource.id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
         expiry     = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
-        @user.tokens[client_id] = {
+        @resource.tokens[client_id] = {
           token:  token_hash,
           expiry: expiry
         }
 
         # ensure that user is confirmed
-        @user.skip_confirmation! unless @user.confirmed_at
+        @resource.skip_confirmation! unless @resource.confirmed_at
 
-        @user.save!
+        @resource.save!
 
-        redirect_to(@user.build_auth_url(params[:redirect_url], {
+        redirect_to(@resource.build_auth_url(params[:redirect_url], {
           token:          token,
           client_id:      client_id,
           reset_password: true,

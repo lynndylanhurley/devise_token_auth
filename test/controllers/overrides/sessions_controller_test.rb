@@ -18,7 +18,7 @@ class Overrides::RegistrationsControllerTest < ActionDispatch::IntegrationTest
         password: 'secret123'
       }
 
-      @user = assigns(:user)
+      @resource = assigns(:resource)
       @data = JSON.parse(response.body)
     end
 

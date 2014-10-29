@@ -30,7 +30,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
           auth_origin_url: @redirect_url
         }
 
-        @user = assigns(:user)
+        @resource = assigns(:resource)
       end
 
       test 'status should be success' do
@@ -46,15 +46,15 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'user should have been created' do
-        assert @user
+        assert @resource
       end
 
       test 'user should be assigned info from provider' do
-        assert_equal 'chongbong@aol.com', @user.email
+        assert_equal 'chongbong@aol.com', @resource.email
       end
 
       test 'user should be of the correct class' do
-        assert_equal User, @user.class
+        assert_equal User, @resource.class
       end
 
       test 'response contains all serializable attributes for user' do
@@ -88,7 +88,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
           name: @unpermitted_param
         }
 
-        @user = assigns(:user)
+        @resource = assigns(:resource)
       end
 
       test 'status shows success' do
@@ -96,11 +96,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'additional attribute was passed' do
-        assert_equal @fav_color, @user.favorite_color
+        assert_equal @fav_color, @resource.favorite_color
       end
 
       test 'non-whitelisted attributes are ignored' do
-        refute_equal @unpermitted_param, @user.name
+        refute_equal @unpermitted_param, @resource.name
       end
     end
   end
@@ -113,7 +113,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
           auth_origin_url: @redirect_url
         }
 
-        @user = assigns(:user)
+        @resource = assigns(:resource)
       end
 
       test 'status should be success' do
@@ -129,15 +129,15 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'user should have been created' do
-        assert @user
+        assert @resource
       end
 
       test 'user should be assigned info from provider' do
-        assert_equal 'chongbong@aol.com', @user.email
+        assert_equal 'chongbong@aol.com', @resource.email
       end
 
       test 'user should be of the correct class' do
-        assert_equal Mang, @user.class
+        assert_equal Mang, @resource.class
       end
     end
   end

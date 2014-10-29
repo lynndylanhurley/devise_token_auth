@@ -20,29 +20,29 @@ module DeviseTokenAuth
         }, status: 401
       end
 
-      @user = resource_class.where({
+      @resource = resource_class.where({
         email: resource_params[:email],
         provider: 'email'
       }).first
 
       errors = nil
 
-      if @user
-        @user.send_reset_password_instructions({
+      if @resource
+        @resource.send_reset_password_instructions({
           email: resource_params[:email],
           provider: 'email',
           redirect_url: params[:redirect_url],
           client_config: params[:config_name]
         })
 
-        if @user.errors.empty?
+        if @resource.errors.empty?
           render json: {
             success: true,
-            message: "An email has been sent to #{@user.email} containing "+
+            message: "An email has been sent to #{@resource.email} containing "+
               "instructions for resetting your password."
           }
         else
-          errors = @user.errors
+          errors = @resource.errors
         end
       else
         errors = ["Unable to find user with email '#{resource_params[:email]}'."]
@@ -59,27 +59,27 @@ module DeviseTokenAuth
 
     # this is where users arrive after visiting the email confirmation link
     def edit
-      @user = resource_class.reset_password_by_token({
+      @resource = resource_class.reset_password_by_token({
         reset_password_token: resource_params[:reset_password_token]
       })
 
-      if @user and @user.id
+      if @resource and @resource.id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
         expiry     = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
-        @user.tokens[client_id] = {
+        @resource.tokens[client_id] = {
           token:  token_hash,
           expiry: expiry
         }
 
         # ensure that user is confirmed
-        @user.skip_confirmation! unless @user.confirmed_at
+        @resource.skip_confirmation! unless @resource.confirmed_at
 
-        @user.save!
+        @resource.save!
 
-        redirect_to(@user.build_auth_url(params[:redirect_url], {
+        redirect_to(@resource.build_auth_url(params[:redirect_url], {
           token:          token,
           client_id:      client_id,
           reset_password: true,
@@ -92,7 +92,7 @@ module DeviseTokenAuth
 
     def update
       # make sure user is authorized
-      unless @user
+      unless @resource
         return render json: {
           success: false,
           errors: ['Unauthorized']
@@ -100,11 +100,11 @@ module DeviseTokenAuth
       end
 
       # make sure account doesn't use oauth2 provider
-      unless @user.provider == 'email'
+      unless @resource.provider == 'email'
         return render json: {
           success: false,
           errors: ["This account does not require a password. Sign in using "+
-                   "your #{@user.provider.humanize} account instead."]
+                   "your #{@resource.provider.humanize} account instead."]
         }, status: 422
       end
 
@@ -116,18 +116,18 @@ module DeviseTokenAuth
         }, status: 422
       end
 
-      if @user.update_attributes(password_resource_params)
+      if @resource.update_attributes(password_resource_params)
         return render json: {
           success: true,
           data: {
-            user: @user,
+            user: @resource,
             message: "Your password has been successfully updated."
           }
         }
       else
         return render json: {
           success: false,
-          errors: @user.errors
+          errors: @resource.errors
         }, status: 422
       end
     end

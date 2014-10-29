@@ -35,11 +35,11 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       describe "success" do
         before do
           xhr :get, :show, {confirmation_token: @token, redirect_url: @redirect_url}
-          @user = assigns(:user)
+          @resource = assigns(:resource)
         end
 
         test "user should now be confirmed" do
-          assert @user.confirmed?
+          assert @resource.confirmed?
         end
 
         test "should redirect to success url" do
@@ -52,8 +52,8 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           assert_raises(ActionController::RoutingError) {
             xhr :get, :show, {confirmation_token: "bogus"}
           }
-          @user = assigns(:user)
-          refute @user.confirmed?
+          @resource = assigns(:resource)
+          refute @resource.confirmed?
         end
       end
     end
@@ -95,11 +95,11 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         before do
           @redirect_url = Faker::Internet.url
           xhr :get, :show, {confirmation_token: @token, redirect_url: @redirect_url}
-          @user = assigns(:user)
+          @resource = assigns(:resource)
         end
 
         test "user should now be confirmed" do
-          assert @user.confirmed?
+          assert @resource.confirmed?
         end
       end
     end

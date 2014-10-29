@@ -26,7 +26,7 @@ class Overrides::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTe
         favorite_color: @favorite_color
       }
 
-      @user = assigns(:user)
+      @resource = assigns(:resource)
     end
 
     test 'request is successful' do
@@ -34,11 +34,11 @@ class Overrides::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTe
     end
 
     test 'controller was overridden' do
-      assert_equal @user.nickname, Overrides::OmniauthCallbacksController::DEFAULT_NICKNAME
+      assert_equal @resource.nickname, Overrides::OmniauthCallbacksController::DEFAULT_NICKNAME
     end
 
     test 'whitelisted param was allowed' do
-      assert_equal @favorite_color, @user.favorite_color
+      assert_equal @favorite_color, @resource.favorite_color
     end
   end
 end

@@ -20,7 +20,7 @@ module DeviseTokenAuth
 
     def omniauth_success
       # find or create user by provider and provider uid
-      @user = resource_class.where({
+      @resource = resource_class.where({
         uid:      auth_hash['uid'],
         provider: auth_hash['provider']
       }).first_or_initialize
@@ -33,34 +33,34 @@ module DeviseTokenAuth
       @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], {
         token:     @token,
         client_id: @client_id,
-        uid:       @user.uid,
+        uid:       @resource.uid,
         expiry:    @expiry
       })
 
       # set crazy password for new oauth users. this is only used to prevent
       # access via email sign-in.
-      unless @user.id
+      unless @resource.id
         p = SecureRandom.urlsafe_base64(nil, false)
-        @user.password = p
-        @user.password_confirmation = p
+        @resource.password = p
+        @resource.password_confirmation = p
       end
 
-      @user.tokens[@client_id] = {
+      @resource.tokens[@client_id] = {
         token: BCrypt::Password.create(@token),
         expiry: @expiry
       }
 
       # sync user info with provider, update/generate auth token
-      assign_provider_attrs(@user, auth_hash)
+      assign_provider_attrs(@resource, auth_hash)
 
       # assign any additional (whitelisted) attributes
       extra_params = whitelisted_params
-      @user.assign_attributes(extra_params) if extra_params
+      @resource.assign_attributes(extra_params) if extra_params
 
       # don't send confirmation email!!!
-      @user.skip_confirmation!
+      @resource.skip_confirmation!
 
-      @user.save!
+      @resource.save!
 
       # render user info to javascript postMessage communication window
       respond_to do |format|

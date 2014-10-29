@@ -9,16 +9,16 @@ require 'test_helper'
 class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
   describe Overrides::PasswordsController do
     before do
-      @user = evil_users(:confirmed_email_user)
+      @resource = evil_users(:confirmed_email_user)
       @redirect_url = Faker::Internet.url
 
       post "/evil_user_auth/password", {
-        email:        @user.email,
+        email:        @resource.email,
         redirect_url: @redirect_url
       }
 
       @mail = ActionMailer::Base.deliveries.last
-      @user.reload
+      @resource.reload
 
       @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
       @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
@@ -29,7 +29,7 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
         redirect_url: @mail_redirect_url
       }
 
-      @user.reload
+      @resource.reload
 
       raw_qs = response.location.split('?')[1]
       @qs = Rack::Utils.parse_nested_query(raw_qs)
