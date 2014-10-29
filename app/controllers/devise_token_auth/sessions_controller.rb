@@ -17,6 +17,8 @@ module DeviseTokenAuth
         }
         @resource.save
 
+        sign_in(:user, @resource, store: false, bypass: false)
+
         render json: {
           data: @resource.as_json(except: [
             :tokens, :created_at, :updated_at
