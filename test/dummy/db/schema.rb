@@ -39,9 +39,10 @@ ActiveRecord::Schema.define(version: 20140928231203) do
     t.datetime "updated_at"
   end
 
+  add_index "evil_users", ["confirmation_token"], name: "index_evil_users_on_confirmation_token", unique: true
   add_index "evil_users", ["email"], name: "index_evil_users_on_email"
   add_index "evil_users", ["reset_password_token"], name: "index_evil_users_on_reset_password_token", unique: true
-  add_index "evil_users", ["uid"], name: "index_evil_users_on_uid", unique: true
+  add_index "evil_users", ["uid", "provider"], name: "index_evil_users_on_uid_and_provider", unique: true
 
   create_table "mangs", force: true do |t|
     t.string   "email"
@@ -71,9 +72,10 @@ ActiveRecord::Schema.define(version: 20140928231203) do
     t.string   "favorite_color"
   end
 
+  add_index "mangs", ["confirmation_token"], name: "index_mangs_on_confirmation_token", unique: true
   add_index "mangs", ["email"], name: "index_mangs_on_email"
   add_index "mangs", ["reset_password_token"], name: "index_mangs_on_reset_password_token", unique: true
-  add_index "mangs", ["uid"], name: "index_mangs_on_uid", unique: true
+  add_index "mangs", ["uid", "provider"], name: "index_mangs_on_uid_and_provider", unique: true
 
   create_table "users", force: true do |t|
     t.string   "email"
@@ -104,8 +106,9 @@ ActiveRecord::Schema.define(version: 20140928231203) do
     t.string   "favorite_color"
   end
 
+  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
   add_index "users", ["email"], name: "index_users_on_email"
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-  add_index "users", ["uid"], name: "index_users_on_uid", unique: true
+  add_index "users", ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
 
 end
