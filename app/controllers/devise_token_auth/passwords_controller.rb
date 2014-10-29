@@ -20,8 +20,15 @@ module DeviseTokenAuth
         }, status: 401
       end
 
+      # honor devise configuration for case_insensitive_keys
+      if resource_class.case_insensitive_keys.include?(:email)
+        email = resource_params[:email].downcase
+      else
+        email = resource_params[:email]
+      end
+
       @resource = resource_class.where({
-        email: resource_params[:email],
+        email: email,
         provider: 'email'
       }).first
 
@@ -29,7 +36,7 @@ module DeviseTokenAuth
 
       if @resource
         @resource.send_reset_password_instructions({
-          email: resource_params[:email],
+          email: email,
           provider: 'email',
           redirect_url: params[:redirect_url],
           client_config: params[:config_name]
@@ -38,14 +45,14 @@ module DeviseTokenAuth
         if @resource.errors.empty?
           render json: {
             success: true,
-            message: "An email has been sent to #{@resource.email} containing "+
+            message: "An email has been sent to #{email} containing "+
               "instructions for resetting your password."
           }
         else
           errors = @resource.errors
         end
       else
-        errors = ["Unable to find user with email '#{resource_params[:email]}'."]
+        errors = ["Unable to find user with email '#{email}'."]
       end
 
       if errors
