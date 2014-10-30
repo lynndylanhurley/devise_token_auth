@@ -32,7 +32,7 @@ PATH
   remote: .
   specs:
     devise_token_auth (0.1.30.beta3)
-      devise (~> 3.2)
+      devise (~> 3.3)
       rails (~> 4.1)
 
 GEM
