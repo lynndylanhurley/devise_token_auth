@@ -27,10 +27,13 @@ module DeviseTokenAuth
         email = resource_params[:email]
       end
 
-      @resource = resource_class.where({
-        email: email,
-        provider: 'email'
-      }).first
+      q = "uid='#{email}' AND provider='email'"
+
+      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+        q = "BINARY uid='#{email}' AND provider='email'"
+      end
+
+      @resource = resource_class.where(q).first
 
       errors = nil
 

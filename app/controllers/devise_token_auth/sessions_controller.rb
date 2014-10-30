@@ -10,7 +10,14 @@ module DeviseTokenAuth
       else
         email = resource_params[:email]
       end
-      @resource = resource_class.find_by_email(email)
+
+      q = "uid='#{email}' AND provider='email'"
+
+      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+        q = "BINARY uid='#{email}' AND provider='email'"
+      end
+
+      @resource = resource_class.where(q).first
 
       if @resource and valid_params? and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id

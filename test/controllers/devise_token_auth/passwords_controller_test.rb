@@ -109,7 +109,6 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         end
 
         describe 'case-insensitive email' do
-
           before do
             @resource_class = User
             @request_params = {
@@ -129,9 +128,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             xhr :post, :create, @request_params
             assert_equal 400, response.status
           end
-
         end
-
       end
 
       describe "change password" do
