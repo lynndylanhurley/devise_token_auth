@@ -55,6 +55,36 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe "case-insensitive email" do
+
+      before do
+        @resource_class = User
+        @request_params = {
+          email: "AlternatingCase@example.com",
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+      end
+
+      test "success should downcase uid if configured" do
+        @resource_class.case_insensitive_keys = [:email]
+        post '/auth', @request_params
+        assert_equal 200, response.status
+        @data = JSON.parse(response.body)
+        assert_equal "alternatingcase@example.com", @data['data']['uid']
+      end
+
+      test "request should not downcase uid if not configured" do
+        @resource_class.case_insensitive_keys = []
+        post '/auth', @request_params
+        assert_equal 200, response.status
+        @data = JSON.parse(response.body)
+        assert_equal "AlternatingCase@example.com", @data['data']['uid']
+      end
+
+    end
+
     describe "Adding extra params" do
       before do
         @redirect_url     = Faker::Internet.url
