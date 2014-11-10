@@ -76,7 +76,16 @@ module DeviseTokenAuth
 
     def update
       if @resource
-        if @resource.update_attributes(account_update_params)
+
+        # honor devise configuration for case_insensitive_keys
+        params = account_update_params
+        if resource_class.case_insensitive_keys.include?(:email) && params[:email]
+          params[:uid] = params[:email].downcase
+        else
+          params[:uid] = params[:email]
+        end
+        
+        if @resource.update_attributes(params)
           render json: {
             status: 'success',
             data:   @resource.as_json

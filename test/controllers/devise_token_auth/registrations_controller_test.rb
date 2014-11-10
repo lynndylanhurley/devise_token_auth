@@ -235,22 +235,38 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         describe "success" do
           before do
             # test valid update param
+            @resource_class = User
             @new_operating_thetan = 1000000
-
-            put "/auth", {
-              operating_thetan: @new_operating_thetan
-            }, @auth_headers
-
-            @data = JSON.parse(response.body)
-            @existing_user.reload
+            @email = "AlternatingCase2@example.com"
+            @request_params = {
+              operating_thetan: @new_operating_thetan,
+              email: @email
+            }
           end
 
           test "Request was successful" do
+            put "/auth", @request_params, @auth_headers
             assert_equal 200, response.status
           end
 
-          test "User attribute was updated" do
+          test "Case sensitive attributes update" do
+            @resource_class.case_insensitive_keys = []
+            put "/auth", @request_params, @auth_headers
+            @data = JSON.parse(response.body)
+            @existing_user.reload
             assert_equal @new_operating_thetan, @existing_user.operating_thetan
+            assert_equal @email, @existing_user.email
+            assert_equal @email, @existing_user.uid
+          end
+
+          test "Case insensitive attributes update" do
+            @resource_class.case_insensitive_keys = [:email]
+            put "/auth", @request_params, @auth_headers
+            @data = JSON.parse(response.body)
+            @existing_user.reload
+            assert_equal @new_operating_thetan, @existing_user.operating_thetan
+            assert_equal @email.downcase, @existing_user.email
+            assert_equal @email.downcase, @existing_user.uid
           end
         end
 
