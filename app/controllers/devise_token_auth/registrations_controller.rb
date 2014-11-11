@@ -11,9 +11,9 @@ module DeviseTokenAuth
 
       # honor devise configuration for case_insensitive_keys
       if resource_class.case_insensitive_keys.include?(:email)
-        @resource.uid = sign_up_params[:email].downcase
+        @resource.email = sign_up_params[:email].downcase
       else
-        @resource.uid = sign_up_params[:email]
+        @resource.email = sign_up_params[:email]
       end
 
       # success redirect url is required
@@ -76,16 +76,8 @@ module DeviseTokenAuth
 
     def update
       if @resource
-
-        # honor devise configuration for case_insensitive_keys
-        params = account_update_params
-        if resource_class.case_insensitive_keys.include?(:email) && params[:email]
-          params[:uid] = params[:email].downcase
-        else
-          params[:uid] = params[:email]
-        end
         
-        if @resource.update_attributes(params)
+        if @resource.update_attributes(account_update_params)
           render json: {
             status: 'success',
             data:   @resource.as_json
