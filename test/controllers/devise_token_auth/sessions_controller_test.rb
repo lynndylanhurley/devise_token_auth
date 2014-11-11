@@ -17,6 +17,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'success' do
         before do
+          @old_sign_in_count      = @existing_user.sign_in_count
+          @old_current_sign_in_at = @existing_user.current_sign_in_at
+          @old_last_sign_in_at    = @existing_user.last_sign_in_at
+          @old_sign_in_ip         = @existing_user.current_sign_in_ip
+          @old_last_sign_in_ip    = @existing_user.last_sign_in_ip
+
           xhr :post, :create, {
             email: @existing_user.email,
             password: 'secret123'
@@ -24,6 +30,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
+
+          @new_sign_in_count      = @resource.sign_in_count
+          @new_current_sign_in_at = @resource.current_sign_in_at
+          @new_last_sign_in_at    = @resource.last_sign_in_at
+          @new_sign_in_ip         = @resource.current_sign_in_ip
+          @new_last_sign_in_ip    = @resource.last_sign_in_ip
         end
 
         test "request should succeed" do
@@ -33,7 +45,34 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         test "request should return user data" do
           assert_equal @existing_user.email, @data['data']['email']
         end
+
+        describe 'trackable' do
+          test 'sign_in_count incrementns' do
+            assert_equal @old_sign_in_count + 1, @new_sign_in_count
+          end
+
+          test 'current_sign_in_at is updated' do
+            refute @old_current_sign_in_at
+            assert @new_current_sign_in_at
+          end
+
+          test 'last_sign_in_at is updated' do
+            refute @old_last_sign_in_at
+            assert @new_last_sign_in_at
+          end
+
+          test 'sign_in_ip is updated' do
+            refute @old_sign_in_ip
+            assert_equal "0.0.0.0", @new_sign_in_ip
+          end
+
+          test 'last_sign_in_ip is updated' do
+            refute @old_last_sign_in_ip
+            assert_equal "0.0.0.0", @new_last_sign_in_ip
+          end
+        end
       end
+
 
       describe 'authed user sign out' do
         before do
