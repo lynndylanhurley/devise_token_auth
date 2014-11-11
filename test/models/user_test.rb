@@ -6,12 +6,21 @@ class UserTest < ActiveSupport::TestCase
       @password    = Faker::Internet.password(10, 20)
       @email       = Faker::Internet.email
       @success_url = Faker::Internet.url
-      @resource        = User.new()
+      @resource    = User.new()
     end
 
     describe 'serialization' do
       test 'hash should not include sensitive info' do
         refute @resource.as_json[:tokens]
+      end
+    end
+
+    describe 'creation' do
+      test 'save fails if uid is missing' do
+        @resource.uid = nil
+        @resource.save
+
+        assert @resource.errors.messages[:uid]
       end
     end
 
@@ -29,6 +38,7 @@ class UserTest < ActiveSupport::TestCase
     describe 'oauth2 authentication' do
       test 'model should save even if email is blank' do
         @resource.provider              = 'facebook'
+        @resource.uid                   = 123
         @resource.password              = @password
         @resource.password_confirmation = @password
 
