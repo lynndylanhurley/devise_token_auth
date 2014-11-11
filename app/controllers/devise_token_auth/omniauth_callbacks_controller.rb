@@ -60,6 +60,8 @@ module DeviseTokenAuth
       # don't send confirmation email!!!
       @resource.skip_confirmation!
 
+      sign_in(:user, @resource, store: false, bypass: false)
+
       @resource.save!
 
       # render user info to javascript postMessage communication window

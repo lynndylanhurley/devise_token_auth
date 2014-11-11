@@ -76,6 +76,29 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         refute request.session['dta.omniauth.auth']
         refute request.session['dta.omniauth.params']
       end
+
+      describe 'trackable' do
+        test 'sign_in_count incrementns' do
+          assert @resource.sign_in_count > 0
+        end
+
+        test 'current_sign_in_at is updated' do
+          assert @resource.current_sign_in_at
+        end
+
+        test 'last_sign_in_at is updated' do
+          assert @resource.last_sign_in_at
+        end
+
+        test 'sign_in_ip is updated' do
+          assert @resource.current_sign_in_ip
+        end
+
+        test 'last_sign_in_ip is updated' do
+          assert @resource.last_sign_in_ip
+        end
+      end
+
     end
 
     describe 'pass additional params' do
