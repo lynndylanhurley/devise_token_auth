@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.1.30.beta4)
+    devise_token_auth (0.1.30.beta5)
       devise (~> 3.3)
       rails (~> 4.1)
 
@@ -176,7 +176,7 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
-    responders (1.1.1)
+    responders (1.1.2)
       railties (>= 3.2, < 4.2)
     ruby-progressbar (1.5.1)
     simplecov (0.9.0)
