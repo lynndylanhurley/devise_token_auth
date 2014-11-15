@@ -20,6 +20,9 @@ module DeviseTokenAuth::Concerns::User
     after_save :set_empty_token_hash
     after_initialize :set_empty_token_hash
 
+    # keep uid in sync with email
+    before_save :sync_uid
+
     # get rid of dead tokens
     before_save :destroy_expired_tokens
 
@@ -213,10 +216,15 @@ module DeviseTokenAuth::Concerns::User
     self.tokens ||= {} if has_attribute?(:tokens)
   end
 
+  def sync_uid
+    self.uid = email if provider == 'email'
+  end
+
   def destroy_expired_tokens
     self.tokens.delete_if{|cid,v|
       expiry = v[:expiry] || v["expiry"]
       DateTime.strptime(expiry.to_s, '%s') < Time.now
     }
   end
+
 end
