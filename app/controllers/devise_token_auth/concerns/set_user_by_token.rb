@@ -29,6 +29,13 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @token     = request.headers['access-token']
     @client_id = request.headers['client']
 
+    if uid.nil? && request.cookies["auth_headers"]
+      auth_headers = JSON.parse(request.cookies["auth_headers"])
+      uid = auth_headers["uid"]
+      @token = auth_headers["access-token"]
+      @client_id = auth_headers["client"]
+    end
+
     return false unless @token
 
     # client_id isn't required, set to 'default' if absent
