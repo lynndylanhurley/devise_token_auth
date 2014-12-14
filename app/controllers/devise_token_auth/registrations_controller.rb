@@ -17,7 +17,7 @@ module DeviseTokenAuth
       end
 
       # success redirect url is required
-      unless params[:confirm_success_url]
+      if DeviseTokenAuth.modules.include?(:confirmable) && !params[:confirm_success_url]
         return render json: {
           status: 'error',
           data:   @resource,
@@ -29,14 +29,12 @@ module DeviseTokenAuth
         # override email confirmation, must be sent manually from ctrl
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
         if @resource.save
-
           unless @resource.confirmed?
             # user will require email authentication
             @resource.send_confirmation_instructions({
               client_config: params[:config_name],
               redirect_url: params[:confirm_success_url]
             })
-
           else
             # email auth has been bypassed, authenticate user
             @client_id = SecureRandom.urlsafe_base64(nil, false)
@@ -76,7 +74,6 @@ module DeviseTokenAuth
 
     def update
       if @resource
-        
         if @resource.update_attributes(account_update_params)
           render json: {
             status: 'success',

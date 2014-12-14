@@ -4,9 +4,7 @@ module DeviseTokenAuth::Concerns::User
   included do
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable and :omniauthable
-    devise :database_authenticatable, :registerable,
-          :recoverable, :rememberable, :trackable, :validatable,
-          :confirmable, :omniauthable
+    devise *DeviseTokenAuth.modules
 
     serialize :tokens, JSON
 
@@ -186,6 +184,9 @@ module DeviseTokenAuth::Concerns::User
     return build_auth_header(token, client_id)
   end
 
+  def confirmed?
+    DeviseTokenAuth.modules.exclude?(:confirmable) || super
+  end
 
   protected
 
