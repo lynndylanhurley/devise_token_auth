@@ -2,9 +2,12 @@ module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
   included do
-    # Include default devise modules. Others available are:
-    # :confirmable, :lockable, :timeoutable and :omniauthable
-    devise *DeviseTokenAuth.modules
+    # Hack to check if devise is already enabled
+    unless self.method_defined?(:devise_modules)
+      devise :database_authenticatable, :registerable,
+          :recoverable, :rememberable, :trackable, :validatable,
+          :confirmable, :omniauthable
+    end
 
     serialize :tokens, JSON
 
@@ -185,7 +188,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def confirmed?
-    DeviseTokenAuth.modules.exclude?(:confirmable) || super
+    self.devise_modules.exclude?(:confirmable) || super
   end
 
   protected

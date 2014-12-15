@@ -30,6 +30,10 @@ module DeviseTokenAuth
         inclusion = "include DeviseTokenAuth::Concerns::User"
         unless parse_file_for_line(fname, inclusion)
           inject_into_file fname, after: "class #{user_class} < ActiveRecord::Base\n" do <<-'RUBY'
+  # Include default devise modules.
+  devise :database_authenticatable, :registerable,
+          :recoverable, :rememberable, :trackable, :validatable,
+          :confirmable, :omniauthable
   include DeviseTokenAuth::Concerns::User
           RUBY
           end
