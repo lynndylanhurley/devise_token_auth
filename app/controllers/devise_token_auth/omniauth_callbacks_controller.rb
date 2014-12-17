@@ -23,6 +23,9 @@ module DeviseTokenAuth
     end
 
     def omniauth_success
+      puts "omniauth success"
+      logger.info "omniauth success"
+      
       # find or create user by provider and provider uid
       @resource = resource_class.where({
         uid:      auth_hash['uid'],
@@ -87,6 +90,8 @@ module DeviseTokenAuth
 
 
     def omniauth_failure
+        puts "omniauth failure"
+      logger.info "omniauth failure"
       @error = params[:message]
 
       respond_to do |format|
