@@ -7,17 +7,21 @@ module DeviseTokenAuth
     # sending emails
     def create
       unless resource_params[:email]
-        return render json: {
-          success: false,
+        @render = Hashie::Mash.new({
+          status: 'error',
           errors: ['You must provide an email address.']
-        }, status: 401
+        })
+
+        return render 'devise_token_auth/passwords/create_errors', status: 401
       end
 
       unless params[:redirect_url]
-        return render json: {
-          success: false,
+        @render = Hashie::Mash.new({
+          status: 'error',
           errors: ['Missing redirect url.']
-        }, status: 401
+        })
+
+        return render 'devise_token_auth/passwords/create_errors', status: 401
       end
 
       # honor devise configuration for case_insensitive_keys
@@ -47,11 +51,12 @@ module DeviseTokenAuth
         })
 
         if @resource.errors.empty?
-          render json: {
-            success: true,
+          @render = Hashie::Mash.new({
+            status: 'success',
             message: "An email has been sent to #{email} containing "+
-              "instructions for resetting your password."
-          }
+              'instructions for resetting your password.'
+          })
+          render 'devise_token_auth/passwords/create_success'
         else
           errors = @resource.errors
         end
@@ -60,10 +65,12 @@ module DeviseTokenAuth
       end
 
       if errors
-        render json: {
+        @render = Hashie::Mash.new({
           success: false,
           errors: errors
-        }, status: 400
+        })
+
+        render 'devise_token_auth/passwords/create_errors', status: 400
       end
     end
 
@@ -104,42 +111,51 @@ module DeviseTokenAuth
     def update
       # make sure user is authorized
       unless @resource
-        return render json: {
-          success: false,
+        @render = Hashie::Mash.new({
+          status: 'error',
           errors: ['Unauthorized']
-        }, status: 401
+        })
+        render 'devise_token_auth/passwords/update_errors', status: 401
       end
 
       # make sure account doesn't use oauth2 provider
       unless @resource.provider == 'email'
-        return render json: {
-          success: false,
-          errors: ["This account does not require a password. Sign in using "+
+        @render = Hashie::Mash.new({
+          status: 'error',
+          errors: ['This account does not require a password. Sign in using '+
                    "your #{@resource.provider.humanize} account instead."]
-        }, status: 422
+        })
+
+        render 'devise_token_auth/passwords/update_errors', status: 422
       end
 
       # ensure that password params were sent
       unless password_resource_params[:password] and password_resource_params[:password_confirmation]
-        return render json: {
-          success: false,
+        @render = Hashie::Mash.new({
+          status: 'error',
           errors: ['You must fill out the fields labeled "password" and "password confirmation".']
-        }, status: 422
+        })
+
+        render 'devise_token_auth/passwords/update_errors', status: 422
       end
 
       if @resource.update_attributes(password_resource_params)
-        return render json: {
-          success: true,
+        @render = Hashie::Mash.new({
+          status: 'success',
           data: {
             user: @resource,
-            message: "Your password has been successfully updated."
+            message: 'Your password has been successfully updated.'
           }
-        }
+        })
+
+        render 'devise_token_auth/passwords/update_success'
       else
-        return render json: {
+        @render = Hashie::Mash.new({
           success: false,
           errors: @resource.errors
-        }, status: 422
+        })
+
+        render 'devise_token_auth/passwords/update_errors', status: 422
       end
     end
 
