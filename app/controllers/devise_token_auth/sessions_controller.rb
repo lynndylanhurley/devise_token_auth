@@ -72,8 +72,11 @@ module DeviseTokenAuth
         user.tokens.delete(client_id)
         user.save!
 
-        render nothing: true, status: 204
+        @render = Hashie::Mash.new({
+          status: 'error'
+        })
 
+        render 'devise_token_auth/sessions/destroy_success'
       else
         @render = Hashie::Mash.new({
           status: 'error',
