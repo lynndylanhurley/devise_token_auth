@@ -32,26 +32,33 @@ module DeviseTokenAuth
 
         sign_in(:user, @resource, store: false, bypass: false)
 
-        render json: {
+        @render = Hashie::Mash.new({
+          status: 'success',
           data: @resource.as_json(except: [
             :tokens, :created_at, :updated_at
           ])
-        }
+        })
 
+        render 'devise_token_auth/sessions/create_success', status: 401
       elsif @resource and not @resource.confirmed?
-        render json: {
-          success: false,
+
+        @render = Hashie::Mash.new({
+          status: 'error',
           errors: [
             "A confirmation email was sent to your account at #{@resource.email}. "+
-            "You must follow the instructions in the email before your account "+
-            "can be activated"
+            'You must follow the instructions in the email before your account '+
+            'can be activated'
           ]
-        }, status: 401
+        })
 
+        render 'devise_token_auth/sessions/create_errors', status: 401
       else
-        render json: {
-          errors: ["Invalid login credentials. Please try again."]
-        }, status: 401
+        @render = Hashie::Mash.new({
+          status: 'error',
+          errors: ['Invalid login credentials. Please try again.']
+        })
+
+        render 'devise_token_auth/sessions/create_errors', status: 401
       end
     end
 
@@ -65,14 +72,18 @@ module DeviseTokenAuth
         user.tokens.delete(client_id)
         user.save!
 
-        render json: {
-          success:true
-        }, status: 200
+        @render = Hashie::Mash.new({
+          status: 'error'
+        })
 
+        render 'devise_token_auth/sessions/destroy_success'
       else
-        render json: {
-          errors: ["User was not found or was not logged in."]
-        }, status: 404
+        @render = Hashie::Mash.new({
+          status: 'error',
+          errors: ['User was not found or was not logged in.']
+        })
+
+        render 'devise_token_auth/sessions/destroy_errors', status: 404
       end
     end
 
