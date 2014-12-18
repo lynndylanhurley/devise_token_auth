@@ -18,81 +18,86 @@ module DeviseTokenAuth
 
       # success redirect url is required
       unless params[:confirm_success_url]
-        return render json: {
+        @render =  Hashie::Mash.new({
           status: 'error',
-          data:   @resource,
-          errors: ["Missing `confirm_success_url` param."]
-        }, status: 403
+          data: @resource,
+          errors: ['Missing `confirm_success_url` param.']
+        })
+
+        return render 'devise_token_auth/registrations/missing_confirm_success_url'
       end
 
-      begin
-        # override email confirmation, must be sent manually from ctrl
-        resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
-        if @resource.save
+      # override email confirmation, must be sent manually from ctrl
+      resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+      if @resource.save
 
-          unless @resource.confirmed?
-            # user will require email authentication
-            @resource.send_confirmation_instructions({
-              client_config: params[:config_name],
-              redirect_url: params[:confirm_success_url]
-            })
+        unless @resource.confirmed?
+          # user will require email authentication
+          @resource.send_confirmation_instructions({
+            client_config: params[:config_name],
+            redirect_url: params[:confirm_success_url]
+          })
 
-          else
-            # email auth has been bypassed, authenticate user
-            @client_id = SecureRandom.urlsafe_base64(nil, false)
-            @token     = SecureRandom.urlsafe_base64(nil, false)
-
-            @resource.tokens[@client_id] = {
-              token: BCrypt::Password.create(@token),
-              expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
-            }
-
-            @resource.save!
-
-            update_auth_header
-          end
-
-          render json: {
-            status: 'success',
-            data:   @resource.as_json
-          }
         else
-          clean_up_passwords @resource
-          render json: {
-            status: 'error',
-            data:   @resource,
-            errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-          }, status: 403
+          # email auth has been bypassed, authenticate user
+          @client_id = SecureRandom.urlsafe_base64(nil, false)
+          @token     = SecureRandom.urlsafe_base64(nil, false)
+
+          @resource.tokens[@client_id] = {
+            token: BCrypt::Password.create(@token),
+            expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          }
+
+          @resource.save!
+
+          update_auth_header
         end
-      rescue ActiveRecord::RecordNotUnique
+
+        @render = Hashie::Mash.new({
+          status: 'success',
+          data:   @resource.as_json
+        })
+
+        render 'devise_token_auth/registrations/create_success'
+      else
         clean_up_passwords @resource
-        render json: {
-          status: 'error',
-          data:   @resource,
-          errors: ["An account already exists for #{@resource.email}"]
-        }, status: 403
+
+        @render = Hashie::Mash.new({
+           status: 'error',
+           data:   @resource,
+           errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+        })
+
+        render 'devise_token_auth/registrations/create_errors', status: 403
       end
+
     end
 
     def update
       if @resource
-        
+
         if @resource.update_attributes(account_update_params)
-          render json: {
+          @render = Hashie::Mash.new({
             status: 'success',
             data:   @resource.as_json
-          }
+          })
+
+          render 'devise_token_auth/registrations/update_success'
         else
-          render json: {
+          @render = Hashie::Mash.new({
             status: 'error',
             errors: @resource.errors
-          }, status: 403
+          })
+
+          render 'devise_token_auth/registrations/update_errors', status: 403
         end
       else
-        render json: {
+        @render = Hashie::Mash.new({
           status: 'error',
-          errors: ["User not found."]
-        }, status: 404
+          errors: ['User not found.']
+        })
+
+        render 'devise_token_auth/registrations/update_errors', status: 404
       end
     end
 
@@ -100,15 +105,19 @@ module DeviseTokenAuth
       if @resource
         @resource.destroy
 
-        render json: {
+        @render = Hashie::Mash.new({
           status: 'success',
           message: "Account with uid #{@resource.uid} has been destroyed."
-        }
+        })
+
+        render 'devise_token_auth/registrations/destroy_success'
       else
-        render json: {
+        @render = Hashie::Mash.new({
           status: 'error',
-          errors: ["Unable to locate account for destruction."]
-        }, status: 404
+          errors: ['Unable to locate account for destruction.']
+        })
+
+        render 'devise_token_auth/registrations/destroy_errors', status: 404
       end
     end
 
