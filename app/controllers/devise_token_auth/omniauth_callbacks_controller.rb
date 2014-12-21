@@ -86,8 +86,8 @@ module DeviseTokenAuth
         image:    auth_hash['info']['image'],
         email:    auth_hash['info']['email'],
         first_name:    auth_hash['info']['first_name'] if auth_hash['info']['first_name']?,
-        last_name:    auth_hash['info']['last_name'] if auth_hash['info']['last_name'],
-        country:    auth_hash['info']['country'] if auth_hash['info']['country']
+        last_name:    auth_hash['info']['last_name'] if auth_hash['info']['last_name']?,
+        country:    auth_hash['info']['country'] if auth_hash['info']['country']?
         
       })
     end
