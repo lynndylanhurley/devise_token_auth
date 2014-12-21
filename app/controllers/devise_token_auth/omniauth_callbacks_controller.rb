@@ -84,7 +84,8 @@ module DeviseTokenAuth
         nickname: auth_hash['info']['nickname'],
         name:     auth_hash['info']['name'],
         image:    auth_hash['info']['image'],
-        email:    auth_hash['info']['email']
+        email:    auth_hash['info']['email'],
+        first_name:    auth_hash['info']['first_name']
       })
     end
 
