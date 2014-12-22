@@ -21,6 +21,8 @@ Rails.application.routes.draw do
 
   mount_devise_token_auth_for 'OnlyEmailUser', at: '/only_email_auth', skip: [:omniauth_callbacks]
 
+  mount_devise_token_auth_for 'UnregisterableUser', at: '/unregisterable_user_auth', skip: [:registrations]
+
   # this route will authorize visitors using the User class
   get 'demo/members_only', to: 'demo_user#members_only'
 

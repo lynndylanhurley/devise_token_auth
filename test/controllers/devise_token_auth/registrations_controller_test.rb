@@ -485,5 +485,19 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         assert @resource.confirmed?
       end
     end
+
+    describe 'User with registration routes disabled' do
+      test 'OnlyEmailUser should not be able to use OAuth' do
+        assert_raises(ActionController::RoutingError) {
+          post '/unregisterable_user_auth', {
+            email: Faker::Internet.email,
+            password: "secret123",
+            password_confirmation: "secret123",
+            confirm_success_url: Faker::Internet.url,
+            unpermitted_param: '(x_x)'
+          }
+        }
+      end
+    end
   end
 end
