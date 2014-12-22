@@ -49,6 +49,7 @@ The fully configured api used in the demo can be found [here](https://github.com
   * [Token Management](#about-token-management)
   * [Batch Requests](#about-batch-requests)
 * [Security](#security)
+* [Callouts](#callouts)
 * [Contribution Guidelines](#contributing)
 
 # Dependencies
@@ -707,6 +708,16 @@ This gem further mitigates timing attacks by using [this technique](https://gist
 
 But the most important step is to use HTTPS. You are on the hook for that.
 
+# Callouts
+
+Thanks to the following contributors:
+
+* [@booleanbetrayal](https://github.com/booleanbetrayal)
+* [@guilhermesimoes](https://github.com/guilhermesimoes)
+* [@jasonswett](https://github.com/jasonswett)
+* [@m2omou](https://github.com/m2omou)
+* [@smarquez1](https://github.com/smarquez1)
+* [@jartek](https://github.com/jartek)
 
 # Contributing
 
