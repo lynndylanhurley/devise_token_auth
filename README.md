@@ -519,7 +519,7 @@ By default, almost all of the Devise modules are included:
 * [`confirmable`](https://github.com/plataformatec/devise/blob/master/lib/devise/models/confirmable.rb)
 * [`omniauthable`](https://github.com/plataformatec/devise/blob/master/lib/devise/models/omniauthable.rb)
 
-You may not want all of these features enabled in your app. That's OK! You can customize them to suit your own unique style.
+You may not want all of these features enabled in your app. That's OK! You can mix and match to suit your own unique style.
 
 The following example shows how to disable email confirmation.
 
@@ -533,9 +533,9 @@ class User < ActiveRecord::Base
 
   # notice this comes BEFORE the include statement below
   # also notice that :confirmable is not included in this block
-  devise :database_authenticatable,
+  devise :database_authenticatable, :confirmable,
          :recoverable, :trackable, :validatable,
-         :registerable, :omniauthable
+         :registerable
 
   # note that this include statement comes AFTER the devise block above
   include DeviseTokenAuth::Concerns::User
