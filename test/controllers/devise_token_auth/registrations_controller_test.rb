@@ -454,5 +454,36 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         assert @resource.valid_token?(@token, @client_id)
       end
     end
+
+
+    describe 'User with only :database_authenticatable and :registerable included' do
+      setup do
+        @mails_sent = ActionMailer::Base.deliveries.count
+
+        post '/only_email_auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url,
+          unpermitted_param: '(x_x)'
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        @mail = ActionMailer::Base.deliveries.last
+      end
+
+      test 'user was created' do
+        assert @resource.id
+      end
+
+      test 'email confirmation was not sent' do
+        assert_equal @mails_sent, ActionMailer::Base.deliveries.count
+      end
+
+      test 'user is confirmed' do
+        assert @resource.confirmed?
+      end
+    end
   end
 end

@@ -164,4 +164,14 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
     end
   end
+
+  describe 'User with only :database_authenticatable and :registerable included' do
+    test 'OnlyEmailUser should not be able to use OAuth' do
+      assert_raises(ActionController::RoutingError) {
+        get_via_redirect '/only_email_auth/facebook', {
+          auth_origin_url: @redirect_url
+        }
+      }
+    end
+  end
 end

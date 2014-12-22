@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140928231203) do
+ActiveRecord::Schema.define(version: 20141222035835) do
 
   create_table "evil_users", force: true do |t|
     t.string   "email"
@@ -76,6 +76,22 @@ ActiveRecord::Schema.define(version: 20140928231203) do
   add_index "mangs", ["email"], name: "index_mangs_on_email"
   add_index "mangs", ["reset_password_token"], name: "index_mangs_on_reset_password_token", unique: true
   add_index "mangs", ["uid", "provider"], name: "index_mangs_on_uid_and_provider", unique: true
+
+  create_table "only_email_users", force: true do |t|
+    t.string   "provider",                        null: false
+    t.string   "uid",                default: "", null: false
+    t.string   "encrypted_password", default: "", null: false
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "image"
+    t.string   "email"
+    t.text     "tokens"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "only_email_users", ["email"], name: "index_only_email_users_on_email"
+  add_index "only_email_users", ["uid", "provider"], name: "index_only_email_users_on_uid_and_provider", unique: true
 
   create_table "users", force: true do |t|
     t.string   "email"

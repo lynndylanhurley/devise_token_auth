@@ -217,5 +217,33 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         assert_equal @existing_user.email, @data['data']['email']
       end
     end
+
+    describe 'User with only :database_authenticatable and :registerable included' do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:only_email_user]
+      end
+
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
+
+      before do
+        @existing_user = only_email_users(:user)
+        @existing_user.save!
+
+        xhr :post, :create, {
+          email: @existing_user.email,
+          password: 'secret123'
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test 'user should be able to sign in without confirmation' do
+        assert 200, response.status
+        refute OnlyEmailUser.method_defined?(:confirmed_at)
+      end
+    end
   end
 end

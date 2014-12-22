@@ -17,7 +17,7 @@ module DeviseTokenAuth
       end
 
       # success redirect url is required
-      unless params[:confirm_success_url]
+      if resource_class.devise_modules.include?(:confirmable) && !params[:confirm_success_url]
         return render json: {
           status: 'error',
           data:   @resource,
@@ -76,7 +76,7 @@ module DeviseTokenAuth
 
     def update
       if @resource
-        
+
         if @resource.update_attributes(account_update_params)
           render json: {
             status: 'success',
