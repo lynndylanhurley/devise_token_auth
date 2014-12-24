@@ -89,8 +89,8 @@ module DeviseTokenAuth
         email:    auth_hash['info']['email'],
         first_name:    auth_hash['info']['first_name']  ,
         last_name:    auth_hash['info']['last_name']  ,
-        country:    auth_hash['info']['country'],
-        oauth_token: auth_hash['credentials']['token']
+        country:    auth_hash['info']['location']
+        #oauth_token: auth_hash['credentials']['token']
         
       })
     end
