@@ -60,7 +60,7 @@ module DeviseTokenAuth
       # don't send confirmation email!!!
       @resource.skip_confirmation!
 
-      sign_in(:user, @resource, store: false, bypass: false)
+      sign_in(DeviseTokenAuth.scope, @resource, store: false, bypass: false)
 
       @resource.save!
 
