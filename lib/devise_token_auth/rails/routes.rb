@@ -30,29 +30,53 @@ module ActionDispatch::Routing
         :controllers => controllers,
         :skip        => opts[:skip]
 
-      devise_scope resource.underscore.to_sym do
-        # path to verify token validity
-        get "#{opts[:at]}/validate_token", to: "#{token_validations_ctrl}#validate_token"
 
-        # omniauth routes. only define if omniauth is installed and not skipped.
-        if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
-          get "#{opts[:at]}/failure",             to: "#{omniauth_ctrl}#omniauth_failure"
-          get "#{opts[:at]}/:provider/callback",  to: "#{omniauth_ctrl}#omniauth_success"
+      unnest_namespace do
+        # get full url path as if it were namespaced
+        full_path = "#{@scope[:path]}/#{opts[:at]}"
 
-          # preserve the resource class thru oauth authentication by setting name of
-          # resource as "resource_class" param
-          match "#{opts[:at]}/:provider", to: redirect{|params, request|
-            # get the current querystring
-            qs = CGI::parse(request.env["QUERY_STRING"])
+        # clear scope so controller routes aren't namespaced
+        @scope = ActionDispatch::Routing::Mapper::Scope.new(
+          path:         "",
+          shallow_path: "",
+          constraints:  {},
+          defaults:     {},
+          options:      {},
+          parent:       nil
+        )
 
-            # append name of current resource
-            qs["resource_class"] = [resource]
+        devise_scope resource.underscore.to_sym do
+          # path to verify token validity
+          get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
 
-            # re-construct the path for omniauth
-            "#{::OmniAuth::config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
-          }, via: [:get]
+          # omniauth routes. only define if omniauth is installed and not skipped.
+          if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
+            match "#{full_path}/failure",             controller: "#{omniauth_ctrl}", action: "omniauth_failure", via: [:get]
+            match "#{full_path}/:provider/callback",  controller: "#{omniauth_ctrl}", action: "omniauth_success", via: [:get]
+
+            # preserve the resource class thru oauth authentication by setting name of
+            # resource as "resource_class" param
+            match "#{full_path}/:provider", to: redirect{|params, request|
+              # get the current querystring
+              qs = CGI::parse(request.env["QUERY_STRING"])
+
+              # append name of current resource
+              qs["resource_class"] = [resource]
+
+              # re-construct the path for omniauth
+              "#{::OmniAuth::config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
+            }, via: [:get]
+          end
         end
       end
+    end
+
+    # this allows us to use namespaced paths without namespacing the routes
+    def unnest_namespace
+      current_scope = @scope.dup
+      yield
+    ensure
+      @scope = current_scope
     end
 
     # ignore error about omniauth/multiple model support
