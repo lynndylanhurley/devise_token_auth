@@ -148,8 +148,6 @@ end
         @f = File.open(@fname, 'w') {|f|
           f.write <<-RUBY
 class ApplicationController < ActionController::Base
-  respond_to :json
-
   def whatever
     'whatever'
   end

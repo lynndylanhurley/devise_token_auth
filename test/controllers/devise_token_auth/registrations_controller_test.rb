@@ -443,7 +443,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
     describe 'Excluded :registrations module' do
       test 'UnregisterableUser should not be able to access registration routes' do
         assert_raises(ActionController::RoutingError) {
-          post 'unregisterable_user_auth', {
+          post '/unregisterable_user_auth', {
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
@@ -522,20 +522,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       test 'user is confirmed' do
         assert @resource.confirmed?
-      end
-    end
-
-    describe 'User with registration routes disabled' do
-      test 'OnlyEmailUser should not be able to use OAuth' do
-        assert_raises(ActionController::RoutingError) {
-          post '/unregisterable_user_auth', {
-            email: Faker::Internet.email,
-            password: "secret123",
-            password_confirmation: "secret123",
-            confirm_success_url: Faker::Internet.url,
-            unpermitted_param: '(x_x)'
-          }
-        }
       end
     end
   end

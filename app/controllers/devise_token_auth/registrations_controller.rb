@@ -3,8 +3,6 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, :only => [:destroy, :update]
     skip_after_filter :update_auth_header, :only => [:create, :destroy]
 
-    respond_to :json
-
     def create
       @resource            = resource_class.new(sign_up_params)
       @resource.provider   = "email"
