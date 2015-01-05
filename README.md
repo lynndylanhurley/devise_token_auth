@@ -199,7 +199,7 @@ For example, given that the app is mounted using the following settings:
 
 ~~~ruby
 # config/routes.rb
-mount_devise_token_auth_for 'User', at: '/auth'
+mount_devise_token_auth_for 'User', at: 'auth'
 ~~~
 
 The client configuration for github should look like this:
@@ -290,12 +290,12 @@ The authentication routes must be mounted to your project. This gem includes a r
 | Argument | Type | Default | Description |
 |---|---|---|---|
 |`class_name`| string | 'User' | The name of the class to use for authentication. This class must include the [model concern described here](#model-concerns). |
-| `options` | object | {at: '/auth'} | The [routes to be used for authentication](#usage) will be prefixed by the path specified in the `at` param of this object. |
+| `options` | object | {at: 'auth'} | The [routes to be used for authentication](#usage) will be prefixed by the path specified in the `at` param of this object. |
 
 **Example**:
 ~~~ruby
 # config/routes.rb
-mount_devise_token_auth_for 'User', at: '/auth'
+mount_devise_token_auth_for 'User', at: 'auth'
 ~~~
 
 Any model class can be used, but the class will need to include [`DeviseTokenAuth::Concerns::User`](#model-concerns) for authentication to work properly.
@@ -458,11 +458,11 @@ This gem supports the use of multiple user models. One possible use case is to a
     # within a `devise_scope` block
 
     # define :users as the first devise mapping:
-    mount_devise_token_auth_for 'User', at: '/auth'
+    mount_devise_token_auth_for 'User', at: 'auth'
 
     # define :admins as the second devise mapping. routes using this class will
     # need to be defined within a devise_scope as shown below
-    mount_devise_token_auth_for "Admin", at: '/admin_auth'
+    mount_devise_token_auth_for "Admin", at: 'admin_auth'
 
     # this route will authorize requests using the User class
     get 'demo/members_only', to: 'demo#members_only'
@@ -566,7 +566,7 @@ Now tell the route helper to `skip` mounting the `omniauth_callbacks` controller
 ~~~ruby
 Rails.application.routes.draw do
   # config/routes.rb
-  mount_devise_token_auth_for 'User', at: '/auth', skip: [:omniauth_callbacks]
+  mount_devise_token_auth_for 'User', at: 'auth', skip: [:omniauth_callbacks]
 end
 ~~~
 
@@ -582,7 +582,7 @@ For example, the default behavior of the [`validate_token`](https://github.com/l
 # config/routes.rb
 Rails.application.routes.draw do
   ...  
-  mount_devise_token_auth_for 'User', at: '/auth', controllers: {
+  mount_devise_token_auth_for 'User', at: 'auth', controllers: {
     token_validations:  'overrides/token_validations'
   }
 end
@@ -611,7 +611,7 @@ end
 ##### Example: all :controller options with default settings:
 
 ~~~ruby
-mount_devise_token_auth_for 'User', at: '/auth', controllers: {
+mount_devise_token_auth_for 'User', at: 'auth', controllers: {
   confirmations:      'devise_token_auth/confirmations',
   passwords:          'devise_token_auth/passwords',
   omniauth_callbacks: 'devise_token_auth/omniauth_callbacks',

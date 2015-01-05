@@ -23,35 +23,33 @@ module ActionDispatch::Routing
       # remove any unwanted devise modules
       opts[:skip].each{|item| controllers.delete(item)}
 
-      scope opts[:at] do
-        devise_for resource.pluralize.underscore.to_sym,
-          :class_name  => resource,
-          :module      => :devise,
-          :path        => "",
-          :controllers => controllers
+      devise_for resource.pluralize.underscore.to_sym,
+        :class_name  => resource,
+        :module      => :devise,
+        :path        => "#{opts[:at]}",
+        :controllers => controllers
 
-        devise_scope resource.underscore.to_sym do
-          # path to verify token validity
-          get "validate_token", to: "#{token_validations_ctrl}#validate_token"
+      devise_scope resource.underscore.to_sym do
+        # path to verify token validity
+        get "#{opts[:at]}/validate_token", to: "#{token_validations_ctrl}#validate_token"
 
-          # omniauth routes. only define if omniauth is installed and not skipped.
-          if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
-            get "failure",             to: "#{omniauth_ctrl}#omniauth_failure"
-            get ":provider/callback",  to: "#{omniauth_ctrl}#omniauth_success"
+        # omniauth routes. only define if omniauth is installed and not skipped.
+        if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
+          get "#{opts[:at]}/failure",             to: "#{omniauth_ctrl}#omniauth_failure"
+          get "#{opts[:at]}/:provider/callback",  to: "#{omniauth_ctrl}#omniauth_success"
 
-            # preserve the resource class thru oauth authentication by setting name of
-            # resource as "resource_class" param
-            match ":provider", to: redirect{|params, request|
-              # get the current querystring
-              qs = CGI::parse(request.env["QUERY_STRING"])
+          # preserve the resource class thru oauth authentication by setting name of
+          # resource as "resource_class" param
+          match "#{opts[:at]}/:provider", to: redirect{|params, request|
+            # get the current querystring
+            qs = CGI::parse(request.env["QUERY_STRING"])
 
-              # append name of current resource
-              qs["resource_class"] = [resource]
+            # append name of current resource
+            qs["resource_class"] = [resource]
 
-              # re-construct the path for omniauth
-              "#{::OmniAuth::config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
-            }, via: [:get]
-          end
+            # re-construct the path for omniauth
+            "#{::OmniAuth::config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
+          }, via: [:get]
         end
       end
     end
@@ -60,6 +58,5 @@ module ActionDispatch::Routing
     def set_omniauth_path_prefix!(path_prefix)
       ::OmniAuth.config.path_prefix = path_prefix
     end
-
   end
 end

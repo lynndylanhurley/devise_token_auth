@@ -55,6 +55,32 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe 'using namespaces' do
+      before do
+        @mails_sent = ActionMailer::Base.deliveries.count
+
+        post '/vx/auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url,
+          unpermitted_param: '(x_x)'
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        @mail = ActionMailer::Base.deliveries.last
+      end
+
+      test "request should be successful" do
+        assert_equal 200, response.status
+      end
+
+      test "user should have been created" do
+        assert @resource.id
+      end
+    end
+
     describe "case-insensitive email" do
 
       before do

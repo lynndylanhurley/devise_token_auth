@@ -4,13 +4,13 @@ Rails.application.routes.draw do
   # within a `devise_scope` block
 
   # define :users as the first devise mapping:
-  mount_devise_token_auth_for 'User', at: '/auth'
+  mount_devise_token_auth_for 'User', at: 'auth'
 
   # define :mangs as the second devise mapping. routes using this class will
   # need to be defined within a devise_scope as shown below
-  mount_devise_token_auth_for "Mang", at: '/mangs'
+  mount_devise_token_auth_for "Mang", at: 'mangs'
 
-  mount_devise_token_auth_for 'EvilUser', at: '/evil_user_auth', controllers: {
+  mount_devise_token_auth_for 'EvilUser', at: 'evil_user_auth', controllers: {
     confirmations:      'overrides/confirmations',
     passwords:          'overrides/passwords',
     omniauth_callbacks: 'overrides/omniauth_callbacks',
@@ -19,9 +19,14 @@ Rails.application.routes.draw do
     token_validations:  'overrides/token_validations'
   }
 
-  mount_devise_token_auth_for 'OnlyEmailUser', at: '/only_email_auth', skip: [:omniauth_callbacks]
+  mount_devise_token_auth_for 'OnlyEmailUser', at: 'only_email_auth', skip: [:omniauth_callbacks]
 
-  mount_devise_token_auth_for 'UnregisterableUser', at: '/unregisterable_user_auth', skip: [:registrations]
+  mount_devise_token_auth_for 'UnregisterableUser', at: 'unregisterable_user_auth', skip: [:registrations]
+
+  # test namespacing
+  namespace :vx do
+    mount_devise_token_auth_for 'User', at: 'auth'
+  end
 
   # this route will authorize visitors using the User class
   get 'demo/members_only', to: 'demo_user#members_only'
