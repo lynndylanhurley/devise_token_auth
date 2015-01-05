@@ -24,8 +24,10 @@ Rails.application.routes.draw do
   mount_devise_token_auth_for 'UnregisterableUser', at: 'unregisterable_user_auth', skip: [:registrations]
 
   # test namespacing
-  namespace :vx do
-    mount_devise_token_auth_for 'User', at: 'auth'
+  namespace :api do
+    scope :v1 do
+      mount_devise_token_auth_for 'User', at: 'auth'
+    end
   end
 
   # this route will authorize visitors using the User class

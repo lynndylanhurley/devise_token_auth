@@ -130,7 +130,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     describe 'using namespaces' do
       before do
-        get_via_redirect '/vx/auth/facebook', {
+        get_via_redirect '/api/v1/auth/facebook', {
           auth_origin_url: @redirect_url
         }
 

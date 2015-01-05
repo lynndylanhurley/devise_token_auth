@@ -59,7 +59,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       before do
         @mails_sent = ActionMailer::Base.deliveries.count
 
-        post '/vx/auth', {
+        post '/api/v1/auth', {
           email: Faker::Internet.email,
           password: "secret123",
           password_confirmation: "secret123",
