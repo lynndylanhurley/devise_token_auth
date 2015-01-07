@@ -11,7 +11,7 @@ module DeviseTokenAuth::Concerns::User
       self.devise_modules.delete(:omniauthable)
     end
 
-    serialize :tokens, HashWithIndifferentAccess
+    serialize :tokens, JSON
 
     validates_presence_of :email, if: Proc.new { |u| u.provider == 'email' }
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
@@ -102,32 +102,39 @@ module DeviseTokenAuth::Concerns::User
 
 
   def token_is_current?(token, client_id)
+    # ghetto HashWithIndifferentAccess
+    expiry     = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
+    token_hash = self.tokens[client_id]['token'] || self.tokens[client_id][:token]
+
     return true if (
       # ensure that expiry and token are set
-      self.tokens[client_id]['expiry'] and
-      self.tokens[client_id]['token'] and
+      expiry and token and
 
       # ensure that the token has not yet expired
-      DateTime.strptime(self.tokens[client_id]['expiry'].to_s, '%s') > Time.now and
+      DateTime.strptime(expiry.to_s, '%s') > Time.now and
 
       # ensure that the token is valid
-      BCrypt::Password.new(self.tokens[client_id]['token']) == token
+      BCrypt::Password.new(token_hash) == token
     )
   end
 
 
   # allow batch requests to use the previous token
   def token_can_be_reused?(token, client_id)
+    # ghetto HashWithIndifferentAccess
+    updated_at = self.tokens[client_id]['updated_at'] || self.tokens[client_id][:updated_at]
+    last_token = self.tokens[client_id]['last_token'] || self.tokens[client_id][:last_token]
+
+
     return true if (
       # ensure that the last token and its creation time exist
-      self.tokens[client_id]['updated_at'] and
-      self.tokens[client_id]['last_token'] and
+      updated_at and last_token and
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      self.tokens[client_id]['updated_at'] > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
+      updated_at > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
 
       # ensure that the token is valid
-      BCrypt::Password.new(self.tokens[client_id]['last_token']) == token
+      BCrypt::Password.new(last_token) == token
     )
   end
 
