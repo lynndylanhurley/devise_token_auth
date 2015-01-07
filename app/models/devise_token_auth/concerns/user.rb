@@ -169,13 +169,13 @@ module DeviseTokenAuth::Concerns::User
 
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
-    expiry = self.tokens[client_id]['expiry'].to_s
+    expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
 
     return {
       "access-token" => token,
       "token-type"   => "Bearer",
       "client"       => client_id,
-      "expiry"       => expiry,
+      "expiry"       => expiry.to_s,
       "uid"          => self.uid
     }
   end
