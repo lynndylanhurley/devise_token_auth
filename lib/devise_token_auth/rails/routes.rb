@@ -17,8 +17,7 @@ module ActionDispatch::Routing
       controllers = {:sessions           => sessions_ctrl,
                      :registrations      => registrations_ctrl,
                      :passwords          => passwords_ctrl,
-                     :confirmations      => confirmations_ctrl,
-                     :omniauth_callbacks => omniauth_ctrl}
+                     :confirmations      => confirmations_ctrl}
 
       # remove any unwanted devise modules
       opts[:skip].each{|item| controllers.delete(item)}
@@ -28,8 +27,7 @@ module ActionDispatch::Routing
         :module      => :devise,
         :path        => "#{opts[:at]}",
         :controllers => controllers,
-        :skip        => opts[:skip]
-
+        :skip        => opts[:skip] + [:omniauth_callbacks]
 
       unnest_namespace do
         # get full url path as if it were namespaced
@@ -51,8 +49,8 @@ module ActionDispatch::Routing
 
           # omniauth routes. only define if omniauth is installed and not skipped.
           if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
-            match "#{full_path}/failure",             controller: "#{omniauth_ctrl}", action: "omniauth_failure", via: [:get]
-            match "#{full_path}/:provider/callback",  controller: "#{omniauth_ctrl}", action: "omniauth_success", via: [:get]
+            match "#{full_path}/failure",             controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
+            match "#{full_path}/:provider/callback",  controller: omniauth_ctrl, action: "omniauth_success", via: [:get]
 
             # preserve the resource class thru oauth authentication by setting name of
             # resource as "resource_class" param
@@ -63,8 +61,10 @@ module ActionDispatch::Routing
               # append name of current resource
               qs["resource_class"] = [resource]
 
+              set_omniauth_path_prefix!(DeviseTokenAuth.omniauth_prefix)
+
               # re-construct the path for omniauth
-              "#{::OmniAuth::config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
+              "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
             }, via: [:get]
           end
         end
