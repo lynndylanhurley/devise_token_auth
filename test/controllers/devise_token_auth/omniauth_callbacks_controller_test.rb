@@ -37,7 +37,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         assert_equal 200, response.status
       end
 
-      focus
       test 'request should determine the correct resource_class' do
         assert_equal 'User', controller.omniauth_params['resource_class']
       end

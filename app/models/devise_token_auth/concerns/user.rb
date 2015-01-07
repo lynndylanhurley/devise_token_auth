@@ -6,7 +6,9 @@ module DeviseTokenAuth::Concerns::User
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
           :recoverable, :trackable, :validatable,
-          :confirmable, :omniauthable
+          :confirmable
+    else
+      self.devise_modules.delete(:omniauthable)
     end
 
     serialize :tokens, HashWithIndifferentAccess

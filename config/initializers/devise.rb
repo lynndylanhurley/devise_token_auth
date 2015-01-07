@@ -193,11 +193,4 @@ Devise.setup do |config|
 
   # don't serialize tokens
   Devise::Models::Authenticatable::BLACKLIST_FOR_SERIALIZATION << :tokens
-
-  # mounted routes will point to this
-  Rails.application.config.after_initialize do
-    if defined?(::OmniAuth)
-      ::OmniAuth::config.path_prefix = config.omniauth_path_prefix = DeviseTokenAuth.omniauth_prefix
-    end
-  end
 end

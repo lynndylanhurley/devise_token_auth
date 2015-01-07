@@ -21,5 +21,11 @@ module DeviseTokenAuth
 
   def self.setup(&block)
     yield self
+
+    Rails.application.config.after_initialize do
+      if defined?(::OmniAuth)
+        ::OmniAuth::config.path_prefix = Devise.omniauth_path_prefix = self.omniauth_prefix
+      end
+    end
   end
 end
