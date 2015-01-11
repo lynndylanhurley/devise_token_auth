@@ -1,7 +1,7 @@
 module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
-
+    protect_from_forgery with: :null_session
 
     def resource_class(m=nil)
       if m

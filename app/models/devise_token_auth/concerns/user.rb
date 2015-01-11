@@ -7,8 +7,6 @@ module DeviseTokenAuth::Concerns::User
       devise :database_authenticatable, :registerable,
           :recoverable, :trackable, :validatable,
           :confirmable
-    else
-      self.devise_modules.delete(:omniauthable)
     end
 
     serialize :tokens, JSON
