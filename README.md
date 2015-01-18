@@ -39,7 +39,7 @@ The fully configured api used in the demo can be found [here](https://github.com
   * [Cross Origin Requests (CORS)](#cors)
 * [Usage Continued](#usage-cont)
   * [Mounting Routes](#mounting-routes)
-  * [Controller Integration](#controller-concerns)
+  * [Controller Integration](#controller-methods)
   * [Model Integration](#model-concerns)
   * [Using Multiple User Classes](#using-multiple-models)
   * [Excluding Modules](#excluding-modules)
@@ -73,7 +73,7 @@ bundle install
 
 # Configuration TL;DR
 
-You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-concerns), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following command for an easy one-step installation:
+You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-methods), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following command for an easy one-step installation:
 
 ~~~bash
 rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
@@ -100,7 +100,7 @@ The following events will take place when using the install generator:
 
 * Routes will be appended to file at `config/routes.rb`. [Read more](#mounting-routes).
 
-* A concern will be included by your application controller at `app/controllers/application_controller.rb`. [Read more](#controller-concerns).
+* A concern will be included by your application controller at `app/controllers/application_controller.rb`. [Read more](#controller-methods).
 
 * A migration file will be created in the `db/migrate` directory. Inspect the migrations file, add additional columns if necessary, and then run the migration:
 
@@ -385,7 +385,7 @@ The authentication headers required for each request will be available in the re
 
 ##### DeviseTokenAuth::Concerns::User
 
-Typical use of this gem will not require the use of any of the following model methods. All authentication should be handled invisibly by the [controller concerns](#controller-concerns) described above.
+Typical use of this gem will not require the use of any of the following model methods. All authentication should be handled invisibly by the [controller concerns](#controller-methods) described above.
 
 Models that include the `DeviseTokenAuth::Concerns::User` concern will have access to the following public methods (read the above section for context on `token` and `client`):
 
