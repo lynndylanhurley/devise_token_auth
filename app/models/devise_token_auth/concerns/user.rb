@@ -30,7 +30,6 @@ module DeviseTokenAuth::Concerns::User
     # get rid of dead tokens
     before_save :destroy_expired_tokens
 
-
     # don't use default devise email validation
     def email_required?
       false
@@ -200,6 +199,13 @@ module DeviseTokenAuth::Concerns::User
     self.devise_modules.exclude?(:confirmable) || super
   end
 
+  def token_validation_response
+    self.as_json(except: [
+      :tokens, :created_at, :updated_at
+    ])
+  end
+
+
   protected
 
 
@@ -217,7 +223,6 @@ module DeviseTokenAuth::Concerns::User
 
     return res
   end
-
 
   # only validate unique email among users that registered by email
   def unique_email_user

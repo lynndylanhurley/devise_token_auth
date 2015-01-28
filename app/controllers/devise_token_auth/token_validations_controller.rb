@@ -8,9 +8,7 @@ module DeviseTokenAuth
       if @resource
         render json: {
           success: true,
-          data: @resource.as_json(except: [
-            :tokens, :created_at, :updated_at
-          ])
+          data: @resource.token_validation_response
         }
       else
         render json: {

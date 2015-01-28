@@ -45,6 +45,7 @@ The fully configured api used in the demo can be found [here](https://github.com
   * [Excluding Modules](#excluding-modules)
   * [Custom Controller Overrides](#custom-controller-overrides)
   * [Email Template Overrides](#email-template-overrides)
+* [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
   * [Token Management](#about-token-management)
   * [Batch Requests](#about-batch-requests)
@@ -639,6 +640,33 @@ This will create two new files:
 These files may be edited to suit your taste.
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
+
+# FAQ
+
+### Can I use this gem alongside standard Devise?
+
+Yes! But you will need to use separate routes for standard Devise. So do something like this:
+
+~~~ruby
+Rails.application.routes.draw do
+
+  # standard devise routes available at /users
+  # NOTE: make sure this comes first!!!
+  devise_for :users
+
+  # token auth routes available at /api/v1/auth
+  namespace :api do
+    scope :v1 do
+      mount_devise_token_auth_for 'User', at: 'auth'
+    end
+  end
+
+end
+~~~
+
+### Why are the `new` routes included if this gem doesn't use them?
+
+Removing the `new` routes will require significant modifications to devise. If the inclusion of the `new` routes is causing your app any problems, post an issue in the issue tracker and it will be addressed ASAP.
 
 # Conceptual
 
