@@ -57,8 +57,10 @@ module DeviseTokenAuth
       extra_params = whitelisted_params
       @resource.assign_attributes(extra_params) if extra_params
 
-      # don't send confirmation email!!!
-      @resource.skip_confirmation!
+      if resource_class.devise_modules.include?(:confirmable)
+        # don't send confirmation email!!!
+        @resource.skip_confirmation!
+      end
 
       sign_in(:user, @resource, store: false, bypass: false)
 
