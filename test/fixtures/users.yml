@@ -1,6 +1,5 @@
 <% timestamp = DateTime.parse(2.weeks.ago.to_s).to_time.strftime("%F %T") %>
 <% @email = Faker::Internet.email %>
-<% @username = Faker::Internet.user_name %>
 confirmed_email_user:
   uid:                 "<%= @email %>"
   email:               "<%= @email %>"

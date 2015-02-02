@@ -30,7 +30,6 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
-
           @new_sign_in_count      = @resource.sign_in_count
           @new_current_sign_in_at = @resource.current_sign_in_at
           @new_last_sign_in_at    = @resource.last_sign_in_at

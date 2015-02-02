@@ -5,8 +5,12 @@ module DeviseTokenAuth
 
     def create
       # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        q_value = resource_params[:email].downcase
+      if resource_params.include?(:email)
+        q_value = resource_params[:email]
+
+        if resource_class.case_insensitive_keys.include?(:email)
+          q_value = resource_params[:email].downcase
+        end
 
         q = "uid = ? AND provider='email'"
 
@@ -14,8 +18,11 @@ module DeviseTokenAuth
           q = "BINARY uid = ? AND provider='email'"
         end
 
-      elsif resource_class.case_insensitive_keys.include?(:username)
-        q_value = resource_params[:username].downcase
+      elsif resource_params.include?(:username)
+        q_value = resource_params[:username]
+        if resource_class.case_insensitive_keys.include?(:username)
+          q_value = resource_params[:username].downcase
+        end
 
         q = "username = ? AND provider='email'"
 
@@ -24,7 +31,12 @@ module DeviseTokenAuth
         end
       end
 
-      @resource = resource_class.where(q, q_value).first
+      @resource = nil
+
+      if q && q_value
+        @resource = resource_class.where(q, q_value).first
+      end
+
       if @resource and valid_params? and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
@@ -83,7 +95,7 @@ module DeviseTokenAuth
     end
 
     def valid_params?
-      resource_params[:password] && resource_params[:email]
+      resource_params[:password] && (resource_params[:email] || resource_params[:username])
     end
 
     def resource_params
