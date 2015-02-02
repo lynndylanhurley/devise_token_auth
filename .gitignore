@@ -8,3 +8,4 @@ test/dummy/tmp/
 test/dummy/.sass-cache
 test/dummy/config/application.yml
 coverage
+.idea

@@ -6,9 +6,10 @@ module DeviseTokenAuth::Concerns::User
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
           :recoverable, :trackable, :validatable,
-          :confirmable
+          :confirmable, authentication_keys: [:login]
     else
       self.devise_modules.delete(:omniauthable)
+      self.devise_modules.push(authentication_keys: [:login])
     end
 
     serialize :tokens, JSON
@@ -30,6 +31,8 @@ module DeviseTokenAuth::Concerns::User
     # get rid of dead tokens
     before_save :destroy_expired_tokens
 
+    attr_accessor :login
+
     # don't use default devise email validation
     def email_required?
       false
@@ -39,6 +42,14 @@ module DeviseTokenAuth::Concerns::User
       false
     end
 
+    def self.find_for_database_authentication(warden_conditions)
+      conditions = warden_conditions.dup
+      if login = conditions.delete(:login)
+        where(conditions).where(["username = :value OR lower(email) = lower(:value)", { :value => login }]).first
+      else
+        where(conditions.to_h).first
+      end
+    end
 
     # override devise method to include additional info as opts hash
     def send_confirmation_instructions(opts=nil)
