@@ -4,36 +4,22 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, :only => [:destroy]
 
     def create
-      # honor devise configuration for case_insensitive_keys
-      if resource_params.include?(:email)
-        q_value = resource_params[:email]
-
-        if resource_class.case_insensitive_keys.include?(:email)
-          q_value = resource_params[:email].downcase
-        end
-
-        q = "uid = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY uid = ? AND provider='email'"
-        end
-
-      elsif resource_params.include?(:username)
-        q_value = resource_params[:username]
-        if resource_class.case_insensitive_keys.include?(:username)
-          q_value = resource_params[:username].downcase
-        end
-
-        q = "username = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY username = ? AND provider='email'"
-        end
-      end
+      # Check
+      field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
 
       @resource = nil
+      if field
+        q_value = resource_params[field]
 
-      if q && q_value
+        if resource_class.case_insensitive_keys.include?(field)
+          q_value.downcase!
+        end
+        q = "uid = ? AND provider='email'"
+
+        if field != :email
+          q = "#{field.to_s} = ? AND provider='email'"
+        end
+
         @resource = resource_class.where(q, q_value).first
       end
 
