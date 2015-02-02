@@ -6,19 +6,26 @@ module DeviseTokenAuth
     def create
       # honor devise configuration for case_insensitive_keys
       if resource_class.case_insensitive_keys.include?(:email)
-        email = resource_params[:email].downcase
-      else
-        email = resource_params[:email]
+        q_value = resource_params[:email].downcase
+
+        q = "uid = ? AND provider='email'"
+
+        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+          q = "BINARY uid = ? AND provider='email'"
+        end
+
+      elsif resource_class.case_insensitive_keys.include?(:username)
+        q_value = resource_params[:username].downcase
+
+        q = "username = ? AND provider='email'"
+
+        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+          q = "BINARY username = ? AND provider='email'"
+        end
+
       end
 
-      q = "uid = ? AND provider='email'"
-
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
-      end
-
-      @resource = resource_class.where(q, email).first
-
+      @resource = resource_class.where(q, q_value).first
       if @resource and valid_params? and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
