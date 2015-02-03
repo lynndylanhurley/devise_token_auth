@@ -25,9 +25,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     return @resource if @resource and @resource.class == rc
 
     # parse header for values necessary for authentication
-    uid        = request.headers['uid']
-    @token     = request.headers['access-token']
-    @client_id = request.headers['client']
+    uid        = request.headers['uid'] || params['uid']
+    @token     = request.headers['access-token'] || params['access-token']
+    @client_id = request.headers['client'] || params['client']
 
     return false unless @token
 
