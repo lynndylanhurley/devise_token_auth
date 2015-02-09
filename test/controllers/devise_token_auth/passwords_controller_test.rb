@@ -15,6 +15,14 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       describe 'request password reset' do
+        test 'unknown user should return 404' do
+          xhr :post, :create, {
+            email:        'chester@cheet.ah',
+            redirect_url: @redirect_url
+          }
+
+          assert_equal 404, response.status
+        end
 
         describe 'case-sensitive email' do
           before do
@@ -126,7 +134,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           test 'response should return failure status if not configured' do
             @resource_class.case_insensitive_keys = []
             xhr :post, :create, @request_params
-            assert_equal 400, response.status
+            assert_equal 404, response.status
           end
         end
       end

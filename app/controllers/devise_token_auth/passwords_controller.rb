@@ -37,6 +37,7 @@ module DeviseTokenAuth
       @resource = resource_class.where(q, email).first
 
       errors = nil
+      error_status = 400
 
       if @resource
         @resource.send_reset_password_instructions({
@@ -57,13 +58,14 @@ module DeviseTokenAuth
         end
       else
         errors = ["Unable to find user with email '#{email}'."]
+        error_status = 404
       end
 
       if errors
         render json: {
           success: false,
-          errors: errors
-        }, status: 400
+          errors: errors,
+        }, status: error_status
       end
     end
 
