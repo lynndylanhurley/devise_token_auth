@@ -28,4 +28,4 @@ Example:
 
   The following line will be inserted at the top of 'config/routes.rb' if it
   does not already exist:
-      mount_devise_token_auth_for "User", at: '/auth'
+      mount_devise_token_auth_for "User", at: 'auth'

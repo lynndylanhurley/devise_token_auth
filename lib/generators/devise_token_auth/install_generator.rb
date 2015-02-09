@@ -5,7 +5,7 @@ module DeviseTokenAuth
     source_root File.expand_path('../templates', __FILE__)
 
     argument :user_class, type: :string, default: "User"
-    argument :mount_path, type: :string, default: '/auth'
+    argument :mount_path, type: :string, default: 'auth'
 
     def create_initializer_file
       copy_file("devise_token_auth.rb", "config/initializers/devise_token_auth.rb")
