@@ -4,22 +4,17 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, :only => [:destroy]
 
     def create
-      # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        email = resource_params[:email].downcase
-      else
-        email = resource_params[:email]
-      end
+      auth_params = get_auth_params
 
-      q = "uid = ? AND provider='email'"
+      q = "#{auth_params[:key]} = ? AND provider='email'"
 
       if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
+        q = "BINARY #{auth_params[:key]} = ? AND provider='email'"
       end
 
-      @resource = resource_class.where(q, email).first
+      @resource = resource_class.where(q, auth_params[:val]).first
 
-      if @resource and valid_params? and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
+      if @resource and valid_params?(auth_params) and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
@@ -76,12 +71,36 @@ module DeviseTokenAuth
       end
     end
 
-    def valid_params?
-      resource_params[:password] && resource_params[:email]
+    def valid_params?(auth_params)
+      resource_params[:password] && auth_params[:key] && auth_params[:val]
     end
 
     def resource_params
       params.permit(devise_parameter_sanitizer.for(:sign_in))
+    end
+
+    def get_auth_params
+      auth_key = nil
+      auth_val = nil
+
+      # iterate thru allowed auth keys, use first found
+      resource_class.authentication_keys.each do |k|
+        if resource_params[k]
+          auth_val = resource_params[k]
+          auth_key = k
+          break
+        end
+      end
+
+      # honor devise configuration for case_insensitive_keys
+      if resource_class.case_insensitive_keys.include?(auth_key)
+        auth_val.downcase!
+      end
+
+      return {
+        key: auth_key,
+        val: auth_val
+      }
     end
   end
 end
