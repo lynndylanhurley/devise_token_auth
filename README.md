@@ -746,6 +746,7 @@ Thanks to the following contributors:
 * [@m2omou](https://github.com/m2omou)
 * [@smarquez1](https://github.com/smarquez1)
 * [@jartek](https://github.com/jartek)
+* [@nicolas-besnard](https://github.com/nicolas-besnard) 
 
 # Contributing
 
