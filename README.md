@@ -83,7 +83,7 @@ rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
 **Example**:
 
 ~~~bash
-rails g devise_token_auth:install User /auth
+rails g devise_token_auth:install User auth
 ~~~
 
 This generator accepts the following optional arguments:
@@ -91,7 +91,7 @@ This generator accepts the following optional arguments:
 | Argument | Default | Description |
 |---|---|---|
 | USER_CLASS | `User` | The name of the class to use for user authentication. |
-| MOUNT_PATH | `/auth` | The path at which to mount the authentication routes. [Read more](#usage). |
+| MOUNT_PATH | `auth` | The path at which to mount the authentication routes. [Read more](#usage). |
 
 The following events will take place when using the install generator:
 
@@ -120,7 +120,7 @@ You may also need to configure the following items:
 
 # Usage TL;DR
 
-The following routes are available for use by your client. These routes live relative to the path at which this engine is mounted (`/auth` by default). These routes correspond to the defaults used by the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js.
+The following routes are available for use by your client. These routes live relative to the path at which this engine is mounted (`auth` by default). These routes correspond to the defaults used by the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js.
 
 | path | method | purpose |
 |:-----|:-------|:--------|
