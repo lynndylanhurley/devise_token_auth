@@ -5,6 +5,14 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   included do
     before_action :set_request_start
     after_action :update_auth_header
+
+    before_action :default_permitted_parameters, if: :devise_controller?
+  end
+
+  def default_permitted_parameters
+    devise_parameter_sanitizer.for(:sign_up).concat([:email, :login, :username])
+    devise_parameter_sanitizer.for(:sign_in).concat([:email, :login, :username])
+    devise_parameter_sanitizer.for(:account_update).concat([:email, :username])
   end
 
   # keep track of request duration

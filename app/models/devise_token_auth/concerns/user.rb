@@ -5,8 +5,7 @@ module DeviseTokenAuth::Concerns::User
     # Hack to check if devise is already enabled
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
-          :recoverable, :trackable, :validatable,
-          :confirmable
+          :recoverable, :trackable, :validatable, :confirmable
     else
       self.devise_modules.delete(:omniauthable)
     end
@@ -38,7 +37,6 @@ module DeviseTokenAuth::Concerns::User
     def email_changed?
       false
     end
-
 
     # override devise method to include additional info as opts hash
     def send_confirmation_instructions(opts=nil)

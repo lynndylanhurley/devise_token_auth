@@ -9,6 +9,18 @@ confirmed_email_user:
   updated_at:          '<%= timestamp %>'
   encrypted_password:  <%= User.new.send(:password_digest, 'secret123') %>
 
+<% @email = Faker::Internet.email %>
+<% @username = Faker::Internet.user_name %>
+confirmed_email_user_with_username:
+  uid:                 "<%= @email %>"
+  email:               "<%= @email %>"
+  provider:            'email'
+  confirmed_at:        '<%= timestamp %>'
+  created_at:          '<%= timestamp %>'
+  updated_at:          '<%= timestamp %>'
+  encrypted_password:  <%= User.new.send(:password_digest, 'secret123') %>
+  username:            "<%= @username %>"
+
 <% @fb_email = Faker::Internet.email %>
 duplicate_email_facebook_user:
   uid:                 "<%= Faker::Number.number(10) %>"
