@@ -98,21 +98,21 @@ end
 
       test 'route method is appended to routes file' do
         assert_file 'config/routes.rb' do |routes|
-          assert_match(/mount_devise_token_auth_for 'User', at: '\/auth'/, routes)
+          assert_match(/mount_devise_token_auth_for 'User', at: 'auth'/, routes)
         end
       end
 
       test 'subsequent runs do not modify file' do
         run_generator
         assert_file 'config/routes.rb' do |routes|
-          matches = routes.scan(/mount_devise_token_auth_for 'User', at: '\/auth'/m).size
+          matches = routes.scan(/mount_devise_token_auth_for 'User', at: 'auth'/m).size
           assert_equal 1, matches
         end
       end
 
       describe 'subsequent models' do
         before do
-          run_generator %w(Mang /mangs)
+          run_generator %w(Mang mangs)
         end
 
         test 'migration is created' do
@@ -121,7 +121,7 @@ end
 
         test 'route method is appended to routes file' do
           assert_file 'config/routes.rb' do |routes|
-            assert_match(/mount_devise_token_auth_for 'Mang', at: '\/mangs'/, routes)
+            assert_match(/mount_devise_token_auth_for 'Mang', at: 'mangs'/, routes)
           end
         end
 
