@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.1.32.beta2)
+    devise_token_auth (0.1.32.beta3)
       devise (~> 3.3)
       rails (~> 4.2)
 
@@ -101,7 +101,7 @@ GEM
     ffi (1.9.6)
     formatador (0.2.5)
     fuzz_ball (0.9.1)
-    globalid (0.3.0)
+    globalid (0.3.2)
       activesupport (>= 4.1.0)
     guard (2.10.5)
       formatador (>= 0.2.4)
