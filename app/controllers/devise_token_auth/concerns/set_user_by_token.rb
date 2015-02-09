@@ -7,12 +7,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     after_action :update_auth_header
   end
 
-  def default_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up).concat([:email, :login])
-    devise_parameter_sanitizer.for(:sign_in).concat([:email, :login])
-    devise_parameter_sanitizer.for(:account_update).concat([:email])
-  end
-
   # keep track of request duration
   def set_request_start
     @request_started_at = Time.now
