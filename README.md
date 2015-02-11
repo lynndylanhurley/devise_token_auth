@@ -26,6 +26,10 @@ This gem provides the following features:
 
 The fully configured api used in the demo can be found [here](https://github.com/lynndylanhurley/devise_token_auth_demo).
 
+# Troubleshooting
+
+Please read the [issue reporting guidelines](#issue-reporting) before posting issues.
+
 # Table of Contents
 
 * [Dependencies](#dependencies)
@@ -45,6 +49,7 @@ The fully configured api used in the demo can be found [here](https://github.com
   * [Excluding Modules](#excluding-modules)
   * [Custom Controller Overrides](#custom-controller-overrides)
   * [Email Template Overrides](#email-template-overrides)
+* [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
   * [Token Management](#about-token-management)
@@ -452,6 +457,7 @@ This gem supports the use of multiple user models. One possible use case is to a
 1. Define the routes to be used by the `Admin` user within a [`devise_scope`](https://github.com/plataformatec/devise#configuring-routes).
 
   **Example**:
+  
   ~~~ruby
   Rails.application.routes.draw do
     # when using multiple models, controllers will default to the first available
@@ -640,6 +646,19 @@ This will create two new files:
 These files may be edited to suit your taste.
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
+
+# Issue Reporting
+
+When posting issues, please include the following information to speed up the troubleshooting process:
+
+* **Version**: which version of this gem (and [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) if applicable) are you using?
+* **Request and response headers**: these can be found in the "Network" tab of your browser's web inspector.
+* **Rails Stacktrace**: this can be found in the `log/development.log` of your API.
+* **Environmental Info**: How is your application different from the [reference implementation](https://github.com/lynndylanhurley/devise_token_auth_demo)? This may include (but is not limited to) the following details:
+  * **Routes**: are you using some crazy namespace, scope, or constraint?
+  * **Gems**: are you using MongoDB, Grape, RailsApi, ActiveAdmin, etc.?
+  * **Custom Overrides**: what have you done in terms of [custom controller overrides](#custom-controller-overrides)?
+  * **Custom Frontend**: are you using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), or something else?
 
 # FAQ
 
