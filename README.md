@@ -151,7 +151,7 @@ The following settings are available for configuration in `config/initializers/d
 
 | Name | Default | Description|
 |---|---|---|
-| **`change_headers_on_each_request`** | `true` | By default the access_token header will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `access_token` header from changing after each request. [Read more](#about-token-management). |
+| **`change_headers_on_each_request`** | `true` | By default the access-token header will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `access-token` header from changing after each request. [Read more](#about-token-management). |
 | **`token_lifespan`** | `2.weeks` | Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login. |
 | **`batch_request_buffer_throttle`** | `5.seconds` | Sometimes it's necessary to make several requests to the API at the same time. In this case, each request in the batch will need to share the same auth token. This setting determines how far apart the requests can be while still using the same auth token. [Read more](#about-batch-requests). |
 | **`omniauth_prefix`** | `"/omniauth"` | This route will be the prefix for all oauth2 redirect callbacks. For example, using the default '/omniauth' setting, the github oauth2 provider will redirect successful authentications to '/omniauth/github/callback'. [Read more](#omniauth-provider-settings). |
@@ -369,8 +369,8 @@ The authentication information should be included by the client in the headers o
 
 ##### Authentication headers example:
 ~~~
-"access_token": "wwwww",
-"token_type":   "Bearer",
+"access-token": "wwwww",
+"token-type":   "Bearer",
 "client":       "xxxxx",
 "expiry":       "yyyyy",
 "uid":          "zzzzz"
@@ -380,7 +380,7 @@ The authentication headers consists of the following params:
 
 | param | description |
 |---|---|
-| **`access_token`** | This serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request. |
+| **`access-token`** | This serves as the user's password for each request. A hashed version of this value is stored in the database for later comparison. This value should be changed on each request. |
 | **`client`** | This enables the use of multiple simultaneous sessions on different clients. (For example, a user may want to be authenticated on both their phone and their laptop at the same time.) |
 | **`expiry`** | The date at which the current session will expire. This can be used by clients to invalidate expired tokens without the need for an API request. |
 | **`uid`** | A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will make the API susceptible to [timing attacks](http://codahale.com/a-lesson-in-timing-attacks/). |
@@ -401,7 +401,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   ~~~ruby
   # extract token + client_id from auth header
   client_id = request.headers['client']
-  token = request.headers['access_token']
+  token = request.headers['access-token']
 
   @user.valid_token?(token, client_id)
   ~~~
@@ -697,7 +697,7 @@ Tokens should be invalidated after each request to the API. The following diagra
 
 ![password reset flow](https://github.com/lynndylanhurley/ng-token-auth/raw/master/test/app/images/flow/token-update-detail.jpg)
 
-During each request, a new token is generated. The `access_token` header that should be used in the next request is returned in the `access_token` header of the response to the previous request. The last request in the diagram fails because it tries to use a token that was invalidated by the previous request.
+During each request, a new token is generated. The `access-token` header that should be used in the next request is returned in the `access-token` header of the response to the previous request. The last request in the diagram fails because it tries to use a token that was invalidated by the previous request.
 
 The only case where an expired token is allowed is during [batch requests](#about-batch-requests).
 
@@ -723,7 +723,7 @@ $scope.getResourceData = function() {
 };
 ~~~
 
-In this case, it's impossible to update the `access_token` header for the second request with the `access_token` header of the first response because the second request will begin before the first one is complete. The server must allow these batches of concurrent requests to share the same auth token. This diagram illustrates how batch requests are identified by the server:
+In this case, it's impossible to update the `access-token` header for the second request with the `access-token` header of the first response because the second request will begin before the first one is complete. The server must allow these batches of concurrent requests to share the same auth token. This diagram illustrates how batch requests are identified by the server:
 
 ![batch request overview](https://github.com/lynndylanhurley/ng-token-auth/raw/master/test/app/images/flow/batch-request-overview.jpg)
 
