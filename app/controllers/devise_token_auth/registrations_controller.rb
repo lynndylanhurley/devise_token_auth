@@ -18,7 +18,7 @@ module DeviseTokenAuth
       if resource_class.devise_modules.include?(:confirmable) && !params[:confirm_success_url]
         return render json: {
           status: 'error',
-          data:   @resource,
+          data:   @resource.as_json,
           errors: ["Missing `confirm_success_url` param."]
         }, status: 403
       end
@@ -58,7 +58,7 @@ module DeviseTokenAuth
           clean_up_passwords @resource
           render json: {
             status: 'error',
-            data:   @resource,
+            data:   @resource.as_json,
             errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
           }, status: 403
         end
@@ -66,7 +66,7 @@ module DeviseTokenAuth
         clean_up_passwords @resource
         render json: {
           status: 'error',
-          data:   @resource,
+          data:   @resource.as_json,
           errors: ["An account already exists for #{@resource.email}"]
         }, status: 403
       end
