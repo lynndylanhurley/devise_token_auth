@@ -12,7 +12,7 @@ module DeviseTokenAuth::Concerns::User
 
     serialize :tokens, JSON
 
-    validates_presence_of :email, if: Proc.new { |u| u.provider == 'email' }
+    validates :email, presence: true, email: true, if: Proc.new { |u| u.provider == 'email' }
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
 
     # only validate unique emails among email registration users
