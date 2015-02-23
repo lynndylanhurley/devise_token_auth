@@ -687,6 +687,25 @@ end
 
 Removing the `new` routes will require significant modifications to devise. If the inclusion of the `new` routes is causing your app any problems, post an issue in the issue tracker and it will be addressed ASAP.
 
+### I'm having trouble using this gem alongside [ActiveAdmin](http://activeadmin.info/)...
+
+For some odd reason, [ActiveAdmin](http://activeadmin.info/) extends from your own app's `ApplicationController`. This becomes a problem if you include the `DeviseTokenAuth::Concerns::SetUserByToken` concern in your app's `ApplicationController`. 
+
+The solution is to use two separate `ApplicationController` classes - one for your API, and one for ActiveAdmin. Something like this:
+
+~~~ruby
+# app/controllers/api_controller.rb
+# API routes extend from this controller
+class ApiController < ActionController::Base
+  include DeviseTokenAuth::Concerns::SetUserByToken
+end
+
+# app/controllers/application_controller.rb
+# leave this for ActiveAdmin, and any other non-api routes
+class ApplicationController < ActionController::Base
+end
+~~~
+
 # Conceptual
 
 None of the following information is required to use this gem, but read on if you're curious.
