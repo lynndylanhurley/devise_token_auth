@@ -87,7 +87,7 @@ module DeviseTokenAuth
           expiry: expiry
         }
 
-        # ensure that user is confirmed is the User model is :confirmable
+        # ensure that user is confirmed if the User model is :confirmable
         if self.class.devise_modules.include?(:confirmable)
           @resource.skip_confirmation! unless @resource.confirmed_at
         end
