@@ -155,6 +155,7 @@ The following settings are available for configuration in `config/initializers/d
 | **`token_lifespan`** | `2.weeks` | Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login. |
 | **`batch_request_buffer_throttle`** | `5.seconds` | Sometimes it's necessary to make several requests to the API at the same time. In this case, each request in the batch will need to share the same auth token. This setting determines how far apart the requests can be while still using the same auth token. [Read more](#about-batch-requests). |
 | **`omniauth_prefix`** | `"/omniauth"` | This route will be the prefix for all oauth2 redirect callbacks. For example, using the default '/omniauth' setting, the github oauth2 provider will redirect successful authentications to '/omniauth/github/callback'. [Read more](#omniauth-provider-settings). |
+| **`require_confirm_success_url`** | `true` | By default when using devise's confirmable a confirm_success_url paramater will be required when creating a user.
 
 
 ## OmniAuth authentication
@@ -351,7 +352,7 @@ Note that if the model that you're trying to access isn't called `User`, the hel
 # app/controllers/test_controller.rb
 class TestController < ApplicationController
   before_action :authenticate_user!
-  
+
   def members_only
     render json: {
       data: {
@@ -457,7 +458,7 @@ This gem supports the use of multiple user models. One possible use case is to a
 1. Define the routes to be used by the `Admin` user within a [`devise_scope`](https://github.com/plataformatec/devise#configuring-routes).
 
   **Example**:
-  
+
   ~~~ruby
   Rails.application.routes.draw do
     # when using multiple models, controllers will default to the first available
@@ -480,7 +481,7 @@ This gem supports the use of multiple user models. One possible use case is to a
     end
   end
   ~~~
-  
+
 1. Configure any `Admin` restricted controllers. Controllers will now have access to the methods [described here](#methods):
   * `before_action: :authenticate_admin!`
   * `current_admin`
@@ -497,7 +498,7 @@ It is also possible to control access to multiple user types at the same time us
 class DemoGroupController < ApplicationController
   devise_token_auth_group :member, contains: [:user, :admin]
   before_action :authenticate_member!
-  
+
   def members_only
     render json: {
       data: {
@@ -579,7 +580,7 @@ end
 
 ## Custom Controller Overrides
 
-The built-in controllers can be overridden with your own custom controllers. 
+The built-in controllers can be overridden with your own custom controllers.
 
 For example, the default behavior of the [`validate_token`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb#L6) method of the [`TokenValidationController`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb) is to return the `User` object as json (sans password and token data). The following example shows how to override the `validate_token` action to include a model method as well.
 
@@ -588,7 +589,7 @@ For example, the default behavior of the [`validate_token`](https://github.com/l
 ~~~ruby
 # config/routes.rb
 Rails.application.routes.draw do
-  ...  
+  ...
   mount_devise_token_auth_for 'User', at: 'auth', controllers: {
     token_validations:  'overrides/token_validations'
   }
@@ -689,7 +690,7 @@ Removing the `new` routes will require significant modifications to devise. If t
 
 ### I'm having trouble using this gem alongside [ActiveAdmin](http://activeadmin.info/)...
 
-For some odd reason, [ActiveAdmin](http://activeadmin.info/) extends from your own app's `ApplicationController`. This becomes a problem if you include the `DeviseTokenAuth::Concerns::SetUserByToken` concern in your app's `ApplicationController`. 
+For some odd reason, [ActiveAdmin](http://activeadmin.info/) extends from your own app's `ApplicationController`. This becomes a problem if you include the `DeviseTokenAuth::Concerns::SetUserByToken` concern in your app's `ApplicationController`.
 
 The solution is to use two separate `ApplicationController` classes - one for your API, and one for ActiveAdmin. Something like this:
 
@@ -784,7 +785,7 @@ Thanks to the following contributors:
 * [@m2omou](https://github.com/m2omou)
 * [@smarquez1](https://github.com/smarquez1)
 * [@jartek](https://github.com/jartek)
-* [@nicolas-besnard](https://github.com/nicolas-besnard) 
+* [@nicolas-besnard](https://github.com/nicolas-besnard)
 
 # Contributing
 
