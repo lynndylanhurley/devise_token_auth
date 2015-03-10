@@ -14,8 +14,8 @@ module DeviseTokenAuth
         @resource.email = sign_up_params[:email]
       end
 
-      # success redirect url is required
-      if resource_class.devise_modules.include?(:confirmable) && !params[:confirm_success_url]
+      # success redirect url may be required
+      if resource_class.devise_modules.include?(:confirmable) && DeviseTokenAuth.require_confirm_success_url && !params[:confirm_success_url]
         return render json: {
           status: 'error',
           data:   @resource.as_json,
@@ -28,7 +28,7 @@ module DeviseTokenAuth
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
         if @resource.save
 
-          unless @resource.confirmed?
+          if params[:confirm_success_url] && !@resource.confirmed?
             # user will require email authentication
             @resource.send_confirmation_instructions({
               client_config: params[:config_name],
