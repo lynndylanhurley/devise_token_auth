@@ -35,7 +35,7 @@ module DeviseTokenAuth
         }
         @resource.save
 
-        sign_in(:user, @resource, store: false, bypass: false)
+        sign_in(DeviseTokenAuth.scope, @resource, store: false, bypass: false)
 
         render json: {
           data: @resource.token_validation_response
