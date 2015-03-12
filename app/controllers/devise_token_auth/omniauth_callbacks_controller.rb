@@ -11,8 +11,9 @@ module DeviseTokenAuth
       devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
       redirect_route = "/#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
 
-      # preserve omniauth info for success route
-      session['dta.omniauth.auth'] = request.env['omniauth.auth']
+      # preserve omniauth info for success route. ignore 'extra' in twitter
+      # auth response to avoid CookieOverflow.
+      session['dta.omniauth.auth'] = request.env['omniauth.auth'].except('extra')
       session['dta.omniauth.params'] = request.env['omniauth.params']
 
       redirect_to redirect_route
