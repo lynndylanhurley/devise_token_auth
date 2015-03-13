@@ -155,6 +155,9 @@ The following settings are available for configuration in `config/initializers/d
 | **`token_lifespan`** | `2.weeks` | Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login. |
 | **`batch_request_buffer_throttle`** | `5.seconds` | Sometimes it's necessary to make several requests to the API at the same time. In this case, each request in the batch will need to share the same auth token. This setting determines how far apart the requests can be while still using the same auth token. [Read more](#about-batch-requests). |
 | **`omniauth_prefix`** | `"/omniauth"` | This route will be the prefix for all oauth2 redirect callbacks. For example, using the default '/omniauth' setting, the github oauth2 provider will redirect successful authentications to '/omniauth/github/callback'. [Read more](#omniauth-provider-settings). |
+| **`default_confirm_success_url`** | `nil` | By default this value is expected to be sent by the client so that the API knows where to redirect users after successful email confirmation. If this param is set, the API will redirect to this value when no value is provided by the cilent. |
+| **`default_password_reset_url`** | `nil` | By default this value is expected to be sent by the client so that the API knows where to redirect users after successful password resets. If this param is set, the API will redirect to this value when no value is provided by the cilent. |
+| **`redirect_whitelist`** | `nil` | As an added security measure, you can limit the URLs to which the API will redirect after email token validation (password reset, email confirmation, etc.). This value should be an array containing exact matches to the client URLs to be visited after validation. |
 
 
 ## OmniAuth authentication

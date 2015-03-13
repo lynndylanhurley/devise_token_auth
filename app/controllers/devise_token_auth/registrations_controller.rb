@@ -14,13 +14,30 @@ module DeviseTokenAuth
         @resource.email = sign_up_params[:email]
       end
 
+      # give redirect value from params priority
+      redirect_url = params[:confirm_success_url]
+
+      # fall back to default value if provided
+      redirect_url ||= DeviseTokenAuth.default_confirm_success_url
+
       # success redirect url is required
-      if resource_class.devise_modules.include?(:confirmable) && !params[:confirm_success_url]
+      if resource_class.devise_modules.include?(:confirmable) && !redirect_url
         return render json: {
           status: 'error',
           data:   @resource.as_json,
           errors: ["Missing `confirm_success_url` param."]
         }, status: 403
+      end
+
+      # if whitelist is set, validate redirect_url against whitelist
+      if DeviseTokenAuth.redirect_whitelist
+        unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
+          return render json: {
+            status: 'error',
+            data:   @resource.as_json,
+            errors: ["Redirect to #{redirect_url} not allowed."]
+          }, status: 403
+        end
       end
 
       begin
@@ -32,7 +49,7 @@ module DeviseTokenAuth
             # user will require email authentication
             @resource.send_confirmation_instructions({
               client_config: params[:config_name],
-              redirect_url: params[:confirm_success_url]
+              redirect_url: redirect_url
             })
 
           else

@@ -13,11 +13,28 @@ module DeviseTokenAuth
         }, status: 401
       end
 
-      unless params[:redirect_url]
+      # give redirect value from params priority
+      redirect_url = params[:redirect_url]
+
+      # fall back to default value if provided
+      redirect_url ||= DeviseTokenAuth.default_password_reset_url
+
+      unless redirect_url
         return render json: {
           success: false,
           errors: ['Missing redirect url.']
         }, status: 401
+      end
+
+      # if whitelist is set, validate redirect_url against whitelist
+      if DeviseTokenAuth.redirect_whitelist
+        unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
+          return render json: {
+            status: 'error',
+            data:   @resource.as_json,
+            errors: ["Redirect to #{redirect_url} not allowed."]
+          }, status: 403
+        end
       end
 
       # honor devise configuration for case_insensitive_keys
@@ -43,7 +60,7 @@ module DeviseTokenAuth
         @resource.send_reset_password_instructions({
           email: email,
           provider: 'email',
-          redirect_url: params[:redirect_url],
+          redirect_url: redirect_url,
           client_config: params[:config_name]
         })
 
@@ -70,7 +87,7 @@ module DeviseTokenAuth
     end
 
 
-    # this is where users arrive after visiting the email confirmation link
+    # this is where users arrive after visiting the password reset confirmation link
     def edit
       @resource = resource_class.reset_password_by_token({
         reset_password_token: resource_params[:reset_password_token]
