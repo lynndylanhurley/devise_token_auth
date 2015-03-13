@@ -55,6 +55,23 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe 'using "+" in email' do
+      test 'can use + sign in email addresses' do
+        @plus_email = 'ak+testing@gmail.com'
+
+        post '/auth', {
+          email: @plus_email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+
+        @resource = assigns(:resource)
+
+        assert_equal @plus_email, @resource.email
+      end
+    end
+
     describe 'Using redirect_whitelist' do
       before do
         @good_redirect_url = Faker::Internet.url
