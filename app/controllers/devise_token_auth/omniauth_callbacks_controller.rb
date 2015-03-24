@@ -30,12 +30,14 @@ module DeviseTokenAuth
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
       @expiry    = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+      @config    = omniauth_params['config_name']
 
       @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], {
         token:     @token,
         client_id: @client_id,
         uid:       @resource.uid,
-        expiry:    @expiry
+        expiry:    @expiry,
+        config:    @config
       })
 
       # set crazy password for new oauth users. this is only used to prevent
