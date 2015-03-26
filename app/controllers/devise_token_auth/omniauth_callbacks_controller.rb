@@ -19,12 +19,17 @@ module DeviseTokenAuth
       redirect_to redirect_route
     end
 
+
     def omniauth_success
-      # find or create user by provider and provider uid
-      @resource = resource_class.where({
-        uid:      auth_hash['uid'],
-        provider: auth_hash['provider']
-      }).first_or_initialize
+      # find or create user by criteria defined in resource_identification_hash
+      @resource = resource_class.where(resource_identification_hash).first_or_initialize
+
+      # sync user info with provider, update/generate auth token
+      assign_provider_attrs(@resource, auth_hash)
+
+      # assign any additional (whitelisted) attributes
+      extra_params = whitelisted_params
+      @resource.assign_attributes(extra_params) if extra_params
 
       # create token info
       @client_id = SecureRandom.urlsafe_base64(nil, false)
@@ -40,7 +45,7 @@ module DeviseTokenAuth
 
       # set crazy password for new oauth users. this is only used to prevent
       # access via email sign-in.
-      unless @resource.id
+      if @resource.new_record?
         p = SecureRandom.urlsafe_base64(nil, false)
         @resource.password = p
         @resource.password_confirmation = p
@@ -50,13 +55,6 @@ module DeviseTokenAuth
         token: BCrypt::Password.create(@token),
         expiry: @expiry
       }
-
-      # sync user info with provider, update/generate auth token
-      assign_provider_attrs(@resource, auth_hash)
-
-      # assign any additional (whitelisted) attributes
-      extra_params = whitelisted_params
-      @resource.assign_attributes(extra_params) if extra_params
 
       if resource_class.devise_modules.include?(:confirmable)
         # don't send confirmation email!!!
@@ -71,6 +69,19 @@ module DeviseTokenAuth
       render :layout => "layouts/omniauth_response", :template => "devise_token_auth/omniauth_success"
     end
 
+    # This is the criteria used to map the user defined by the auth_hash to
+    # the users in our DB.
+    # Example:
+    #
+    # If we want to map a facebook user with one that registered previously
+    # with email/password we could override this method with a hash like this:
+    #   { email: auth_hash['info']['email'] }
+    def resource_identification_hash
+      {
+        uid:      auth_hash['uid'],
+        provider: auth_hash['provider']
+      }
+    end
 
     # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user, auth_hash)
