@@ -805,6 +805,7 @@ Thanks to the following contributors:
 * [@jartek](https://github.com/jartek)
 * [@nicolas-besnard](https://github.com/nicolas-besnard)
 * [@tbloncar](https://github.com/tbloncar)
+* [@nickL](https://github.com/nickL)
 
 # Contributing
 
