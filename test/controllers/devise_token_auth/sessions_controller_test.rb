@@ -181,6 +181,58 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       end
     end
 
+    describe "Unconfirmed user with allowed unconfirmed access" do
+      before do
+        @original_duration = Devise.allow_unconfirmed_access_for
+        Devise.allow_unconfirmed_access_for = 3.days
+        @recent_unconfirmed_user = users(:recent_unconfirmed_email_user)
+        xhr :post, :create, {
+          email: @recent_unconfirmed_user.email,
+          password: 'secret123'
+        }
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      after do
+        Devise.allow_unconfirmed_access_for = @original_duration
+      end
+
+      test "request should succeed" do
+        assert_equal 200, response.status
+      end
+
+      test "request should return user data" do
+        assert_equal @recent_unconfirmed_user.email, @data['data']['email']
+      end
+    end
+
+    describe "Unconfirmed user with expired unconfirmed access" do
+      before do
+        @original_duration = Devise.allow_unconfirmed_access_for
+        Devise.allow_unconfirmed_access_for = 3.days
+        @unconfirmed_user = users(:unconfirmed_email_user)
+        xhr :post, :create, {
+          email: @unconfirmed_user.email,
+          password: 'secret123'
+        }
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      after do
+        Devise.allow_unconfirmed_access_for = @original_duration
+      end
+
+      test "request should fail" do
+        assert_equal 401, response.status
+      end
+
+      test "response should contain errors" do
+        assert @data['errors']
+      end
+    end
+
     describe "Non-existing user" do
       before do
         xhr :post, :create, {
