@@ -44,6 +44,7 @@ module DeviseTokenAuth
         # override email confirmation, must be sent manually from ctrl
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
         if @resource.save
+          yield @resource if block_given?
 
           unless @resource.confirmed?
             # user will require email authentication
@@ -93,6 +94,7 @@ module DeviseTokenAuth
       if @resource
 
         if @resource.update_attributes(account_update_params)
+          yield @resource if block_given?
           render json: {
             status: 'success',
             data:   @resource.as_json
@@ -114,6 +116,7 @@ module DeviseTokenAuth
     def destroy
       if @resource
         @resource.destroy
+        yield @resource if block_given?
 
         render json: {
           status: 'success',

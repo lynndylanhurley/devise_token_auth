@@ -51,6 +51,7 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [Excluding Modules](#excluding-modules)
   * [Custom Controller Overrides](#custom-controller-overrides)
   * [Email Template Overrides](#email-template-overrides)
+  * [Passing blocks to Controllers](#passing-blocks-controllers)
 * [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
@@ -367,7 +368,7 @@ Note that if the model that you're trying to access isn't called `User`, the hel
 # app/controllers/test_controller.rb
 class TestController < ApplicationController
   before_action :authenticate_user!
-  
+
   def members_only
     render json: {
       data: {
@@ -476,7 +477,7 @@ This gem supports the use of multiple user models. One possible use case is to a
 1. Define the routes to be used by the `Admin` user within a [`devise_scope`](https://github.com/plataformatec/devise#configuring-routes).
 
   **Example**:
-  
+
   ~~~ruby
   Rails.application.routes.draw do
     # when using multiple models, controllers will default to the first available
@@ -499,7 +500,7 @@ This gem supports the use of multiple user models. One possible use case is to a
     end
   end
   ~~~
-  
+
 1. Configure any `Admin` restricted controllers. Controllers will now have access to the methods [described here](#methods):
   * `before_action: :authenticate_admin!`
   * `current_admin`
@@ -516,7 +517,7 @@ It is also possible to control access to multiple user types at the same time us
 class DemoGroupController < ApplicationController
   devise_token_auth_group :member, contains: [:user, :admin]
   before_action :authenticate_member!
-  
+
   def members_only
     render json: {
       data: {
@@ -598,7 +599,7 @@ end
 
 ## Custom Controller Overrides
 
-The built-in controllers can be overridden with your own custom controllers. 
+The built-in controllers can be overridden with your own custom controllers.
 
 For example, the default behavior of the [`validate_token`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb#L6) method of the [`TokenValidationController`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb) is to return the `User` object as json (sans password and token data). The following example shows how to override the `validate_token` action to include a model method as well.
 
@@ -666,6 +667,22 @@ These files may be edited to suit your taste.
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
 
+## Passing blocks to RegistrationController
+
+If you simply want to add behaviour to the existing Registration controller, you can do so by creating a new controller that inherits from it, and override the `create`, `update` or `destroy` methods, and passing a block to super:
+
+```ruby
+class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
+
+  def create
+    super do |resource|
+      resource.add_something(extra)
+    end
+  end
+
+end
+```
+
 # Issue Reporting
 
 When posting issues, please include the following information to speed up the troubleshooting process:
@@ -708,7 +725,7 @@ Removing the `new` routes will require significant modifications to devise. If t
 
 ### I'm having trouble using this gem alongside [ActiveAdmin](http://activeadmin.info/)...
 
-For some odd reason, [ActiveAdmin](http://activeadmin.info/) extends from your own app's `ApplicationController`. This becomes a problem if you include the `DeviseTokenAuth::Concerns::SetUserByToken` concern in your app's `ApplicationController`. 
+For some odd reason, [ActiveAdmin](http://activeadmin.info/) extends from your own app's `ApplicationController`. This becomes a problem if you include the `DeviseTokenAuth::Concerns::SetUserByToken` concern in your app's `ApplicationController`.
 
 The solution is to use two separate `ApplicationController` classes - one for your API, and one for ActiveAdmin. Something like this:
 
