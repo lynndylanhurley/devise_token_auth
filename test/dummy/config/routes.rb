@@ -19,6 +19,10 @@ Rails.application.routes.draw do
     token_validations:  'overrides/token_validations'
   }
 
+  mount_devise_token_auth_for 'NiceUser', at: 'nice_user_auth', controllers: {
+    registrations: 'custom/registrations'
+  }
+
   mount_devise_token_auth_for 'OnlyEmailUser', at: 'only_email_auth', skip: [:omniauth_callbacks]
 
   mount_devise_token_auth_for 'UnregisterableUser', at: 'unregisterable_user_auth', skip: [:registrations]
