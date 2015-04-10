@@ -57,6 +57,7 @@ module DeviseTokenAuth
       error_status = 400
 
       if @resource
+        yield if block_given?
         @resource.send_reset_password_instructions({
           email: email,
           provider: 'email',
@@ -108,6 +109,7 @@ module DeviseTokenAuth
         @resource.skip_confirmation! unless @resource.confirmed_at
 
         @resource.save!
+        yield if block_given?
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
           token:          token,
@@ -147,6 +149,7 @@ module DeviseTokenAuth
       end
 
       if @resource.update_attributes(password_resource_params)
+        yield if block_given?
         return render json: {
           success: true,
           data: {
