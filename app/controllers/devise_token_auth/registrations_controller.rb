@@ -11,7 +11,7 @@ module DeviseTokenAuth
 
       # honor devise configuration for case_insensitive_keys
       if resource_class.case_insensitive_keys.include?(:email)
-        @resource.email = sign_up_params[:email].downcase
+        @resource.email = sign_up_params[:email].try :downcase
       else
         @resource.email = sign_up_params[:email]
       end
