@@ -65,7 +65,7 @@ module DeviseTokenAuth::Concerns::User
       # fall back to "default" config name
       opts[:client_config] ||= "default"
 
-      if pending_reconfirmation?
+      if respond_to?(:pending_reconfirmation?) && pending_reconfirmation?
         opts[:to] = unconfirmed_email
       else
         opts[:to] = email
