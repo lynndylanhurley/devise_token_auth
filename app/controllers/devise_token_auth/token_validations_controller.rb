@@ -13,7 +13,7 @@ module DeviseTokenAuth
       else
         render json: {
           success: false,
-          errors: ["Invalid login credentials"]
+          errors: [I18n.t("devise_token_auth.validations.invalid") ]
         }, status: 401
       end
     end

@@ -27,7 +27,7 @@ module DeviseTokenAuth
         return render json: {
           status: 'error',
           data:   @resource.as_json,
-          errors: ["Missing `confirm_success_url` param."]
+          errors: [ I18n.t('devise_token_auth.registrations.missing_param') ]
         }, status: 403
       end
 
@@ -37,7 +37,7 @@ module DeviseTokenAuth
           return render json: {
             status: 'error',
             data:   @resource.as_json,
-            errors: ["Redirect to #{redirect_url} not allowed."]
+            errors: [ I18n.t('devise_token_auth.registrations.redirect_disallowed', url: redirect_url) ]
           }, status: 403
         end
       end
@@ -87,7 +87,7 @@ module DeviseTokenAuth
         render json: {
           status: 'error',
           data:   @resource.as_json,
-          errors: ["An account already exists for #{@resource.email}"]
+          errors: [ I18n.t('devise_token_auth.registrations.account_exists', email: @resource.email) ]
         }, status: 403
       end
     end
@@ -110,7 +110,7 @@ module DeviseTokenAuth
       else
         render json: {
           status: 'error',
-          errors: ["User not found."]
+          errors: [ I18n.t('devise_token_auth.registrations.not_found') ]
         }, status: 404
       end
     end
@@ -122,12 +122,12 @@ module DeviseTokenAuth
 
         render json: {
           status: 'success',
-          message: "Account with uid #{@resource.uid} has been destroyed."
+          message: I18n.t('devise_token_auth.registrations.destroyed', uid: @resource.uid)
         }
       else
         render json: {
           status: 'error',
-          errors: ["Unable to locate account for destruction."]
+          errors: [ I18n.t('devise_token_auth.registrations.not_located') ]
         }, status: 404
       end
     end
@@ -143,11 +143,11 @@ module DeviseTokenAuth
     private
 
     def validate_sign_up_params
-      validate_post_data sign_up_params, 'Please submit proper sign up data in request body.'
+      validate_post_data sign_up_params, I18n.t('devise_token_auth.registrations.invalid_sign_up_params')
     end
 
     def validate_account_update_params
-      validate_post_data account_update_params, 'Please submit proper account update data in request body.'
+      validate_post_data account_update_params, I18n.t('devise_token_auth.registrations.invalid_update_params')
     end
 
     def validate_post_data which, message
