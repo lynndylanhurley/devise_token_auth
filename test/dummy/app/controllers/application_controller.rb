@@ -10,5 +10,6 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.for(:sign_up) << :favorite_color
     devise_parameter_sanitizer.for(:account_update) << :operating_thetan
     devise_parameter_sanitizer.for(:account_update) << :favorite_color
+    devise_parameter_sanitizer.for(:account_update) << :current_password
   end
 end
