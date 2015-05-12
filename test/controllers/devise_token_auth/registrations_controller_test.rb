@@ -414,6 +414,18 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             assert_equal @email.downcase, @existing_user.email
             assert_equal @email.downcase, @existing_user.uid
           end
+
+          test "Supply current password" do
+            @request_params.merge!(
+              current_password: "secret123",
+              email: "new.email@example.com",
+            )
+
+            put "/auth", @request_params, @auth_headers
+            @data = JSON.parse(response.body)
+            @existing_user.reload
+            assert_equal @existing_user.email, "new.email@example.com"
+          end
         end
 
         describe "error" do
