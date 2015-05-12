@@ -92,7 +92,7 @@ module DeviseTokenAuth
     def update
       if @resource
 
-        if @resource.update_attributes(account_update_params)
+        if @resource.send(resource_update_method, account_update_params)
           render json: {
             status: 'success',
             data:   @resource.as_json
@@ -133,6 +133,14 @@ module DeviseTokenAuth
 
     def account_update_params
       params.permit(devise_parameter_sanitizer.for(:account_update))
+    end
+
+    def resource_update_method
+      if account_update_params.has_key?(:current_password)
+        "update_with_password"
+      else
+        "update_attributes"
+      end
     end
   end
 end
