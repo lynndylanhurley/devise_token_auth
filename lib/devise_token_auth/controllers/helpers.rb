@@ -36,6 +36,9 @@ module DeviseTokenAuth
                 mappings.each do |mapping|
                   set_user_by_token(mapping)
                 end
+                return render json: {
+                  errors: ["Authorized users only."]
+                }, status: 401
               end
             end
 
