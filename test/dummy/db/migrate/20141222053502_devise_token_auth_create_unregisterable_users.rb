@@ -1,14 +1,16 @@
-class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateUnregisterableUsers < ActiveRecord::Migration
   def change
-    create_table(:users) do |t|
+    create_table(:unregisterable_users) do |t|
+      ## Required
+      t.string :provider, :null => false
+      t.string :uid, :null => false, :default => ""
+
       ## Database authenticatable
-      t.string :email
       t.string :encrypted_password, :null => false, :default => ""
 
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
-      t.string   :reset_password_redirect_url
 
       ## Rememberable
       t.datetime :remember_created_at
@@ -24,7 +26,6 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       t.string   :confirmation_token
       t.datetime :confirmed_at
       t.datetime :confirmation_sent_at
-      t.string   :confirm_success_url
       t.string   :unconfirmed_email # Only if using reconfirmable
 
       ## Lockable
@@ -36,10 +37,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       t.string :name
       t.string :nickname
       t.string :image
-
-      ## unique oauth id
-      t.string :provider
-      t.string :uid, :null => false, :default => ""
+      t.string :email
 
       ## Tokens
       t.text :tokens
@@ -47,11 +45,10 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :users, :email
-    add_index :users, [:uid, :provider],     :unique => true
-    add_index :users, :reset_password_token, :unique => true
-    add_index :users, :confirmation_token,   :unique => true
-    add_index :users, :nickname,             :unique => true
-    # add_index :users, :unlock_token,         :unique => true
+    add_index :unregisterable_users, :email
+    add_index :unregisterable_users, [:uid, :provider],     :unique => true
+    add_index :unregisterable_users, :reset_password_token, :unique => true
+    # add_index :unregisterable_users, :confirmation_token,   :unique => true
+    # add_index :unregisterable_users, :unlock_token,         :unique => true
   end
 end

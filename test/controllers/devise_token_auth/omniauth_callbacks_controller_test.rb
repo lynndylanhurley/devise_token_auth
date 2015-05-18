@@ -126,6 +126,29 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         refute_equal @unpermitted_param, @resource.name
       end
     end
+
+
+    describe 'using namespaces' do
+      before do
+        get_via_redirect '/api/v1/auth/facebook', {
+          auth_origin_url: @redirect_url
+        }
+
+        @resource = assigns(:resource)
+      end
+
+      test 'request is successful' do
+        assert_equal 200, response.status
+      end
+
+      test 'user should have been created' do
+        assert @resource
+      end
+
+      test 'user should be of the correct class' do
+        assert_equal User, @resource.class
+      end
+    end
   end
 
 
@@ -162,6 +185,16 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       test 'user should be of the correct class' do
         assert_equal Mang, @resource.class
       end
+    end
+  end
+
+  describe 'User with only :database_authenticatable and :registerable included' do
+    test 'OnlyEmailUser should not be able to use OAuth' do
+      assert_raises(ActionController::RoutingError) {
+        get_via_redirect '/only_email_auth/facebook', {
+          auth_origin_url: @redirect_url
+        }
+      }
     end
   end
 end

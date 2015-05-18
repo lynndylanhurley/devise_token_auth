@@ -73,6 +73,20 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
       end
 
+      describe 'alt auth keys' do
+        before do
+          xhr :post, :create, {
+            nickname: @existing_user.nickname,
+            password: 'secret123'
+          }
+          @data = JSON.parse(response.body)
+        end
+
+        test 'user can sign in using nickname' do
+          assert_equal 200, response.status
+          assert_equal @existing_user.email, @data['data']['email']
+        end
+      end
 
       describe 'authed user sign out' do
         before do
@@ -215,6 +229,34 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       test "request should return user data" do
         assert_equal @existing_user.email, @data['data']['email']
+      end
+    end
+
+    describe 'User with only :database_authenticatable and :registerable included' do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:only_email_user]
+      end
+
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
+
+      before do
+        @existing_user = only_email_users(:user)
+        @existing_user.save!
+
+        xhr :post, :create, {
+          email: @existing_user.email,
+          password: 'secret123'
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test 'user should be able to sign in without confirmation' do
+        assert 200, response.status
+        refute OnlyEmailUser.method_defined?(:confirmed_at)
       end
     end
   end

@@ -15,6 +15,14 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       describe 'request password reset' do
+        test 'unknown user should return 404' do
+          xhr :post, :create, {
+            email:        'chester@cheet.ah',
+            redirect_url: @redirect_url
+          }
+
+          assert_equal 404, response.status
+        end
 
         describe 'case-sensitive email' do
           before do
@@ -126,8 +134,74 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           test 'response should return failure status if not configured' do
             @resource_class.case_insensitive_keys = []
             xhr :post, :create, @request_params
-            assert_equal 400, response.status
+            assert_equal 404, response.status
           end
+        end
+      end
+
+      describe 'Using default_password_reset_url' do
+        before do
+          @resource = users(:confirmed_email_user)
+          @redirect_url = 'http://ng-token-auth.dev'
+
+          DeviseTokenAuth.default_password_reset_url = @redirect_url
+
+          xhr :post, :create, {
+            email:        @resource.email,
+            redirect_url: @redirect_url
+          }
+
+          @mail = ActionMailer::Base.deliveries.last
+          @resource.reload
+
+          @sent_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+        end
+
+        teardown do
+          DeviseTokenAuth.default_password_reset_url = nil
+        end
+
+        test 'response should return success status' do
+          assert_equal 200, response.status
+        end
+
+        test 'action should send an email' do
+          assert @mail
+        end
+
+        test 'the email body should contain a link with redirect url as a query param' do
+          assert_equal @redirect_url, @sent_redirect_url
+        end
+      end
+
+      describe 'Using redirect_whitelist' do
+        before do
+          @resource = users(:confirmed_email_user)
+          @good_redirect_url = Faker::Internet.url
+          @bad_redirect_url = Faker::Internet.url
+          DeviseTokenAuth.redirect_whitelist = [@good_redirect_url]
+        end
+
+        teardown do
+          DeviseTokenAuth.redirect_whitelist = nil
+        end
+
+        test "request to whitelisted redirect should be successful" do
+          xhr :post, :create, {
+            email:        @resource.email,
+            redirect_url: @good_redirect_url
+          }
+
+          assert_equal 200, response.status
+        end
+
+        test "request to non-whitelisted redirect should fail" do
+          xhr :post, :create, {
+            email:        @resource.email,
+            redirect_url: @bad_redirect_url
+          }
+
+          assert_equal 403, response.status
         end
       end
 

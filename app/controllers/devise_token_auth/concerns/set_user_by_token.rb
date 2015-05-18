@@ -21,18 +21,25 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # no default user defined
     return unless rc
 
-    # user has already been found and authenticated
-    return @resource if @resource and @resource.class == rc
-
     # parse header for values necessary for authentication
-    uid        = request.headers['uid']
-    @token     = request.headers['access-token']
-    @client_id = request.headers['client']
-
-    return false unless @token
+    uid        = request.headers['uid'] || params['uid']
+    @token     = request.headers['access-token'] || params['access-token']
+    @client_id = request.headers['client'] || params['client']
 
     # client_id isn't required, set to 'default' if absent
     @client_id ||= 'default'
+
+    # check for an existing user, authenticated via warden/devise
+    devise_warden_user =  warden.user(rc.to_s.underscore.to_sym)
+    if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
+      @resource = devise_warden_user
+      @resource.create_new_auth_token
+    end
+
+    # user has already been found and authenticated
+    return @resource if @resource and @resource.class == rc
+
+    return false unless @token
 
     # mitigate timing attacks by finding by uid instead of auth token
     user = uid && rc.find_by_uid(uid)

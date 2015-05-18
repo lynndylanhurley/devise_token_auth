@@ -15,8 +15,9 @@ module DeviseTokenAuth
       puts "redirect_route #{redirect_route}"
       logger.info "redirect_route #{redirect_route}"
 
-      # preserve omniauth info for success route
-      session['dta.omniauth.auth'] = request.env['omniauth.auth']
+      # preserve omniauth info for success route. ignore 'extra' in twitter
+      # auth response to avoid CookieOverflow.
+      session['dta.omniauth.auth'] = request.env['omniauth.auth'].except('extra')
       session['dta.omniauth.params'] = request.env['omniauth.params']
 
       redirect_to redirect_route
@@ -36,12 +37,14 @@ module DeviseTokenAuth
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
       @expiry    = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+      @config    = omniauth_params['config_name']
 
       @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], {
         token:     @token,
         client_id: @client_id,
         uid:       @resource.uid,
-        expiry:    @expiry
+        expiry:    @expiry,
+        config:    @config
       })
 
       # set crazy password for new oauth users. this is only used to prevent
@@ -64,17 +67,17 @@ module DeviseTokenAuth
       extra_params = whitelisted_params
       @resource.assign_attributes(extra_params) if extra_params
 
-      # don't send confirmation email!!!
-      @resource.skip_confirmation!
+      if resource_class.devise_modules.include?(:confirmable)
+        # don't send confirmation email!!!
+        @resource.skip_confirmation!
+      end
 
       sign_in(:user, @resource, store: false, bypass: false)
 
       @resource.save!
 
       # render user info to javascript postMessage communication window
-      respond_to do |format|
-        format.html { render :layout => "omniauth_response", :template => "devise_token_auth/omniauth_success" }
-      end
+      render :layout => "layouts/omniauth_response", :template => "devise_token_auth/omniauth_success"
     end
 
 
@@ -100,10 +103,7 @@ module DeviseTokenAuth
         puts "omniauth failure"
       logger.info "omniauth failure"
       @error = params[:message]
-
-      respond_to do |format|
-        format.html { render :layout => "omniauth_response", :template => "devise_token_auth/omniauth_failure" }
-      end
+      render :layout => "layouts/omniauth_response", :template => "devise_token_auth/omniauth_failure"
     end
 
 

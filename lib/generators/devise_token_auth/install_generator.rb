@@ -5,7 +5,7 @@ module DeviseTokenAuth
     source_root File.expand_path('../templates', __FILE__)
 
     argument :user_class, type: :string, default: "User"
-    argument :mount_path, type: :string, default: '/auth'
+    argument :mount_path, type: :string, default: 'auth'
 
     def create_initializer_file
       copy_file("devise_token_auth.rb", "config/initializers/devise_token_auth.rb")
@@ -30,6 +30,10 @@ module DeviseTokenAuth
         inclusion = "include DeviseTokenAuth::Concerns::User"
         unless parse_file_for_line(fname, inclusion)
           inject_into_file fname, after: "class #{user_class} < ActiveRecord::Base\n" do <<-'RUBY'
+  # Include default devise modules.
+  devise :database_authenticatable, :registerable,
+          :recoverable, :rememberable, :trackable, :validatable,
+          :confirmable, :omniauthable
   include DeviseTokenAuth::Concerns::User
           RUBY
           end

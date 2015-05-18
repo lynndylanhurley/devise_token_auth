@@ -9,6 +9,32 @@ require 'test_helper'
 
 class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   describe DeviseTokenAuth::RegistrationsController do
+    describe 'Validate non-empty body' do
+      before do
+        # need to post empty data
+        post '/auth', {}
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test 'request should fail' do
+        assert_equal 422, response.status
+      end
+
+      test 'returns error message' do
+        assert_not_empty @data['errors']
+      end
+
+      test 'return error status' do
+        assert_equal 'error', @data['status']
+      end
+
+      test 'user should not have been saved' do
+        assert @resource.nil?
+      end
+    end
+
     describe "Successful registration" do
       before do
         @mails_sent = ActionMailer::Base.deliveries.count
@@ -52,6 +78,122 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       test "only one email was sent" do
         assert_equal @mails_sent + 1, ActionMailer::Base.deliveries.count
+      end
+    end
+
+    describe 'using "+" in email' do
+      test 'can use + sign in email addresses' do
+        @plus_email = 'ak+testing@gmail.com'
+
+        post '/auth', {
+          email: @plus_email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+
+        @resource = assigns(:resource)
+
+        assert_equal @plus_email, @resource.email
+      end
+    end
+
+    describe 'Using redirect_whitelist' do
+      before do
+        @good_redirect_url = Faker::Internet.url
+        @bad_redirect_url = Faker::Internet.url
+        DeviseTokenAuth.redirect_whitelist = [@good_redirect_url]
+      end
+
+      teardown do
+        DeviseTokenAuth.redirect_whitelist = nil
+      end
+
+      test "request to whitelisted redirect should be successful" do
+        post '/auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: @good_redirect_url,
+          unpermitted_param: '(x_x)'
+        }
+
+        assert_equal 200, response.status
+      end
+
+      test "request to non-whitelisted redirect should fail" do
+        post '/auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: @bad_redirect_url,
+          unpermitted_param: '(x_x)'
+        }
+
+        assert_equal 403, response.status
+      end
+    end
+
+    describe 'Using default_confirm_success_url' do
+      before do
+        @mails_sent = ActionMailer::Base.deliveries.count
+        @redirect_url = Faker::Internet.url
+
+        DeviseTokenAuth.default_confirm_success_url = @redirect_url
+
+        post '/auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          unpermitted_param: '(x_x)'
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        @mail = ActionMailer::Base.deliveries.last
+        @sent_redirect_url = URI.decode(@mail.body.match(/redirect_url=([^&]*)(&|\")/)[1])
+      end
+
+      teardown do
+        DeviseTokenAuth.default_confirm_success_url = nil
+      end
+
+      test "request should be successful" do
+        assert_equal 200, response.status
+      end
+
+      test "the email was sent" do
+        assert_equal @mails_sent + 1, ActionMailer::Base.deliveries.count
+      end
+
+      test 'email contains the default redirect url' do
+        assert_equal @redirect_url, @sent_redirect_url
+      end
+    end
+
+    describe 'using namespaces' do
+      before do
+        @mails_sent = ActionMailer::Base.deliveries.count
+
+        post '/api/v1/auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url,
+          unpermitted_param: '(x_x)'
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        @mail = ActionMailer::Base.deliveries.last
+      end
+
+      test "request should be successful" do
+        assert_equal 200, response.status
+      end
+
+      test "user should have been created" do
+        assert @resource.id
       end
     end
 
@@ -122,6 +264,36 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       test "client config name falls back to 'default'" do
         assert_equal "default", @mail_config_name
+      end
+    end
+
+    describe 'bad email' do
+      before do
+        post '/auth', {
+          email: "false_email@",
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test "request should not be successful" do
+        assert_equal 403, response.status
+      end
+
+      test "user should not have been created" do
+        assert_nil @resource.id
+      end
+
+      test "error should be returned in the response" do
+        assert @data['errors'].length
+      end
+
+      test "full_messages should be included in error hash" do
+        assert @data['errors']['full_messages'].length
       end
     end
 
@@ -270,6 +442,33 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
         end
 
+        describe 'validate non-empty body' do
+          before do
+            # get the email so we can check it wasn't updated
+            @email = @existing_user.email
+            put '/auth', {}, @auth_headers
+
+            @data = JSON.parse(response.body)
+            @existing_user.reload
+          end
+
+          test 'request should fail' do
+            assert_equal 422, response.status
+          end
+
+          test 'returns error message' do
+            assert_not_empty @data['errors']
+          end
+
+          test 'return error status' do
+            assert_equal 'error', @data['status']
+          end
+
+          test 'user should not have been saved' do
+            assert_equal @email, @existing_user.email
+          end
+        end
+
         describe "error" do
           before do
             # test invalid update param
@@ -414,6 +613,19 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe 'Excluded :registrations module' do
+      test 'UnregisterableUser should not be able to access registration routes' do
+        assert_raises(ActionController::RoutingError) {
+          post '/unregisterable_user_auth', {
+            email: Faker::Internet.email,
+            password: "secret123",
+            password_confirmation: "secret123",
+            confirm_success_url: Faker::Internet.url
+          }
+        }
+      end
+    end
+
     describe "Skipped confirmation" do
       setup do
         User.set_callback(:create, :before, :skip_confirmation!)
@@ -452,6 +664,37 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       test "response token is valid" do
         assert @resource.valid_token?(@token, @client_id)
+      end
+    end
+
+
+    describe 'User with only :database_authenticatable and :registerable included' do
+      setup do
+        @mails_sent = ActionMailer::Base.deliveries.count
+
+        post '/only_email_auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url,
+          unpermitted_param: '(x_x)'
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        @mail = ActionMailer::Base.deliveries.last
+      end
+
+      test 'user was created' do
+        assert @resource.id
+      end
+
+      test 'email confirmation was not sent' do
+        assert_equal @mails_sent, ActionMailer::Base.deliveries.count
+      end
+
+      test 'user is confirmed' do
+        assert @resource.confirmed?
       end
     end
   end

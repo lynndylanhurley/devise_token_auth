@@ -13,11 +13,28 @@ module DeviseTokenAuth
         }, status: 401
       end
 
-      unless params[:redirect_url]
+      # give redirect value from params priority
+      redirect_url = params[:redirect_url]
+
+      # fall back to default value if provided
+      redirect_url ||= DeviseTokenAuth.default_password_reset_url
+
+      unless redirect_url
         return render json: {
           success: false,
           errors: ['Missing redirect url.']
         }, status: 401
+      end
+
+      # if whitelist is set, validate redirect_url against whitelist
+      if DeviseTokenAuth.redirect_whitelist
+        unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
+          return render json: {
+            status: 'error',
+            data:   @resource.as_json,
+            errors: ["Redirect to #{redirect_url} not allowed."]
+          }, status: 403
+        end
       end
 
       # honor devise configuration for case_insensitive_keys
@@ -27,22 +44,23 @@ module DeviseTokenAuth
         email = resource_params[:email]
       end
 
-      q = "uid='#{email}' AND provider='email'"
+      q = "uid = ? AND provider='email'"
 
       # fix for mysql default case insensitivity
       if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid='#{email}' AND provider='email'"
+        q = "BINARY uid = ? AND provider='email'"
       end
 
-      @resource = resource_class.where(q).first
+      @resource = resource_class.where(q, email).first
 
       errors = nil
+      error_status = 400
 
       if @resource
         @resource.send_reset_password_instructions({
           email: email,
           provider: 'email',
-          redirect_url: params[:redirect_url],
+          redirect_url: redirect_url,
           client_config: params[:config_name]
         })
 
@@ -57,18 +75,19 @@ module DeviseTokenAuth
         end
       else
         errors = ["Unable to find user with email '#{email}'."]
+        error_status = 404
       end
 
       if errors
         render json: {
           success: false,
-          errors: errors
-        }, status: 400
+          errors: errors,
+        }, status: error_status
       end
     end
 
 
-    # this is where users arrive after visiting the email confirmation link
+    # this is where users arrive after visiting the password reset confirmation link
     def edit
       @resource = resource_class.reset_password_by_token({
         reset_password_token: resource_params[:reset_password_token]
@@ -138,7 +157,7 @@ module DeviseTokenAuth
       else
         return render json: {
           success: false,
-          errors: @resource.errors
+          errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
         }, status: 422
       end
     end
