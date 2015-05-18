@@ -57,6 +57,7 @@ module DeviseTokenAuth
       error_status = 400
 
       if @resource
+        puts "send_reset_password_instructions params #{params.inspect}"
         @resource.send_reset_password_instructions({
           email: email,
           provider: 'email',
@@ -108,6 +109,7 @@ module DeviseTokenAuth
         @resource.skip_confirmation! unless @resource.confirmed_at
 
         @resource.save!
+        puts "resource params #{params.inspect}"
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
           token:          token,
