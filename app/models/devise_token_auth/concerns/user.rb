@@ -211,7 +211,9 @@ module DeviseTokenAuth::Concerns::User
   # parsing using AngularJS.
   def generate_url(url, params = {})
     uri = URI(url)
-
+    puts "uri: #{uri}"
+    puts "url: #{url.inspect}"
+    puts "uri scheme: #{uri.scheme}"
     res = "#{uri.scheme}://#{uri.host}"
     res += ":#{uri.port}" if (uri.port and uri.port != 80 and uri.port != 443)
     res += "#{uri.path}" if uri.path
