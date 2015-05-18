@@ -216,9 +216,9 @@ module DeviseTokenAuth::Concerns::User
     puts "uri scheme: #{uri.scheme}"
     res = "#{uri.scheme}"
     res += ":#{uri.port}" if (uri.port and uri.port != 80 and uri.port != 443)
-    puts 'res1: #{res}'
+    puts "res1: #{res}: #{uri.path}"
     res += "{uri.path}" if uri.path
-    puts 'res2: #{res}'
+    puts "res2: #{res}"
     res += '#'
     res += "#{uri.fragment}" if uri.fragment
     res += "?#{params.to_query}"
