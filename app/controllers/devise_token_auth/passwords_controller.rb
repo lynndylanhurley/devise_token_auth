@@ -148,7 +148,7 @@ module DeviseTokenAuth
     end
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :reset_password_token)
+      params.permit(:email, :password, :password_confirmation, :reset_password_token, :redirect_url)
     end
 
   end
