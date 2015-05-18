@@ -219,6 +219,7 @@ module DeviseTokenAuth::Concerns::User
     res += "#{uri.path}" if uri.path
     res += '#'
     res += "#{uri.fragment}" if uri.fragment
+    res = uri
     res += "?#{params.to_query}"
 
     return res
