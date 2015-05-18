@@ -216,8 +216,8 @@ module DeviseTokenAuth::Concerns::User
     res += '#'
     res += "#{uri.fragment}" if uri.fragment
     res += "?#{params.to_query}"
-    
-
+    puts "params #{params.inspect}"
+    puts "res #{res.inspect}"
     return res
   end
 
