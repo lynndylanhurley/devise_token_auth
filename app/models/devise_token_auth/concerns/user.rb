@@ -211,14 +211,12 @@ module DeviseTokenAuth::Concerns::User
   # parsing using AngularJS.
   def generate_url(url, params = {})
     uri = URI(url)
-    res = url
-    puts "res #{res}"
+    res = "#{uri.scheme}://#{uri.host}"
+    res += ":#{uri.port}" if (uri.port and uri.port != 80 and uri.port != 443)
+    res += "#{uri.path}" if uri.path
     res += '#'
     res += "#{uri.fragment}" if uri.fragment
     res += "?#{params.to_query}"
-    puts "params #{params.inspect}"
-    puts "res #{res.inspect}"
-    return res
   end
 
   # only validate unique email among users that registered by email
