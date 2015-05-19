@@ -222,7 +222,6 @@ module DeviseTokenAuth::Concerns::User
     puts "uri host#{uri.host}"
     puts "uri path #{uri.path}" if uri.path
     
-    
     return res
   end
 
