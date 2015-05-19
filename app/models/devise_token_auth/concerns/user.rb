@@ -217,6 +217,10 @@ module DeviseTokenAuth::Concerns::User
     res += '#'
     res += "#{uri.fragment}" if uri.fragment
     res += "?#{params.to_query}"
+    puts "res #{res}"
+    
+    
+    return res
   end
 
   # only validate unique email among users that registered by email
