@@ -15,6 +15,8 @@ module DeviseTokenAuth
       logger.info "devise mapping #{devise_mapping}"
       puts "redirect_route #{redirect_route}"
       logger.info "redirect_route #{redirect_route}"
+      puts "maps1 #{Devise.mappings[devise_mapping].as_json["path"]}"
+      logger.info "maps #{Devise.mappings[devise_mapping].as_json["path"]}"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
       # auth response to avoid CookieOverflow.
