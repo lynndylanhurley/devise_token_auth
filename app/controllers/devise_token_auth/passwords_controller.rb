@@ -111,7 +111,7 @@ module DeviseTokenAuth
         @resource.save!
         puts "resource params #{params.inspect}"
 
-        redirect_to(@resource.build_auth_url(params[:redirect_url], {
+        redirect_to(@resource.build_auth_url(params[:redirect_url], false, {
           token:          token,
           client_id:      client_id,
           reset_password: true,
