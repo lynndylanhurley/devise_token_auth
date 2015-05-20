@@ -217,7 +217,7 @@ module DeviseTokenAuth::Concerns::User
     res += "#{uri.fragment}" if uri.fragment
     res += "?#{params.to_query}"
     puts "res #{res}"
-    puts "uri schem #{uri.scheme}"
+    puts "uri scheme #{uri.scheme}"
     puts "uri host#{uri.host}"
     puts "uri path #{uri.path}" if uri.path
     
