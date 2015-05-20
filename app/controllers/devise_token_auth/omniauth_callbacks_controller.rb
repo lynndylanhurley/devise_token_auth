@@ -11,11 +11,12 @@ module DeviseTokenAuth
       devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
       # redirect_route = "#{Devise.mappings[devise_mapping].as_json["path_prefix"]}/#{params[:provider]}/callback"
       redirect_route = "#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
-      puts "devise mapping #{devise_mapping}"
+       
       logger.info "devise mapping #{devise_mapping}"
-      puts "redirect_route #{redirect_route}"
+       
       logger.info "redirect_route #{redirect_route}"
-      puts "maps1 #{Devise.mappings[devise_mapping].as_json["path"]}"
+      logger.info "devise mapping #{devise_mapping}"
+      logger.info "devise mapping1 #{Devise.mappings[devise_mapping].inspect}" 
       logger.info "maps #{Devise.mappings[devise_mapping].as_json["path"]}"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
