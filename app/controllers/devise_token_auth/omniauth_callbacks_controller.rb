@@ -10,7 +10,7 @@ module DeviseTokenAuth
       # before authentication.
       devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
       # redirect_route = "#{Devise.mappings[devise_mapping].as_json["path_prefix"]}/#{params[:provider]}/callback"
-      redirect_route = "/#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
+      redirect_route = "/api/#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
        
       logger.info "devise mapping #{devise_mapping}"
        
