@@ -94,8 +94,7 @@ module DeviseTokenAuth
 
     def update
       if @resource
-
-        if @resource.update_attributes(account_update_params)
+        if @resource.send(resource_update_method, account_update_params)
           yield @resource if block_given?
           render json: {
             status: 'success',
@@ -141,6 +140,14 @@ module DeviseTokenAuth
     end
 
     private
+
+    def resource_update_method
+      if account_update_params.has_key?(:current_password)
+        "update_with_password"
+      else
+        "update_attributes"
+      end
+    end
 
     def validate_sign_up_params
       validate_post_data sign_up_params, I18n.t('devise_token_auth.registrations.invalid_sign_up_params')
