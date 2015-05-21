@@ -64,6 +64,10 @@ module DeviseTokenAuth
         user.tokens.delete(client_id)
         user.save!
 
+        # Since we check warden in in SetUserByToken it would
+        # make sense to also log out there...
+        warden.logout
+
         render json: {
           success: true,
           message: I18n.t('devise_token_auth.sessions.logged_out')
