@@ -30,11 +30,11 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @client_id ||= 'default'
 
     # check for an existing user, authenticated via warden/devise
-    devise_warden_user =  warden.user(rc.to_s.underscore.to_sym)
-    if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
-      @resource = devise_warden_user
-      @resource.create_new_auth_token
-    end
+    # devise_warden_user =  warden.user(rc.to_s.underscore.to_sym)
+    # if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
+    #   @resource = devise_warden_user
+    #   @resource.create_new_auth_token
+    # end
 
     # user has already been found and authenticated
     return @resource if @resource and @resource.class == rc
