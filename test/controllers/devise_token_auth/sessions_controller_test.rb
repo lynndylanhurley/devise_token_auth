@@ -90,6 +90,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'authed user sign out' do
         before do
+          def @controller.reset_session_called; @reset_session_called == true; end
+          def @controller.reset_session; @reset_session_called = true; end
           @auth_headers = @existing_user.create_new_auth_token
           request.headers.merge!(@auth_headers)
           xhr :delete, :destroy, format: :json
@@ -102,6 +104,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         test "token was destroyed" do
           @existing_user.reload
           refute @existing_user.tokens[@auth_headers["client"]]
+        end
+
+        test "session was destroyed" do
+          assert_equal true, @controller.reset_session_called
         end
       end
 
