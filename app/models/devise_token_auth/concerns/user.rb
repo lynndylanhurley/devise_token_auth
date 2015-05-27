@@ -225,7 +225,7 @@ module DeviseTokenAuth::Concerns::User
   # only validate unique email among users that registered by email
   def unique_email_user
     if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
-      errors.add(:email, :already_in_use, default: "This email address is already in use")
+      errors.add(:email, :already_in_use, default: "address is already in use")
     end
   end
 
