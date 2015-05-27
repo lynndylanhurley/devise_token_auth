@@ -25,6 +25,7 @@ module DeviseTokenAuth
         uid:      auth_hash['uid'],
         provider: auth_hash['provider']
       }).first_or_initialize
+      @new_record = @resource.new_record?
 
       # create token info
       @client_id = SecureRandom.urlsafe_base64(nil, false)
