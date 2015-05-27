@@ -136,6 +136,36 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
       end
 
+      describe 'failure with bad password when change_headers_on_each_request false' do
+        before do
+          DeviseTokenAuth.change_headers_on_each_request = false
+
+          # accessing current_user calls through set_user_by_token, 
+          # which initializes client_id
+          @controller.current_user
+
+          xhr :post, :create, {
+            email: @existing_user.email,
+            password: 'bogus'
+          }
+
+          @resource = assigns(:resource)
+          @data = JSON.parse(response.body)
+        end
+
+        test "request should fail" do
+          assert_equal 401, response.status
+        end
+
+        test "response should contain errors" do
+          assert @data['errors']
+        end
+
+        after do
+            DeviseTokenAuth.change_headers_on_each_request = true
+        end
+      end
+
       describe 'case-insensitive email' do
 
         before do
