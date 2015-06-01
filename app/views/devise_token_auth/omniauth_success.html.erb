@@ -6,5 +6,8 @@
 "message":    "deliverCredentials",
 "client_id":  "<%= @client_id %>",
 "expiry":     "<%= @expiry %>",
-"config":     "<%= @config %>",
-"new_record":     <%= @new_record.to_s %>
+<% if @oauth_registration %>
+"oauth_registration": "true",
+<% end %>
+"config":     "<%= @config %>"
+
