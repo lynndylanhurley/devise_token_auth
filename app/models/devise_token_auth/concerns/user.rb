@@ -111,7 +111,7 @@ module DeviseTokenAuth::Concerns::User
       DateTime.strptime(expiry.to_s, '%s') > Time.now and
 
       # ensure that the token is valid
-      BCrypt::Password.new(token_hash) == token
+      BCrypt::Password.new(token_hash).to_s == token
     )
   end
 
@@ -131,7 +131,7 @@ module DeviseTokenAuth::Concerns::User
       Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
 
       # ensure that the token is valid
-      BCrypt::Password.new(last_token) == token
+      BCrypt::Password.new(last_token).to_s == token
     )
   end
 
