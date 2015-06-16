@@ -105,7 +105,7 @@ module DeviseTokenAuth
     end
 
     # pull resource class from omniauth return
-    def resource_class
+    def resource_class(mapping = nil)
       if omniauth_params
         omniauth_params['resource_class'].constantize
       end
