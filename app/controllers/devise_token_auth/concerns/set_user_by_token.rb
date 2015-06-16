@@ -14,7 +14,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   # user auth
   def set_user_by_token(mapping=nil)
-
     # determine target authentication class
     rc = resource_class(mapping)
 
@@ -39,6 +38,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # user has already been found and authenticated
     return @resource if @resource and @resource.class == rc
 
+    # ensure we clear the client_id
+    if !@token
+      @client_id = nil
+      return
+    end
+
     return false unless @token
 
     # mitigate timing attacks by finding by uid instead of auth token
@@ -49,13 +54,13 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       return @resource = user
     else
       # zero all values previously set values
+      @client_id = nil
       return @resource = nil
     end
   end
 
 
   def update_auth_header
-
     # cannot save object if model has invalid params
     return unless @resource and @resource.valid? and @client_id
 
