@@ -9,7 +9,15 @@ module DeviseTokenAuth
       # derive target redirect route from 'resource_class' param, which was set
       # before authentication.
       devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
-      redirect_route = "/#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
+      # redirect_route = "#{Devise.mappings[devise_mapping].as_json["path_prefix"]}/#{params[:provider]}/callback"
+      redirect_route = "/api/#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
+       
+      logger.info "devise mapping #{devise_mapping}"
+       
+      logger.info "redirect_route #{redirect_route}"
+      logger.info "devise mapping #{devise_mapping}"
+      logger.info "devise mapping1 #{Devise.mappings[devise_mapping].inspect}" 
+      logger.info "maps #{Devise.mappings[devise_mapping].as_json["path"]}"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
       # auth response to avoid CookieOverflow.
@@ -20,6 +28,9 @@ module DeviseTokenAuth
     end
 
     def omniauth_success
+      puts "omniauth success"
+      logger.info "omniauth success"
+      
       # find or create user by provider and provider uid
       @resource = resource_class.where({
         uid:      auth_hash['uid'],
@@ -76,16 +87,25 @@ module DeviseTokenAuth
 
     # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user, auth_hash)
+      puts auth_hash.inspect
+      logger.info auth_hash.inspect
       user.assign_attributes({
         nickname: auth_hash['info']['nickname'],
         name:     auth_hash['info']['name'],
         image:    auth_hash['info']['image'],
-        email:    auth_hash['info']['email']
+        email:    auth_hash['info']['email'],
+        first_name:    auth_hash['info']['first_name']  ,
+        last_name:    auth_hash['info']['last_name']  ,
+        country:    auth_hash['info']['location']
+        #oauth_token: auth_hash['credentials']['token']
+        
       })
     end
 
 
     def omniauth_failure
+        puts "omniauth failure"
+      logger.info "omniauth failure"
       @error = params[:message]
       render :layout => "layouts/omniauth_response", :template => "devise_token_auth/omniauth_failure"
     end

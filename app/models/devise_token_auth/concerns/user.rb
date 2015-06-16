@@ -178,11 +178,11 @@ module DeviseTokenAuth::Concerns::User
   end
 
 
-  def build_auth_url(base_url, args)
+  def build_auth_url(base_url, include_hash=true, args)
     args[:uid]    = self.uid
     args[:expiry] = self.tokens[args[:client_id]]['expiry']
 
-    generate_url(base_url, args)
+    generate_url(base_url,include_hash, args)
   end
 
 
@@ -209,16 +209,21 @@ module DeviseTokenAuth::Concerns::User
 
   # NOTE: ensure that fragment comes AFTER querystring for proper $location
   # parsing using AngularJS.
-  def generate_url(url, params = {})
+  def generate_url(url, include_hash=true, params = {})
     uri = URI(url)
-
     res = "#{uri.scheme}://#{uri.host}"
     res += ":#{uri.port}" if (uri.port and uri.port != 80 and uri.port != 443)
     res += "#{uri.path}" if uri.path
-    res += '#'
+  
+    res += '#' if include_hash
+  
     res += "#{uri.fragment}" if uri.fragment
     res += "?#{params.to_query}"
-
+    puts "res #{res}"
+    puts "uri scheme #{uri.scheme}"
+    puts "uri host#{uri.host}"
+    puts "uri path #{uri.path}" if uri.path
+    
     return res
   end
 
