@@ -59,36 +59,40 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # cannot save object if model has invalid params
     return unless @resource and @resource.valid? and @client_id
 
-    # Lock the user record during any auth_header updates to ensure
-    # we don't have write contention from multiple threads
-    @resource.with_lock do
+    if not DeviseTokenAuth.change_headers_on_each_request
+      auth_header = @resource.build_auth_header(@token, @client_id)
 
-      # determine batch request status after request processing, in case
-      # another processes has updated it during that processing
-      @is_batch_request = is_batch_request?(@resource, @client_id)
+      # update the response header
+      response.headers.merge!(auth_header)
 
-      auth_header = {}
+    else
 
-      if not DeviseTokenAuth.change_headers_on_each_request
-        auth_header = @resource.build_auth_header(@token, @client_id)
+      # Lock the user record during any auth_header updates to ensure
+      # we don't have write contention from multiple threads
+      @resource.with_lock do
 
-        # update the response header
-        response.headers.merge!(auth_header)
+        # determine batch request status after request processing, in case
+        # another processes has updated it during that processing
+        @is_batch_request = is_batch_request?(@resource, @client_id)
 
-      # extend expiration of batch buffer to account for the duration of
-      # this request
-      elsif @is_batch_request
-        auth_header = @resource.extend_batch_buffer(@token, @client_id)
+        auth_header = {}
 
-      # update Authorization response header with new token
-      else
-        auth_header = @resource.create_new_auth_token(@client_id)
+        # extend expiration of batch buffer to account for the duration of
+        # this request
+        if @is_batch_request
+          auth_header = @resource.extend_batch_buffer(@token, @client_id)
 
-        # update the response header
-        response.headers.merge!(auth_header)
-      end
+        # update Authorization response header with new token
+        else
+          auth_header = @resource.create_new_auth_token(@client_id)
 
-    end # end lock
+          # update the response header
+          response.headers.merge!(auth_header)
+        end
+
+      end # end lock
+
+    end
 
   end
 
