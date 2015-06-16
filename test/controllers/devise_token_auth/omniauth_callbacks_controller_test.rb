@@ -60,16 +60,18 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       test 'response contains all serializable attributes for user' do
         post_message = JSON.parse(/postMessage\((?<data>.*), '\*'\);/m.match(response.body)[:data])
 
-        assert post_message["id"]
-        assert post_message["email"]
-        assert post_message["uid"]
-        assert post_message["name"]
-        assert post_message["favorite_color"]
-        assert post_message["message"]
-        assert post_message["client_id"]
+
+        ['id', 'email', 'uid', 'name', 
+          'favorite_color', 'tokens', 'password'
+        ].each do |key|
+            assert_equal post_message[key], @resource.as_json[key], "Unexpected value for #{key.inspect}"
+        end
+        
+        assert_equal "deliverCredentials", post_message["message"]
         assert post_message["auth_token"]
-        refute post_message["tokens"]
-        refute post_message["password"]
+        assert post_message["client_id"]
+        assert post_message["expiry"]
+        assert post_message["config"]
       end
 
       test 'session vars have been cleared' do
