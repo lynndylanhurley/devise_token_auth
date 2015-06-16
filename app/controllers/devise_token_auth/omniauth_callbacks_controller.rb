@@ -25,6 +25,7 @@ module DeviseTokenAuth
         uid:      auth_hash['uid'],
         provider: auth_hash['provider']
       }).first_or_initialize
+      @oauth_registration = @resource.new_record?
 
       # create token info
       @client_id = SecureRandom.urlsafe_base64(nil, false)
@@ -32,13 +33,15 @@ module DeviseTokenAuth
       @expiry    = (Time.now + DeviseTokenAuth.token_lifespan).to_i
       @config    = omniauth_params['config_name']
 
-      @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], {
+      auth_origin_url_params = {
         token:     @token,
         client_id: @client_id,
         uid:       @resource.uid,
         expiry:    @expiry,
         config:    @config
-      })
+      }
+      auth_origin_url_params.merge!(oauth_registration: true) if @oauth_registration
+      @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], auth_origin_url_params)
 
       # set crazy password for new oauth users. this is only used to prevent
       # access via email sign-in.
