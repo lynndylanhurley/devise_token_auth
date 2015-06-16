@@ -2,6 +2,7 @@
 module DeviseTokenAuth
   class SessionsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:destroy]
+    after_action :reset_session, :only => [:destroy]
 
     def create
       # Check
