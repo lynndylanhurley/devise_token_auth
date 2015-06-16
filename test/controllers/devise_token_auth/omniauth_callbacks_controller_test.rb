@@ -103,6 +103,56 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     end
 
+    describe "oauth_registration attr" do
+
+      def stub_resource
+        relation = {}
+        def relation.first_or_initialize
+          @resource ||= User.new
+          def @resource.save!; end # prevent validation error
+          @resource
+        end        
+        User.stub(:where, relation) do          
+          yield(relation.first_or_initialize)
+        end
+      end
+
+      test 'response contains oauth_registration attr with new user' do
+
+        stub_resource do |resource|
+          def resource.new_record?
+            true
+          end
+          get_via_redirect '/auth/facebook', {
+            auth_origin_url: @redirect_url
+          }
+           
+          post_message = JSON.parse(/postMessage\((?<data>.*), '\*'\);/m.match(response.body)[:data])
+          assert post_message['oauth_registration']
+          assert_match 'oauth_registration', @controller.instance_variable_get(:@auth_origin_url)
+        end
+      end
+
+      test 'response does not contain oauth_registration attr with existing user' do
+
+        stub_resource do |resource|
+          def resource.new_record?
+            false
+          end
+          get_via_redirect '/auth/facebook', {
+            auth_origin_url: @redirect_url
+          }
+          
+          post_message = JSON.parse(/postMessage\((?<data>.*), '\*'\);/m.match(response.body)[:data])
+          refute post_message['oauth_registration']
+          assert_no_match 'oauth_registration', @controller.instance_variable_get(:@auth_origin_url)
+        end
+      end
+
+
+
+    end
+
     describe 'pass additional params' do
       before do
         @fav_color = 'alizarin crimson'
