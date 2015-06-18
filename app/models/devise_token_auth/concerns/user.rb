@@ -1,6 +1,17 @@
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
+  def self.tokens_match?(token_hash, token)
+    @token_equality_cache ||= {}
+
+    key = "#{token_hash}/#{token}"
+    result = @token_equality_cache[key] ||= (BCrypt::Password.new(token_hash) == token)
+    if @token_equality_cache.size > 10000
+      @token_equality_cache = {}
+    end
+    result
+  end
+
   included do
     # Hack to check if devise is already enabled
     unless self.method_defined?(:devise_modules)
@@ -111,7 +122,7 @@ module DeviseTokenAuth::Concerns::User
       DateTime.strptime(expiry.to_s, '%s') > Time.now and
 
       # ensure that the token is valid
-      BCrypt::Password.new(token_hash) == token
+      DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
     )
   end
 
