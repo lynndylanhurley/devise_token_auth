@@ -840,7 +840,7 @@ To run the test suite do the following:
 2. Run `bundle install`
 3. Run `rake db:migrate`
 4. Run `RAILS_ENV=test rake db:migrate`
-5. Run `guard`.
+5. Run `guard`
 
 The last command will open the [guard](https://github.com/guard/guard) test-runner. Guard will re-run each test suite when changes are made to its corresponding files.
 
