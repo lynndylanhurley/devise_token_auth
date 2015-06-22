@@ -9,6 +9,32 @@ require 'test_helper'
 
 class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   describe DeviseTokenAuth::RegistrationsController do
+    describe 'Validate non-empty body' do
+      before do
+        # need to post empty data
+        post '/auth', {}
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test 'request should fail' do
+        assert_equal 422, response.status
+      end
+
+      test 'returns error message' do
+        assert_not_empty @data['errors']
+      end
+
+      test 'return error status' do
+        assert_equal 'error', @data['status']
+      end
+
+      test 'user should not have been saved' do
+        assert @resource.nil?
+      end
+    end
+
     describe "Successful registration" do
       before do
         @mails_sent = ActionMailer::Base.deliveries.count
@@ -425,6 +451,33 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             @data = JSON.parse(response.body)
             @existing_user.reload
             assert_equal @existing_user.email, "new.email@example.com"
+          end
+        end
+
+        describe 'validate non-empty body' do
+          before do
+            # get the email so we can check it wasn't updated
+            @email = @existing_user.email
+            put '/auth', {}, @auth_headers
+
+            @data = JSON.parse(response.body)
+            @existing_user.reload
+          end
+
+          test 'request should fail' do
+            assert_equal 422, response.status
+          end
+
+          test 'returns error message' do
+            assert_not_empty @data['errors']
+          end
+
+          test 'return error status' do
+            assert_equal 'error', @data['status']
+          end
+
+          test 'user should not have been saved' do
+            assert_equal @email, @existing_user.email
           end
         end
 

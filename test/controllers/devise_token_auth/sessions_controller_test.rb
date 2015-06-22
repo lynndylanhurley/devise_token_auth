@@ -90,6 +90,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'authed user sign out' do
         before do
+          def @controller.reset_session_called; @reset_session_called == true; end
+          def @controller.reset_session; @reset_session_called = true; end
           @auth_headers = @existing_user.create_new_auth_token
           request.headers.merge!(@auth_headers)
           xhr :delete, :destroy, format: :json
@@ -102,6 +104,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         test "token was destroyed" do
           @existing_user.reload
           refute @existing_user.tokens[@auth_headers["client"]]
+        end
+
+        test "session was destroyed" do
+          assert_equal true, @controller.reset_session_called
         end
       end
 
@@ -133,6 +139,36 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test "response should contain errors" do
           assert @data['errors']
+        end
+      end
+
+      describe 'failure with bad password when change_headers_on_each_request false' do
+        before do
+          DeviseTokenAuth.change_headers_on_each_request = false
+
+          # accessing current_user calls through set_user_by_token, 
+          # which initializes client_id
+          @controller.current_user
+
+          xhr :post, :create, {
+            email: @existing_user.email,
+            password: 'bogus'
+          }
+
+          @resource = assigns(:resource)
+          @data = JSON.parse(response.body)
+        end
+
+        test "request should fail" do
+          assert_equal 401, response.status
+        end
+
+        test "response should contain errors" do
+          assert @data['errors']
+        end
+
+        after do
+            DeviseTokenAuth.change_headers_on_each_request = true
         end
       end
 
