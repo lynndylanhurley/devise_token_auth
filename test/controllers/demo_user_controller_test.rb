@@ -7,6 +7,7 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class DemoUserControllerTest < ActionDispatch::IntegrationTest
+  include Warden::Test::Helpers
   describe DemoUserController do
     describe "Token access" do
       before do
@@ -258,5 +259,57 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         end
       end
     end
+
+    describe 'Existing Warden authentication' do
+      before do
+        @resource = users(:confirmed_email_user)
+        @resource.skip_confirmation!
+        @resource.save!
+        login_as( @resource, :scope => :user)
+
+        # no auth headers sent, testing that warden authenticates correctly.
+        get '/demo/members_only', {}, nil
+
+        @resp_token       = response.headers['access-token']
+        @resp_client_id   = response.headers['client']
+        @resp_expiry      = response.headers['expiry']
+        @resp_uid         = response.headers['uid']
+      end
+
+      describe 'devise mappings' do
+        it 'should define current_user' do
+          assert_equal @resource, @controller.current_user
+        end
+
+        it 'should define user_signed_in?' do
+          assert @controller.user_signed_in?
+        end
+
+        it 'should not define current_mang' do
+          refute_equal @resource, @controller.current_mang
+        end
+      end
+
+      it 'should return success status' do
+        assert_equal 200, response.status
+      end
+
+      it 'should receive new token after successful request' do
+        assert @resp_token
+      end
+
+      it 'should set the token expiry in the auth header' do
+        assert @resp_expiry
+      end
+
+      it 'should return the client id in the auth header' do
+        assert @resp_client_id
+      end
+
+      it "should return the user's uid in the auth header" do
+        assert @resp_uid
+      end
+    end
+
   end
 end

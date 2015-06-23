@@ -9,6 +9,32 @@ require 'test_helper'
 
 class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   describe DeviseTokenAuth::RegistrationsController do
+    describe 'Validate non-empty body' do
+      before do
+        # need to post empty data
+        post '/auth', {}
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test 'request should fail' do
+        assert_equal 422, response.status
+      end
+
+      test 'returns error message' do
+        assert_not_empty @data['errors']
+      end
+
+      test 'return error status' do
+        assert_equal 'error', @data['status']
+      end
+
+      test 'user should not have been saved' do
+        assert @resource.nil?
+      end
+    end
+
     describe "Successful registration" do
       before do
         @mails_sent = ActionMailer::Base.deliveries.count
@@ -271,6 +297,35 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe 'missing email' do
+      before do
+        post '/auth', {
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test "request should not be successful" do
+        assert_equal 403, response.status
+      end
+
+      test "user should not have been created" do
+        assert_nil @resource.id
+      end
+
+      test "error should be returned in the response" do
+        assert @data['errors'].length
+      end
+
+      test "full_messages should be included in error hash" do
+        assert @data['errors']['full_messages'].length
+      end
+    end
+
     describe "Mismatched passwords" do
       before do
         post '/auth', {
@@ -413,6 +468,33 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             assert_equal @new_operating_thetan, @existing_user.operating_thetan
             assert_equal @email.downcase, @existing_user.email
             assert_equal @email.downcase, @existing_user.uid
+          end
+        end
+
+        describe 'validate non-empty body' do
+          before do
+            # get the email so we can check it wasn't updated
+            @email = @existing_user.email
+            put '/auth', {}, @auth_headers
+
+            @data = JSON.parse(response.body)
+            @existing_user.reload
+          end
+
+          test 'request should fail' do
+            assert_equal 422, response.status
+          end
+
+          test 'returns error message' do
+            assert_not_empty @data['errors']
+          end
+
+          test 'return error status' do
+            assert_equal 'error', @data['status']
+          end
+
+          test 'user should not have been saved' do
+            assert_equal @email, @existing_user.email
           end
         end
 

@@ -1,6 +1,8 @@
 module DeviseTokenAuth
   class RegistrationsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:destroy, :update]
+    before_filter :validate_sign_up_params, :only => :create
+    before_filter :validate_account_update_params, :only => :update
     skip_after_filter :update_auth_header, :only => [:create, :destroy]
 
     def create
@@ -9,7 +11,7 @@ module DeviseTokenAuth
 
       # honor devise configuration for case_insensitive_keys
       if resource_class.case_insensitive_keys.include?(:email)
-        @resource.email = sign_up_params[:email].downcase
+        @resource.email = sign_up_params[:email].try :downcase
       else
         @resource.email = sign_up_params[:email]
       end
@@ -44,6 +46,7 @@ module DeviseTokenAuth
         # override email confirmation, must be sent manually from ctrl
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
         if @resource.save
+          yield @resource if block_given?
 
           unless @resource.confirmed?
             # user will require email authentication
@@ -93,6 +96,7 @@ module DeviseTokenAuth
       if @resource
 
         if @resource.update_attributes(account_update_params)
+          yield @resource if block_given?
           render json: {
             status: 'success',
             data:   @resource.as_json
@@ -100,7 +104,7 @@ module DeviseTokenAuth
         else
           render json: {
             status: 'error',
-            errors: @resource.errors
+            errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
           }, status: 403
         end
       else
@@ -114,6 +118,7 @@ module DeviseTokenAuth
     def destroy
       if @resource
         @resource.destroy
+        yield @resource if block_given?
 
         render json: {
           status: 'success',
@@ -133,6 +138,23 @@ module DeviseTokenAuth
 
     def account_update_params
       params.permit(devise_parameter_sanitizer.for(:account_update))
+    end
+
+    private
+
+    def validate_sign_up_params
+      validate_post_data sign_up_params, 'Please submit proper sign up data in request body.'
+    end
+
+    def validate_account_update_params
+      validate_post_data account_update_params, 'Please submit proper account update data in request body.'
+    end
+
+    def validate_post_data which, message
+      render json: {
+         status: 'error',
+         errors: [message]
+      }, status: :unprocessable_entity if which.empty?
     end
   end
 end

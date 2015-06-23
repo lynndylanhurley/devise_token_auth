@@ -60,16 +60,18 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       test 'response contains all serializable attributes for user' do
         post_message = JSON.parse(/postMessage\((?<data>.*), '\*'\);/m.match(response.body)[:data])
 
-        assert post_message["id"]
-        assert post_message["email"]
-        assert post_message["uid"]
-        assert post_message["name"]
-        assert post_message["favorite_color"]
-        assert post_message["message"]
-        assert post_message["client_id"]
+
+        ['id', 'email', 'uid', 'name', 
+          'favorite_color', 'tokens', 'password'
+        ].each do |key|
+            assert_equal post_message[key], @resource.as_json[key], "Unexpected value for #{key.inspect}"
+        end
+        
+        assert_equal "deliverCredentials", post_message["message"]
         assert post_message["auth_token"]
-        refute post_message["tokens"]
-        refute post_message["password"]
+        assert post_message["client_id"]
+        assert post_message["expiry"]
+        assert post_message["config"]
       end
 
       test 'session vars have been cleared' do
@@ -98,6 +100,56 @@ class OmniauthTest < ActionDispatch::IntegrationTest
           assert @resource.last_sign_in_ip
         end
       end
+
+    end
+
+    describe "oauth_registration attr" do
+
+      def stub_resource
+        relation = {}
+        def relation.first_or_initialize
+          @resource ||= User.new
+          def @resource.save!; end # prevent validation error
+          @resource
+        end        
+        User.stub(:where, relation) do          
+          yield(relation.first_or_initialize)
+        end
+      end
+
+      test 'response contains oauth_registration attr with new user' do
+
+        stub_resource do |resource|
+          def resource.new_record?
+            true
+          end
+          get_via_redirect '/auth/facebook', {
+            auth_origin_url: @redirect_url
+          }
+           
+          post_message = JSON.parse(/postMessage\((?<data>.*), '\*'\);/m.match(response.body)[:data])
+          assert post_message['oauth_registration']
+          assert_match 'oauth_registration', @controller.instance_variable_get(:@auth_origin_url)
+        end
+      end
+
+      test 'response does not contain oauth_registration attr with existing user' do
+
+        stub_resource do |resource|
+          def resource.new_record?
+            false
+          end
+          get_via_redirect '/auth/facebook', {
+            auth_origin_url: @redirect_url
+          }
+          
+          post_message = JSON.parse(/postMessage\((?<data>.*), '\*'\);/m.match(response.body)[:data])
+          refute post_message['oauth_registration']
+          assert_no_match 'oauth_registration', @controller.instance_variable_get(:@auth_origin_url)
+        end
+      end
+
+
 
     end
 

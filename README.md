@@ -10,7 +10,7 @@
 
 This gem provides the following features:
 
-* Seamless integration with the the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js).
+* Seamless integration with both the the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js) and the outstanding [jToker](https://github.com/lynndylanhurley/j-toker) plugin for [jQuery](https://jquery.com/).
 * Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
 * Email authentication using [Devise](https://github.com/plataformatec/devise), including:
   * User registration
@@ -20,11 +20,13 @@ This gem provides the following features:
 * Support for [multiple user models](https://github.com/lynndylanhurley/devise_token_auth#using-multiple-models).
 * It is [secure](#security).
 
-# [Live Demo](http://ng-token-auth-demo.herokuapp.com/)
+# Live Demos
 
-[Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
+[Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module and [AngularJS](https://angularjs.org/).
 
-The fully configured api used in the demo can be found [here](https://github.com/lynndylanhurley/devise_token_auth_demo).
+[Here is a demo](https://j-toker-demo.herokuapp.com/) of this app using the [jToker](https://github.com/lynndylanhurley/j-toker) plugin and [React](http://facebook.github.io/react/).
+
+The fully configured api used in these demos can be found [here](https://github.com/lynndylanhurley/devise_token_auth_demo).
 
 # Troubleshooting
 
@@ -49,6 +51,7 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [Excluding Modules](#excluding-modules)
   * [Custom Controller Overrides](#custom-controller-overrides)
   * [Email Template Overrides](#email-template-overrides)
+  * [Passing blocks to Controllers](#passing-blocks-controllers)
 * [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
@@ -125,7 +128,7 @@ You may also need to configure the following items:
 
 # Usage TL;DR
 
-The following routes are available for use by your client. These routes live relative to the path at which this engine is mounted (`auth` by default). These routes correspond to the defaults used by the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js.
+The following routes are available for use by your client. These routes live relative to the path at which this engine is mounted (`auth` by default). These routes correspond to the defaults used by the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [AngularJS](https://angularjs.org/) and the [jToker](https://github.com/lynndylanhurley/j-toker) plugin for [jQuery](https://jquery.com/).
 
 | path | method | purpose |
 |:-----|:-------|:--------|
@@ -151,7 +154,7 @@ The following settings are available for configuration in `config/initializers/d
 
 | Name | Default | Description|
 |---|---|---|
-| **`change_headers_on_each_request`** | `true` | By default the access-token header will change after each request. The client is responsible for keeping track of the changing tokens. The [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js does this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `access-token` header from changing after each request. [Read more](#about-token-management). |
+| **`change_headers_on_each_request`** | `true` | By default the access-token header will change after each request. The client is responsible for keeping track of the changing tokens. Both [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) and [jToker](https://github.com/lynndylanhurley/j-toker) do this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `access-token` header from changing after each request. [Read more](#about-token-management). |
 | **`token_lifespan`** | `2.weeks` | Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login. |
 | **`batch_request_buffer_throttle`** | `5.seconds` | Sometimes it's necessary to make several requests to the API at the same time. In this case, each request in the batch will need to share the same auth token. This setting determines how far apart the requests can be while still using the same auth token. [Read more](#about-batch-requests). |
 | **`omniauth_prefix`** | `"/omniauth"` | This route will be the prefix for all oauth2 redirect callbacks. For example, using the default '/omniauth' setting, the github oauth2 provider will redirect successful authentications to '/omniauth/github/callback'. [Read more](#omniauth-provider-settings). |
@@ -226,6 +229,17 @@ angular.module('myApp', ['ng-token-auth'])
   });
 ~~~
 
+**jToker settings for github should look like this:
+
+~~~javascript
+$.auth.configure({
+  apiUrl: 'http://api.example.com',
+  authProviderPaths: {
+    github: '/auth/github' // <-- note that this is different than what was set with github
+  }
+});
+~~~
+
 This incongruence is necessary to support multiple user classes and mounting points.
 
 #### Note for [pow](http://pow.cx/) and [xip.io](http://xip.io) users
@@ -286,7 +300,7 @@ end
 
 Make extra sure that the `Access-Control-Expose-Headers` includes `access-token`, `expiry`, `token-type`, `uid`, and `client` (as is set in the example above by the`:expose` param). If your client experiences erroneous 401 responses, this is likely the cause.
 
-CORS may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) for more information.
+CORS may not be possible with older browsers (IE8, IE9). I usually set up a proxy for those browsers. See the [ng-token-auth readme](https://github.com/lynndylanhurley/ng-token-auth) or the [jToker readme](https://github.com/lynndylanhurley/j-toker) for more information.
 
 # Usage cont.
 
@@ -309,7 +323,7 @@ mount_devise_token_auth_for 'User', at: 'auth'
 
 Any model class can be used, but the class will need to include [`DeviseTokenAuth::Concerns::User`](#model-concerns) for authentication to work properly.
 
-You can mount this engine to any route that you like. `/auth` is used by default to conform with the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module.
+You can mount this engine to any route that you like. `/auth` is used by default to conform with the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module and the [jToker](https://github.com/lynndylanhurley/j-toker) plugin.
 
 
 ## Controller Methods
@@ -354,7 +368,7 @@ Note that if the model that you're trying to access isn't called `User`, the hel
 # app/controllers/test_controller.rb
 class TestController < ApplicationController
   before_action :authenticate_user!
-  
+
   def members_only
     render json: {
       data: {
@@ -388,7 +402,7 @@ The authentication headers consists of the following params:
 | **`expiry`** | The date at which the current session will expire. This can be used by clients to invalidate expired tokens without the need for an API request. |
 | **`uid`** | A unique value that is used to identify the user. This is necessary because searching the DB for users by their access token will make the API susceptible to [timing attacks](http://codahale.com/a-lesson-in-timing-attacks/). |
 
-The authentication headers required for each request will be available in the response from the previous request. If you are using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for angular.js, this functionality is already provided.
+The authentication headers required for each request will be available in the response from the previous request. If you are using the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) AngularJS module or the [jToker](https://github.com/lynndylanhurley/j-toker) jQuery plugin, this functionality is already provided.
 
 ## Model Concerns
 
@@ -446,7 +460,10 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
 
 ## Using multiple models
 
-### [View Live Multi-User Demo](http://ng-token-auth-demo.herokuapp.com/multi-user)
+### View Live Multi-User Demos
+
+* [AngularJS](http://ng-token-auth-demo.herokuapp.com/multi-user)
+* [React + jToker](http://j-toker-demo.herokuapp.com/#/alt-user)
 
 This gem supports the use of multiple user models. One possible use case is to authenticate visitors using a model called `User`, and to authenticate administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
 
@@ -460,7 +477,7 @@ This gem supports the use of multiple user models. One possible use case is to a
 1. Define the routes to be used by the `Admin` user within a [`devise_scope`](https://github.com/plataformatec/devise#configuring-routes).
 
   **Example**:
-  
+
   ~~~ruby
   Rails.application.routes.draw do
     # when using multiple models, controllers will default to the first available
@@ -483,7 +500,7 @@ This gem supports the use of multiple user models. One possible use case is to a
     end
   end
   ~~~
-  
+
 1. Configure any `Admin` restricted controllers. Controllers will now have access to the methods [described here](#methods):
   * `before_action: :authenticate_admin!`
   * `current_admin`
@@ -500,7 +517,7 @@ It is also possible to control access to multiple user types at the same time us
 class DemoGroupController < ApplicationController
   devise_token_auth_group :member, contains: [:user, :admin]
   before_action :authenticate_member!
-  
+
   def members_only
     render json: {
       data: {
@@ -582,7 +599,7 @@ end
 
 ## Custom Controller Overrides
 
-The built-in controllers can be overridden with your own custom controllers. 
+The built-in controllers can be overridden with your own custom controllers.
 
 For example, the default behavior of the [`validate_token`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb#L6) method of the [`TokenValidationController`](https://github.com/lynndylanhurley/devise_token_auth/blob/8a33d25deaedb4809b219e557e82ec7ec61bf940/app/controllers/devise_token_auth/token_validations_controller.rb) is to return the `User` object as json (sans password and token data). The following example shows how to override the `validate_token` action to include a model method as well.
 
@@ -650,18 +667,34 @@ These files may be edited to suit your taste.
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
 
+## Passing blocks to RegistrationController
+
+If you simply want to add behaviour to the existing Registration controller, you can do so by creating a new controller that inherits from it, and override the `create`, `update` or `destroy` methods, and passing a block to super:
+
+```ruby
+class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
+
+  def create
+    super do |resource|
+      resource.add_something(extra)
+    end
+  end
+
+end
+```
+
 # Issue Reporting
 
 When posting issues, please include the following information to speed up the troubleshooting process:
 
-* **Version**: which version of this gem (and [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) if applicable) are you using?
+* **Version**: which version of this gem (and [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) / [jToker](https://github.com/lynndylanhurley/j-toker) if applicable) are you using?
 * **Request and response headers**: these can be found in the "Network" tab of your browser's web inspector.
 * **Rails Stacktrace**: this can be found in the `log/development.log` of your API.
 * **Environmental Info**: How is your application different from the [reference implementation](https://github.com/lynndylanhurley/devise_token_auth_demo)? This may include (but is not limited to) the following details:
   * **Routes**: are you using some crazy namespace, scope, or constraint?
   * **Gems**: are you using MongoDB, Grape, RailsApi, ActiveAdmin, etc.?
   * **Custom Overrides**: what have you done in terms of [custom controller overrides](#custom-controller-overrides)?
-  * **Custom Frontend**: are you using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), or something else?
+  * **Custom Frontend**: are you using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker), or something else?
 
 # FAQ
 
@@ -692,7 +725,7 @@ Removing the `new` routes will require significant modifications to devise. If t
 
 ### I'm having trouble using this gem alongside [ActiveAdmin](http://activeadmin.info/)...
 
-For some odd reason, [ActiveAdmin](http://activeadmin.info/) extends from your own app's `ApplicationController`. This becomes a problem if you include the `DeviseTokenAuth::Concerns::SetUserByToken` concern in your app's `ApplicationController`. 
+For some odd reason, [ActiveAdmin](http://activeadmin.info/) extends from your own app's `ApplicationController`. This becomes a problem if you include the `DeviseTokenAuth::Concerns::SetUserByToken` concern in your app's `ApplicationController`.
 
 The solution is to use two separate `ApplicationController` classes - one for your API, and one for ActiveAdmin. Something like this:
 
@@ -789,6 +822,8 @@ Thanks to the following contributors:
 * [@jartek](https://github.com/jartek)
 * [@nicolas-besnard](https://github.com/nicolas-besnard)
 * [@tbloncar](https://github.com/tbloncar)
+* [@nickL](https://github.com/nickL)
+* [@mchavarriagam](https://github.com/mchavarriagam)
 
 # Contributing
 
@@ -805,7 +840,7 @@ To run the test suite do the following:
 2. Run `bundle install`
 3. Run `rake db:migrate`
 4. Run `RAILS_ENV=test rake db:migrate`
-5. Run `guard`.
+5. Run `guard`
 
 The last command will open the [guard](https://github.com/guard/guard) test-runner. Guard will re-run each test suite when changes are made to its corresponding files.
 

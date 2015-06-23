@@ -1,6 +1,17 @@
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
+  def self.tokens_match?(token_hash, token)
+    @token_equality_cache ||= {}
+
+    key = "#{token_hash}/#{token}"
+    result = @token_equality_cache[key] ||= (BCrypt::Password.new(token_hash) == token)
+    if @token_equality_cache.size > 10000
+      @token_equality_cache = {}
+    end
+    result
+  end
+
   included do
     # Hack to check if devise is already enabled
     unless self.method_defined?(:devise_modules)
@@ -65,7 +76,7 @@ module DeviseTokenAuth::Concerns::User
       # fall back to "default" config name
       opts[:client_config] ||= "default"
 
-      if pending_reconfirmation?
+      if respond_to?(:pending_reconfirmation?) && pending_reconfirmation?
         opts[:to] = unconfirmed_email
       else
         opts[:to] = email
@@ -111,7 +122,7 @@ module DeviseTokenAuth::Concerns::User
       DateTime.strptime(expiry.to_s, '%s') > Time.now and
 
       # ensure that the token is valid
-      BCrypt::Password.new(token_hash) == token
+      DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
     )
   end
 
@@ -215,8 +226,7 @@ module DeviseTokenAuth::Concerns::User
     res = "#{uri.scheme}://#{uri.host}"
     res += ":#{uri.port}" if (uri.port and uri.port != 80 and uri.port != 443)
     res += "#{uri.path}" if uri.path
-    res += '#'
-    res += "#{uri.fragment}" if uri.fragment
+    res += "##{uri.fragment}" if uri.fragment
     res += "?#{params.to_query}"
 
     return res
@@ -225,7 +235,7 @@ module DeviseTokenAuth::Concerns::User
   # only validate unique email among users that registered by email
   def unique_email_user
     if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
-      errors.add(:email, "This email address is already in use")
+      errors.add(:email, :already_in_use, default: "address is already in use")
     end
   end
 
