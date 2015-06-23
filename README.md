@@ -50,8 +50,8 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [Using Multiple User Classes](#using-multiple-models)
   * [Excluding Modules](#excluding-modules)
   * [Custom Controller Overrides](#custom-controller-overrides)
-  * [Email Template Overrides](#email-template-overrides)
   * [Passing blocks to Controllers](#passing-blocks-controllers)
+  * [Email Template Overrides](#email-template-overrides)
 * [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
@@ -650,6 +650,24 @@ mount_devise_token_auth_for 'User', at: 'auth', controllers: {
 
 **Note:** Controller overrides must implement the expected actions of the controllers that they replace.
 
+## Passing blocks to Controllers
+
+It may be that you simply want to _add_ behavior to existing controllers without having to re-implement their behavior completely. In this case, you can do so by creating a new controller that inherits from any of DeviseTokenAuth's controllers, overriding whichever methods you'd like to add behavior to by  passing a block to `super`:
+
+```ruby
+class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
+
+  def create
+    super do |resource|
+      resource.do_something(extra)
+    end
+  end
+
+end
+```
+
+Your block will be performed just before the controller would usually render a successful response.
+
 ## Email Template Overrides
 
 You will probably want to override the default email templates for email sign-up and password-reset confirmation. Run the following command to copy the email templates into your app:
@@ -666,22 +684,6 @@ This will create two new files:
 These files may be edited to suit your taste.
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
-
-## Passing blocks to RegistrationController
-
-If you simply want to add behaviour to the existing Registration controller, you can do so by creating a new controller that inherits from it, and override the `create`, `update` or `destroy` methods, and passing a block to super:
-
-```ruby
-class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
-
-  def create
-    super do |resource|
-      resource.add_something(extra)
-    end
-  end
-
-end
-```
 
 # Issue Reporting
 

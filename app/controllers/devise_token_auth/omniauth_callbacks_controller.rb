@@ -72,6 +72,8 @@ module DeviseTokenAuth
 
       @resource.save!
 
+      yield if block_given?
+
       # render user info to javascript postMessage communication window
       render :layout => "layouts/omniauth_response", :template => "devise_token_auth/omniauth_success"
     end

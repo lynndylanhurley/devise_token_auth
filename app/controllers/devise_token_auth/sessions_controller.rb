@@ -38,6 +38,8 @@ module DeviseTokenAuth
 
         sign_in(:user, @resource, store: false, bypass: false)
 
+        yield if block_given?
+
         render json: {
           data: @resource.token_validation_response
         }
@@ -68,6 +70,8 @@ module DeviseTokenAuth
       if user and client_id and user.tokens[client_id]
         user.tokens.delete(client_id)
         user.save!
+
+        yield if block_given?
 
         render json: {
           success:true
