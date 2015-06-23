@@ -9,6 +9,36 @@ class UserTest < ActiveSupport::TestCase
       @resource    = User.new()
     end
 
+    describe '#build_auth_header' do
+      describe 'default client' do
+        test 'it works with a string key' do
+          @resource.tokens = {
+            'default' => { 'expiry' => '1434996433' }
+          }
+
+          assert @resource.build_auth_header('abc')['expiry'] == '1434996433'
+        end
+      end
+
+      describe 'default client' do
+        test 'it works with a symbol key' do
+          @resource.tokens = {
+            'default' => { expiry: '1434996433' }
+          }
+
+          assert @resource.build_auth_header('abc')['expiry'] == '1434996433'
+        end
+      end
+
+      describe 'missing expiry' do
+        test 'it returns an empty string' do
+          @resource.tokens = { 'default' => {} }
+
+          assert @resource.build_auth_header('abc', 'nonexistent')['expiry'] == ''
+        end
+      end
+    end
+
     describe 'serialization' do
       test 'hash should not include sensitive info' do
         refute @resource.as_json[:tokens]

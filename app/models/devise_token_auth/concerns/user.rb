@@ -171,19 +171,18 @@ module DeviseTokenAuth::Concerns::User
     return build_auth_header(token, client_id)
   end
 
-
   def build_auth_header(token, client_id='default')
-    client_id ||= 'default'
+    tokens_for_client = self.tokens.with_indifferent_access[client_id]
 
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
-    expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
+    expiry = tokens_for_client.present? ? tokens_for_client[:expiry].to_s : ''
 
     return {
       "access-token" => token,
       "token-type"   => "Bearer",
       "client"       => client_id,
-      "expiry"       => expiry.to_s,
+      "expiry"       => expiry,
       "uid"          => self.uid
     }
   end
