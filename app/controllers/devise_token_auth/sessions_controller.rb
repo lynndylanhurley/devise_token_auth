@@ -4,6 +4,12 @@ module DeviseTokenAuth
     before_filter :set_user_by_token, :only => [:destroy]
     after_action :reset_session, :only => [:destroy]
 
+    def new
+      render json: {
+        errors: ["Use POST /sign_in to sign in. GET is not supported."]
+      }, status: 405
+    end
+
     def create
       # Check
       field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first

@@ -73,6 +73,20 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
       end
 
+      describe 'get sign_in is not supported' do
+        before do
+          xhr :get, :new, {
+            nickname: @existing_user.nickname,
+            password: 'secret123'
+          }
+          @data = JSON.parse(response.body)
+        end
+
+        test 'user is notified that they should use post sign_in to authenticate' do
+          assert_equal 405, response.status
+        end
+      end
+
       describe 'alt auth keys' do
         before do
           xhr :post, :create, {
