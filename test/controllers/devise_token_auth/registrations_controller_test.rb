@@ -297,6 +297,35 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe 'missing email' do
+      before do
+        post '/auth', {
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test "request should not be successful" do
+        assert_equal 403, response.status
+      end
+
+      test "user should not have been created" do
+        assert_nil @resource.id
+      end
+
+      test "error should be returned in the response" do
+        assert @data['errors'].length
+      end
+
+      test "full_messages should be included in error hash" do
+        assert @data['errors']['full_messages'].length
+      end
+    end
+
     describe "Mismatched passwords" do
       before do
         post '/auth', {

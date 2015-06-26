@@ -2,6 +2,13 @@
 module DeviseTokenAuth
   class SessionsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:destroy]
+    after_action :reset_session, :only => [:destroy]
+
+    def new
+      render json: {
+        errors: ["Use POST /sign_in to sign in. GET is not supported."]
+      }, status: 405
+    end
 
     def create
       # Check
@@ -37,6 +44,8 @@ module DeviseTokenAuth
 
         sign_in(:user, @resource, store: false, bypass: false)
 
+        yield if block_given?
+
         render json: {
           data: @resource.token_validation_response
         }
@@ -64,9 +73,7 @@ module DeviseTokenAuth
         user.tokens.delete(client_id)
         user.save!
 
-        # Since we check warden in in SetUserByToken it would
-        # make sense to also log out there...
-        warden.logout
+        yield if block_given?
 
         render json: {
           success: true,

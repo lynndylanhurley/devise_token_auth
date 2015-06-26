@@ -35,7 +35,7 @@ class Custom::RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
     test "yield resource to block on destroy success" do
       delete '/nice_user_auth', @auth_headers
-      assert @controller.destroy_block_called?, "update failed to yield resource to provided block"
+      assert @controller.destroy_block_called?, "destroy failed to yield resource to provided block"
     end
 
   end
