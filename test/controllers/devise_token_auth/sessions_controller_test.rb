@@ -85,6 +85,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         test 'user is notified that they should use post sign_in to authenticate' do
           assert_equal 405, response.status
         end
+        test "response should contain errors" do
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.not_supported")]
+        end
       end
 
       describe 'alt auth keys' do
@@ -129,10 +133,16 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           @auth_headers = @existing_user.create_new_auth_token
           xhr :delete, :destroy, format: :json
+          @data = JSON.parse(response.body)
         end
 
         test "unauthed request returns 404" do
           assert_equal 404, response.status
+        end
+
+        test "response should contain errors" do
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.user_not_found")]
         end
       end
 
@@ -153,6 +163,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test "response should contain errors" do
           assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.bad_credentials")]
         end
       end
 
@@ -160,7 +171,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           DeviseTokenAuth.change_headers_on_each_request = false
 
-          # accessing current_user calls through set_user_by_token, 
+          # accessing current_user calls through set_user_by_token,
           # which initializes client_id
           @controller.current_user
 
@@ -179,6 +190,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test "response should contain errors" do
           assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.bad_credentials")]
         end
 
         after do
@@ -228,6 +240,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       test "response should contain errors" do
         assert @data['errors']
+        assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.not_confirmed", email: @unconfirmed_user.email)]
       end
     end
 

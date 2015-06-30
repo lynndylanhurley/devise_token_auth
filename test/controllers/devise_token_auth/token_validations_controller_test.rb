@@ -45,5 +45,22 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
         assert_equal 200, response.status
       end
     end
+
+    describe 'failure' do
+      before do
+        get '/api/v1/auth/validate_token', {}, @auth_headers.merge({"access-token" => "12345"})
+        @resp = JSON.parse(response.body)
+      end
+
+      test "request should fail" do
+        assert_equal 401, response.status
+      end
+
+      test "response should contain errors" do
+        assert @resp['errors']
+        assert_equal @resp['errors'], [I18n.t("devise_token_auth.token_validations.invalid")]
+      end
+    end
+
   end
 end
