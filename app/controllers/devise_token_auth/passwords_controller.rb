@@ -9,7 +9,7 @@ module DeviseTokenAuth
       unless resource_params[:email]
         return render json: {
           success: false,
-          errors: ['You must provide an email address.']
+          errors: [ I18n.t('devise_token_auth.passwords.email_required') ]
         }, status: 401
       end
 
@@ -22,7 +22,7 @@ module DeviseTokenAuth
       unless redirect_url
         return render json: {
           success: false,
-          errors: ['Missing redirect url.']
+          errors: [ I18n.t('devise_token_auth.passwords.missing_redirect') ]
         }, status: 401
       end
 
@@ -32,7 +32,7 @@ module DeviseTokenAuth
           return render json: {
             status: 'error',
             data:   @resource.as_json,
-            errors: ["Redirect to #{redirect_url} not allowed."]
+            errors: [ I18n.t('devise_token_auth.passwords.redirect_disallowed', url: redirect_url) ],
           }, status: 403
         end
       end
@@ -68,14 +68,13 @@ module DeviseTokenAuth
         if @resource.errors.empty?
           render json: {
             success: true,
-            message: "An email has been sent to #{email} containing "+
-              "instructions for resetting your password."
+            message: I18n.t('devise_token_auth.passwords.instructions_sent', email: email) 
           }
         else
           errors = @resource.errors
         end
       else
-        errors = ["Unable to find user with email '#{email}'."]
+        errors = [ I18n.t('devise_token_auth.passwords.not_found', email: email) ]
         error_status = 404
       end
 
@@ -127,7 +126,7 @@ module DeviseTokenAuth
       unless @resource
         return render json: {
           success: false,
-          errors: ['Unauthorized']
+          errors: [ I18n.t('devise_token_auth.passwords.unauthorized') ]
         }, status: 401
       end
 
@@ -135,8 +134,7 @@ module DeviseTokenAuth
       unless @resource.provider == 'email'
         return render json: {
           success: false,
-          errors: ["This account does not require a password. Sign in using "+
-                   "your #{@resource.provider.humanize} account instead."]
+          errors: [ I18n.t('devise_token_auth.passwords.password_not_required', account: @resource.provider.humanize) ]
         }, status: 422
       end
 
@@ -144,7 +142,7 @@ module DeviseTokenAuth
       unless password_resource_params[:password] and password_resource_params[:password_confirmation]
         return render json: {
           success: false,
-          errors: ['You must fill out the fields labeled "password" and "password confirmation".']
+          errors: [ I18n.t('devise_token_auth.passwords.password_params_required') ]
         }, status: 422
       end
 
@@ -154,7 +152,7 @@ module DeviseTokenAuth
           success: true,
           data: {
             user: @resource,
-            message: "Your password has been successfully updated."
+            message: I18n.t('devise_token_auth.passwords.password_updated')
           }
         }
       else

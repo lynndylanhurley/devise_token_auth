@@ -53,16 +53,12 @@ module DeviseTokenAuth
       elsif @resource and not @resource.confirmed?
         render json: {
           success: false,
-          errors: [
-            "A confirmation email was sent to your account at #{@resource.email}. "+
-            "You must follow the instructions in the email before your account "+
-            "can be activated"
-          ]
+          errors: [ I18n.t('devise_token_auth.sessions.unconfirmed', email: @resource.email) ]
         }, status: 401
 
       else
         render json: {
-          errors: ["Invalid login credentials. Please try again."]
+          errors: [ I18n.t('devise_token_auth.sessions.invalid') ]
         }, status: 401
       end
     end
@@ -80,12 +76,13 @@ module DeviseTokenAuth
         yield if block_given?
 
         render json: {
-          success:true
+          success: true,
+          message: I18n.t('devise_token_auth.sessions.logged_out')
         }, status: 200
 
       else
         render json: {
-          errors: ["User was not found or was not logged in."]
+          errors: [ I18n.t('devise_token_auth.sessions.not_found') ]
         }, status: 404
       end
     end
