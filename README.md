@@ -99,7 +99,7 @@ This generator accepts the following optional arguments:
 | Argument | Default | Description |
 |---|---|---|
 | USER_CLASS | `User` | The name of the class to use for user authentication. |
-| MOUNT_PATH | `auth` | The path at which to mount the authentication routes. [Read more](#usage). |
+| MOUNT_PATH | `auth` | The path at which to mount the authentication routes. [Read more](#usage-tldr). |
 
 The following events will take place when using the install generator:
 
