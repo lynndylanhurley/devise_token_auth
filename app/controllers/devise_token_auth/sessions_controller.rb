@@ -6,7 +6,7 @@ module DeviseTokenAuth
 
     def new
       render json: {
-        errors: ["Use POST /sign_in to sign in. GET is not supported."]
+        errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
       }, status: 405
     end
 
@@ -53,16 +53,12 @@ module DeviseTokenAuth
       elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
         render json: {
           success: false,
-          errors: [
-            "A confirmation email was sent to your account at #{@resource.email}. "+
-            "You must follow the instructions in the email before your account "+
-            "can be activated"
-          ]
+          errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
         }, status: 401
 
       else
         render json: {
-          errors: ["Invalid login credentials. Please try again."]
+          errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
         }, status: 401
       end
     end
@@ -85,7 +81,7 @@ module DeviseTokenAuth
 
       else
         render json: {
-          errors: ["User was not found or was not logged in."]
+          errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
         }, status: 404
       end
     end
