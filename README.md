@@ -800,7 +800,7 @@ This gem automatically manages batch requests. You can change the time buffer fo
 This gem takes the following steps to ensure security.
 
 This gem uses auth tokens that are:
-* [changed after every request](#about-token-management),
+* [changed after every request](#about-token-management) (can be [turned off](https://github.com/lynndylanhurley/devise_token_auth/#initializer-settings)),
 * [of cryptographic strength](http://ruby-doc.org/stdlib-2.1.0/libdoc/securerandom/rdoc/SecureRandom.html),
 * hashed using [BCrypt](https://github.com/codahale/bcrypt-ruby) (not stored in plain-text),
 * securely compared (to protect against timing attacks),
