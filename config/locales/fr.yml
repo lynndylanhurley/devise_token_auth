@@ -1,0 +1,30 @@
+fr:
+  devise_token_auth:
+    sessions:
+      not_confirmed: "Une email de confirmation de votre compte a été envoyé à %{email}. Merci de suivre les instructions afin de valider votre compte"
+      bad_credentials: "Mot de passe ou identifiant invalide."
+      not_supported: "Utilisez POST /sign_in pour la connexion. GET n'est pas supporté."
+      user_not_found: "L'utilisateur est inconnu ou n'est pas connecté."
+    token_validations:
+      invalid: "Mot de passe ou identifiant invalide."
+    registrations:
+      missing_confirm_success_url: "Le paramètre `confirm_success_url` est manquant."
+      redirect_url_not_allowed: "Redirection vers %{redirect_url} n'est pas autorisée."
+      email_already_exists: "Un compte existe déjà avec cet email: %{email}"
+      account_with_uid_destroyed: "Le compte avec l'identifiant %{uid} a été supprimé."
+      account_to_destroy_not_found: "Impossible de trouver le compte à supprimer."
+      user_not_found: "Utilisateur non trouvé."
+    passwords:
+      missing_email: "Vous devez soumettre un email."
+      missing_redirect_url: "Url de redirection manquante."
+      not_allowed_redirect_url: "Redirection vers %{redirect_url} n'est pas autorisée."
+      sended: "Un email a été envoyé à %{email} avec les instructions pour réinitialiser votre mot de passe."
+      user_not_found: "Impossible de trouver un utilisateur avec cet email: '%{email}'."
+      password_not_required: "Ce compte ne demande pas de mot de passe. Connectez vous plutôt en utilisant %{provider}."
+      missing_passwords: 'Vous devez remplir les champs "mt de passe" et "confirmation de mot de passe".'
+      successfully_updated: "Votre mot de passe a été correctement mis à jour."
+
+  errors:
+    validate_sign_up_params: "Les données de l'inscription dans le corps de la requête ne sont pas valides."
+    validate_account_update_params: "Les données de mise à jour dans le corps de la requête ne sont pas valides."
+    not_email: "n'est pas un email"

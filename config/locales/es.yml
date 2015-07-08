@@ -1,0 +1,30 @@
+es:
+  devise_token_auth:
+    sessions:
+      not_confirmed: "Un correo electrónico de confirmación de su cuenta ha sido enviado a %{email}. Por favor, siga las instrucciones para validar su cuenta"
+      bad_credentials: "Identidad o contraseña no válida."
+      not_supported: "Use POST /sign_in para la conexión. GET no esta disponible."
+      user_not_found: "Usuario desconocido o no está conectado."
+    token_validations:
+      invalid: "Identidad o contraseña no válida."
+    registrations:
+      missing_confirm_success_url: "El parámetro `confirm_success_url` no esta presente."
+      redirect_url_not_allowed: "Redirección hacia %{redirect_url} no esta permitida."
+      email_already_exists: "Una cuenta ya existe con este correo electrónico: %{email}"
+      account_with_uid_destroyed: "La cuenta con el identificador %{uid} se ha eliminado."
+      account_to_destroy_not_found: "No se puede encontrar la cuenta a borrar."
+      user_not_found: "Usuario no encontrado."
+    passwords:
+      missing_email: "Debe incluir un correo electrónico."
+      missing_redirect_url: "Falta el Url de redirección."
+      not_allowed_redirect_url: "Redirección hacia %{redirect_url} no esta permitida."
+      sended: "Un correo electrónico ha sido enviado a %{email} con las instrucciones para restablecer su contraseña."
+      user_not_found: "No se pudo encontrar un usuario con este correo electrónico: '%{email}'."
+      password_not_required: "Esta cuenta no requiere contraseña. Iniciar sesión utilizando %{provider}."
+      missing_passwords: 'Debe llenar los campos "contraseña" y "confirmación de contraseña".'
+      successfully_updated: "Su contraseña ha sido actualizada con éxito."
+
+  errors:
+    validate_sign_up_params: "Los datos introducidos en la solicitud de acceso no son válidos."
+    validate_account_update_params: "Los datos introducidos en la solicitud de actualización no son válidos."
+    not_email: "no es un correo electrónico"
