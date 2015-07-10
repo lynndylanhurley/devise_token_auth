@@ -122,13 +122,13 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           describe 'password reset link failure' do
-            test 'request should not be authorized' do
-              assert_raises(ActionController::RoutingError) {
-                xhr :get, :edit, {
+            test 'respone should return 404' do
+              xhr :get, :edit, {
                   reset_password_token: 'bogus',
                   redirect_url: @mail_redirect_url
-                }
               }
+
+              assert_equal 404, response.status
             end
           end
 
@@ -397,9 +397,38 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         @resource.reload
       end
+    end
+    describe 'unconfirmable user' do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:unconfirmable_user]
+      end
 
-      test 'unconfirmed email user should now be confirmed' do
-        assert @resource.confirmed_at
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
+
+      before do
+        @resource = unconfirmable_users(:user)
+        @redirect_url = 'http://ng-token-auth.dev'
+
+        xhr :post, :create, {
+          email:        @resource.email,
+          redirect_url: @redirect_url
+        }
+
+        @mail = ActionMailer::Base.deliveries.last
+        @resource.reload
+
+        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
+        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+        @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+
+        xhr :get, :edit, {
+          reset_password_token: @mail_reset_token,
+          redirect_url: @mail_redirect_url
+        }
+
+        @resource.reload
       end
     end
 

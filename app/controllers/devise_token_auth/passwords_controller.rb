@@ -105,7 +105,7 @@ module DeviseTokenAuth
         }
 
         # ensure that user is confirmed
-        @resource.skip_confirmation! unless @resource.confirmed_at
+        @resource.skip_confirmation! if @resource.devise_modules.include?(:confirmable) && !@resource.confirmed_at
 
         @resource.save!
         yield if block_given?
@@ -117,7 +117,9 @@ module DeviseTokenAuth
           config:         params[:config]
         }))
       else
-        raise ActionController::RoutingError.new('Not Found')
+        render json: {
+          success: false
+        }, status: 404
       end
     end
 

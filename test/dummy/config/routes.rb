@@ -32,6 +32,8 @@ Rails.application.routes.draw do
 
   mount_devise_token_auth_for 'UnregisterableUser', at: 'unregisterable_user_auth', skip: [:registrations]
 
+  mount_devise_token_auth_for 'UnconfirmableUser', at: 'unconfirmable_user_auth'
+
   # test namespacing
   namespace :api do
     scope :v1 do
