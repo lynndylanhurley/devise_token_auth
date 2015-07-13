@@ -2,7 +2,7 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
   def change
     create_table(:<%= user_class.pluralize.underscore %>) do |t|
       ## Required
-      t.string :provider, :null => false
+      t.string :provider, :null => false, :default => "email"
       t.string :uid, :null => false, :default => ""
 
       ## Database authenticatable
