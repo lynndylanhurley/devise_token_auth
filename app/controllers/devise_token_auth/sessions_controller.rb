@@ -46,8 +46,11 @@ module DeviseTokenAuth
 
         yield if block_given?
 
+        # Add auth data to the response body for devices that don't fully suport CORS/Exposed headers
+        @auth_header = @resource.build_auth_header(@token, @client_id)
         render json: {
-          data: @resource.token_validation_response
+          data: @resource.token_validation_response,
+          auth: @auth_header
         }
 
       elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
