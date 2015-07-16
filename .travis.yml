@@ -17,3 +17,6 @@ script:
 before_script:
   - mysql -e 'create database devise_token_auth_test'
   - psql -c 'create database devise_token_auth_test' -U postgres
+
+addons:
+  postgresql: "9.3"

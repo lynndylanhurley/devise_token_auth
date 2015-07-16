@@ -21,7 +21,9 @@ module DeviseTokenAuth::Concerns::User
       self.devise_modules.delete(:omniauthable)
     end
 
-    serialize :tokens, JSON
+    unless tokens_has_json_column_type?
+      serialize :tokens, JSON
+    end
 
     validates :email, presence: true, email: true, if: Proc.new { |u| u.provider == 'email' }
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
@@ -79,6 +81,15 @@ module DeviseTokenAuth::Concerns::User
       send_devise_notification(:reset_password_instructions, token, opts)
 
       token
+    end
+  end
+
+  module ClassMethods
+    protected
+    
+
+    def tokens_has_json_column_type?
+      table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
     end
   end
 
@@ -240,10 +251,12 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def destroy_expired_tokens
-    self.tokens.delete_if{|cid,v|
-      expiry = v[:expiry] || v["expiry"]
-      DateTime.strptime(expiry.to_s, '%s') < Time.now
-    }
+    if self.tokens
+      self.tokens.delete_if do |cid, v|
+        expiry = v[:expiry] || v["expiry"]
+        DateTime.strptime(expiry.to_s, '%s') < Time.now
+      end
+    end
   end
 
 end

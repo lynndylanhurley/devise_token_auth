@@ -87,6 +87,19 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+    describe 'nil tokens are handled properly' do
+      before do
+        @resource = users(:confirmed_email_user)
+        @resource.skip_confirmation!
+        @resource.save!
+      end
+
+      test 'tokens can be set to nil' do
+        @resource.tokens = nil
+        assert @resource.save
+      end
+    end
+
     describe "#generate_url" do
       test 'URI fragment should appear at the end of URL' do
         params = {client_id: 123}
