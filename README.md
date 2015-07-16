@@ -420,7 +420,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   client_id = request.headers['client']
   token = request.headers['access-token']
 
-  @user.valid_token?(token, client_id)
+  @resource.valid_token?(token, client_id)
   ~~~
 
 * **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client` as an optional argument. Will generate a new `client` if none is provided. Returns the authentication headers that should be sent by the client as an object.
@@ -431,7 +431,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   client_id = request.headers['client']
 
   # update token, generate updated auth headers for response
-  new_auth_header = @user.create_new_auth_token(client_id)
+  new_auth_header = @resource.create_new_auth_token(client_id)
 
   # update response with the header that will be required by the next request
   response.headers.merge!(new_auth_header)
@@ -446,13 +446,13 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   token     = SecureRandom.urlsafe_base64(nil, false)
 
   # store client + token in user's token hash
-  @user.tokens[client_id] = {
+  @resource.tokens[client_id] = {
     token: BCrypt::Password.create(token),
     expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
   }
 
   # generate auth headers for response
-  new_auth_header = @user.build_auth_header(token, client_id)
+  new_auth_header = @resource.build_auth_header(token, client_id)
 
   # update response with the header that will be required by the next request
   response.headers.merge!(new_auth_header)
@@ -619,10 +619,10 @@ module Overrides
   class TokenValidationsController < DeviseTokenAuth::TokenValidationsController
 
     def validate_token
-      # @user will have been set by set_user_by_token concern
-      if @user
+      # @resource will have been set by set_user_by_token concern
+      if @resource
         render json: {
-          data: @user.as_json(methods: :calculate_operating_thetan)
+          data: @resource.as_json(methods: :calculate_operating_thetan)
         }
       else
         render json: {
