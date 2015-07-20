@@ -502,7 +502,7 @@ This gem supports the use of multiple user models. One possible use case is to a
   ~~~
 
 1. Configure any `Admin` restricted controllers. Controllers will now have access to the methods [described here](#methods):
-  * `before_action: :authenticate_admin!`
+  * `before_action :authenticate_admin!`
   * `current_admin`
   * `admin_signed_in?`
 
