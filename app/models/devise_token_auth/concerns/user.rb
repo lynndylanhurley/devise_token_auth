@@ -28,9 +28,6 @@ module DeviseTokenAuth::Concerns::User
     validates :email, presence: true, email: true, if: Proc.new { |u| u.provider == 'email' }
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
 
-    # only validate unique emails among email registration users
-    validate :unique_email_user, on: :create
-
     # can't set default on text fields in mysql, simulate here instead.
     after_save :set_empty_token_hash
     after_initialize :set_empty_token_hash
