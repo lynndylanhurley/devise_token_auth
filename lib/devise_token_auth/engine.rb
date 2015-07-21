@@ -15,15 +15,17 @@ module DeviseTokenAuth
                  :omniauth_prefix,
                  :default_confirm_success_url,
                  :default_password_reset_url,
-                 :redirect_whitelist
+                 :redirect_whitelist,
+                 :check_current_password_before_update
 
-  self.change_headers_on_each_request = true
-  self.token_lifespan                 = 2.weeks
-  self.batch_request_buffer_throttle  = 5.seconds
-  self.omniauth_prefix                = '/omniauth'
-  self.default_confirm_success_url    = nil
-  self.default_password_reset_url     = nil
-  self.redirect_whitelist             = nil
+  self.change_headers_on_each_request       = true
+  self.token_lifespan                       = 2.weeks
+  self.batch_request_buffer_throttle        = 5.seconds
+  self.omniauth_prefix                      = '/omniauth'
+  self.default_confirm_success_url          = nil
+  self.default_password_reset_url           = nil
+  self.redirect_whitelist                   = nil
+  self.check_current_password_before_update = false
 
   def self.setup(&block)
     yield self

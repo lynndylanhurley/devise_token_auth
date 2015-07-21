@@ -269,6 +269,56 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         end
       end
 
+      describe "change password with current password required" do
+        before do
+          DeviseTokenAuth.check_current_password_before_update = :password
+        end
+
+        after do
+          DeviseTokenAuth.check_current_password_before_update = false
+        end
+
+        describe 'success' do
+          before do
+            @auth_headers = @resource.create_new_auth_token
+            request.headers.merge!(@auth_headers)
+            @new_password = Faker::Internet.password
+            @resource.update password: 'secret123', password_confirmation: 'secret123'
+
+            xhr :put, :update, {
+              password: @new_password,
+              password_confirmation: @new_password,
+              current_password: 'secret123'
+            }
+
+            @data = JSON.parse(response.body)
+            @resource.reload
+          end
+
+          test "request should be successful" do
+            assert_equal 200, response.status
+          end
+        end
+
+        describe 'current password mismatch error' do
+          before do
+            @auth_headers = @resource.create_new_auth_token
+            request.headers.merge!(@auth_headers)
+            @new_password = Faker::Internet.password
+
+            xhr :put, :update, {
+              password: @new_password,
+              password_confirmation: @new_password,
+              current_password: 'not_very_secret321'
+            }
+          end
+
+          test 'response should fail unauthorized' do
+            assert_equal 422, response.status
+          end
+        end
+      end
+
       describe "change password" do
         describe 'success' do
           before do
