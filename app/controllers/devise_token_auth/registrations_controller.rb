@@ -142,7 +142,11 @@ module DeviseTokenAuth
     private
 
     def resource_update_method
-      if account_update_params.has_key?(:current_password)
+      if DeviseTokenAuth.check_current_password_before_update == :attributes
+        "update_with_password"
+      elsif DeviseTokenAuth.check_current_password_before_update == :password and account_update_params.has_key?(:password)
+        "update_with_password"
+      elsif account_update_params.has_key?(:current_password)
         "update_with_password"
       else
         "update_attributes"

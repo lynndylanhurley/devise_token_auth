@@ -148,7 +148,7 @@ module DeviseTokenAuth
         }, status: 422
       end
 
-      if @resource.update_attributes(password_resource_params)
+      if @resource.send(resource_update_method, password_resource_params)
         yield if block_given?
         return render json: {
           success: true,
@@ -165,12 +165,20 @@ module DeviseTokenAuth
       end
     end
 
+    def resource_update_method
+      if DeviseTokenAuth.check_current_password_before_update != false
+        "update_with_password"
+      else
+        "update_attributes"
+      end
+    end
+
     def password_resource_params
       params.permit(devise_parameter_sanitizer.for(:account_update))
     end
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :reset_password_token)
+      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token)
     end
 
   end
