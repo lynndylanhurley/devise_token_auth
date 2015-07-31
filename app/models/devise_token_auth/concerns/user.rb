@@ -198,7 +198,7 @@ module DeviseTokenAuth::Concerns::User
     args[:uid]    = self.uid
     args[:expiry] = self.tokens[args[:client_id]]['expiry']
 
-    generate_url(base_url, args)
+    DeviseTokenAuth::Url.generate(base_url, args)
   end
 
 
@@ -221,19 +221,6 @@ module DeviseTokenAuth::Concerns::User
 
 
   protected
-
-
-  def generate_url(url, params = {})
-    uri = URI(url)
-
-    res = "#{uri.scheme}://#{uri.host}"
-    res += ":#{uri.port}" if (uri.port and uri.port != 80 and uri.port != 443)
-    res += "#{uri.path}" if uri.path
-    res += "?#{params.to_query}"
-    res += "##{uri.fragment}" if uri.fragment
-
-    return res
-  end
 
   # only validate unique email among users that registered by email
   def unique_email_user

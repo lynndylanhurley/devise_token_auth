@@ -99,13 +99,5 @@ class UserTest < ActiveSupport::TestCase
         assert @resource.save
       end
     end
-
-    describe "#generate_url" do
-      test 'URI fragment should appear at the end of URL' do
-        params = {client_id: 123}
-        url = 'http://example.com#fragment'
-        assert_equal @resource.send(:generate_url, url, params), "http://example.com?client_id=123#fragment"
-      end
-    end
   end
 end
