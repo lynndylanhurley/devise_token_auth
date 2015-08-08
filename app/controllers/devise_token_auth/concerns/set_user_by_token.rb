@@ -69,7 +69,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
 
-    if not DeviseTokenAuth.change_headers_on_each_request
+    if @used_auth_by_token and not DeviseTokenAuth.change_headers_on_each_request
       auth_header = @resource.build_auth_header(@token, @client_id)
 
       # update the response header
