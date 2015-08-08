@@ -10,6 +10,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   # keep track of request duration
   def set_request_start
     @request_started_at = Time.now
+    @used_auth_by_token = true
   end
 
   # user auth
@@ -31,6 +32,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # check for an existing user, authenticated via warden/devise
     devise_warden_user =  warden.user(rc.to_s.underscore.to_sym)
     if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
+      @used_auth_by_token = false
       @resource = devise_warden_user
       @resource.create_new_auth_token
     end
@@ -63,6 +65,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   def update_auth_header
     # cannot save object if model has invalid params
     return unless @resource and @resource.valid? and @client_id
+
+    # Generate new client_id with existing authentication
+    @client_id = nil unless @used_auth_by_token
 
     if not DeviseTokenAuth.change_headers_on_each_request
       auth_header = @resource.build_auth_header(@token, @client_id)
