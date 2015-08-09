@@ -19,7 +19,8 @@ class Custom::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
     test "yield resource to block on omniauth_sucess success" do
       @redirect_url = "http://ng-token-auth.dev/"
       get_via_redirect '/nice_user_auth/facebook', {
-        auth_origin_url: @redirect_url
+        auth_origin_url: @redirect_url,
+        omniauth_window_type: 'newWindow'
       }
       assert @controller.omniauth_success_block_called?, "omniauth_success failed to yield resource to provided block"
     end

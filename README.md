@@ -846,5 +846,12 @@ To run the test suite do the following:
 
 The last command will open the [guard](https://github.com/guard/guard) test-runner. Guard will re-run each test suite when changes are made to its corresponding files.
 
+To run just one test:
+1. Clone this repo
+2. Run `bundle install`
+3. Run `rake db:migrate`
+4. Run `RAILS_ENV=test rake db:migrate`
+5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/ 
+
 # License
 This project uses the WTFPL

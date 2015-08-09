@@ -49,4 +49,7 @@ Rails.application.routes.draw do
 
   # routes within this block will authorize visitors using the Mang or User class
   get 'demo/members_only_group', to: 'demo_group#members_only'
+
+  # we need a route for omniauth_callback_controller to redirect to in sameWindow case
+  get 'auth_origin', to: 'auth_origin#redirected'
 end
