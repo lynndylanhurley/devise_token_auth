@@ -24,6 +24,7 @@ module ActionDispatch::Routing
 
       devise_for resource.pluralize.underscore.to_sym,
         :class_name  => resource,
+        :singular    => resource.underscore,
         :module      => :devise,
         :path        => "#{opts[:at]}",
         :controllers => controllers,
