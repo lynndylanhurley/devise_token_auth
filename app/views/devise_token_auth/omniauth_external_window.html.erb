@@ -27,7 +27,7 @@
         return data;
       }
       setTimeout(function() {
-        window.getElementById('text').innerHTML = 'Redirecting...';
+        document.getElementById('text').innerHTML = (data && data.error) || 'Redirecting...';
       }, 1000);
     </script>
   </head>
