@@ -165,6 +165,8 @@ module DeviseTokenAuth
       end
     end
 
+    protected
+
     def resource_update_method
       if DeviseTokenAuth.check_current_password_before_update != false
         "update_with_password"
@@ -173,12 +175,14 @@ module DeviseTokenAuth
       end
     end
 
-    def password_resource_params
-      params.permit(devise_parameter_sanitizer.for(:account_update))
-    end
+    private
 
     def resource_params
       params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token)
+    end
+
+    def password_resource_params
+      params.permit(devise_parameter_sanitizer.for(:account_update))
     end
 
   end

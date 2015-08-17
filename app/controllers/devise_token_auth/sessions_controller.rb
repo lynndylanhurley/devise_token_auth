@@ -86,12 +86,10 @@ module DeviseTokenAuth
       end
     end
 
+    protected
+
     def valid_params?(key, val)
       resource_params[:password] && key && val
-    end
-
-    def resource_params
-      params.permit(devise_parameter_sanitizer.for(:sign_in))
     end
 
     def get_auth_params
@@ -117,5 +115,12 @@ module DeviseTokenAuth
         val: auth_val
       }
     end
+
+    private
+
+    def resource_params
+      params.permit(devise_parameter_sanitizer.for(:sign_in))
+    end
+
   end
 end

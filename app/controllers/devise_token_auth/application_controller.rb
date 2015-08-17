@@ -2,6 +2,7 @@ module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
 
+    protected
 
     def resource_class(m=nil)
       if m

@@ -7,6 +7,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     after_action :update_auth_header
   end
 
+  protected
+
   # keep track of request duration
   def set_request_start
     @request_started_at = Time.now
