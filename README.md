@@ -109,7 +109,7 @@ The following events will take place when using the install generator:
 
 * Routes will be appended to file at `config/routes.rb`. [Read more](#mounting-routes).
 
-* A concern will be included by your application controller at `app/controllers/application_controller.rb`. *If you are using `rails-api` instead of vanilla rails, you will need to add this concern manually.* [Read more](#controller-methods).
+* A concern will be included by your application controller at `app/controllers/application_controller.rb`. [Read more](#controller-methods).
 
 * A migration file will be created in the `db/migrate` directory. Inspect the migrations file, add additional columns if necessary, and then run the migration:
 
