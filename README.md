@@ -42,6 +42,7 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [OmniAuth Authentication](#omniauth-authentication)
   * [OmniAuth Provider Settings](#omniauth-provider-settings)
   * [Email Authentication](#email-authentication)
+  * [Customizing Devise Verbiage](#customizing-devise-verbiage)
   * [Cross Origin Requests (CORS)](#cors)
 * [Usage Continued](#usage-cont)
   * [Mounting Routes](#mounting-routes)
@@ -283,6 +284,21 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = { :address => 'your-dev-host.dev', :port => 1025 }
 end
+~~~
+
+If you wish to send custom e-mails instead of using the default devise templates, you can [do that too](#email-template-overrides).
+
+## Customizing Devise Verbiage
+Devise Token Auth ships with intelligent default wording for everything you need. But that doesn't mean you can't make it more awesome. You can override the [devise defaults](https://github.com/plataformatec/devise/blob/master/config/locales/en.yml) by creating a YAML file at `config/locales/devise.en.yml` and assigning whatever custom values you want. For example, to customize the subject line of your devise e-mails, you could do this:
+
+~~~yaml
+en:
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: "Please confirm your e-mail address"
+      reset_password_instructions:
+        subject: "Reset password request"
 ~~~
 
 ## CORS
@@ -695,7 +711,7 @@ This will create two new files:
 * `app/views/devise/mailer/reset_password_instructions.html.erb`
 * `app/views/devise/mailer/confirmation_instructions.html.erb`
 
-These files may be edited to suit your taste.
+These files may be edited to suit your taste. You can customize the e-mail subjects like [this](#customizing-devise-verbiage).
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
 
