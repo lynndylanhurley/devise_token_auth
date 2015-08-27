@@ -8,6 +8,8 @@
 
 ## Simple, secure token based authentication for Rails.
 
+[![Join the chat at https://gitter.im/lynndylanhurley/devise_token_auth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lynndylanhurley/devise_token_auth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This gem provides the following features:
 
 * Seamless integration with both the the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js) and the outstanding [jToker](https://github.com/lynndylanhurley/j-toker) plugin for [jQuery](https://jquery.com/).
