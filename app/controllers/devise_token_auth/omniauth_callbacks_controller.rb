@@ -47,6 +47,8 @@ module DeviseTokenAuth
       render_data_or_redirect('authFailure', {error: @error})
     end
 
+    protected
+
     # this will be determined differently depending on the action that calls
     # it. redirect_callbacks is called upon returning from successful omniauth
     # authentication, and the target params live in an omniauth-specific
@@ -71,8 +73,6 @@ module DeviseTokenAuth
       @_omniauth_params
       
     end
-
-    protected
 
     # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user, auth_hash)
