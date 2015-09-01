@@ -48,6 +48,9 @@ class DeviseTokenAuthCreateUnregisterableUsers < ActiveRecord::Migration
         t.text :tokens
       end
 
+      ## TokenAuthenticatable
+      t.string   :api_token
+
       t.timestamps
     end
 

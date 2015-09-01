@@ -13,6 +13,7 @@ module DeviseTokenAuth
     def create
       # Check
       field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
+      api_token = request_authentication_header_value
 
       @resource = nil
       if field
@@ -27,11 +28,12 @@ module DeviseTokenAuth
         if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
           q = "BINARY " + q
         end
-
         @resource = resource_class.where(q, q_value).first
+      elsif api_token
+        @resource = resource_class.where(api_token: api_token).first
       end
 
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      if api_token_or_username_password_valid?(api_token, field, q_value) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
@@ -120,6 +122,14 @@ module DeviseTokenAuth
 
     def resource_params
       params.permit(devise_parameter_sanitizer.for(:sign_in))
+    end
+
+    def request_authentication_header_value
+      request.headers[DeviseTokenAuth.default_authentication_header]
+    end
+
+    def api_token_or_username_password_valid?(api_token, field, q_value)
+      ((@resource and api_token) or (@resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password])))
     end
 
   end

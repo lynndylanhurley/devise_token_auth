@@ -21,6 +21,18 @@ second_confirmed_email_user:
   updated_at:         '<%= timestamp %>'
   encrypted_password: <%= User.new.send(:password_digest, 'secret123') %>
 
+<% @api_user_email = Faker::Internet.email %>
+confirmed_api_user:
+  uid:                "<%= @api_user_email %>"
+  email:              "api_stimpy"
+  nickname:           'api stimpy'
+  provider:           'api'
+  confirmed_at:       '<%= timestamp %>'
+  api_token:            <%= SecureRandom.urlsafe_base64(nil, false) %>
+  created_at:         '<%= timestamp %>'
+  updated_at:         '<%= timestamp %>'
+  encrypted_password: <%= User.new.send(:password_digest, 'secret123') %>
+
 <% @fb_email = Faker::Internet.email %>
 duplicate_email_facebook_user:
   uid:                "<%= Faker::Number.number(10) %>"

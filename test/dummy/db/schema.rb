@@ -27,14 +27,15 @@ ActiveRecord::Schema.define(version: 20150708104536) do
     t.string   "confirmation_token",     limit: 255
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.string   "unconfirmed_email",      limit: 255
-    t.string   "name",                   limit: 255
-    t.string   "nickname",               limit: 255
-    t.string   "image",                  limit: 255
-    t.string   "provider",               limit: 255
-    t.string   "uid",                    limit: 255,   default: "", null: false
-    t.text     "tokens",                 limit: 65535
-    t.string   "favorite_color",         limit: 255
+    t.string   "unconfirmed_email"
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "image"
+    t.string   "provider"
+    t.string   "uid",                    default: "", null: false
+    t.text     "tokens"
+    t.string   "api_token"
+    t.string   "favorite_color"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -98,6 +99,7 @@ ActiveRecord::Schema.define(version: 20150708104536) do
     t.string   "image"
     t.string   "email"
     t.text     "tokens"
+    t.string   "api_token"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -107,14 +109,15 @@ ActiveRecord::Schema.define(version: 20150708104536) do
   add_index "nice_users", ["uid", "provider"], name: "index_nice_users_on_uid_and_provider", unique: true
 
   create_table "only_email_users", force: :cascade do |t|
-    t.string   "provider",           limit: 255,                null: false
-    t.string   "uid",                limit: 255,   default: "", null: false
-    t.string   "encrypted_password", limit: 255,   default: "", null: false
-    t.string   "name",               limit: 255
-    t.string   "nickname",           limit: 255
-    t.string   "image",              limit: 255
-    t.string   "email",              limit: 255
-    t.text     "tokens",             limit: 65535
+    t.string   "provider",                        null: false
+    t.string   "uid",                default: "", null: false
+    t.string   "encrypted_password", default: "", null: false
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "image"
+    t.string   "email"
+    t.text     "tokens"
+    t.string   "api_token"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -139,6 +142,7 @@ ActiveRecord::Schema.define(version: 20150708104536) do
     t.string   "image"
     t.string   "email"
     t.text     "tokens"
+    t.string   "api_token"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -162,12 +166,13 @@ ActiveRecord::Schema.define(version: 20150708104536) do
     t.string   "confirmation_token",     limit: 255
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.string   "unconfirmed_email",      limit: 255
-    t.string   "name",                   limit: 255
-    t.string   "nickname",               limit: 255
-    t.string   "image",                  limit: 255
-    t.string   "email",                  limit: 255
-    t.text     "tokens",                 limit: 65535
+    t.string   "unconfirmed_email"
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "image"
+    t.string   "email"
+    t.text     "tokens"
+    t.string   "api_token"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -191,14 +196,15 @@ ActiveRecord::Schema.define(version: 20150708104536) do
     t.string   "confirmation_token",          limit: 255
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.string   "confirm_success_url",         limit: 255
-    t.string   "unconfirmed_email",           limit: 255
-    t.string   "name",                        limit: 255
-    t.string   "nickname",                    limit: 255
-    t.string   "image",                       limit: 255
-    t.string   "provider",                    limit: 255
-    t.string   "uid",                         limit: 255,   default: "", null: false
-    t.text     "tokens",                      limit: 65535
+    t.string   "confirm_success_url"
+    t.string   "unconfirmed_email"
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "image"
+    t.string   "provider"
+    t.string   "uid",                         default: "", null: false
+    t.text     "tokens"
+    t.string   "api_token"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "operating_thetan",            limit: 4

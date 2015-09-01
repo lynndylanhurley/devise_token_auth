@@ -42,6 +42,9 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
       ## Tokens
       <%= json_supported_database? ? 't.json :tokens' : 't.text :tokens' %>
 
+      ## TokenAuthenticatable
+      t.string   :api_token
+
       t.timestamps
     end
 
