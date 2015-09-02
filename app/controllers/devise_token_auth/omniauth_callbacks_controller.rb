@@ -39,7 +39,7 @@ module DeviseTokenAuth
 
       yield if block_given?
 
-      render_data_or_redirect('deliverCredentials', @resource.as_json.merge(@auth_params.as_json))
+      render_data_or_redirect('deliverCredentials', @auth_params.as_json, @resource.as_json)
     end
 
     def omniauth_failure
@@ -190,7 +190,7 @@ module DeviseTokenAuth
       render :layout => nil, :template => "devise_token_auth/omniauth_external_window"
     end
 
-    def render_data_or_redirect(message, data)
+    def render_data_or_redirect(message, data, user_data = {})
 
       # We handle inAppBrowser and newWindow the same, but it is nice
       # to support values in case people need custom implementations for each case
@@ -201,7 +201,7 @@ module DeviseTokenAuth
       # why we can handle these both the same.  The view is setup to handle both cases
       # at the same time.
       if ['inAppBrowser', 'newWindow'].include?(omniauth_window_type)
-        render_data(message, data)
+        render_data(message, user_data.merge(data))
 
       elsif auth_origin_url # default to same-window implementation, which forwards back to auth_origin_url
 
