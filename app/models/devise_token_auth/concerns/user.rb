@@ -53,6 +53,16 @@ module DeviseTokenAuth::Concerns::User
       false
     end
 
+    def password_required?
+      return super unless self.provider == "api"
+      false
+    end
+
+    def password_changed?
+      return super unless self.provider == "api"
+      false
+    end
+
     # override devise method to include additional info as opts hash
     def send_confirmation_instructions(opts=nil)
       unless @raw_confirmation_token
@@ -88,7 +98,7 @@ module DeviseTokenAuth::Concerns::User
 
   module ClassMethods
     protected
-    
+
 
     def tokens_has_json_column_type?
       table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])

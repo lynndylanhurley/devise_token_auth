@@ -48,6 +48,9 @@ class DeviseTokenAuthCreateEvilUsers < ActiveRecord::Migration
         t.text :tokens
       end
 
+      ## TokenAuthenticatable
+      t.string   :api_token
+
       ## etc.
       t.string :favorite_color
 
