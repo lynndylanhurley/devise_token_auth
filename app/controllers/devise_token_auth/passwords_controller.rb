@@ -107,7 +107,7 @@ module DeviseTokenAuth
         # ensure that user is confirmed
         @resource.skip_confirmation! if @resource.devise_modules.include?(:confirmable) && !@resource.confirmed_at
 
-        # allow user to change password without current_password
+        # allow user to change password once without current_password
         @resource.allow_password_change = true;
 
         @resource.save!

@@ -33,6 +33,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_email")]
         end
       end
+
       describe 'not redirect_url should return 401' do
         before do
           @auth_headers = @resource.create_new_auth_token
@@ -297,6 +298,45 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
           test "request should be successful" do
             assert_equal 200, response.status
+          end
+        end
+
+        describe 'success with after password reset' do
+          before do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @redirect_url
+            }
+
+            @mail = ActionMailer::Base.deliveries.last
+            @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+            @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+
+            xhr :get, :edit, {
+              reset_password_token: @mail_reset_token,
+              redirect_url: @mail_redirect_url
+            }
+
+            @auth_headers = @resource.create_new_auth_token
+            request.headers.merge!(@auth_headers)
+            @new_password = Faker::Internet.password
+
+            xhr :put, :update, {
+              password: @new_password,
+              password_confirmation: @new_password
+            }
+
+            @data = JSON.parse(response.body)
+            @allow_password_change = @resource.allow_password_change
+            @resource.reload
+          end
+
+          test "request should be successful" do
+            assert_equal 200, response.status
+          end
+
+          test "sets allow_password_change false" do
+            assert_equal false, @allow_password_change
           end
         end
 
