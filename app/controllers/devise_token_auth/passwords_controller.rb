@@ -1,7 +1,20 @@
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:update]
+    before_filter :set_auth_hash!, :only => [:create]
     skip_after_filter :update_auth_header, :only => [:create, :edit]
+
+    def set_auth_hash!
+      @auth_hash = Hash.new
+      @auth_hash = {uid: @uid} if @uid
+      @rc ||= resource_class
+
+      @rc.request_keys.each do |k|
+        _m = k.to_s.downcase.to_sym
+        next unless request.respond_to?(_m)
+        @auth_hash[k.downcase.to_sym] = request.send(_m)
+      end
+    end
 
     # this action is responsible for generating password reset tokens and
     # sending emails
@@ -44,14 +57,7 @@ module DeviseTokenAuth
         email = resource_params[:email]
       end
 
-      q = "uid = ? AND provider='email'"
-
-      # fix for mysql default case insensitivity
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
-      end
-
-      @resource = resource_class.where(q, email).first
+      @resource = resource_class.find_for_authentication(@auth_hash.merge(email: email))
 
       errors = nil
       error_status = 400

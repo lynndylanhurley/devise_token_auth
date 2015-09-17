@@ -7,6 +7,8 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
+  self.use_transactional_fixtures = false
+
   describe DeviseTokenAuth::SessionsController do
     describe "Confirmed user" do
       before do
@@ -42,8 +44,59 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           assert_equal 200, response.status
         end
 
-        test "request should return user data" do
-          assert_equal @existing_user.email, @data['data']['email']
+        describe 'and with scoping' do
+          before do
+            Devise.request_keys = [:domain]
+            @existing_user2 = users(:confirmed_email_user)
+            @existing_user2.skip_confirmation!
+            @existing_user2.save!
+          end
+
+          describe 'success' do
+            before do
+              @old_sign_in_count      = @existing_user2.sign_in_count
+              @old_current_sign_in_at = @existing_user2.current_sign_in_at
+              @old_last_sign_in_at    = @existing_user2.last_sign_in_at
+              @old_sign_in_ip         = @existing_user2.current_sign_in_ip
+              @old_last_sign_in_ip    = @existing_user2.last_sign_in_ip
+
+              mock = MiniTest::Mock.new
+              mock.expect(:call, @existing_user2, [{provider: 'email', :email =>  @existing_user2.email, domain: 'test.host'}])
+
+              stub_params = lambda { |params|
+                mock.call(params)
+              }
+              User.stub(:find_for_authentication, stub_params) do
+                xhr :post, :create, {
+                  email: @existing_user2.email,
+                  password: 'secret123'
+                }
+              end
+              mock.verify
+
+              @resource = assigns(:resource)
+              @data = JSON.parse(response.body)
+
+              @new_sign_in_count      = @resource.sign_in_count
+              @new_current_sign_in_at = @resource.current_sign_in_at
+              @new_last_sign_in_at    = @resource.last_sign_in_at
+              @new_sign_in_ip         = @resource.current_sign_in_ip
+              @new_last_sign_in_ip    = @resource.last_sign_in_ip
+            end
+
+            after do
+              Devise.request_keys = []
+            end
+
+            test "request should succeed" do
+              assert_equal 200, response.status
+            end
+
+            test "request should return user data" do
+              assert_equal @existing_user2.email, @data['data']['email']
+            end
+
+          end
         end
 
         describe 'trackable' do
@@ -85,6 +138,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         test 'user is notified that they should use post sign_in to authenticate' do
           assert_equal 405, response.status
         end
+
         test "response should contain errors" do
           assert @data['errors']
           assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.not_supported")]
@@ -199,8 +253,16 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       end
 
       describe 'case-insensitive email' do
-
         before do
+          # Change to case sensitive column if running mysql, the default is insensitive.
+          # As in devise, the assumption is the db is configured as needed for case sensitivity
+          # We removed custom sql in the sessions controller for mysql in favor of db configuration.
+          if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+            ActiveRecord::Base.connection.execute <<-SQL
+              ALTER TABLE users CHANGE email email VARCHAR(255) BINARY NOT NULL
+            SQL
+          end
+
           @resource_class = User
           @request_params = {
             email: @existing_user.email.upcase,
@@ -208,14 +270,27 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           }
         end
 
+        after do
+          if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+            ActiveRecord::Base.connection.execute <<-SQL
+              ALTER TABLE users CHANGE email email VARCHAR(255) BINARY NULL
+            SQL
+          end
+        end
+
+
         test "request should succeed if configured" do
           @resource_class.case_insensitive_keys = [:email]
+          @resource_class.instance_variable_set(:@devise_parameter_filter, nil)
+
           xhr :post, :create, @request_params
           assert_equal 200, response.status
         end
 
         test "request should fail if not configured" do
           @resource_class.case_insensitive_keys = []
+          @resource_class.instance_variable_set(:@devise_parameter_filter, nil)
+
           xhr :post, :create, @request_params
           assert_equal 401, response.status
         end
