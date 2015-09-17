@@ -9,71 +9,6 @@ require 'test_helper'
 class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::SessionsController do
     describe "Confirmed user" do
-      describe "with api token" do
-        before do
-          @existing_user = users(:confirmed_api_user)
-          @existing_user.skip_confirmation!
-          @existing_user.save!
-        end
-
-        describe 'success' do
-          before do
-            @old_sign_in_count      = @existing_user.sign_in_count
-            @old_current_sign_in_at = @existing_user.current_sign_in_at
-            @old_last_sign_in_at    = @existing_user.last_sign_in_at
-            @old_sign_in_ip         = @existing_user.current_sign_in_ip
-            @old_last_sign_in_ip    = @existing_user.last_sign_in_ip
-
-            @request.headers[DeviseTokenAuth.default_authentication_header] = @existing_user.api_token
-
-            xhr :post, :create
-
-            @resource = assigns(:resource)
-            @data = JSON.parse(response.body)
-
-            @new_sign_in_count      = @resource.sign_in_count
-            @new_current_sign_in_at = @resource.current_sign_in_at
-            @new_last_sign_in_at    = @resource.last_sign_in_at
-            @new_sign_in_ip         = @resource.current_sign_in_ip
-            @new_last_sign_in_ip    = @resource.last_sign_in_ip
-          end
-
-          test "request should succeed" do
-            assert_equal 200, response.status
-          end
-
-          test "request should return user data" do
-            assert_equal @existing_user.email, @data['data']['email']
-          end
-
-          describe 'trackable' do
-            test 'sign_in_count incrementns' do
-              assert_equal @old_sign_in_count + 1, @new_sign_in_count
-            end
-
-            test 'current_sign_in_at is updated' do
-              refute @old_current_sign_in_at
-              assert @new_current_sign_in_at
-            end
-
-            test 'last_sign_in_at is updated' do
-              refute @old_last_sign_in_at
-              assert @new_last_sign_in_at
-            end
-
-            test 'sign_in_ip is updated' do
-              refute @old_sign_in_ip
-              assert_equal "0.0.0.0", @new_sign_in_ip
-            end
-
-            test 'last_sign_in_ip is updated' do
-              refute @old_last_sign_in_ip
-              assert_equal "0.0.0.0", @new_last_sign_in_ip
-            end
-          end
-        end
-      end
-
       describe "with user/pass" do
         before do
           @existing_user = users(:confirmed_email_user)
@@ -89,6 +24,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             @old_sign_in_ip         = @existing_user.current_sign_in_ip
             @old_last_sign_in_ip    = @existing_user.last_sign_in_ip
 
+            @request.headers["App"] = "company"
             xhr :post, :create, {
               email: @existing_user.email,
               password: 'secret123'
