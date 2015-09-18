@@ -26,6 +26,7 @@ group :development, :test do
   #gem 'spring'
   gem "pry"
   gem "pry-remote"
+  gem "pry-byebug"
   gem 'minitest'
   gem 'minitest-rails'
   gem 'minitest-focus'

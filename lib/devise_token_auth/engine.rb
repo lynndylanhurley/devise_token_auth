@@ -16,7 +16,8 @@ module DeviseTokenAuth
                  :default_confirm_success_url,
                  :default_password_reset_url,
                  :redirect_whitelist,
-                 :check_current_password_before_update
+                 :check_current_password_before_update,
+                 :default_authentication_header
 
   self.change_headers_on_each_request       = true
   self.token_lifespan                       = 2.weeks
@@ -26,6 +27,7 @@ module DeviseTokenAuth
   self.default_password_reset_url           = nil
   self.redirect_whitelist                   = nil
   self.check_current_password_before_update = false
+  self.default_authentication_header         = 'Authorization'
 
   def self.setup(&block)
     yield self
