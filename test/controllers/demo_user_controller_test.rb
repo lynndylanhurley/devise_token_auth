@@ -9,6 +9,53 @@ require 'test_helper'
 class DemoUserControllerTest < ActionDispatch::IntegrationTest
   include Warden::Test::Helpers
   describe DemoUserController do
+    describe "Token access with request keys" do
+      before do
+        Devise.request_keys = [:nickname]
+
+        @resource = users(:confirmed_email_user_with_request_key)
+        @resource.skip_confirmation!
+        @resource.save!
+
+        @auth_headers = @resource.create_new_auth_token
+
+        @token     = @auth_headers['access-token']
+        @client_id = @auth_headers['client']
+        @expiry    = @auth_headers['expiry']
+      end
+
+      after do
+        Devise.request_keys = []
+      end
+
+      describe 'successful request with request keys' do
+        before do
+          # ensure that request is not treated as batch request
+          age_token(@resource, @client_id)
+
+          # add mock header
+          Devise.request_keys.each do |k|
+            @auth_headers[k.to_s.capitalize] = @resource.send(k)
+          end
+
+          get '/demo/members_only', {}, @auth_headers
+
+          @resp_token       = response.headers['access-token']
+          @resp_client_id   = response.headers['client']
+          @resp_expiry      = response.headers['expiry']
+          @resp_uid         = response.headers['uid']
+        end
+
+        it 'should return success status' do
+          assert_equal 200, response.status
+        end
+
+        it 'should define current_user' do
+          assert_equal @resource, @controller.current_user
+        end
+      end
+    end
+
     describe "Token access" do
       before do
         @resource = users(:confirmed_email_user)

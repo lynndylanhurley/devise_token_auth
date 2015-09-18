@@ -21,6 +21,17 @@ second_confirmed_email_user:
   updated_at:         '<%= timestamp %>'
   encrypted_password: <%= User.new.send(:password_digest, 'secret123') %>
 
+<% @email = Faker::Internet.email %>
+confirmed_email_user_with_request_key:
+  uid:                "<%= @email %>"
+  email:              "<%= @email %>"
+  nickname:           'manager'
+  provider:           'email'
+  confirmed_at:       '<%= timestamp %>'
+  created_at:         '<%= timestamp %>'
+  updated_at:         '<%= timestamp %>'
+  encrypted_password: <%= User.new.send(:password_digest, 'secret123') %>
+
 <% @api_user_email = Faker::Internet.email %>
 confirmed_api_user:
   uid:                "<%= @api_user_email %>"
