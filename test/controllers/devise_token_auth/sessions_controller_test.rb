@@ -16,6 +16,57 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @existing_user.save!
         end
 
+        describe 'and with scoping' do
+          before do
+            Devise.request_keys = [:nickname]
+            @existing_user2 = users(:confirmed_email_user_with_request_key)
+            @existing_user2.skip_confirmation!
+            @existing_user2.save!
+          end
+
+          describe 'success' do
+            before do
+              @old_sign_in_count      = @existing_user2.sign_in_count
+              @old_current_sign_in_at = @existing_user2.current_sign_in_at
+              @old_last_sign_in_at    = @existing_user2.last_sign_in_at
+              @old_sign_in_ip         = @existing_user2.current_sign_in_ip
+              @old_last_sign_in_ip    = @existing_user2.last_sign_in_ip
+
+              # add mock header
+              Devise.request_keys.each do |k|
+                @request.headers[k.to_s.capitalize] = @existing_user2.send(k)
+              end
+
+              xhr :post, :create, {
+                email: @existing_user2.email,
+                password: 'secret123'
+              }
+
+              @resource = assigns(:resource)
+              @data = JSON.parse(response.body)
+
+              @new_sign_in_count      = @resource.sign_in_count
+              @new_current_sign_in_at = @resource.current_sign_in_at
+              @new_last_sign_in_at    = @resource.last_sign_in_at
+              @new_sign_in_ip         = @resource.current_sign_in_ip
+              @new_last_sign_in_ip    = @resource.last_sign_in_ip
+            end
+
+            after do
+              Devise.request_keys = []
+            end
+
+            test "request should succeed" do
+              assert_equal 200, response.status
+            end
+
+            test "request should return user data" do
+              assert_equal @existing_user2.email, @data['data']['email']
+            end
+
+          end
+        end
+
         describe 'success' do
           before do
             @old_sign_in_count      = @existing_user.sign_in_count
