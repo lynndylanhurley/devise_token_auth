@@ -2,6 +2,8 @@
 module DeviseTokenAuth
   class SessionsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:destroy]
+    before_filter :set_auth_hash!, :except => [:destroy] # mutually exclusive since set_user_by_token calls this.
+
     after_action :reset_session, :only => [:destroy]
 
     def new
@@ -22,13 +24,8 @@ module DeviseTokenAuth
           q_value.downcase!
         end
 
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.where(q, q_value).first
+        @auth_hash.merge!("#{field}" => q_value, provider: 'email')
+        @resource = resource_class.find_for_authentication(@auth_hash)
       end
 
       if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
@@ -120,6 +117,13 @@ module DeviseTokenAuth
 
     def resource_params
       params.permit(devise_parameter_sanitizer.for(:sign_in))
+    end
+
+    def request_authentication_header_value
+      request.headers[DeviseTokenAuth.default_authentication_header]
+    end
+
+    def api_token_or_username_password_valid?(api_token, field, q_value)
     end
 
   end
