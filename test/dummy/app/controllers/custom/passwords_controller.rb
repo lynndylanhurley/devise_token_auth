@@ -30,6 +30,11 @@ class Custom::PasswordsController < DeviseTokenAuth::PasswordsController
     @update_block_called == true
   end
 
+  protected
+
+  def render_passwords_controller_update_success
+    render json: {custom: "foo"}
+  end
 
 
 end
