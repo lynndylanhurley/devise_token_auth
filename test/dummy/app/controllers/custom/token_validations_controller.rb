@@ -10,4 +10,10 @@ class Custom::TokenValidationsController < DeviseTokenAuth::TokenValidationsCont
     @validate_token_block_called == true
   end
 
+  protected
+
+  def render_token_validations_controller_validate_token_success
+    render json: {custom: "foo"}
+  end
+
 end

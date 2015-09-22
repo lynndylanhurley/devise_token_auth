@@ -2,12 +2,12 @@
 module DeviseTokenAuth
   class SessionsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:destroy]
+    before_filter :set_auth_hash!, :except => [:destroy] # mutually exclusive since set_user_by_token calls this.
+
     after_action :reset_session, :only => [:destroy]
 
     def new
-      render json: {
-        errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
-      }, status: 405
+      render_sessions_controller_new_error
     end
 
     def create
@@ -22,13 +22,8 @@ module DeviseTokenAuth
           q_value.downcase!
         end
 
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.where(q, q_value).first
+        @auth_hash.merge!(field.to_sym => q_value, provider: 'email')
+        @resource = resource_class.find_for_authentication(@auth_hash)
       end
 
       if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
@@ -46,20 +41,11 @@ module DeviseTokenAuth
 
         yield if block_given?
 
-        render json: {
-          data: @resource.token_validation_response
-        }
-
+        render_sessions_controller_create_success
       elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
-        render json: {
-          success: false,
-          errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
-        }, status: 401
-
+        render_sessions_controller_create_error_not_confirmed
       else
-        render json: {
-          errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
-        }, status: 401
+        render_sessions_controller_create_error_bad_credentials
       end
     end
 
@@ -75,14 +61,9 @@ module DeviseTokenAuth
 
         yield if block_given?
 
-        render json: {
-          success:true
-        }, status: 200
-
+        render_sessions_controller_destroy_success
       else
-        render json: {
-          errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
-        }, status: 404
+        render_sessions_controller_destroy_error
       end
     end
 
@@ -115,6 +96,44 @@ module DeviseTokenAuth
         val: auth_val
       }
     end
+
+    def render_sessions_controller_new_error
+      render json: {
+        errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
+      }, status: 405
+    end
+
+    def render_sessions_controller_create_success
+      render json: {
+        data: @resource.token_validation_response
+      }
+    end
+
+    def render_sessions_controller_create_error_not_confirmed
+      render json: {
+        success: false,
+        errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
+      }, status: 401
+    end
+
+    def render_sessions_controller_create_error_bad_credentials
+      render json: {
+        errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
+      }, status: 401
+    end
+
+    def render_sessions_controller_destroy_success
+      render json: {
+        success:true
+      }, status: 200
+    end
+
+    def render_sessions_controller_destroy_error
+      render json: {
+        errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
+      }, status: 404
+    end
+
 
     private
 

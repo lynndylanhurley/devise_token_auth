@@ -61,6 +61,21 @@ class Custom::PasswordsControllerTest < ActionController::TestCase
       assert @controller.update_block_called?, "update failed to yield resource to provided block"
     end
 
+    test "yield resource to block on update success with custom json" do
+      @auth_headers = @resource.create_new_auth_token
+      request.headers.merge!(@auth_headers)
+      @new_password = Faker::Internet.password
+      put :update, {
+        password: @new_password,
+        password_confirmation: @new_password
+      }
+
+      @data = JSON.parse(response.body)
+
+      assert @controller.update_block_called?, "update failed to yield resource to provided block"
+      assert_equal @data["custom"], "foo"
+    end
+
   end
 
 end

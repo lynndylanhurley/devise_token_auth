@@ -180,6 +180,19 @@ Devise.setup do |config|
 end
 ~~~
 
+Devise request_keys are injected into the find_for_authentication method for authenticated models. As described in `config/initializers/devise.rb`:
+
+~~~ruby
+  # Configure parameters from the request object used for authentication. Each entry
+  # given should be a request method and it will automatically be passed to the
+  # find_for_authentication method and considered in your model lookup. For instance,
+  # if you set :request_keys to [:subdomain], :subdomain will be used on authentication.
+  # The same considerations mentioned for authentication_keys also apply to request_keys.
+  # config.request_keys = [:subdomain]
+~~~
+
+Read the [devise wiki](https://github.com/plataformatec/devise/wiki/How-to:-Scope-login-to-subdomain) for more information on request_keys configuration.
+
 ## OmniAuth authentication
 
 If you wish to use omniauth authentication, add all of your desired authentication provider gems to your `Gemfile`.
@@ -667,6 +680,45 @@ module Overrides
 end
 ~~~
 
+## Overriding rendering methods
+To customize json rendering, implement the following protected controller methods, for success methods, assume that the @resource object is available:
+
+### Registrations Controller
+* render_registrations_controller_create_error_missing_confirm_success_url
+* render_registrations_controller_create_error_redirect_url_not_allowed
+* render_registrations_controller_create_success
+* render_registrations_controller_create_error
+* render_registrations_controller_create_error_email_already_exists
+* render_registrations_controller_update_success
+* render_registrations_controller_update_error
+* render_registrations_controller_update_error_user_not_found
+
+
+### Sessions Controller
+* render_sessions_controller_new_error
+* render_sessions_controller_create_success
+* render_sessions_controller_create_error_not_confirmed
+* render_sessions_controller_create_error_bad_credentials
+* render_sessions_controller_destroy_success
+* render_sessions_controller_destroy_error
+
+
+### Passwords Controller
+* render_passwords_controller_create_error_missing_email
+* render_passwords_controller_create_error_missing_redirect_url
+* render_passwords_controller_create_error_not_allowed_redirect_url
+* render_passwords_controller_create_success
+* render_passwords_controller_create_error
+* render_passwords_controller_update_error_unauthorized
+* render_passwords_controller_update_error_password_not_required
+* render_passwords_controller_update_error_missing_password
+* render_passwords_controller_update_success
+* render_passwords_controller_update_error
+
+### Token Validations Controller
+* render_token_validations_controller_validate_token_success
+* render_token_validations_controller_validate_token_error
+
 ##### Example: all :controller options with default settings:
 
 ~~~ruby
@@ -883,7 +935,7 @@ To run just one test:
 2. Run `bundle install`
 3. Run `rake db:migrate`
 4. Run `RAILS_ENV=test rake db:migrate`
-5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/ 
+5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/
 
 # License
 This project uses the WTFPL
