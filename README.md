@@ -680,6 +680,45 @@ module Overrides
 end
 ~~~
 
+## Overriding rendering methods
+To customize json rendering, implement the following protected controller methods, for success methods, assume that the @resource object is available:
+
+### Registrations Controller
+* render_registrations_controller_create_error_missing_confirm_success_url
+* render_registrations_controller_create_error_redirect_url_not_allowed
+* render_registrations_controller_create_success
+* render_registrations_controller_create_error
+* render_registrations_controller_create_error_email_already_exists
+* render_registrations_controller_update_success
+* render_registrations_controller_update_error
+* render_registrations_controller_update_error_user_not_found
+
+
+### Sessions Controller
+* render_sessions_controller_new_error
+* render_sessions_controller_create_success
+* render_sessions_controller_create_error_not_confirmed
+* render_sessions_controller_create_error_bad_credentials
+* render_sessions_controller_destroy_success
+* render_sessions_controller_destroy_error
+
+
+### Passwords Controller
+* render_passwords_controller_create_error_missing_email
+* render_passwords_controller_create_error_missing_redirect_url
+* render_passwords_controller_create_error_not_allowed_redirect_url
+* render_passwords_controller_create_success
+* render_passwords_controller_create_error
+* render_passwords_controller_update_error_unauthorized
+* render_passwords_controller_update_error_password_not_required
+* render_passwords_controller_update_error_missing_password
+* render_passwords_controller_update_success
+* render_passwords_controller_update_error
+
+### Token Validations Controller
+* render_token_validations_controller_validate_token_success
+* render_token_validations_controller_validate_token_error
+
 ##### Example: all :controller options with default settings:
 
 ~~~ruby

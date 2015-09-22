@@ -20,4 +20,10 @@ class Custom::SessionsController < DeviseTokenAuth::SessionsController
     @destroy_block_called == true
   end
 
+  protected
+
+  def render_sessions_controller_create_success
+    render json: {custom: "foo"}
+  end
+
 end

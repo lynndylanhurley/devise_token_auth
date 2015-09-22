@@ -24,6 +24,15 @@ class Custom::TokenValidationsControllerTest < ActionDispatch::IntegrationTest
       assert @controller.validate_token_block_called?, "validate_token failed to yield resource to provided block"
     end
 
+    test "yield resource to block on validate_token success with custom json" do
+      get '/nice_user_auth/validate_token', {}, @auth_headers
+
+      @data = JSON.parse(response.body)
+
+      assert @controller.validate_token_block_called?, "validate_token failed to yield resource to provided block"
+      assert_equal @data["custom"], "foo"
+    end
+
   end
 
 end
