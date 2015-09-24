@@ -7,7 +7,7 @@ module DeviseTokenAuth
     after_action :reset_session, :only => [:destroy]
 
     def new
-      render_sessions_controller_new_error
+      render_new_error
     end
 
     def create
@@ -41,11 +41,11 @@ module DeviseTokenAuth
 
         yield if block_given?
 
-        render_sessions_controller_create_success
+        render_create_success
       elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
-        render_sessions_controller_create_error_not_confirmed
+        render_create_error_not_confirmed
       else
-        render_sessions_controller_create_error_bad_credentials
+        render_create_error_bad_credentials
       end
     end
 
@@ -61,9 +61,9 @@ module DeviseTokenAuth
 
         yield if block_given?
 
-        render_sessions_controller_destroy_success
+        render_destroy_success
       else
-        render_sessions_controller_destroy_error
+        render_destroy_error
       end
     end
 
@@ -97,38 +97,38 @@ module DeviseTokenAuth
       }
     end
 
-    def render_sessions_controller_new_error
+    def render_new_error
       render json: {
         errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
       }, status: 405
     end
 
-    def render_sessions_controller_create_success
+    def render_create_success
       render json: {
         data: @resource.token_validation_response
       }
     end
 
-    def render_sessions_controller_create_error_not_confirmed
+    def render_create_error_not_confirmed
       render json: {
         success: false,
         errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
       }, status: 401
     end
 
-    def render_sessions_controller_create_error_bad_credentials
+    def render_create_error_bad_credentials
       render json: {
         errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
       }, status: 401
     end
 
-    def render_sessions_controller_destroy_success
+    def render_destroy_success
       render json: {
         success:true
       }, status: 200
     end
 
-    def render_sessions_controller_destroy_error
+    def render_destroy_error
       render json: {
         errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
       }, status: 404
