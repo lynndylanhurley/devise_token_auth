@@ -32,7 +32,7 @@ class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
 
   protected
 
-  def render_registrations_controller_create_success
+  def render_create_success
     render json: {custom: "foo"}
   end
 

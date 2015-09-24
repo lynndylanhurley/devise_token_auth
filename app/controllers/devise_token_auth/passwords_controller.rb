@@ -20,7 +20,7 @@ module DeviseTokenAuth
     # sending emails
     def create
       unless resource_params[:email]
-        return render_passwords_controller_create_error_missing_email
+        return render_create_error_missing_email
       end
 
       # give redirect value from params priority
@@ -30,13 +30,13 @@ module DeviseTokenAuth
       @redirect_url ||= DeviseTokenAuth.default_password_reset_url
 
       unless @redirect_url
-        return render_passwords_controller_create_error_missing_redirect_url
+        return render_create_error_missing_redirect_url
       end
 
       # if whitelist is set, validate redirect_url against whitelist
       if DeviseTokenAuth.redirect_whitelist
         unless DeviseTokenAuth.redirect_whitelist.include?(@redirect_url)
-          return render_passwords_controller_create_error_not_allowed_redirect_url
+          return render_create_error_not_allowed_redirect_url
         end
       end
 
@@ -47,7 +47,7 @@ module DeviseTokenAuth
         @email = resource_params[:email]
       end
 
-      @resource = resource_class.find_for_authentication(@auth_hash.merge(email: email))
+      @resource = resource_class.find_for_authentication(@auth_hash.merge(email: @email))
 
       @errors = nil
       @error_status = 400
@@ -62,7 +62,7 @@ module DeviseTokenAuth
         })
 
         if @resource.errors.empty?
-          return render_passwords_controller_create_success
+          return render_create_success
         else
           @errors = @resource.errors
         end
@@ -72,7 +72,7 @@ module DeviseTokenAuth
       end
 
       if @errors
-        return render_passwords_controller_create_error
+        return render_create_error
       end
     end
 
@@ -106,31 +106,31 @@ module DeviseTokenAuth
           config:         params[:config]
         }))
       else
-        render_passwords_controller_edit_error
+        render_edit_error
       end
     end
 
     def update
       # make sure user is authorized
       unless @resource
-        return render_passwords_controller_update_error_unauthorized
+        return render_update_error_unauthorized
       end
 
       # make sure account doesn't use oauth2 provider
       unless @resource.provider == 'email'
-        return render_passwords_controller_update_error_password_not_required
+        return render_update_error_password_not_required
       end
 
       # ensure that password params were sent
       unless password_resource_params[:password] and password_resource_params[:password_confirmation]
-        return render_passwords_controller_update_error_missing_password
+        return render_update_error_missing_password
       end
 
       if @resource.send(resource_update_method, password_resource_params)
         yield if block_given?
-        return render_passwords_controller_update_success
+        return render_update_success
       else
-        return render_passwords_controller_update_error
+        return render_update_error
       end
     end
 
@@ -144,21 +144,21 @@ module DeviseTokenAuth
       end
     end
 
-    def render_passwords_controller_create_error_missing_email
+    def render_create_error_missing_email
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.missing_email")]
       }, status: 401
     end
 
-    def render_passwords_controller_create_error_missing_redirect_url
+    def render_create_error_missing_redirect_url
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
       }, status: 401
     end
 
-    def render_passwords_controller_create_error_not_allowed_redirect_url
+    def render_create_error_not_allowed_redirect_url
       render json: {
         status: 'error',
         data:   @resource.as_json,
@@ -166,48 +166,48 @@ module DeviseTokenAuth
       }, status: 403
     end
 
-    def render_passwords_controller_create_success
+    def render_create_success
       render json: {
         success: true,
         message: I18n.t("devise_token_auth.passwords.sended", email: @email)
       }
     end
 
-    def render_passwords_controller_create_error
+    def render_create_error
       render json: {
         success: false,
         errors: @errors,
       }, status: @error_status
     end
 
-    def render_passwords_controller_edit_error
+    def render_edit_error
       render json: {
         success: false
       }, status: 404
     end
 
-    def render_passwords_controller_update_error_unauthorized
+    def render_update_error_unauthorized
       render json: {
         success: false,
         errors: ['Unauthorized']
       }, status: 401
     end
 
-    def render_passwords_controller_update_error_password_not_required
+    def render_update_error_password_not_required
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)]
       }, status: 422
     end
 
-    def render_passwords_controller_update_error_missing_password
+    def render_update_error_missing_password
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.missing_passwords")]
       }, status: 422
     end
 
-    def render_passwords_controller_update_success
+    def render_update_success
       render json: {
         success: true,
         data: {
@@ -217,7 +217,7 @@ module DeviseTokenAuth
       }
     end
 
-    def render_passwords_controller_update_error
+    def render_update_error
       return render json: {
         success: false,
         errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)

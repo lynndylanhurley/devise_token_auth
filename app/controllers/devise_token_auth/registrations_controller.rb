@@ -24,13 +24,13 @@ module DeviseTokenAuth
 
       # success redirect url is required
       if resource_class.devise_modules.include?(:confirmable) && !@redirect_url
-        return render_registrations_controller_create_error_missing_confirm_success_url
+        return render_create_error_missing_confirm_success_url
       end
 
       # if whitelist is set, validate redirect_url against whitelist
       if DeviseTokenAuth.redirect_whitelist
         unless DeviseTokenAuth.redirect_whitelist.include?(@redirect_url)
-          return render_registrations_controller_create_error_redirect_url_not_allowed
+          return render_create_error_redirect_url_not_allowed
         end
       end
 
@@ -61,14 +61,14 @@ module DeviseTokenAuth
 
             update_auth_header
           end
-          render_registrations_controller_create_success
+          render_create_success
         else
           clean_up_passwords @resource
-          render_registrations_controller_create_error
+          render_create_error
         end
       rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
-        render_registrations_controller_create_error_email_already_exists
+        render_create_error_email_already_exists
       end
     end
 
@@ -76,12 +76,12 @@ module DeviseTokenAuth
       if @resource
         if @resource.send(resource_update_method, account_update_params)
           yield @resource if block_given?
-          render_registrations_controller_update_success
+          render_update_success
         else
-          render_registrations_controller_update_error
+          render_update_error
         end
       else
-        render_registrations_controller_update_error_user_not_found
+        render_update_error_user_not_found
       end
     end
 
@@ -90,9 +90,9 @@ module DeviseTokenAuth
         @resource.destroy
         yield @resource if block_given?
 
-        render_registrations_controller_destroy_success
+        render_destroy_success
       else
-        render_registrations_controller_destroy_error
+        render_destroy_error
       end
     end
 
@@ -106,7 +106,7 @@ module DeviseTokenAuth
 
     protected
 
-    def render_registrations_controller_create_error_missing_confirm_success_url
+    def render_create_error_missing_confirm_success_url
       render json: {
         status: 'error',
         data:   @resource.as_json,
@@ -114,7 +114,7 @@ module DeviseTokenAuth
       }, status: 403
     end
 
-    def render_registrations_controller_create_error_redirect_url_not_allowed
+    def render_create_error_redirect_url_not_allowed
       render json: {
         status: 'error',
         data:   @resource.as_json,
@@ -122,14 +122,14 @@ module DeviseTokenAuth
       }, status: 403
     end
 
-    def render_registrations_controller_create_success
+    def render_create_success
       render json: {
         status: 'success',
         data:   @resource.as_json
       }
     end
 
-    def render_registrations_controller_create_error
+    def render_create_error
       render json: {
         status: 'error',
         data:   @resource.as_json,
@@ -137,7 +137,7 @@ module DeviseTokenAuth
       }, status: 403
     end
 
-    def render_registrations_controller_create_error_email_already_exists
+    def render_create_error_email_already_exists
       render json: {
         status: 'error',
         data:   @resource.as_json,
@@ -145,35 +145,35 @@ module DeviseTokenAuth
       }, status: 403
     end
 
-    def render_registrations_controller_update_success
+    def render_update_success
       render json: {
         status: 'success',
         data:   @resource.as_json
       }
     end
 
-    def render_registrations_controller_update_error
+    def render_update_error
       render json: {
         status: 'error',
         errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
       }, status: 403
     end
 
-    def render_registrations_controller_update_error_user_not_found
+    def render_update_error_user_not_found
       render json: {
         status: 'error',
         errors: [I18n.t("devise_token_auth.registrations.user_not_found")]
       }, status: 404
     end
 
-    def render_registrations_controller_destroy_success
+    def render_destroy_success
       render json: {
         status: 'success',
         message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
       }
     end
 
-    def render_registrations_controller_destroy_error
+    def render_destroy_error
       render json: {
         status: 'error',
         errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
