@@ -25,6 +25,15 @@ class Custom::SessionsControllerTest < ActionController::TestCase
       assert @controller.destroy_block_called?, "destroy failed to yield resource to provided block"
     end
 
+    test "render method override" do
+      post :create, {
+        email: @existing_user.email,
+        password: 'secret123'
+      }
+      @data = JSON.parse(response.body)
+      assert_equal @data["custom"], "foo"
+    end
+
   end
 
 end

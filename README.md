@@ -667,6 +667,45 @@ module Overrides
 end
 ~~~
 
+## Overriding rendering methods
+To customize json rendering, implement the following protected controller methods, for success methods, assume that the @resource object is available:
+
+### Registrations Controller
+* render_create_error_missing_confirm_success_url
+* render_create_error_redirect_url_not_allowed
+* render_create_success
+* render_create_error
+* render_create_error_email_already_exists
+* render_update_success
+* render_update_error
+* render_update_error_user_not_found
+
+
+### Sessions Controller
+* render_new_error
+* render_create_success
+* render_create_error_not_confirmed
+* render_create_error_bad_credentials
+* render_destroy_success
+* render_destroy_error
+
+
+### Passwords Controller
+* render_create_error_missing_email
+* render_create_error_missing_redirect_url
+* render_create_error_not_allowed_redirect_url
+* render_create_success
+* render_create_error
+* render_update_error_unauthorized
+* render_update_error_password_not_required
+* render_update_error_missing_password
+* render_update_success
+* render_update_error
+
+### Token Validations Controller
+* render_validate_token_success
+* render_validate_token_error
+
 ##### Example: all :controller options with default settings:
 
 ~~~ruby
@@ -883,7 +922,7 @@ To run just one test:
 2. Run `bundle install`
 3. Run `rake db:migrate`
 4. Run `RAILS_ENV=test rake db:migrate`
-5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/ 
+5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/
 
 # License
 This project uses the WTFPL
