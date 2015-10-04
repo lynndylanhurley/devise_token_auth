@@ -20,13 +20,21 @@ module DeviseTokenAuth
           q_value.downcase!
         end
 
-        q = "#{field.to_s} = ? AND provider='email'"
+        if field == :login
+          q = "email = ? or nickname = ? AND provider='email'"
+        else
+          q = "#{field.to_s} = ? AND provider='email'"
+        end
 
         if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
           q = "BINARY " + q
         end
 
-        @resource = resource_class.where(q, q_value).first
+        if field == :login
+          @resource = resource_class.where(q, q_value, q_value).first
+        else
+          @resource = resource_class.where(q, q_value).first
+        end
       end
 
       if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
