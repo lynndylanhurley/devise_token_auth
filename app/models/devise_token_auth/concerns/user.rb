@@ -1,5 +1,4 @@
-require 'bcrypt'
-
+# @authentication
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
@@ -31,7 +30,7 @@ module DeviseTokenAuth::Concerns::User
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
 
     # only validate unique emails among email registration users
-    validate :unique_email_user, on: :create
+    #validate :unique_email_user, on: :create
 
     # can't set default on text fields in mysql, simulate here instead.
     after_save :set_empty_token_hash
@@ -88,7 +87,7 @@ module DeviseTokenAuth::Concerns::User
 
   module ClassMethods
     protected
-    
+
 
     def tokens_has_json_column_type?
       table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
