@@ -9,6 +9,7 @@ require 'test_helper'
 class DemoUserControllerTest < ActionDispatch::IntegrationTest
   include Warden::Test::Helpers
   describe DemoUserController do
+
     describe "Token access" do
       before do
         @resource = users(:confirmed_email_user)

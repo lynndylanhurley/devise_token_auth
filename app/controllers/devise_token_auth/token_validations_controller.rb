@@ -13,7 +13,7 @@ module DeviseTokenAuth
       end
     end
 
-    protected 
+    protected
 
     def render_validate_token_success
       render json: {

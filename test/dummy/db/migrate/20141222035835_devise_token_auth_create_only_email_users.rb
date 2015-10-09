@@ -52,7 +52,7 @@ class DeviseTokenAuthCreateOnlyEmailUsers < ActiveRecord::Migration
     end
 
     add_index :only_email_users, :email
-    add_index :only_email_users, [:uid, :provider],     :unique => true
+    add_index :only_email_users, [:uid, :provider]
     #add_index :only_email_users, :reset_password_token, :unique => true
     # add_index :only_email_users, :confirmation_token,   :unique => true
     # add_index :only_email_users, :unlock_token,         :unique => true
