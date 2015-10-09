@@ -54,7 +54,7 @@ class DeviseTokenAuthCreateMangs < ActiveRecord::Migration
     end
 
     add_index :mangs, :email
-    add_index :mangs, [:uid, :provider],     :unique => true
+    add_index :mangs, [:uid, :provider]
     add_index :mangs, :reset_password_token, :unique => true
     add_index :mangs, :confirmation_token,   :unique => true
     # add_index :mangs, :unlock_token,         :unique => true

@@ -30,7 +30,7 @@ module DeviseTokenAuth::Concerns::User
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
 
     # only validate unique emails among email registration users
-    #validate :unique_email_user, on: :create
+    validate :unique_email_user, on: :create
 
     # can't set default on text fields in mysql, simulate here instead.
     after_save :set_empty_token_hash
@@ -225,9 +225,17 @@ module DeviseTokenAuth::Concerns::User
 
   # only validate unique email among users that registered by email
   def unique_email_user
-    if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
+    search_params = {provider: 'email', email: email}
+    self.class.request_keys.each do |k|
+      _m = k.to_s.downcase.to_sym
+      search_params.merge!("#{_m}" => self.send(_m))
+    end
+
+    if provider == 'email' and self.class.where(search_params).count > 0
       errors.add(:email, :already_in_use, default: "address is already in use")
     end
+  rescue
+    errors.add(:base, "#{self.class.request_keys} needs to be an attribute on the user model.")
   end
 
   def set_empty_token_hash

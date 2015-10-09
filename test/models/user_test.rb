@@ -22,6 +22,7 @@ class UserTest < ActiveSupport::TestCase
 
         assert @resource.errors.messages[:uid]
       end
+
     end
 
     describe 'email registration' do
@@ -32,6 +33,50 @@ class UserTest < ActiveSupport::TestCase
 
         refute @resource.save
         assert @resource.errors.messages[:email]
+      end
+
+      test 'save fails if email and request_key is already taken' do
+        @password    = Faker::Internet.password(10, 20)
+        @email       = Faker::Internet.email
+
+        Devise.request_keys = [:nickname]
+
+        User.new(provider: 'email',
+                 email: @email,
+                 password: @password,
+                 password_confirmation: @password,
+                 nickname: 'foo').save!
+
+        @resource.provider              = 'email'
+        @resource.email                 = @email
+        @resource.password              = @password
+        @resource.password_confirmation = @password
+        @resource.nickname = 'foo'
+
+        refute @resource.save
+        assert @resource.errors.messages[:email]
+      end
+
+      test 'save succeeds when email and request_key are different' do
+        @password    = Faker::Internet.password(10, 20)
+        @email       = Faker::Internet.email
+
+        Devise.request_keys = [:nickname]
+
+        User.new(provider: 'email',
+                 email: @email,
+                 password: @password,
+                 password_confirmation: @password,
+                 nickname: 'foo').save!
+
+        @resource.provider              = 'email'
+        @resource.email                 = @email
+        @resource.password              = @password
+        @resource.password_confirmation = @password
+        @resource.nickname = 'bar'
+
+        assert @resource.save
+        refute @resource.errors.messages[:email]
       end
     end
 

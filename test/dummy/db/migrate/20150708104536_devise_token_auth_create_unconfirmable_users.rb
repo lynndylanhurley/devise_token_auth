@@ -52,7 +52,7 @@ class DeviseTokenAuthCreateUnconfirmableUsers < ActiveRecord::Migration
     end
 
     add_index :unconfirmable_users, :email
-    add_index :unconfirmable_users, [:uid, :provider],     :unique => true
+    add_index :unconfirmable_users, [:uid, :provider]
     add_index :unconfirmable_users, :reset_password_token, :unique => true
     # add_index :nice_users, :confirmation_token,   :unique => true
     # add_index :nice_users, :unlock_token,         :unique => true

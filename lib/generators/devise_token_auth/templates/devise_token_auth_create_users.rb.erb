@@ -46,7 +46,7 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
     end
 
     add_index :<%= user_class.pluralize.underscore %>, :email
-    add_index :<%= user_class.pluralize.underscore %>, [:uid, :provider],     :unique => true
+    add_index :<%= user_class.pluralize.underscore %>, [:uid, :provider]
     add_index :<%= user_class.pluralize.underscore %>, :reset_password_token, :unique => true
     # add_index :<%= user_class.pluralize.underscore %>, :confirmation_token,   :unique => true
     # add_index :<%= user_class.pluralize.underscore %>, :unlock_token,         :unique => true
