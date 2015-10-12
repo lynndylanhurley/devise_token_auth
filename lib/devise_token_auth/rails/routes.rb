@@ -22,7 +22,7 @@ module ActionDispatch::Routing
       # remove any unwanted devise modules
       opts[:skip].each{|item| controllers.delete(item)}
 
-      devise_for resource.pluralize.underscore.to_sym,
+      devise_for resource.pluralize.underscore.gsub('/', '_').to_sym,
         :class_name  => resource,
         :module      => :devise,
         :path        => "#{opts[:at]}",
@@ -43,7 +43,7 @@ module ActionDispatch::Routing
           parent:       nil
         )
 
-        devise_scope resource.underscore.to_sym do
+        devise_scope resource.underscore.gsub('/', '_').to_sym do
           # path to verify token validity
           get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
 
@@ -51,6 +51,9 @@ module ActionDispatch::Routing
           if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
             match "#{full_path}/failure",             controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
             match "#{full_path}/:provider/callback",  controller: omniauth_ctrl, action: "omniauth_success", via: [:get]
+
+            match "#{DeviseTokenAuth.omniauth_prefix}/:provider/callback", controller: omniauth_ctrl, action: "redirect_callbacks", via: [:get]
+            match "#{DeviseTokenAuth.omniauth_prefix}/failure", controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
 
             # preserve the resource class thru oauth authentication by setting name of
             # resource as "resource_class" param

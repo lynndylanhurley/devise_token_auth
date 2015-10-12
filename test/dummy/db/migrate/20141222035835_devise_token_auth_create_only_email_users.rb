@@ -1,3 +1,5 @@
+include MigrationDatabaseHelper
+
 class DeviseTokenAuthCreateOnlyEmailUsers < ActiveRecord::Migration
   def change
     create_table(:only_email_users) do |t|
@@ -40,7 +42,11 @@ class DeviseTokenAuthCreateOnlyEmailUsers < ActiveRecord::Migration
       t.string :email
 
       ## Tokens
-      t.text :tokens
+      if json_supported_database?
+        t.json :tokens
+      else
+        t.text :tokens
+      end
 
       t.timestamps
     end

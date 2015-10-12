@@ -23,7 +23,8 @@ class Overrides::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTe
 
       get_via_redirect '/evil_user_auth/facebook', {
         auth_origin_url: Faker::Internet.url,
-        favorite_color: @favorite_color
+        favorite_color: @favorite_color,
+        omniauth_window_type: 'newWindow'
       }
 
       @resource = assigns(:resource)

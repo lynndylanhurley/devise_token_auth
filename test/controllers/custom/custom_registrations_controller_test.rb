@@ -26,6 +26,15 @@ class Custom::RegistrationsControllerTest < ActionDispatch::IntegrationTest
       assert @controller.create_block_called?, "create failed to yield resource to provided block"
     end
 
+    test "yield resource to block on create success with custom json" do
+      post '/nice_user_auth', @create_params
+
+      @data = JSON.parse(response.body)
+
+      assert @controller.create_block_called?, "create failed to yield resource to provided block"
+      assert_equal @data["custom"], "foo"
+    end
+
     test "yield resource to block on update success" do
       put '/nice_user_auth', {
         nickname: "Ol' Sunshine-face",
@@ -35,7 +44,7 @@ class Custom::RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
     test "yield resource to block on destroy success" do
       delete '/nice_user_auth', @auth_headers
-      assert @controller.destroy_block_called?, "update failed to yield resource to provided block"
+      assert @controller.destroy_block_called?, "destroy failed to yield resource to provided block"
     end
 
   end

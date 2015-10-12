@@ -73,6 +73,24 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
       end
 
+      describe 'get sign_in is not supported' do
+        before do
+          xhr :get, :new, {
+            nickname: @existing_user.nickname,
+            password: 'secret123'
+          }
+          @data = JSON.parse(response.body)
+        end
+
+        test 'user is notified that they should use post sign_in to authenticate' do
+          assert_equal 405, response.status
+        end
+        test "response should contain errors" do
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.not_supported")]
+        end
+      end
+
       describe 'alt auth keys' do
         before do
           xhr :post, :create, {
@@ -90,6 +108,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'authed user sign out' do
         before do
+          def @controller.reset_session_called; @reset_session_called == true; end
+          def @controller.reset_session; @reset_session_called = true; end
           @auth_headers = @existing_user.create_new_auth_token
           request.headers.merge!(@auth_headers)
           xhr :delete, :destroy, format: :json
@@ -103,16 +123,26 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @existing_user.reload
           refute @existing_user.tokens[@auth_headers["client"]]
         end
+
+        test "session was destroyed" do
+          assert_equal true, @controller.reset_session_called
+        end
       end
 
       describe 'unauthed user sign out' do
         before do
           @auth_headers = @existing_user.create_new_auth_token
           xhr :delete, :destroy, format: :json
+          @data = JSON.parse(response.body)
         end
 
         test "unauthed request returns 404" do
           assert_equal 404, response.status
+        end
+
+        test "response should contain errors" do
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.user_not_found")]
         end
       end
 
@@ -133,6 +163,38 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test "response should contain errors" do
           assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.bad_credentials")]
+        end
+      end
+
+      describe 'failure with bad password when change_headers_on_each_request false' do
+        before do
+          DeviseTokenAuth.change_headers_on_each_request = false
+
+          # accessing current_user calls through set_user_by_token,
+          # which initializes client_id
+          @controller.current_user
+
+          xhr :post, :create, {
+            email: @existing_user.email,
+            password: 'bogus'
+          }
+
+          @resource = assigns(:resource)
+          @data = JSON.parse(response.body)
+        end
+
+        test "request should fail" do
+          assert_equal 401, response.status
+        end
+
+        test "response should contain errors" do
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.bad_credentials")]
+        end
+
+        after do
+            DeviseTokenAuth.change_headers_on_each_request = true
         end
       end
 
@@ -170,6 +232,59 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
+      end
+
+      test "request should fail" do
+        assert_equal 401, response.status
+      end
+
+      test "response should contain errors" do
+        assert @data['errors']
+        assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.not_confirmed", email: @unconfirmed_user.email)]
+      end
+    end
+
+    describe "Unconfirmed user with allowed unconfirmed access" do
+      before do
+        @original_duration = Devise.allow_unconfirmed_access_for
+        Devise.allow_unconfirmed_access_for = 3.days
+        @recent_unconfirmed_user = users(:recent_unconfirmed_email_user)
+        xhr :post, :create, {
+          email: @recent_unconfirmed_user.email,
+          password: 'secret123'
+        }
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      after do
+        Devise.allow_unconfirmed_access_for = @original_duration
+      end
+
+      test "request should succeed" do
+        assert_equal 200, response.status
+      end
+
+      test "request should return user data" do
+        assert_equal @recent_unconfirmed_user.email, @data['data']['email']
+      end
+    end
+
+    describe "Unconfirmed user with expired unconfirmed access" do
+      before do
+        @original_duration = Devise.allow_unconfirmed_access_for
+        Devise.allow_unconfirmed_access_for = 3.days
+        @unconfirmed_user = users(:unconfirmed_email_user)
+        xhr :post, :create, {
+          email: @unconfirmed_user.email,
+          password: 'secret123'
+        }
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      after do
+        Devise.allow_unconfirmed_access_for = @original_duration
       end
 
       test "request should fail" do

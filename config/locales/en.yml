@@ -1,0 +1,30 @@
+en:
+  devise_token_auth:
+    sessions:
+      not_confirmed: "A confirmation email was sent to your account at %{email}. You must follow the instructions in the email before your account can be activated"
+      bad_credentials: "Invalid login credentials. Please try again."
+      not_supported: "Use POST /sign_in to sign in. GET is not supported."
+      user_not_found: "User was not found or was not logged in."
+    token_validations:
+      invalid: "Invalid login credentials"
+    registrations:
+      missing_confirm_success_url: "Missing `confirm_success_url` param."
+      redirect_url_not_allowed: "Redirect to %{redirect_url} not allowed."
+      email_already_exists: "An account already exists for %{email}"
+      account_with_uid_destroyed: "Account with uid %{uid} has been destroyed."
+      account_to_destroy_not_found: "Unable to locate account for destruction."
+      user_not_found: "User not found."
+    passwords:
+      missing_email: "You must provide an email address."
+      missing_redirect_url: "Missing redirect url."
+      not_allowed_redirect_url: "Redirect to %{redirect_url} not allowed."
+      sended: "An email has been sent to %{email} containing instructions for resetting your password."
+      user_not_found: "Unable to find user with email '%{email}'."
+      password_not_required: "This account does not require a password. Sign in using your %{provider} account instead."
+      missing_passwords: 'You must fill out the fields labeled "password" and "password confirmation".'
+      successfully_updated: "Your password has been successfully updated."
+
+  errors:
+    validate_sign_up_params: "Please submit proper sign up data in request body."
+    validate_account_update_params: "Please submit proper account update data in request body."
+    not_email: "is not an email"

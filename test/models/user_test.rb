@@ -86,5 +86,18 @@ class UserTest < ActiveSupport::TestCase
         assert @resource.tokens[@new_auth_headers["client"]]
       end
     end
+
+    describe 'nil tokens are handled properly' do
+      before do
+        @resource = users(:confirmed_email_user)
+        @resource.skip_confirmation!
+        @resource.save!
+      end
+
+      test 'tokens can be set to nil' do
+        @resource.tokens = nil
+        assert @resource.save
+      end
+    end
   end
 end

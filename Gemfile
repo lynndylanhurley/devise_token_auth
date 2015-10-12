@@ -34,6 +34,7 @@ group :development, :test do
   gem 'guard-minitest'
   gem 'faker'
   gem 'fuzz_ball'
+  gem 'mocha'
 end
 
 # code coverage, metrics

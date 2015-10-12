@@ -20,12 +20,19 @@ Rails.application.routes.draw do
   }
 
   mount_devise_token_auth_for 'NiceUser', at: 'nice_user_auth', controllers: {
-    registrations: 'custom/registrations'
+    registrations: 'custom/registrations',
+    confirmations: 'custom/confirmations',
+    passwords: 'custom/passwords',
+    sessions: 'custom/sessions',
+    token_validations: 'custom/token_validations',
+    omniauth_callbacks: 'custom/omniauth_callbacks'
   }
 
   mount_devise_token_auth_for 'OnlyEmailUser', at: 'only_email_auth', skip: [:omniauth_callbacks]
 
   mount_devise_token_auth_for 'UnregisterableUser', at: 'unregisterable_user_auth', skip: [:registrations]
+
+  mount_devise_token_auth_for 'UnconfirmableUser', at: 'unconfirmable_user_auth'
 
   # test namespacing
   namespace :api do
@@ -42,4 +49,7 @@ Rails.application.routes.draw do
 
   # routes within this block will authorize visitors using the Mang or User class
   get 'demo/members_only_group', to: 'demo_group#members_only'
+
+  # we need a route for omniauth_callback_controller to redirect to in sameWindow case
+  get 'auth_origin', to: 'auth_origin#redirected'
 end

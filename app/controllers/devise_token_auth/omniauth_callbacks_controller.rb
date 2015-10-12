@@ -1,15 +1,18 @@
 module DeviseTokenAuth
   class OmniauthCallbacksController < DeviseTokenAuth::ApplicationController
+
+    attr_reader :auth_params
     skip_before_filter :set_user_by_token
     skip_after_filter :update_auth_header
 
     # intermediary route for successful omniauth authentication. omniauth does
     # not support multiple models, so we must resort to this terrible hack.
     def redirect_callbacks
+
       # derive target redirect route from 'resource_class' param, which was set
       # before authentication.
       devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
-      redirect_route = "/#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
+      redirect_route = "#{request.protocol}#{request.host_with_port}/#{Devise.mappings[devise_mapping].as_json["path"]}/#{params[:provider]}/callback"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
       # auth response to avoid CookieOverflow.
@@ -20,45 +23,10 @@ module DeviseTokenAuth
     end
 
     def omniauth_success
-      # find or create user by provider and provider uid
-      @resource = resource_class.where({
-        uid:      auth_hash['uid'],
-        provider: auth_hash['provider']
-      }).first_or_initialize
-
-      # create token info
-      @client_id = SecureRandom.urlsafe_base64(nil, false)
-      @token     = SecureRandom.urlsafe_base64(nil, false)
-      @expiry    = (Time.now + DeviseTokenAuth.token_lifespan).to_i
-      @config    = omniauth_params['config_name']
-
-      @auth_origin_url = generate_url(omniauth_params['auth_origin_url'], {
-        token:     @token,
-        client_id: @client_id,
-        uid:       @resource.uid,
-        expiry:    @expiry,
-        config:    @config
-      })
-
-      # set crazy password for new oauth users. this is only used to prevent
-      # access via email sign-in.
-      unless @resource.id
-        p = SecureRandom.urlsafe_base64(nil, false)
-        @resource.password = p
-        @resource.password_confirmation = p
-      end
-
-      @resource.tokens[@client_id] = {
-        token: BCrypt::Password.create(@token),
-        expiry: @expiry
-      }
-
-      # sync user info with provider, update/generate auth token
-      assign_provider_attrs(@resource, auth_hash)
-
-      # assign any additional (whitelisted) attributes
-      extra_params = whitelisted_params
-      @resource.assign_attributes(extra_params) if extra_params
+      get_resource_from_auth_hash
+      create_token_info
+      set_token_on_resource
+      create_auth_params
 
       if resource_class.devise_modules.include?(:confirmable)
         # don't send confirmation email!!!
@@ -69,10 +37,42 @@ module DeviseTokenAuth
 
       @resource.save!
 
-      # render user info to javascript postMessage communication window
-      render :layout => "layouts/omniauth_response", :template => "devise_token_auth/omniauth_success"
+      yield if block_given?
+
+      render_data_or_redirect('deliverCredentials', @auth_params.as_json, @resource.as_json)
     end
 
+    def omniauth_failure
+      @error = params[:message]
+      render_data_or_redirect('authFailure', {error: @error})
+    end
+
+    protected
+
+    # this will be determined differently depending on the action that calls
+    # it. redirect_callbacks is called upon returning from successful omniauth
+    # authentication, and the target params live in an omniauth-specific
+    # request.env variable. this variable is then persisted thru the redirect
+    # using our own dta.omniauth.params session var. the omniauth_success
+    # method will access that session var and then destroy it immediately
+    # after use.  In the failure case, finally, the omniauth params
+    # are added as query params in our monkey patch to OmniAuth in engine.rb
+    def omniauth_params
+      if !defined?(@_omniauth_params)
+        if request.env['omniauth.params'] && request.env['omniauth.params'].any?
+          @_omniauth_params = request.env['omniauth.params']
+        elsif session['dta.omniauth.params'] && session['dta.omniauth.params'].any?
+          @_omniauth_params ||= session.delete('dta.omniauth.params')
+          @_omniauth_params
+        elsif params['omniauth_window_type']
+          @_omniauth_params = params.slice('omniauth_window_type', 'auth_origin_url', 'resource_class', 'origin')
+        else
+          @_omniauth_params = {}
+        end
+      end
+      @_omniauth_params
+      
+    end
 
     # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user, auth_hash)
@@ -83,13 +83,6 @@ module DeviseTokenAuth
         email:    auth_hash['info']['email']
       })
     end
-
-
-    def omniauth_failure
-      @error = params[:message]
-      render :layout => "layouts/omniauth_response", :template => "devise_token_auth/omniauth_failure"
-    end
-
 
     # derive allowed params from the standard devise parameter sanitizer
     def whitelisted_params
@@ -104,10 +97,13 @@ module DeviseTokenAuth
       }
     end
 
-    # pull resource class from omniauth return
-    def resource_class
-      if omniauth_params
+    def resource_class(mapping = nil)
+      if omniauth_params['resource_class']
         omniauth_params['resource_class'].constantize
+      elsif params['resource_class']
+        params['resource_class'].constantize
+      else
+        raise "No resource_class found"
       end
     end
 
@@ -115,20 +111,18 @@ module DeviseTokenAuth
       resource_class
     end
 
-    # this will be determined differently depending on the action that calls
-    # it. redirect_callbacks is called upon returning from successful omniauth
-    # authentication, and the target params live in an omniauth-specific
-    # request.env variable. this variable is then persisted thru the redirect
-    # using our own dta.omniauth.params session var. the omniauth_success
-    # method will access that session var and then destroy it immediately
-    # after use.
-    def omniauth_params
-      if request.env['omniauth.params']
-        request.env['omniauth.params']
-      else
-        @_omniauth_params ||= session.delete('dta.omniauth.params')
-        @_omniauth_params
-      end
+    def omniauth_window_type
+      omniauth_params['omniauth_window_type']
+    end
+
+    def auth_origin_url
+      omniauth_params['auth_origin_url'] || omniauth_params['origin']
+    end
+
+    # in the success case, omniauth_window_type is in the omniauth_params.
+    # in the failure case, it is in a query param.  See monkey patch above
+    def omniauth_window_type
+      omniauth_params.nil? ? params['omniauth_window_type'] : omniauth_params['omniauth_window_type']
     end
 
     # this sesison value is set by the redirect_callbacks method. its purpose
@@ -154,18 +148,107 @@ module DeviseTokenAuth
       end
     end
 
-    def generate_url(url, params = {})
-      auth_url = url
+    def set_random_password
+      # set crazy password for new oauth users. this is only used to prevent
+        # access via email sign-in.
+        p = SecureRandom.urlsafe_base64(nil, false)
+        @resource.password = p
+        @resource.password_confirmation = p
+    end
 
-      # ensure that hash-bang is present BEFORE querystring for angularjs
-      unless url.match(/#/)
-        auth_url += '#'
+    def create_token_info
+      # create token info
+      @client_id = SecureRandom.urlsafe_base64(nil, false)
+      @token     = SecureRandom.urlsafe_base64(nil, false)
+      @expiry    = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+      @config    = omniauth_params['config_name']
+    end
+
+    def create_auth_params
+      @auth_params = {
+        auth_token:     @token,
+        client_id: @client_id,
+        uid:       @resource.uid,
+        expiry:    @expiry,
+        config:    @config
+      }
+      @auth_params.merge!(oauth_registration: true) if @oauth_registration
+      @auth_params
+    end
+
+    def set_token_on_resource
+      @resource.tokens[@client_id] = {
+        token: BCrypt::Password.create(@token),
+        expiry: @expiry
+      }
+    end
+
+    def render_data(message, data)
+      @data = data.merge({
+        message: message
+      })
+      render :layout => nil, :template => "devise_token_auth/omniauth_external_window"
+    end
+
+    def render_data_or_redirect(message, data, user_data = {})
+
+      # We handle inAppBrowser and newWindow the same, but it is nice
+      # to support values in case people need custom implementations for each case
+      # (For example, nbrustein does not allow new users to be created if logging in with
+      # an inAppBrowser)
+      #
+      # See app/views/devise_token_auth/omniauth_external_window.html.erb to understand
+      # why we can handle these both the same.  The view is setup to handle both cases
+      # at the same time.
+      if ['inAppBrowser', 'newWindow'].include?(omniauth_window_type)
+        render_data(message, user_data.merge(data))
+
+      elsif auth_origin_url # default to same-window implementation, which forwards back to auth_origin_url
+
+        # build and redirect to destination url
+        redirect_to DeviseTokenAuth::Url.generate(auth_origin_url, data)
+      else
+        
+        # there SHOULD always be an auth_origin_url, but if someone does something silly
+        # like coming straight to this url or refreshing the page at the wrong time, there may not be one.
+        # In that case, just render in plain text the error message if there is one or otherwise 
+        # a generic message.
+        fallback_render data[:error] || 'An error occurred'
+      end
+    end
+
+    def fallback_render(text)
+        render inline: %Q|
+
+            <html>
+                    <head></head>
+                    <body>
+                            #{text}
+                    </body>
+            </html>| 
+    end
+
+    def get_resource_from_auth_hash
+      # find or create user by provider and provider uid
+      @resource = resource_class.where({
+        uid:      auth_hash['uid'],
+        provider: auth_hash['provider']
+      }).first_or_initialize
+
+      if @resource.new_record?
+        @oauth_registration = true
+        set_random_password
       end
 
-      # add query AFTER hash-bang
-      auth_url += "?#{params.to_query}"
+      # sync user info with provider, update/generate auth token
+      assign_provider_attrs(@resource, auth_hash)
 
-      return auth_url
+      # assign any additional (whitelisted) attributes
+      extra_params = whitelisted_params
+      @resource.assign_attributes(extra_params) if extra_params
+
+      @resource
     end
+
   end
 end

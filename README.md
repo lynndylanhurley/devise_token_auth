@@ -8,6 +8,8 @@
 
 ## Simple, secure token based authentication for Rails.
 
+[![Join the chat at https://gitter.im/lynndylanhurley/devise_token_auth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lynndylanhurley/devise_token_auth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This gem provides the following features:
 
 * Seamless integration with both the the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js) and the outstanding [jToker](https://github.com/lynndylanhurley/j-toker) plugin for [jQuery](https://jquery.com/).
@@ -42,6 +44,7 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [OmniAuth Authentication](#omniauth-authentication)
   * [OmniAuth Provider Settings](#omniauth-provider-settings)
   * [Email Authentication](#email-authentication)
+  * [Customizing Devise Verbiage](#customizing-devise-verbiage)
   * [Cross Origin Requests (CORS)](#cors)
 * [Usage Continued](#usage-cont)
   * [Mounting Routes](#mounting-routes)
@@ -50,8 +53,8 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [Using Multiple User Classes](#using-multiple-models)
   * [Excluding Modules](#excluding-modules)
   * [Custom Controller Overrides](#custom-controller-overrides)
-  * [Email Template Overrides](#email-template-overrides)
   * [Passing blocks to Controllers](#passing-blocks-controllers)
+  * [Email Template Overrides](#email-template-overrides)
 * [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
@@ -99,7 +102,7 @@ This generator accepts the following optional arguments:
 | Argument | Default | Description |
 |---|---|---|
 | USER_CLASS | `User` | The name of the class to use for user authentication. |
-| MOUNT_PATH | `auth` | The path at which to mount the authentication routes. [Read more](#usage). |
+| MOUNT_PATH | `auth` | The path at which to mount the authentication routes. [Read more](#usage-tldr). |
 
 The following events will take place when using the install generator:
 
@@ -134,14 +137,14 @@ The following routes are available for use by your client. These routes live rel
 |:-----|:-------|:--------|
 | /    | POST   | Email registration. Accepts **`email`**, **`password`**, and **`password_confirmation`** params. A verification email will be sent to the email address provided. Accepted params can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. |
 | / | DELETE | Account deletion. This route will destroy users identified by their **`uid`** and **`auth_token`** headers. |
-| / | PUT | Account updates. This route will update an existing user's account settings. The default accepted params are **`password`** and **`password_confirmation`**, but this can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. |
+| / | PUT | Account updates. This route will update an existing user's account settings. The default accepted params are **`password`** and **`password_confirmation`**, but this can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. If **`config.check_current_password_before_update`** is set to `:attributes` the **`current_password`** param is checked before any update, if it is set to `:password` the **`current_password`** param is checked only if the request updates user password. |
 | /sign_in | POST | Email authentication. Accepts **`email`** and **`password`** as params. This route will return a JSON representation of the `User` model on successful login. |
 | /sign_out | DELETE | Use this route to end the user's current session. This route will invalidate the user's authentication token. |
 | /:provider | GET | Set this route as the destination for client authentication. Ideally this will happen in an external window or popup. [Read more](#omniauth-authentication). |
 | /:provider/callback | GET/POST | Destination for the oauth2 provider's callback uri. `postMessage` events containing the authenticated user's data will be sent back to the main client window from this page. [Read more](#omniauth-authentication). |
-| /validate_token | GET | Use this route to validate tokens on return visits to the client. Accepts **`uid`** and **`auth_token`** as params. These values should correspond to the columns in your `User` table of the same names. |
+| /validate_token | GET | Use this route to validate tokens on return visits to the client. Accepts **`uid`** and **`access-token`** as params. These values should correspond to the columns in your `User` table of the same names. |
 | /password | POST | Use this route to send a password reset confirmation email to users that registered by email. Accepts **`email`** and **`redirect_url`** as params. The user matching the `email` param will be sent instructions on how to reset their password. `redirect_url` is the url to which the user will be redirected after visiting the link contained in the email. |
-| /password | PUT | Use this route to change users' passwords. Accepts **`password`** and **`password_confirmation`** as params. This route is only valid for users that registered by email (OAuth2 users will receive an error). |
+| /password | PUT | Use this route to change users' passwords. Accepts **`password`** and **`password_confirmation`** as params. This route is only valid for users that registered by email (OAuth2 users will receive an error). It also checks **`current_password`** if **`config.check_current_password_before_update`** is not set `false` (disabled by default). |
 | /password/edit | GET | Verify user by password reset token. This route is the destination URL for password reset confirmation. This route must contain **`reset_password_token`** and **`redirect_url`** params. These values will be set automatically by the confirmation email that is generated by the password reset request. |
 
 [Jump here](#usage-cont) for more usage information.
@@ -162,6 +165,20 @@ The following settings are available for configuration in `config/initializers/d
 | **`default_password_reset_url`** | `nil` | By default this value is expected to be sent by the client so that the API knows where to redirect users after successful password resets. If this param is set, the API will redirect to this value when no value is provided by the cilent. |
 | **`redirect_whitelist`** | `nil` | As an added security measure, you can limit the URLs to which the API will redirect after email token validation (password reset, email confirmation, etc.). This value should be an array containing exact matches to the client URLs to be visited after validation. |
 
+Additionally, you can configure other aspects of devise by manually creating the traditional devise.rb file at `config/initializers/devise.rb`. Here are some examples of what you can do in this file:
+
+~~~ruby
+Devise.setup do |config|
+  # The e-mail address that mail will appear to be sent from
+  # If absent, mail is sent from "please-change-me-at-config-initializers-devise@example.com"
+  config.mailer_sender = "support@myapp.com"
+
+  # If using rails-api, you may want to tell devise to not use ActionDispatch::Flash
+  # middleware b/c rails-api does not include it.
+  # See: http://stackoverflow.com/q/19600905/806956
+  config.navigational_formats = [:json]
+end
+~~~
 
 ## OmniAuth authentication
 
@@ -269,6 +286,21 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = { :address => 'your-dev-host.dev', :port => 1025 }
 end
+~~~
+
+If you wish to send custom e-mails instead of using the default devise templates, you can [do that too](#email-template-overrides).
+
+## Customizing Devise Verbiage
+Devise Token Auth ships with intelligent default wording for everything you need. But that doesn't mean you can't make it more awesome. You can override the [devise defaults](https://github.com/plataformatec/devise/blob/master/config/locales/en.yml) by creating a YAML file at `config/locales/devise.en.yml` and assigning whatever custom values you want. For example, to customize the subject line of your devise e-mails, you could do this:
+
+~~~yaml
+en:
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: "Please confirm your e-mail address"
+      reset_password_instructions:
+        subject: "Reset password request"
 ~~~
 
 ## CORS
@@ -420,7 +452,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   client_id = request.headers['client']
   token = request.headers['access-token']
 
-  @user.valid_token?(token, client_id)
+  @resource.valid_token?(token, client_id)
   ~~~
 
 * **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client` as an optional argument. Will generate a new `client` if none is provided. Returns the authentication headers that should be sent by the client as an object.
@@ -431,7 +463,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   client_id = request.headers['client']
 
   # update token, generate updated auth headers for response
-  new_auth_header = @user.create_new_auth_token(client_id)
+  new_auth_header = @resource.create_new_auth_token(client_id)
 
   # update response with the header that will be required by the next request
   response.headers.merge!(new_auth_header)
@@ -446,13 +478,13 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   token     = SecureRandom.urlsafe_base64(nil, false)
 
   # store client + token in user's token hash
-  @user.tokens[client_id] = {
+  @resource.tokens[client_id] = {
     token: BCrypt::Password.create(token),
     expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
   }
 
   # generate auth headers for response
-  new_auth_header = @user.build_auth_header(token, client_id)
+  new_auth_header = @resource.build_auth_header(token, client_id)
 
   # update response with the header that will be required by the next request
   response.headers.merge!(new_auth_header)
@@ -502,7 +534,7 @@ This gem supports the use of multiple user models. One possible use case is to a
   ~~~
 
 1. Configure any `Admin` restricted controllers. Controllers will now have access to the methods [described here](#methods):
-  * `before_action: :authenticate_admin!`
+  * `before_action :authenticate_admin!`
   * `current_admin`
   * `admin_signed_in?`
 
@@ -608,7 +640,7 @@ For example, the default behavior of the [`validate_token`](https://github.com/l
 ~~~ruby
 # config/routes.rb
 Rails.application.routes.draw do
-  ...  
+  ...
   mount_devise_token_auth_for 'User', at: 'auth', controllers: {
     token_validations:  'overrides/token_validations'
   }
@@ -619,10 +651,10 @@ module Overrides
   class TokenValidationsController < DeviseTokenAuth::TokenValidationsController
 
     def validate_token
-      # @user will have been set by set_user_by_token concern
-      if @user
+      # @resource will have been set by set_user_by_token concern
+      if @resource
         render json: {
-          data: @user.as_json(methods: :calculate_operating_thetan)
+          data: @resource.as_json(methods: :calculate_operating_thetan)
         }
       else
         render json: {
@@ -634,6 +666,45 @@ module Overrides
   end
 end
 ~~~
+
+## Overriding rendering methods
+To customize json rendering, implement the following protected controller methods, for success methods, assume that the @resource object is available:
+
+### Registrations Controller
+* render_create_error_missing_confirm_success_url
+* render_create_error_redirect_url_not_allowed
+* render_create_success
+* render_create_error
+* render_create_error_email_already_exists
+* render_update_success
+* render_update_error
+* render_update_error_user_not_found
+
+
+### Sessions Controller
+* render_new_error
+* render_create_success
+* render_create_error_not_confirmed
+* render_create_error_bad_credentials
+* render_destroy_success
+* render_destroy_error
+
+
+### Passwords Controller
+* render_create_error_missing_email
+* render_create_error_missing_redirect_url
+* render_create_error_not_allowed_redirect_url
+* render_create_success
+* render_create_error
+* render_update_error_unauthorized
+* render_update_error_password_not_required
+* render_update_error_missing_password
+* render_update_success
+* render_update_error
+
+### Token Validations Controller
+* render_validate_token_success
+* render_validate_token_error
 
 ##### Example: all :controller options with default settings:
 
@@ -650,6 +721,24 @@ mount_devise_token_auth_for 'User', at: 'auth', controllers: {
 
 **Note:** Controller overrides must implement the expected actions of the controllers that they replace.
 
+## Passing blocks to Controllers
+
+It may be that you simply want to _add_ behavior to existing controllers without having to re-implement their behavior completely. In this case, you can do so by creating a new controller that inherits from any of DeviseTokenAuth's controllers, overriding whichever methods you'd like to add behavior to by  passing a block to `super`:
+
+```ruby
+class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
+
+  def create
+    super do |resource|
+      resource.do_something(extra)
+    end
+  end
+
+end
+```
+
+Your block will be performed just before the controller would usually render a successful response.
+
 ## Email Template Overrides
 
 You will probably want to override the default email templates for email sign-up and password-reset confirmation. Run the following command to copy the email templates into your app:
@@ -663,25 +752,9 @@ This will create two new files:
 * `app/views/devise/mailer/reset_password_instructions.html.erb`
 * `app/views/devise/mailer/confirmation_instructions.html.erb`
 
-These files may be edited to suit your taste.
+These files may be edited to suit your taste. You can customize the e-mail subjects like [this](#customizing-devise-verbiage).
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
-
-## Passing blocks to RegistrationController
-
-If you simply want to add behaviour to the existing Registration controller, you can do so by creating a new controller that inherits from it, and override the `create`, `update` or `destroy` methods, and passing a block to super:
-
-```ruby
-class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
-
-  def create
-    super do |resource|
-      resource.add_something(extra)
-    end
-  end
-
-end
-```
 
 # Issue Reporting
 
@@ -798,7 +871,7 @@ This gem automatically manages batch requests. You can change the time buffer fo
 This gem takes the following steps to ensure security.
 
 This gem uses auth tokens that are:
-* [changed after every request](#about-token-management),
+* [changed after every request](#about-token-management) (can be [turned off](https://github.com/lynndylanhurley/devise_token_auth/#initializer-settings)),
 * [of cryptographic strength](http://ruby-doc.org/stdlib-2.1.0/libdoc/securerandom/rdoc/SecureRandom.html),
 * hashed using [BCrypt](https://github.com/codahale/bcrypt-ruby) (not stored in plain-text),
 * securely compared (to protect against timing attacks),
@@ -840,9 +913,16 @@ To run the test suite do the following:
 2. Run `bundle install`
 3. Run `rake db:migrate`
 4. Run `RAILS_ENV=test rake db:migrate`
-5. Run `guard`.
+5. Run `guard`
 
 The last command will open the [guard](https://github.com/guard/guard) test-runner. Guard will re-run each test suite when changes are made to its corresponding files.
+
+To run just one test:
+1. Clone this repo
+2. Run `bundle install`
+3. Run `rake db:migrate`
+4. Run `RAILS_ENV=test rake db:migrate`
+5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/
 
 # License
 This project uses the WTFPL

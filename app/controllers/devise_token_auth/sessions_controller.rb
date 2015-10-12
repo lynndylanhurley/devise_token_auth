@@ -2,6 +2,11 @@
 module DeviseTokenAuth
   class SessionsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:destroy]
+    after_action :reset_session, :only => [:destroy]
+
+    def new
+      render_new_error
+    end
 
     def create
       # Check
@@ -24,7 +29,7 @@ module DeviseTokenAuth
         @resource = resource_class.where(q, q_value).first
       end
 
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
+      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
@@ -37,24 +42,13 @@ module DeviseTokenAuth
 
         sign_in(:user, @resource, store: false, bypass: false)
 
-        render json: {
-          data: @resource.token_validation_response
-        }
+        yield if block_given?
 
-      elsif @resource and not @resource.confirmed?
-        render json: {
-          success: false,
-          errors: [
-            "A confirmation email was sent to your account at #{@resource.email}. "+
-            "You must follow the instructions in the email before your account "+
-            "can be activated"
-          ]
-        }, status: 401
-
+        render_create_success
+      elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+        render_create_error_not_confirmed
       else
-        render json: {
-          errors: ["Invalid login credentials. Please try again."]
-        }, status: 401
+        render_create_error_bad_credentials
       end
     end
 
@@ -68,23 +62,18 @@ module DeviseTokenAuth
         user.tokens.delete(client_id)
         user.save!
 
-        render json: {
-          success:true
-        }, status: 200
+        yield if block_given?
 
+        render_destroy_success
       else
-        render json: {
-          errors: ["User was not found or was not logged in."]
-        }, status: 404
+        render_destroy_error
       end
     end
 
+    protected
+
     def valid_params?(key, val)
       resource_params[:password] && key && val
-    end
-
-    def resource_params
-      params.permit(devise_parameter_sanitizer.for(:sign_in))
     end
 
     def get_auth_params
@@ -110,5 +99,50 @@ module DeviseTokenAuth
         val: auth_val
       }
     end
+
+    def render_new_error
+      render json: {
+        errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
+      }, status: 405
+    end
+
+    def render_create_success
+      render json: {
+        data: @resource.token_validation_response
+      }
+    end
+
+    def render_create_error_not_confirmed
+      render json: {
+        success: false,
+        errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
+      }, status: 401
+    end
+
+    def render_create_error_bad_credentials
+      render json: {
+        errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
+      }, status: 401
+    end
+
+    def render_destroy_success
+      render json: {
+        success:true
+      }, status: 200
+    end
+
+    def render_destroy_error
+      render json: {
+        errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
+      }, status: 404
+    end
+
+
+    private
+
+    def resource_params
+      params.permit(devise_parameter_sanitizer.for(:sign_in))
+    end
+
   end
 end

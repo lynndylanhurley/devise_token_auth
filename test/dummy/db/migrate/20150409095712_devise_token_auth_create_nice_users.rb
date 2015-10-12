@@ -1,3 +1,5 @@
+include MigrationDatabaseHelper
+
 class DeviseTokenAuthCreateNiceUsers < ActiveRecord::Migration
   def change
     create_table(:nice_users) do |t|
@@ -40,7 +42,11 @@ class DeviseTokenAuthCreateNiceUsers < ActiveRecord::Migration
       t.string :email
 
       ## Tokens
-      t.text :tokens
+      if json_supported_database?
+        t.json :tokens
+      else
+        t.text :tokens
+      end
 
       t.timestamps
     end

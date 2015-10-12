@@ -30,4 +30,10 @@ class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
     @destroy_block_called == true
   end
 
+  protected
+
+  def render_create_success
+    render json: {custom: "foo"}
+  end
+
 end

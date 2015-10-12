@@ -258,11 +258,69 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
         end
       end
+
+      describe 'existing Warden authentication with ignored token data' do
+        before do
+          @resource = users(:second_confirmed_email_user)
+          @resource.skip_confirmation!
+          @resource.save!
+          login_as( @resource, :scope => :user)
+
+          get '/demo/members_only', {}, @auth_headers
+
+          @resp_token       = response.headers['access-token']
+          @resp_client_id   = response.headers['client']
+          @resp_expiry      = response.headers['expiry']
+          @resp_uid         = response.headers['uid']
+        end
+
+        describe 'devise mappings' do
+          it 'should define current_user' do
+            assert_equal @resource, @controller.current_user
+          end
+
+          it 'should define user_signed_in?' do
+            assert @controller.user_signed_in?
+          end
+
+          it 'should not define current_mang' do
+            refute_equal @resource, @controller.current_mang
+          end
+        end
+
+        it 'should return success status' do
+          assert_equal 200, response.status
+        end
+
+        it 'should receive new token after successful request' do
+          assert @resp_token
+        end
+
+        it 'should set the token expiry in the auth header' do
+          assert @resp_expiry
+        end
+
+        it 'should return the client id in the auth header' do
+          assert @resp_client_id
+        end
+
+        it "should not use the existing token's client" do
+          refute_equal @auth_headers['client'], @resp_client_id
+        end
+
+        it "should return the user's uid in the auth header" do
+          assert @resp_uid
+        end
+
+        it "should not return the token user's uid in the auth header" do
+          refute_equal @resp_uid, @auth_headers['uid']
+        end
+      end
     end
 
     describe 'Existing Warden authentication' do
       before do
-        @resource = users(:confirmed_email_user)
+        @resource = users(:second_confirmed_email_user)
         @resource.skip_confirmation!
         @resource.save!
         login_as( @resource, :scope => :user)

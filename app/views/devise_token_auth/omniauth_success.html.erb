@@ -1,9 +1,0 @@
-<% @resource.as_json.each do |attr, val| %>
-  "<%= attr %>": "<%= val %>",
-<% end %>
-
-"auth_token": "<%= @token %>",
-"message":    "deliverCredentials",
-"client_id":  "<%= @client_id %>",
-"expiry":     "<%= @expiry %>",
-"config":     "<%= @config %>"

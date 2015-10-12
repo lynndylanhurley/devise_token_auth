@@ -129,8 +129,38 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           confirm_success_url: @bad_redirect_url,
           unpermitted_param: '(x_x)'
         }
+        @data = JSON.parse(response.body)
 
         assert_equal 403, response.status
+        assert @data["errors"]
+        assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @bad_redirect_url)]
+      end
+    end
+
+    describe 'failure if not redirecturl' do
+
+      test "request should fail if not redirect_url" do
+        post '/auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          unpermitted_param: '(x_x)'
+        }
+
+        assert_equal 403, response.status
+      end
+
+      test "request to non-whitelisted redirect should fail" do
+        post '/auth', {
+          email: Faker::Internet.email,
+          password: "secret123",
+          password_confirmation: "secret123",
+          unpermitted_param: '(x_x)'
+        }
+        @data = JSON.parse(response.body)
+
+        assert @data["errors"]
+        assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
       end
     end
 
@@ -297,6 +327,35 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe 'missing email' do
+      before do
+        post '/auth', {
+          password: "secret123",
+          password_confirmation: "secret123",
+          confirm_success_url: Faker::Internet.url
+        }
+
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+      end
+
+      test "request should not be successful" do
+        assert_equal 403, response.status
+      end
+
+      test "user should not have been created" do
+        assert_nil @resource.id
+      end
+
+      test "error should be returned in the response" do
+        assert @data['errors'].length
+      end
+
+      test "full_messages should be included in error hash" do
+        assert @data['errors']['full_messages'].length
+      end
+    end
+
     describe "Mismatched passwords" do
       before do
         post '/auth', {
@@ -375,6 +434,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           assert_equal 200, response.status
         end
 
+        test "message should be returned" do
+          assert @data["message"]
+          assert_equal @data["message"], I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @existing_user.uid)
+        end
         test "existing user should be deleted" do
           refute User.where(id: @existing_user.id).first
         end
@@ -388,6 +451,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         test 'request returns 404 (not found) status' do
           assert_equal 404, response.status
+        end
+
+        test 'error should be returned' do
+          assert @data['errors'].length
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
         end
       end
     end
@@ -404,89 +472,207 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           age_token(@existing_user, @client_id)
         end
 
-        describe "success" do
+        describe "without password check" do
+          describe "success" do
+            before do
+              # test valid update param
+              @resource_class = User
+              @new_operating_thetan = 1000000
+              @email = "AlternatingCase2@example.com"
+              @request_params = {
+                operating_thetan: @new_operating_thetan,
+                email: @email
+              }
+            end
+
+            test "Request was successful" do
+              put "/auth", @request_params, @auth_headers
+              assert_equal 200, response.status
+            end
+
+            test "Case sensitive attributes update" do
+              @resource_class.case_insensitive_keys = []
+              put "/auth", @request_params, @auth_headers
+              @data = JSON.parse(response.body)
+              @existing_user.reload
+              assert_equal @new_operating_thetan, @existing_user.operating_thetan
+              assert_equal @email, @existing_user.email
+              assert_equal @email, @existing_user.uid
+            end
+
+            test "Case insensitive attributes update" do
+              @resource_class.case_insensitive_keys = [:email]
+              put "/auth", @request_params, @auth_headers
+              @data = JSON.parse(response.body)
+              @existing_user.reload
+              assert_equal @new_operating_thetan, @existing_user.operating_thetan
+              assert_equal @email.downcase, @existing_user.email
+              assert_equal @email.downcase, @existing_user.uid
+            end
+
+            test "Supply current password" do
+              @request_params.merge!(
+                current_password: "secret123",
+                email: "new.email@example.com",
+              )
+
+              put "/auth", @request_params, @auth_headers
+              @data = JSON.parse(response.body)
+              @existing_user.reload
+              assert_equal @existing_user.email, "new.email@example.com"
+            end
+          end
+
+          describe 'validate non-empty body' do
+            before do
+              # get the email so we can check it wasn't updated
+              @email = @existing_user.email
+              put '/auth', {}, @auth_headers
+
+              @data = JSON.parse(response.body)
+              @existing_user.reload
+            end
+
+            test 'request should fail' do
+              assert_equal 422, response.status
+            end
+
+            test 'returns error message' do
+              assert_not_empty @data['errors']
+            end
+
+            test 'return error status' do
+              assert_equal 'error', @data['status']
+            end
+
+            test 'user should not have been saved' do
+              assert_equal @email, @existing_user.email
+            end
+          end
+
+          describe "error" do
+            before do
+              # test invalid update param
+              @new_operating_thetan = "blegh"
+              put "/auth", {
+                operating_thetan: @new_operating_thetan
+              }, @auth_headers
+
+              @data = JSON.parse(response.body)
+              @existing_user.reload
+            end
+
+            test "Request was NOT successful" do
+              assert_equal 403, response.status
+            end
+
+            test "Errors were provided with response" do
+              assert @data["errors"].length
+            end
+          end
+        end
+
+        describe "with password check for password update only" do
           before do
-            # test valid update param
-            @resource_class = User
+            DeviseTokenAuth.check_current_password_before_update = :password
+          end
+
+          after do
+            DeviseTokenAuth.check_current_password_before_update = false
+          end
+
+          describe "success without password update" do
+            before do
+              # test valid update param
+              @resource_class = User
+              @new_operating_thetan = 1000000
+              @email = "AlternatingCase2@example.com"
+              @request_params = {
+                operating_thetan: @new_operating_thetan,
+                email: @email
+              }
+            end
+
+            test "Request was successful" do
+              put "/auth", @request_params, @auth_headers
+              assert_equal 200, response.status
+            end
+          end
+
+          describe "success with password update" do
+            before do
+              @existing_user.update password: 'secret123', password_confirmation: 'secret123'
+              @request_params = {
+                password: 'the_new_secret456',
+                password_confirmation: 'the_new_secret456',
+                current_password: 'secret123'
+              }
+            end
+
+            test "Request was successful" do
+              put "/auth", @request_params, @auth_headers
+              assert_equal 200, response.status
+            end
+          end
+
+          describe "error with password mismatch" do
+            before do
+              @existing_user.update password: 'secret123', password_confirmation: 'secret123'
+              @request_params = {
+                password: 'the_new_secret456',
+                password_confirmation: 'the_new_secret456',
+                current_password: 'not_so_secret321'
+              }
+            end
+
+            test "Request was NOT successful" do
+              put "/auth", @request_params, @auth_headers
+              assert_equal 403, response.status
+            end
+          end
+        end
+
+        describe "with password check for all attributes" do
+          before do
+            DeviseTokenAuth.check_current_password_before_update = :password
             @new_operating_thetan = 1000000
             @email = "AlternatingCase2@example.com"
-            @request_params = {
-              operating_thetan: @new_operating_thetan,
-              email: @email
-            }
           end
 
-          test "Request was successful" do
-            put "/auth", @request_params, @auth_headers
-            assert_equal 200, response.status
+          after do
+            DeviseTokenAuth.check_current_password_before_update = false
           end
 
-          test "Case sensitive attributes update" do
-            @resource_class.case_insensitive_keys = []
-            put "/auth", @request_params, @auth_headers
-            @data = JSON.parse(response.body)
-            @existing_user.reload
-            assert_equal @new_operating_thetan, @existing_user.operating_thetan
-            assert_equal @email, @existing_user.email
-            assert_equal @email, @existing_user.uid
+          describe "success with password update" do
+            before do
+              @existing_user.update password: 'secret123', password_confirmation: 'secret123'
+              @request_params = {
+                operating_thetan: @new_operating_thetan,
+                email: @email,
+                current_password: 'secret123'
+              }
+            end
+
+            test "Request was successful" do
+              put "/auth", @request_params, @auth_headers
+              assert_equal 200, response.status
+            end
           end
 
-          test "Case insensitive attributes update" do
-            @resource_class.case_insensitive_keys = [:email]
-            put "/auth", @request_params, @auth_headers
-            @data = JSON.parse(response.body)
-            @existing_user.reload
-            assert_equal @new_operating_thetan, @existing_user.operating_thetan
-            assert_equal @email.downcase, @existing_user.email
-            assert_equal @email.downcase, @existing_user.uid
-          end
-        end
+          describe "error with password mismatch" do
+            before do
+              @existing_user.update password: 'secret123', password_confirmation: 'secret123'
+              @request_params = {
+                operating_thetan: @new_operating_thetan,
+                email: @email,
+                current_password: 'not_so_secret321'
+              }
+            end
 
-        describe 'validate non-empty body' do
-          before do
-            # get the email so we can check it wasn't updated
-            @email = @existing_user.email
-            put '/auth', {}, @auth_headers
-
-            @data = JSON.parse(response.body)
-            @existing_user.reload
-          end
-
-          test 'request should fail' do
-            assert_equal 422, response.status
-          end
-
-          test 'returns error message' do
-            assert_not_empty @data['errors']
-          end
-
-          test 'return error status' do
-            assert_equal 'error', @data['status']
-          end
-
-          test 'user should not have been saved' do
-            assert_equal @email, @existing_user.email
-          end
-        end
-
-        describe "error" do
-          before do
-            # test invalid update param
-            @new_operating_thetan = "blegh"
-            put "/auth", {
-              operating_thetan: @new_operating_thetan
-            }, @auth_headers
-
-            @data = JSON.parse(response.body)
-            @existing_user.reload
-          end
-
-          test "Request was NOT successful" do
-            assert_equal 403, response.status
-          end
-
-          test "Errors were provided with response" do
-            assert @data["errors"].length
+            test "Request was NOT successful" do
+              put "/auth", @request_params, @auth_headers
+              assert_equal 403, response.status
+            end
           end
         end
       end
@@ -513,6 +699,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         test "Response should return 404 status" do
           assert_equal 404, response.status
+        end
+
+        test "error should be returned" do
+          assert @data["errors"].length
+          assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.user_not_found")]
         end
 
         test "User should not be updated" do
