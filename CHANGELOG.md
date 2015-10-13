@@ -1,3 +1,11 @@
+<a name="0.1.36"></a>
+# 0.1.36 (2015-10-13)
+
+## Fixes
+
+- **Deps**: Revert to last known working mysql2 gem for Travis
+
+
 <a name="0.1.35"></a>
 # 0.1.35 (2015-10-13)
 
