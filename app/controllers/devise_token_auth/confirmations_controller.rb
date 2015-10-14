@@ -15,8 +15,10 @@ module DeviseTokenAuth
           expiry: expiry
         }
 
-        @resource.save!
+        sign_in(@resource)
 
+        @resource.save!
+        
         yield if block_given?
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
@@ -25,6 +27,7 @@ module DeviseTokenAuth
           account_confirmation_success: true,
           config:                       params[:config]
         }))
+
       else
         raise ActionController::RoutingError.new('Not Found')
       end

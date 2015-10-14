@@ -203,7 +203,6 @@ module DeviseTokenAuth::Concerns::User
     DeviseTokenAuth::Url.generate(base_url, args)
   end
 
-
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
     self.save!
