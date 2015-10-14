@@ -10,17 +10,10 @@ module DeviseTokenAuth
       @resource.provider   = "email"
 
       # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        @resource.email = sign_up_params[:email].try :downcase
-      else
-        @resource.email = sign_up_params[:email]
-      end
+      @resource.email.try :downcase! if resource_class.case_insensitive_keys.include?(:email)
 
-      # give redirect value from params priority
-      @redirect_url = params[:confirm_success_url]
-
-      # fall back to default value if provided
-      @redirect_url ||= DeviseTokenAuth.default_confirm_success_url
+      # give redirect value from params priority or fall back to default value if provided
+      @redirect_url = params[:confirm_success_url] || DeviseTokenAuth.default_confirm_success_url
 
       # success redirect url is required
       if resource_class.devise_modules.include?(:confirmable) && !@redirect_url
@@ -28,48 +21,43 @@ module DeviseTokenAuth
       end
 
       # if whitelist is set, validate redirect_url against whitelist
-      if DeviseTokenAuth.redirect_whitelist
-        unless DeviseTokenAuth.redirect_whitelist.include?(@redirect_url)
+      if DeviseTokenAuth.redirect_whitelist && !DeviseTokenAuth.redirect_whitelist.include?(@redirect_url)
           return render_create_error_redirect_url_not_allowed
-        end
       end
 
-      begin
-        # override email confirmation, must be sent manually from ctrl
-        resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
-        if @resource.save
-          yield @resource if block_given?
+      # override email confirmation, must be sent manually from ctrl
+      resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+      if @resource.save
+        yield @resource if block_given?
 
-          unless @resource.confirmed?
-            # user will require email authentication
-            @resource.send_confirmation_instructions({
-              client_config: params[:config_name],
-              redirect_url: @redirect_url
-            })
-
-          else
-            # email auth has been bypassed, authenticate user
-            @client_id = SecureRandom.urlsafe_base64(nil, false)
-            @token     = SecureRandom.urlsafe_base64(nil, false)
-
-            @resource.tokens[@client_id] = {
-              token: BCrypt::Password.create(@token),
-              expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
-            }
-
-            @resource.save!
-
-            update_auth_header
-          end
-          render_create_success
+        unless @resource.confirmed?
+          # user will require email authentication
+          @resource.send_confirmation_instructions({
+            client_config: params[:config_name],
+            redirect_url: @redirect_url
+          })
         else
-          clean_up_passwords @resource
-          render_create_error
+          # email auth has been bypassed, authenticate user
+          @client_id = SecureRandom.urlsafe_base64(nil, false)
+          @token     = SecureRandom.urlsafe_base64(nil, false)
+
+          @resource.tokens[@client_id] = {
+            token: BCrypt::Password.create(@token),
+            expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          }
+
+          @resource.save!
+
+          update_auth_header
         end
-      rescue ActiveRecord::RecordNotUnique
+        render_create_success
+      else
         clean_up_passwords @resource
-        render_create_error_email_already_exists
+        render_create_error
       end
+    rescue ActiveRecord::RecordNotUnique
+      clean_up_passwords @resource
+      render_create_error_email_already_exists
     end
 
     def update
@@ -111,7 +99,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
-      }, status: 403
+      }, status: :bad_request
     end
 
     def render_create_error_redirect_url_not_allowed
@@ -119,7 +107,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)]
-      }, status: 403
+      }, status: :forbidden
     end
 
     def render_create_success
@@ -134,7 +122,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-      }, status: 403
+      }, status: :unprocessable_entity
     end
 
     def render_create_error_email_already_exists
@@ -142,7 +130,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
-      }, status: 403
+      }, status: :unprocessable_entity
     end
 
     def render_update_success
@@ -156,14 +144,14 @@ module DeviseTokenAuth
       render json: {
         status: 'error',
         errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-      }, status: 403
+      }, status: :unprocessable_entity
     end
 
     def render_update_error_user_not_found
       render json: {
         status: 'error',
         errors: [I18n.t("devise_token_auth.registrations.user_not_found")]
-      }, status: 404
+      }, status: :not_found
     end
 
     def render_destroy_success
@@ -177,7 +165,7 @@ module DeviseTokenAuth
       render json: {
         status: 'error',
         errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
-      }, status: 404
+      }, status: :not_found
     end
 
     private
