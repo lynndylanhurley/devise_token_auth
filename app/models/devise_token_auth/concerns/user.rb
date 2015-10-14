@@ -44,6 +44,12 @@ module DeviseTokenAuth::Concerns::User
     # get rid of dead tokens
     before_save :destroy_expired_tokens
 
+    # allows user to change password without current_password
+    attr_writer :allow_password_change
+    def allow_password_change
+      @allow_password_change || false
+    end
+
     # don't use default devise email validation
     def email_required?
       false
@@ -88,7 +94,7 @@ module DeviseTokenAuth::Concerns::User
 
   module ClassMethods
     protected
-    
+
 
     def tokens_has_json_column_type?
       table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
