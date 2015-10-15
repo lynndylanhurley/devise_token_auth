@@ -103,7 +103,7 @@ module DeviseTokenAuth
           config:         params[:config]
         }))
       else
-        render_edit_error
+        raise ActionController::RoutingError.new('Not Found')
       end
     end
 
