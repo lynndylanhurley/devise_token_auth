@@ -9,3 +9,4 @@ test/dummy/.sass-cache
 test/dummy/config/application.yml
 coverage
 .idea
+.ruby-version
