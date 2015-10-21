@@ -12,12 +12,8 @@ class EmailValidator < ActiveModel::EachValidator
     message = options[:message]
     
     if message.nil?
-
-      # Try DeviceTokenAuth translations:
-      message = I18n.t('errors.not_email', default: '')
-
-      # Fallback to ActiveModel translations:
-      message = I18n.t('errors.messages.invalid') if message.blank?
+      # Try DeviceTokenAuth translations or fallback to ActiveModel translations
+      message = I18n.t(:'errors.not_email', default: :'errors.messages.invalid')
     end
     
     message
