@@ -1,3 +1,10 @@
+<a name="0.1.37"></a>
+# 0.1.37 (beta)
+
+## Features
+
+- **Batch Requests**: Prevent batching of requests by appending `unbatch=true` param to request URL
+
 <a name="0.1.36"></a>
 # 0.1.36 (2015-10-13)
 
