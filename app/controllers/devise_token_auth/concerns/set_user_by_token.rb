@@ -106,6 +106,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     end
 
+    sign_out(@resource)
+
   end
 
   def resource_class(m=nil)
