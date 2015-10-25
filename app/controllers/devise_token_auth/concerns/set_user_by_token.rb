@@ -125,6 +125,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
 
   def is_batch_request?(user, client_id)
+    not params[:unbatch] and
     user.tokens[client_id] and
     user.tokens[client_id]['updated_at'] and
     Time.parse(user.tokens[client_id]['updated_at']) > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle

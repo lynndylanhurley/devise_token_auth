@@ -201,6 +201,31 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
         end
 
+        describe 'unbatch' do
+          before do
+            @resource.reload
+            age_token(@resource, @client_id)
+
+            get '/demo/members_only', {}, @auth_headers
+
+            @first_is_batch_request = assigns(:is_batch_request)
+            @first_user = assigns(:resource).dup
+            @first_access_token = response.headers['access-token']
+            @first_response_status = response.status
+
+            get '/demo/members_only?unbatch=true', {}, @auth_headers
+
+            @second_is_batch_request = assigns(:is_batch_request)
+            @second_user = assigns(:resource)
+            @second_access_token = response.headers['access-token']
+            @second_response_status = response.status
+          end
+
+          it 'should NOT treat the second request as a batch request when "unbatch" param is set' do
+            refute @second_is_batch_request
+          end
+        end
+
         describe 'time out' do
           before do
             @resource.reload
