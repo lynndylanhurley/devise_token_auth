@@ -180,6 +180,19 @@ Devise.setup do |config|
 end
 ~~~
 
+Devise request_keys are injected into the find_for_authentication method for authenticated models. As described in `config/initializers/devise.rb`:
+
+~~~ruby
+  # Configure parameters from the request object used for authentication. Each entry
+  # given should be a request method and it will automatically be passed to the
+  # find_for_authentication method and considered in your model lookup. For instance,
+  # if you set :request_keys to [:subdomain], :subdomain will be used on authentication.
+  # The same considerations mentioned for authentication_keys also apply to request_keys.
+  # config.request_keys = [:subdomain]
+~~~
+
+Read the [devise wiki](https://github.com/plataformatec/devise/wiki/How-to:-Scope-login-to-subdomain) for more information on request_keys configuration.
+
 ## OmniAuth authentication
 
 If you wish to use omniauth authentication, add all of your desired authentication provider gems to your `Gemfile`.

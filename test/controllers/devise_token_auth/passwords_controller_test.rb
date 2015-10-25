@@ -7,6 +7,8 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
+  self.use_transactional_fixtures = false
+
   describe DeviseTokenAuth::PasswordsController do
     describe "Password reset" do
       before do
@@ -63,6 +65,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             }
             @data = JSON.parse(response.body)
           end
+
           test 'unknown user should return 404' do
             assert_equal 404, response.status
           end
@@ -173,6 +176,15 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'case-insensitive email' do
           before do
+            # Change to case sensitive column if running mysql, the default is insensitive.
+            # As in devise, the assumption is the db is configured as needed for case sensitivity
+            # We removed custom sql in the sessions controller for mysql in favor of db configuration.
+            if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+              ActiveRecord::Base.connection.execute <<-SQL
+              ALTER TABLE users CHANGE email email VARCHAR(255) BINARY NOT NULL
+              SQL
+            end
+
             @resource_class = User
             @request_params = {
               email:        @resource.email.upcase,
@@ -180,14 +192,26 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             }
           end
 
+          after do
+            if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+              ActiveRecord::Base.connection.execute <<-SQL
+                ALTER TABLE users CHANGE email email VARCHAR(255) BINARY NULL
+              SQL
+            end
+          end
+
           test 'response should return success status if configured' do
             @resource_class.case_insensitive_keys = [:email]
+            @resource_class.instance_variable_set(:@devise_parameter_filter, nil)
+
             xhr :post, :create, @request_params
             assert_equal 200, response.status
           end
 
           test 'response should return failure status if not configured' do
             @resource_class.case_insensitive_keys = []
+            @resource_class.instance_variable_set(:@devise_parameter_filter, nil)
+
             xhr :post, :create, @request_params
             assert_equal 404, response.status
           end
