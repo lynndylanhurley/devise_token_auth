@@ -123,13 +123,13 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           describe 'password reset link failure' do
-            test 'respone should return 404' do
-              xhr :get, :edit, {
-                  reset_password_token: 'bogus',
+            test 'response should return 404' do
+              assert_raises(ActionController::RoutingError) {
+                xhr :get, :edit, {
+                  reset_password_token: "bogus",
                   redirect_url: @mail_redirect_url
+                }
               }
-
-              assert_equal 404, response.status
             end
           end
 
