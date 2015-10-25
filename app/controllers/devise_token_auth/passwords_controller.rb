@@ -103,7 +103,7 @@ module DeviseTokenAuth
           config:         params[:config]
         }))
       else
-        render_edit_error
+        raise ActionController::RoutingError.new('Not Found')
       end
     end
 
@@ -177,12 +177,6 @@ module DeviseTokenAuth
         success: false,
         errors: @errors,
       }, status: @error_status
-    end
-
-    def render_edit_error
-      render json: {
-        success: false
-      }, status: 404
     end
 
     def render_update_error_unauthorized
