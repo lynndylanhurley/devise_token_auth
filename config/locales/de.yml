@@ -1,4 +1,4 @@
-en:
+de:
   devise_token_auth:
     sessions:
       not_confirmed: "Ein E-Mail zu Bestätigung wurde an Ihre Adresse %{email} gesendet. Sie müssen den Anleitungsschritten im E-Mail folgen, um Ihren Account zu aktivieren"
