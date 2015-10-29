@@ -17,7 +17,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
   end
 
   describe 'success callback' do
-
     setup do
       OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
         :provider => 'facebook',
@@ -125,13 +124,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     describe "oauth registration attr" do
-
       after do
         User.any_instance.unstub(:new_record?)
       end
 
       describe 'with new user' do
-
         before do
           User.any_instance.expects(:new_record?).returns(true).at_least_once
         end
@@ -148,7 +145,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       describe 'with existing user' do
-
         before do
           User.any_instance.expects(:new_record?).returns(false).at_least_once
         end
@@ -191,7 +187,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     describe 'with omniauth_window_type=inAppBrowser' do
-
       test 'response contains all expected data' do
         get_success(omniauth_window_type: 'inAppBrowser')
         assert_expected_data_in_new_window
@@ -200,7 +195,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     describe 'with omniauth_window_type=newWindow' do
-
       test 'response contains all expected data' do
         get_success(omniauth_window_type: 'newWindow')
         assert_expected_data_in_new_window
@@ -216,7 +210,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     describe 'with omniauth_window_type=sameWindow' do
-
       test 'redirects to auth_origin_url with all expected query params' do
         get_via_redirect '/auth/facebook', {
           auth_origin_url: '/auth_origin',
@@ -247,14 +240,9 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       assert_equal 200, response.status
       @resource = assigns(:resource)
     end
-
-
-
   end
 
   describe 'failure callback' do
-
-
     setup do
       OmniAuth.config.mock_auth[:facebook] = :invalid_credentials
       OmniAuth.config.on_failure = Proc.new { |env|
@@ -280,7 +268,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       assert_equal 200, response.status
       assert_select "body", "invalid_credentials"
     end
-
   end
 
   describe 'User with only :database_authenticatable and :registerable included' do
