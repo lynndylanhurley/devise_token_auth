@@ -164,6 +164,8 @@ The following settings are available for configuration in `config/initializers/d
 | **`default_confirm_success_url`** | `nil` | By default this value is expected to be sent by the client so that the API knows where to redirect users after successful email confirmation. If this param is set, the API will redirect to this value when no value is provided by the cilent. |
 | **`default_password_reset_url`** | `nil` | By default this value is expected to be sent by the client so that the API knows where to redirect users after successful password resets. If this param is set, the API will redirect to this value when no value is provided by the cilent. |
 | **`redirect_whitelist`** | `nil` | As an added security measure, you can limit the URLs to which the API will redirect after email token validation (password reset, email confirmation, etc.). This value should be an array containing exact matches to the client URLs to be visited after validation. |
+| **`enable_standard_devise_support`** | `false` | By default, only Bearer Token authentication is implemented out of the box. If, however, you wish to integrate with legacy Devise authentication, you can do so by enabling this flag. NOTE: This feature is highly experimental! |
+
 
 Additionally, you can configure other aspects of devise by manually creating the traditional devise.rb file at `config/initializers/devise.rb`. Here are some examples of what you can do in this file:
 
@@ -773,8 +775,16 @@ When posting issues, please include the following information to speed up the tr
 
 ### Can I use this gem alongside standard Devise?
 
-Yes! But you will need to use separate routes for standard Devise. So do something like this:
+Yes! But you will need to enable the support use separate routes for standard Devise. So do something like this:
 
+#### config/initializers/devise_token_auth.rb
+~~~ruby
+DeviseTokenAuth.setup do |config|
+  # enable_standard_devise_support = false
+end
+~~~
+
+#### config/routes.rb
 ~~~ruby
 Rails.application.routes.draw do
 
