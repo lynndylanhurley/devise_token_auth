@@ -56,7 +56,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     user = uid && rc.find_by_uid(uid)
 
     if user && user.valid_token?(@token, @client_id)
-      sign_in(:user, user, store: false, bypass: false)
+      sign_in(:user, user, store: false, bypass: true)
       return @resource = user
     else
       # zero all values previously set values
