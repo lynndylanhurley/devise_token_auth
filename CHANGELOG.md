@@ -3,7 +3,18 @@
 
 ## Features
 
+- **Standard Devise**: Allow conditional support of legacy Devise. Now defaults to disabled.
+- **Localization**: Add German translation(de)
 - **Batch Requests**: Prevent batching of requests by appending `unbatch=true` param to request URL
+
+## Fixes
+
+- **URL Helper**: Preserve query parameters when building urls
+
+## Breaking Changes
+
+- This version updates legacy Devise support to default to disabled rather than enabled. This support causing all sorts of random issues for people who may not have needed the integration. This feature is considered experimental.
+
 
 <a name="0.1.36"></a>
 # 0.1.36 (2015-10-13)

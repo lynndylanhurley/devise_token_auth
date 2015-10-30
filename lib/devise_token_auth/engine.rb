@@ -17,7 +17,8 @@ module DeviseTokenAuth
                  :default_confirm_success_url,
                  :default_password_reset_url,
                  :redirect_whitelist,
-                 :check_current_password_before_update
+                 :check_current_password_before_update,
+                 :enable_standard_devise_support
 
   self.change_headers_on_each_request       = true
   self.max_number_of_clients                = 10
@@ -28,6 +29,7 @@ module DeviseTokenAuth
   self.default_password_reset_url           = nil
   self.redirect_whitelist                   = nil
   self.check_current_password_before_update = false
+  self.enable_standard_devise_support       = false
 
   def self.setup(&block)
     yield self
