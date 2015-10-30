@@ -23,10 +23,25 @@ en:
       password_not_required: "This account does not require a password. Sign in using your %{provider} account instead."
       missing_passwords: 'You must fill out the fields labeled "password" and "password confirmation".'
       successfully_updated: "Your password has been successfully updated."
-
   errors:
     validate_sign_up_params: "Please submit proper sign up data in request body."
     validate_account_update_params: "Please submit proper account update data in request body."
     not_email: "is not an email"
     messages:
       already_in_use: already in use
+  devise:
+    mailer:
+      confirmation_instructions:
+        confirm_link_msg: "You can confirm your account email through the link below:"
+        confirm_account_link: Confirm my account
+      reset_password_instructions:
+        request_reset_link_msg: "Someone has requested a link to change your password. You can do this through the link below."
+        password_change_link: Change my password
+        ignore_mail_msg: "If you didn't request this, please ignore this email."
+        no_changes_msg: "Your password won't change until you access the link above and create a new one."
+      unlock_instructions:
+        account_lock_msg: Your account has been locked due to an excessive number of unsuccessful sign in attempts.
+        unlock_link_msg: "Click the link below to unlock your account:"
+        unlock_link: Unlock my account
+  hello: hello
+  welcome: welcome

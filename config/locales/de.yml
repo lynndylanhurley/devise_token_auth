@@ -23,10 +23,28 @@ de:
       password_not_required: "Dieser Account benötigt kein Passwort. Melden Sie Sich stattdessen über Ihren Account bei %{provider} an."
       missing_passwords: 'Sie müssen die Felder "Passwort" and "Passwortbestätigung" ausfüllen.'
       successfully_updated: "Ihr Passwort wurde erfolgreich aktualisiert."
-
   errors:
     validate_sign_up_params: "Bitte übermitteln sie vollständige Anmeldeinformationen im Body des Requests."
     validate_account_update_params: "Bitte übermitteln sie vollständige Informationen zur Aktualisierung im Body des Requests."
     not_email: "ist keine E-Mail Adresse"
     messages:
       already_in_use: "bereits in Verwendung"
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: "Bestätigungs-"
+        confirm_link_msg: "Sie können Ihr Konto E-Mail über den untenstehenden Link bestätigen:"
+        confirm_account_link: "Ihr Konto zu bestätigen"
+      reset_password_instructions:
+        subject: "Wiederherstellungskennwort Anweisungen"
+        request_reset_link_msg: "Jemand hat einen Link auf Ihr Kennwort zu ändern angefordert. Sie können dies durch den folgenden Link tun:"
+        password_change_link: "Kennwort ändern"
+        ignore_mail_msg: "Wenn Sie nicht angefordert haben diese , ignorieren Sie bitte diese E-Mail:"
+        no_changes_msg: "Ihr Passwort wird nicht geändert , bis Sie auf den obigen Link zugreifen und eine neue erstellen ."
+      unlock_instructions:
+        subject: "entsperren Anweisungen"
+        account_lock_msg: "Ihr Konto wurde aufgrund einer übermäßigen Anzahl von erfolglosen Zeichen in Versuchen gesperrt."
+        unlock_link_msg: "Klicken Sie auf den Link unten , um Ihr Konto zu entsperren :"
+        unlock_link: "Entsperren Sie Ihr Konto "
+  hello: "hallo"
+  welcome: "willkommen"

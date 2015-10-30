@@ -23,10 +23,28 @@ fr:
       password_not_required: "Ce compte ne demande pas de mot de passe. Connectez vous plutôt en utilisant %{provider}."
       missing_passwords: 'Vous devez remplir les champs "mt de passe" et "confirmation de mot de passe".'
       successfully_updated: "Votre mot de passe a été correctement mis à jour."
-
   errors:
     validate_sign_up_params: "Les données de l'inscription dans le corps de la requête ne sont pas valides."
     validate_account_update_params: "Les données de mise à jour dans le corps de la requête ne sont pas valides."
     not_email: "n'est pas un email"
     messages:
       already_in_use: "déjà utilisé"
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: "Les instructions de confirmation"
+        confirm_link_msg: "Vous pouvez confirmer votre compte e-mail via le lien ci-dessous :"
+        confirm_account_link: "Confirmez mon compte"
+      reset_password_instructions:
+        subject: "Instructions de mot de passe de récupération"
+        request_reset_link_msg: "Quelqu'un a demandé un lien pour changer votre mot de passe . Vous pouvez le faire via le lien ci-dessous ."
+        password_change_link: "Changer mon mot de passe"
+        ignore_mail_msg: "Si vous ne l'avez pas demandé cela, s'il vous plaît ignorer cet e-mail ."
+        no_changes_msg: "Votre mot de passe ne changera pas jusqu'à ce que vous accédez au lien ci-dessus et en créer un nouveau ."
+      unlock_instructions:
+        subject: "Instructions à débloquer"
+        account_lock_msg: "Votre compte a été bloqué en raison d' un nombre excessif de signe échec dans les tentatives ."
+        unlock_link_msg: "Cliquez sur le lien ci-dessous pour déverrouiller votre compte :"
+        unlock_link: "Déverrouiller mon compte"
+  hello: bonjour
+  welcome: bienvenue
