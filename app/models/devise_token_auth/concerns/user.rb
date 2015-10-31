@@ -161,8 +161,8 @@ module DeviseTokenAuth::Concerns::User
 
 
   # update user's auth token (should happen on each request)
-  def create_new_auth_token(options = {})
-    client_id    = options.fetch(:client_id, SecureRandom.urlsafe_base64(nil, false))
+  def create_new_auth_token(client_id=nil, options = {})
+	client_id  ||= SecureRandom.urlsafe_base64(nil, false)
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = ::BCrypt::Password.create(token)
