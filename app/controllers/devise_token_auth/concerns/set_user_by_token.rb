@@ -36,7 +36,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
       @used_auth_by_token = false
       @resource = devise_warden_user
-      @resource.create_new_auth_token
+      @resource.create_new_auth_token(@client_id)
     end
 
     # user has already been found and authenticated
