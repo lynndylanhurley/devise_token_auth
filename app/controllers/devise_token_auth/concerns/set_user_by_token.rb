@@ -31,12 +31,14 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # client_id isn't required, set to 'default' if absent
     @client_id ||= 'default'
 
-    # check for an existing user, authenticated via warden/devise
-    devise_warden_user = warden.user(rc.to_s.underscore.to_sym)
-    if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
-      @used_auth_by_token = false
-      @resource = devise_warden_user
-      @resource.create_new_auth_token
+    # check for an existing user, authenticated via warden/devise, if enabled
+    if DeviseTokenAuth.enable_standard_devise_support
+      devise_warden_user = warden.user(rc.to_s.underscore.to_sym)
+      if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
+        @used_auth_by_token = false
+        @resource = devise_warden_user
+        @resource.create_new_auth_token
+      end
     end
 
     # user has already been found and authenticated
@@ -54,7 +56,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     user = uid && rc.find_by_uid(uid)
 
     if user && user.valid_token?(@token, @client_id)
-      sign_in(:user, user, store: false, bypass: false)
+      sign_in(:user, user, store: false, bypass: true)
       return @resource = user
     else
       # zero all values previously set values

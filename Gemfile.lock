@@ -261,6 +261,3 @@ DEPENDENCIES
   rack-cors
   sqlite3 (~> 1.3)
   thor
-
-BUNDLED WITH
-   1.10.5
