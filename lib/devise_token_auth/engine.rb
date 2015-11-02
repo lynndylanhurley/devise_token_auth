@@ -10,6 +10,7 @@ module DeviseTokenAuth
   end
 
   mattr_accessor :change_headers_on_each_request,
+                 :max_number_of_clients,
                  :token_lifespan,
                  :batch_request_buffer_throttle,
                  :omniauth_prefix,
@@ -19,6 +20,7 @@ module DeviseTokenAuth
                  :check_current_password_before_update
 
   self.change_headers_on_each_request       = true
+  self.max_number_of_clients                = 10
   self.token_lifespan                       = 2.weeks
   self.batch_request_buffer_throttle        = 5.seconds
   self.omniauth_prefix                      = '/omniauth'
@@ -33,7 +35,7 @@ module DeviseTokenAuth
     Rails.application.config.after_initialize do
       if defined?(::OmniAuth)
         ::OmniAuth::config.path_prefix = Devise.omniauth_path_prefix = self.omniauth_prefix
-      
+
 
         # Omniauth currently does not pass along omniauth.params upon failure redirect
         # see also: https://github.com/intridea/omniauth/issues/626
