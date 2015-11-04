@@ -1,0 +1,32 @@
+de:
+  devise_token_auth:
+    sessions:
+      not_confirmed: "Ein E-Mail zu Bestätigung wurde an Ihre Adresse %{email} gesendet. Sie müssen den Anleitungsschritten im E-Mail folgen, um Ihren Account zu aktivieren"
+      bad_credentials: "Ungültige Anmeldeinformationen. Bitte versuchen Sie es erneut."
+      not_supported: "Verwenden Sie POST /sign_in zur Anmeldung. GET wird nicht unterstützt."
+      user_not_found: "Benutzer wurde nicht gefunden oder konnte nicht angemeldet werden."
+    token_validations:
+      invalid: "Ungültige Anmeldeinformationen"
+    registrations:
+      missing_confirm_success_url: "Fehlender Paramter `confirm_success_url`."
+      redirect_url_not_allowed: "Weiterleitung zu %{redirect_url} ist nicht gestattet."
+      email_already_exists: "Es gibt bereits einen Account für %{email}."
+      account_with_uid_destroyed: "Account mit der uid %{uid} wurde gelöscht."
+      account_to_destroy_not_found: "Der Account, der gelöscht werden soll, kann nicht gefunden werden."
+      user_not_found: "Benutzer kann nicht gefunden werden."
+    passwords:
+      missing_email: "Sie müssen eine E-Mail Adresse angeben."
+      missing_redirect_url: "Es fehlt der URL zu Weiterleitung."
+      not_allowed_redirect_url: "Weiterleitung zu %{redirect_url} ist nicht gestattet."
+      sended: "Ein E-Mail mit Anleitung zum Rücksetzen Ihres Passwortes wurde an %{email} gesendet."
+      user_not_found: "Der Benutzer mit E-Mail-Adresse '%{email}' kann nicht gefunden werden."
+      password_not_required: "Dieser Account benötigt kein Passwort. Melden Sie Sich stattdessen über Ihren Account bei %{provider} an."
+      missing_passwords: 'Sie müssen die Felder "Passwort" and "Passwortbestätigung" ausfüllen.'
+      successfully_updated: "Ihr Passwort wurde erfolgreich aktualisiert."
+
+  errors:
+    validate_sign_up_params: "Bitte übermitteln sie vollständige Anmeldeinformationen im Body des Requests."
+    validate_account_update_params: "Bitte übermitteln sie vollständige Informationen zur Aktualisierung im Body des Requests."
+    not_email: "ist keine E-Mail Adresse"
+    message:
+      already_in_use: "bereits in Verwendung"

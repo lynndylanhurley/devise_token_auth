@@ -31,12 +31,14 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # client_id isn't required, set to 'default' if absent
     @client_id ||= 'default'
 
-    # check for an existing user, authenticated via warden/devise
-    devise_warden_user =  warden.user(rc.to_s.underscore.to_sym)
-    if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
-      @used_auth_by_token = false
-      @resource = devise_warden_user
-      @resource.create_new_auth_token
+    # check for an existing user, authenticated via warden/devise, if enabled
+    if DeviseTokenAuth.enable_standard_devise_support
+      devise_warden_user = warden.user(rc.to_s.underscore.to_sym)
+      if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
+        @used_auth_by_token = false
+        @resource = devise_warden_user
+        @resource.create_new_auth_token
+      end
     end
 
     # user has already been found and authenticated
@@ -123,6 +125,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
 
   def is_batch_request?(user, client_id)
+    not params[:unbatch] and
     user.tokens[client_id] and
     user.tokens[client_id]['updated_at'] and
     Time.parse(user.tokens[client_id]['updated_at']) > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle

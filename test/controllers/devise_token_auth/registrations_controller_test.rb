@@ -763,13 +763,15 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "Mang should be destroyed" do
+        @resource.skip_confirmation!
+        @resource.save!
         @auth_headers  = @resource.create_new_auth_token
         @client_id     = @auth_headers['client']
 
         # ensure request is not treated as batch request
         age_token(@resource, @client_id)
 
-        delete "/mangs", {}, @auth_headers
+        xhr :delete,  "/mangs", {}, @auth_headers
 
         assert_equal 200, response.status
         refute Mang.where(id: @resource.id).first

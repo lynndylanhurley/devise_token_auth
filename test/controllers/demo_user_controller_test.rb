@@ -201,6 +201,31 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
         end
 
+        describe 'unbatch' do
+          before do
+            @resource.reload
+            age_token(@resource, @client_id)
+
+            get '/demo/members_only', {}, @auth_headers
+
+            @first_is_batch_request = assigns(:is_batch_request)
+            @first_user = assigns(:resource).dup
+            @first_access_token = response.headers['access-token']
+            @first_response_status = response.status
+
+            get '/demo/members_only?unbatch=true', {}, @auth_headers
+
+            @second_is_batch_request = assigns(:is_batch_request)
+            @second_user = assigns(:resource)
+            @second_access_token = response.headers['access-token']
+            @second_response_status = response.status
+          end
+
+          it 'should NOT treat the second request as a batch request when "unbatch" param is set' do
+            refute @second_is_batch_request
+          end
+        end
+
         describe 'time out' do
           before do
             @resource.reload
@@ -256,6 +281,67 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           it 'should not define user during second request' do
             refute @second_user
           end
+        end
+      end
+
+    end
+
+    describe 'enable_standard_devise_support' do
+
+      before do
+        @resource = users(:confirmed_email_user)
+        @auth_headers = @resource.create_new_auth_token
+        DeviseTokenAuth.enable_standard_devise_support = true
+      end
+
+      describe 'Existing Warden authentication' do
+        before do
+          @resource = users(:second_confirmed_email_user)
+          @resource.skip_confirmation!
+          @resource.save!
+          login_as( @resource, :scope => :user)
+
+          # no auth headers sent, testing that warden authenticates correctly.
+          get '/demo/members_only', {}, nil
+
+          @resp_token       = response.headers['access-token']
+          @resp_client_id   = response.headers['client']
+          @resp_expiry      = response.headers['expiry']
+          @resp_uid         = response.headers['uid']
+        end
+
+        describe 'devise mappings' do
+          it 'should define current_user' do
+            assert_equal @resource, @controller.current_user
+          end
+
+          it 'should define user_signed_in?' do
+            assert @controller.user_signed_in?
+          end
+
+          it 'should not define current_mang' do
+            refute_equal @resource, @controller.current_mang
+          end
+        end
+
+        it 'should return success status' do
+          assert_equal 200, response.status
+        end
+
+        it 'should receive new token after successful request' do
+          assert @resp_token
+        end
+
+        it 'should set the token expiry in the auth header' do
+          assert @resp_expiry
+        end
+
+        it 'should return the client id in the auth header' do
+          assert @resp_client_id
+        end
+
+        it "should return the user's uid in the auth header" do
+          assert @resp_uid
         end
       end
 
@@ -316,57 +402,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           refute_equal @resp_uid, @auth_headers['uid']
         end
       end
-    end
 
-    describe 'Existing Warden authentication' do
-      before do
-        @resource = users(:second_confirmed_email_user)
-        @resource.skip_confirmation!
-        @resource.save!
-        login_as( @resource, :scope => :user)
-
-        # no auth headers sent, testing that warden authenticates correctly.
-        get '/demo/members_only', {}, nil
-
-        @resp_token       = response.headers['access-token']
-        @resp_client_id   = response.headers['client']
-        @resp_expiry      = response.headers['expiry']
-        @resp_uid         = response.headers['uid']
-      end
-
-      describe 'devise mappings' do
-        it 'should define current_user' do
-          assert_equal @resource, @controller.current_user
-        end
-
-        it 'should define user_signed_in?' do
-          assert @controller.user_signed_in?
-        end
-
-        it 'should not define current_mang' do
-          refute_equal @resource, @controller.current_mang
-        end
-      end
-
-      it 'should return success status' do
-        assert_equal 200, response.status
-      end
-
-      it 'should receive new token after successful request' do
-        assert @resp_token
-      end
-
-      it 'should set the token expiry in the auth header' do
-        assert @resp_expiry
-      end
-
-      it 'should return the client id in the auth header' do
-        assert @resp_client_id
-      end
-
-      it "should return the user's uid in the auth header" do
-        assert @resp_uid
-      end
     end
 
   end

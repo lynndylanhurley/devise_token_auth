@@ -71,7 +71,7 @@ module DeviseTokenAuth
         end
       end
       @_omniauth_params
-      
+
     end
 
     # break out provider attribute assignment for easy method extension
@@ -206,12 +206,12 @@ module DeviseTokenAuth
       elsif auth_origin_url # default to same-window implementation, which forwards back to auth_origin_url
 
         # build and redirect to destination url
-        redirect_to DeviseTokenAuth::Url.generate(auth_origin_url, data)
+        redirect_to DeviseTokenAuth::Url.generate(auth_origin_url, data.merge(blank: true))
       else
-        
+
         # there SHOULD always be an auth_origin_url, but if someone does something silly
         # like coming straight to this url or refreshing the page at the wrong time, there may not be one.
-        # In that case, just render in plain text the error message if there is one or otherwise 
+        # In that case, just render in plain text the error message if there is one or otherwise
         # a generic message.
         fallback_render data[:error] || 'An error occurred'
       end
@@ -225,7 +225,7 @@ module DeviseTokenAuth
                     <body>
                             #{text}
                     </body>
-            </html>| 
+            </html>|
     end
 
     def get_resource_from_auth_hash
