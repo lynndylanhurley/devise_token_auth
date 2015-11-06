@@ -322,6 +322,19 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           it 'should not define current_mang' do
             refute_equal @resource, @controller.current_mang
           end
+		  
+		  
+          it 'should increase the number of tokens by a factor of 2 up to 11' do
+            @first_token = @resource.tokens.keys.first
+
+            DeviseTokenAuth.max_number_of_devices = 11
+            (1..10).each do |n|
+              assert_equal [11, 2*n].min, @resource.reload.tokens.keys.length
+              get '/demo/members_only', {}, nil
+            end
+
+            assert_not_includes @resource.reload.tokens.keys, @first_token
+          end
         end
 
         it 'should return success status' do

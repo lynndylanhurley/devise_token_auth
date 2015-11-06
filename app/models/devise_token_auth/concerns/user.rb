@@ -178,6 +178,12 @@ module DeviseTokenAuth::Concerns::User
       last_token: last_token,
       updated_at: Time.now
     }
+	
+    max_clients = DeviseTokenAuth.max_number_of_devices
+    while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
+      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
+      self.tokens.delete(oldest_token.first)
+    end	
 
     self.save!
 
