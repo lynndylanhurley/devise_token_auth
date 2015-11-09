@@ -1,0 +1,33 @@
+ru:
+  devise_token_auth:
+    sessions:
+      not_confirmed: "Письмо с подтверждением Вашей учетной записи %{email} отправлено на электронную почту. Вы должны следовать инструкциям, приведенным в письме, прежде чем Ваша учетная запись сможет быть активирована"
+      bad_credentials: "Неверные логин или пароль. Пожалуйста, попробуйте еще раз."
+      not_supported: "Используйте POST /sign_in для входа. GET запросы не поддерживаются."
+      user_not_found: "Пользователь не найден или не вошел."
+    token_validations:
+      invalid: "Неверные данные для входа"
+    registrations:
+      missing_confirm_success_url: "Отсутствует параметр `confirm_success_url`."
+      redirect_url_not_allowed: "Переадресация на %{redirect_url} не разрешена."
+      email_already_exists: "Учетная запись для %{email} уже существует"
+      account_with_uid_destroyed: "Учетная запись с uid %{uid} удалена."
+      account_to_destroy_not_found: "Не удается найти учетную запись для удаления."
+      user_not_found: "Пользователь не найден."
+    passwords:
+      missing_email: "Вы должны указать адрес электронной почты."
+      missing_redirect_url: "Отсутствует адрес переадресации."
+      not_allowed_redirect_url: "Переадресация на %{redirect_url} не разрешена."
+      sended: "Инструкция по восстановлению пароля отправлена на Вашу электронную почту %{email}."
+      user_not_found: "Не удается найти пользователя с электронной почтой '%{email}'."
+      password_not_required: "Эта учетная запись не требует пароля. Войдите используя учетную запись %{provider}."
+      missing_passwords: 'Вы должны заполнить поля "пароль" и "повторите пароль".'
+      successfully_updated: "Ваш пароль успешно обновлён."
+
+  errors:
+    validate_sign_up_params: "Пожалуйста, укажите надлежащие данные для регистрации в теле запроса."
+    validate_account_update_params: "Пожалуйста, укажите надлежащие данные для обновления учетной записи в теле запроса."
+    not_email: "не является электронной почтой"
+    messages:
+      already_in_use: "уже используется"
+
