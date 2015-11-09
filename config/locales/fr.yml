@@ -28,3 +28,5 @@ fr:
     validate_sign_up_params: "Les données de l'inscription dans le corps de la requête ne sont pas valides."
     validate_account_update_params: "Les données de mise à jour dans le corps de la requête ne sont pas valides."
     not_email: "n'est pas un email"
+    messages:
+      already_in_use: "déjà utilisé"

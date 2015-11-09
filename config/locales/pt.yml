@@ -28,3 +28,5 @@ pt:
     validate_sign_up_params: "Os dados submetidos na requisição de registo são inválidos."
     validate_account_update_params: "Os dados submetidos para atualização de conta são inválidos."
     not_email: "não é um e-mail"
+    messages:
+      already_in_use: "em uso"
