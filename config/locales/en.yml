@@ -23,6 +23,8 @@ en:
       password_not_required: "This account does not require a password. Sign in using your %{provider} account instead."
       missing_passwords: 'You must fill out the fields labeled "password" and "password confirmation".'
       successfully_updated: "Your password has been successfully updated."
+    users:
+      email_in_use: "address is already in use"
 
   errors:
     validate_sign_up_params: "Please submit proper sign up data in request body."

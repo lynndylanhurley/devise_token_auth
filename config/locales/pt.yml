@@ -23,6 +23,8 @@ pt:
       password_not_required: "Esta conta não necessita de uma senha. Faça login utilizando %{provider}."
       missing_passwords: 'Preencha a senha e a confirmação de senha.'
       successfully_updated: "Senha atualizada com sucesso."
+    users:
+      email_in_use: "já está registado"
 
   errors:
     validate_sign_up_params: "Os dados submetidos na requisição de registo são inválidos."
