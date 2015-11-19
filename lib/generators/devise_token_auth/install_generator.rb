@@ -1,4 +1,5 @@
 module DeviseTokenAuth
+
   class InstallGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
@@ -12,13 +13,15 @@ module DeviseTokenAuth
     end
 
     def copy_migrations
-      if self.class.migration_exists?("db/migrate", "devise_token_auth_create_#{ user_class.underscore }")
-        say_status("skipped", "Migration 'devise_token_auth_create_#{ user_class.underscore }' already exists")
-      else
-        migration_template(
-          "devise_token_auth_create_users.rb.erb",
-          "db/migrate/devise_token_auth_create_#{ user_class.pluralize.underscore }.rb"
-        )
+      if !DeviseTokenAuth.mongoid?
+        if self.class.migration_exists?("db/migrate", "devise_token_auth_create_#{ user_class.underscore }")
+          say_status("skipped", "Migration 'devise_token_auth_create_#{ user_class.underscore }' already exists")
+        else
+          migration_template(
+            "devise_token_auth_create_users.rb.erb",
+            "db/migrate/devise_token_auth_create_#{ user_class.pluralize.underscore }.rb"
+          )
+        end
       end
     end
 
@@ -29,13 +32,59 @@ module DeviseTokenAuth
       else
         inclusion = "include DeviseTokenAuth::Concerns::User"
         unless parse_file_for_line(fname, inclusion)
-          inject_into_file fname, after: "class #{user_class} < ActiveRecord::Base\n" do <<-'RUBY'
-  # Include default devise modules.
-  devise :database_authenticatable, :registerable,
-          :recoverable, :rememberable, :trackable, :validatable,
-          :confirmable, :omniauthable
-  include DeviseTokenAuth::Concerns::User
-          RUBY
+          if DeviseTokenAuth.mongoid?
+            inject_into_file fname, after: "class #{user_class}\n include Mongoid::Document\n" do <<-'RUBY'
+    # Include default devise modules.
+    devise :database_authenticatable, :registerable,
+            :recoverable, :rememberable, :trackable, :validatable,
+            :confirmable, :omniauthable
+    include DeviseTokenAuth::Concerns::User
+    field :email, type: String
+    field :encrypted_password, type: String, default: ''
+
+    ## Recoverable
+    field :reset_password_token, type: String
+    field :reset_password_sent_at, type: Time
+
+    ## Rememberable
+    field :remember_created_at, type: Time
+
+    ## Trackable
+    field :sign_in_count, type: Integer, default: 0
+    field :current_sign_in_at, type: Time
+    field :last_sign_in_at, type: Time
+    field :current_sign_in_ip, type: String
+    field :last_sign_in_ip, type: String
+
+    ## Confirmable
+    field :confirmation_token, type: String
+    field :confirmed_at, type: Time
+    field :confirmation_sent_at, type: Time
+    field :unconfirmed_email, type: String
+
+    ## unique oauth id
+    field :provider, type: String
+    field :uid, default: ""
+
+    ## Tokens
+    field :tokens, type: Hash, default: { }
+
+    ## Index
+    index({email: 1, uid: 1, reset_password_token: 1}, {unique: true})
+
+    ## Validation
+    validates_uniqueness_of :email, :uid
+            RUBY
+            end
+          else
+            inject_into_file fname, after: "class #{user_class} < ActiveRecord::Base\n" do <<-'RUBY'
+    # Include default devise modules.
+    devise :database_authenticatable, :registerable,
+            :recoverable, :rememberable, :trackable, :validatable,
+            :confirmable, :omniauthable
+    include DeviseTokenAuth::Concerns::User
+            RUBY
+            end
           end
         end
       end
@@ -128,7 +177,7 @@ module DeviseTokenAuth
     end
 
     def json_supported_database?
-      (postgres? && postgres_correct_version?) || (mysql? && mysql_correct_version?)
+      (postgres? && postgres_correct_version?) || (mysql? && mysql_correct_version?) || DeviseTokenAuth.mongoid?
     end
 
     def postgres?

@@ -1,4 +1,5 @@
 require 'bcrypt'
+require 'mongoid-locker' if DeviseTokenAuth.mongoid?
 
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
@@ -15,6 +16,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   included do
+    include Mongoid::Locker if DeviseTokenAuth.mongoid?
     # Hack to check if devise is already enabled
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
@@ -97,7 +99,7 @@ module DeviseTokenAuth::Concerns::User
 
 
     def tokens_has_json_column_type?
-      table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+      DeviseTokenAuth.mongoid? || (table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb]))
     end
   end
 

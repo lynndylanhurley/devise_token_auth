@@ -17,7 +17,8 @@ module DeviseTokenAuth
                  :default_password_reset_url,
                  :redirect_whitelist,
                  :check_current_password_before_update,
-                 :enable_standard_devise_support
+                 :enable_standard_devise_support,
+                 :use_mongoid
 
   self.change_headers_on_each_request       = true
   self.token_lifespan                       = 2.weeks
@@ -28,6 +29,7 @@ module DeviseTokenAuth
   self.redirect_whitelist                   = nil
   self.check_current_password_before_update = false
   self.enable_standard_devise_support       = false
+  self.use_mongoid                          = false
 
   def self.setup(&block)
     yield self
@@ -72,5 +74,9 @@ module DeviseTokenAuth
 
       end
     end
+  end
+
+  def self.mongoid?
+    DeviseTokenAuth.use_mongoid
   end
 end
