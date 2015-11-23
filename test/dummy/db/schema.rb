@@ -62,6 +62,12 @@ ActiveRecord::Schema.define(version: 20160629184441) do
     t.index ["unlock_token"], name: "index_lockable_users_on_unlock_token", unique: true
   end
 
+  create_table "facebook_users", force: :cascade do |t|
+    t.integer "facebook_id"
+  end
+
+  add_index "facebook_users", ["facebook_id"], name: "index_facebook_users_on_facebook_id"
+
   create_table "mangs", force: :cascade do |t|
     t.string "email"
     t.string "encrypted_password", default: "", null: false
@@ -93,6 +99,45 @@ ActiveRecord::Schema.define(version: 20160629184441) do
     t.index ["reset_password_token"], name: "index_mangs_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_mangs_on_uid_and_provider", unique: true
   end
+
+  add_index "mangs", ["confirmation_token"], name: "index_mangs_on_confirmation_token", unique: true
+  add_index "mangs", ["email"], name: "index_mangs_on_email"
+  add_index "mangs", ["reset_password_token"], name: "index_mangs_on_reset_password_token", unique: true
+  add_index "mangs", ["uid", "provider"], name: "index_mangs_on_uid_and_provider", unique: true
+
+  create_table "multi_auth_users", force: :cascade do |t|
+    t.string   "email"
+    t.string   "encrypted_password",          default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.string   "reset_password_redirect_url"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",               default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "confirm_success_url"
+    t.string   "unconfirmed_email"
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "image"
+    t.integer  "twitter_id"
+    t.integer  "facebook_user_id"
+    t.text     "tokens"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "multi_auth_users", ["confirmation_token"], name: "index_multi_auth_users_on_confirmation_token", unique: true
+  add_index "multi_auth_users", ["email"], name: "index_multi_auth_users_on_email"
+  add_index "multi_auth_users", ["facebook_user_id"], name: "index_multi_auth_users_on_facebook_user_id", unique: true
+  add_index "multi_auth_users", ["nickname"], name: "index_multi_auth_users_on_nickname", unique: true
+  add_index "multi_auth_users", ["reset_password_token"], name: "index_multi_auth_users_on_reset_password_token", unique: true
+  add_index "multi_auth_users", ["twitter_id"], name: "index_multi_auth_users_on_twitter_id", unique: true
 
   create_table "nice_users", force: :cascade do |t|
     t.string "provider", null: false
@@ -245,14 +290,22 @@ ActiveRecord::Schema.define(version: 20160629184441) do
     t.string "uid", default: "", null: false
     t.text "tokens"
     t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "operating_thetan"
-    t.string "favorite_color"
+    t.datetime "updated_at"s
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email"
     t.index ["nickname"], name: "index_users_on_nickname", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
+    t.integer  "operating_thetan"
+    t.string   "favorite_color"
+    t.integer  "twitter_id"
   end
+
+  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email"
+  add_index "users", ["nickname"], name: "index_users_on_nickname", unique: true
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["twitter_id"], name: "index_users_on_twitter_id"
+  add_index "users", ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
 
 end

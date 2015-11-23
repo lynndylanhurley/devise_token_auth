@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
+  resource_finder_for :twitter, ->(twitter_id) { find_by(twitter_id: twitter_id) }
+
   validates :operating_thetan, numericality: true, allow_nil: true
   validate :ensure_correct_favorite_color
 

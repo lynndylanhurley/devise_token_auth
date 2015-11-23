@@ -1,0 +1,11 @@
+<% timestamp = DateTime.parse(2.weeks.ago.to_s).to_time.strftime("%F %T") %>
+multi_authed_user:
+  email:              '<%= Faker::Internet.email %>'
+  nickname:           'stimpy'
+  twitter_id:         '12345'
+  confirmed_at:       '<%= timestamp %>'
+  created_at:         '<%= timestamp %>'
+  updated_at:         '<%= timestamp %>'
+  encrypted_password: <%= User.new.send(:password_digest, 'secret123') %>
+
+
