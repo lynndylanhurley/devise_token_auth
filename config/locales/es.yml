@@ -23,10 +23,28 @@ es:
       password_not_required: "Esta cuenta no requiere contraseña. Iniciar sesión utilizando %{provider}."
       missing_passwords: 'Debe llenar los campos "contraseña" y "confirmación de contraseña".'
       successfully_updated: "Su contraseña ha sido actualizada con éxito."
-
   errors:
     validate_sign_up_params: "Los datos introducidos en la solicitud de acceso no son válidos."
     validate_account_update_params: "Los datos introducidos en la solicitud de actualización no son válidos."
     not_email: "no es un correo electrónico"
     messages:
       already_in_use: ya ha sido ocupado
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: Instrucciones de confirmación
+        confirm_link_msg: "Para confirmar su cuenta ingrese en el siguiente link:"
+        confirm_account_link: Confirmar cuenta
+      reset_password_instructions:
+        subject: Instrucciones para restablecer su contraseña
+        request_reset_link_msg: "Ha solicitado un cambio de contraseña. Para continuar ingrese en el siguiente link:"
+        password_change_link: Cambiar contraseña
+        ignore_mail_msg: Por favor ignore este mensaje si no ha solicitado esta acción.
+        no_changes_msg: "Importante: Su contraseña no será actualizada a menos que ingrese en el link."
+      unlock_instructions:
+        subject: Instrucciones de desbloqueo
+        account_lock_msg: Su cuenta ha sido bloqueada debido a sucesivos intentos de ingresos fallidos
+        unlock_link_msg: "Para desbloquear su cuenta ingrese en el siguiente link:"
+        unlock_link: Desbloquear cuenta  
+  hello: hola
+  welcome: bienvenido
