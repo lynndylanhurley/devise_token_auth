@@ -9,37 +9,24 @@ module DeviseTokenAuth
     end
 
     def create
-      # Check
-      field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
+      field = resource_class.authentication_field_for(resource_params.keys.map(&:to_sym))
 
-      @resource = nil
       if field
-        q_value = resource_params[field]
-
-        if resource_class.case_insensitive_keys.include?(field)
-          q_value.downcase!
-        end
-
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.where(q, q_value).first
+        @resource = resource_class.find_resource(resource_params[field], field)
       end
 
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
-        # create client id
-        @client_id = SecureRandom.urlsafe_base64(nil, false)
-        @token     = SecureRandom.urlsafe_base64(nil, false)
+      if @resource and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+        auth_values = @resource.create_new_auth_token(nil, resource_params[field], field)
 
-        @resource.tokens[@client_id] = {
-          token: BCrypt::Password.create(@token),
-          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
-        }
-        @resource.save
+        # These instance variables are required when updating the auth headers
+        # at the end of the request, see:
+        #   DeviseTokenAuth::Concerns::SetUserByToken#update_auth_header
+        @token       = auth_values["access-token"]
+        @client_id   = auth_values["client"]
+        @provider    = "email"
+        @provider_id = @resource.email
 
+        # REVIEW: Shouldn't this be a "mapping" option, rather than a :user?
         sign_in(:user, @resource, store: false, bypass: false)
 
         yield if block_given?
@@ -71,10 +58,6 @@ module DeviseTokenAuth
     end
 
     protected
-
-    def valid_params?(key, val)
-      resource_params[:password] && key && val
-    end
 
     def get_auth_params
       auth_key = nil

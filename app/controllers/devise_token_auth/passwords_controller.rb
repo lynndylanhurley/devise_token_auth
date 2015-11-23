@@ -27,26 +27,14 @@ module DeviseTokenAuth
         end
       end
 
-      # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        @email = resource_params[:email].downcase
-      else
-        @email = resource_params[:email]
-      end
+      field = resource_class.authentication_field_for(resource_params.keys.map(&:to_sym))
 
-      q = "uid = ? AND provider='email'"
-
-      # fix for mysql default case insensitivity
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
-      end
-
-      @resource = resource_class.where(q, @email).first
-
+      @resource = resource_class.find_resource(resource_params[field], field) if field
       @errors = nil
       @error_status = 400
 
       if @resource
+        @email = @resource.email
         yield if block_given?
         @resource.send_reset_password_instructions({
           email: @email,
@@ -61,7 +49,10 @@ module DeviseTokenAuth
           @errors = @resource.errors
         end
       else
-        @errors = [I18n.t("devise_token_auth.passwords.user_not_found", email: @email)]
+        # TODO: The resource_params could be a "username" field depending on
+        # what keys the resource uses for authentication. This translation
+        # should be updated to reflect this.
+        @errors = [I18n.t("devise_token_auth.passwords.user_not_found", email: resource_params[field])]
         @error_status = 404
       end
 

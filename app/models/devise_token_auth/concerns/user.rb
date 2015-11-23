@@ -15,6 +15,9 @@ module DeviseTokenAuth::Concerns::User
   end
 
   included do
+
+    class_variable_set(:@@finder_methods, {})
+
     # Hack to check if devise is already enabled
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
@@ -59,6 +62,14 @@ module DeviseTokenAuth::Concerns::User
       false
     end
 
+    def provider
+      if has_attribute?(:provider)
+        read_attribute(:provider)
+      else
+        self.class.authentication_keys.first.to_s
+      end
+    end
+
     # override devise method to include additional info as opts hash
     def send_confirmation_instructions(opts=nil)
       unless @raw_confirmation_token
@@ -93,8 +104,77 @@ module DeviseTokenAuth::Concerns::User
   end
 
   module ClassMethods
-    protected
 
+    # This attempts 4 different finds to try and get the resource, depending on
+    # how the resources have been configured and accounting for backwards
+    # compatibility prior to multiple authentication methods.
+    #
+    def find_resource(id, provider)
+      # 1. If a finder method has been registered for this provider, use it!
+      #
+      finder_method = finder_methods[provider.try(:to_sym)]
+      return finder_method.call(id) if finder_method
+
+      # 2. This check is for backwards compatibility. On introducing multiple
+      #    oauth methods, the uid header changed to include the provider. Prior
+      #    to this change, however, the uid was only the identifier.
+      #    Consequently, if we don't have the provider we fall back to the old
+      #    behaviour of searching by uid. If we don't have a uid (i.e. we're
+      #    allowing multiple auth methods) then we default to something sane.
+      #
+      if provider.nil?
+        field = column_names.include?("uid") ? "uid" : authentication_keys.first
+        return case_sensitive_find("#{field} = ?", id)
+      end
+
+      id.downcase! if self.case_insensitive_keys.include?(provider.to_sym)
+
+      # 3. We then search using {provider: provider, uid: uid} to cover the
+      #    default behaviour which doesn't allow multiple authentication
+      #    methods for a single resource
+      #
+      if column_names.include?("uid") && column_names.include?("provider")
+        resource = case_sensitive_find("uid = ? AND provider = ?", id, provider)
+        return resource if resource
+      end
+
+      # 4. If we're at this point, we've either:
+      #
+      #  A. Got someone who hasn't registered yet
+      #  B. Are using a non-email field to identify users
+      #
+      # If A is the case, we likely won't have a column which corresponds to
+      # the value of "provider" (e.g. "twitter"). Consequently, bail out to
+      # avoid running a query selecting on a column we don't have.
+      #
+      return nil unless column_names.include?(provider.to_s)
+
+      case_sensitive_find("#{provider} = ?", id)
+    end
+
+    def case_sensitive_find(query, *args)
+      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+        query = "BINARY " + query
+      end
+
+      where(query, *args).first
+    end
+
+    def authentication_field_for(allowed_fields)
+      (allowed_fields & authentication_keys).first
+    end
+
+    # These two methods must use .class_variable_get or the class variable gets
+    # set on this ClassMethods module, instead of the class including it
+    def resource_finder_for(resource, callable)
+      self.class_variable_get(:@@finder_methods)[resource.to_sym] = callable
+    end
+
+    def finder_methods
+      self.class_variable_get(:@@finder_methods)
+    end
+
+    protected
 
     def tokens_has_json_column_type?
       table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
@@ -161,7 +241,7 @@ module DeviseTokenAuth::Concerns::User
 
 
   # update user's auth token (should happen on each request)
-  def create_new_auth_token(client_id=nil)
+  def create_new_auth_token(client_id=nil, provider_id=nil, provider=nil)
     client_id  ||= SecureRandom.urlsafe_base64(nil, false)
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
@@ -178,21 +258,29 @@ module DeviseTokenAuth::Concerns::User
       last_token: last_token,
       updated_at: Time.now
     }
-	
+
     max_clients = DeviseTokenAuth.max_number_of_devices
     while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
       oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
       self.tokens.delete(oldest_token.first)
-    end	
+    end
 
     self.save!
 
-    return build_auth_header(token, client_id)
+    return build_auth_header(token, client_id, provider_id, provider)
   end
 
-
-  def build_auth_header(token, client_id='default')
+  def build_auth_header(token, client_id='default', provider_id, provider)
     client_id ||= 'default'
+
+    # If we've not been given a specific provider, intuit it. This may occur
+    # when logging in through standard devise (for example). See the check
+    # for DeviseTokenAuth.enable_standard_devise_support in:
+    #
+    #  DeviseAuthToken::SetUserToken#set_user_token
+    #
+    provider    = self.class.authentication_keys.first if provider.nil?
+    provider_id = self.send(provider)                  if provider_id.nil?
 
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
@@ -203,10 +291,9 @@ module DeviseTokenAuth::Concerns::User
       "token-type"   => "Bearer",
       "client"       => client_id,
       "expiry"       => expiry.to_s,
-      "uid"          => self.uid
+      "uid"          => "#{provider_id} #{provider}"
     }
   end
-
 
   def build_auth_url(base_url, args)
     args[:uid]    = self.uid
@@ -216,11 +303,11 @@ module DeviseTokenAuth::Concerns::User
   end
 
 
-  def extend_batch_buffer(token, client_id)
+  def extend_batch_buffer(token, client_id, provider_id, provider)
     self.tokens[client_id]['updated_at'] = Time.now
     self.save!
 
-    return build_auth_header(token, client_id)
+    return build_auth_header(token, client_id, provider_id, provider)
   end
 
   def confirmed?
@@ -238,7 +325,9 @@ module DeviseTokenAuth::Concerns::User
 
   # only validate unique email among users that registered by email
   def unique_email_user
-    if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
+    return true unless self.class.column_names.include?('provider')
+
+    if self.class.where(provider: 'email', email: email).count > 0
       errors.add(:email, :already_in_use)
     end
   end
@@ -248,7 +337,9 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def sync_uid
-    self.uid = email if provider == 'email'
+    if provider == 'email' && has_attribute?(:uid)
+      self.uid = email
+    end
   end
 
   def destroy_expired_tokens

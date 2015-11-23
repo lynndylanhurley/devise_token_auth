@@ -1,18 +1,18 @@
-class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
-  def change
-    create_table(:<%= user_class.pluralize.underscore %>) do |t|
-      ## Required if using single method authentication per resource. See
-      #  "Single vs Multiple authentication methods per resource" in the README
-      #  for more information.
-      t.string :provider, :null => false, :default => "email"
-      t.string :uid, :null => false, :default => ""
+include MigrationDatabaseHelper
 
+class DeviseTokenAuthCreateMultiAuthUsers < ActiveRecord::Migration
+  # This was largely copied from DeviseTokenAuthCreateUsers
+
+  def change
+    create_table :multi_auth_users do |t|
       ## Database authenticatable
+      t.string :email
       t.string :encrypted_password, :null => false, :default => ""
 
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
+      t.string   :reset_password_redirect_url
 
       ## Rememberable
       t.datetime :remember_created_at
@@ -28,6 +28,7 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
       t.string   :confirmation_token
       t.datetime :confirmed_at
       t.datetime :confirmation_sent_at
+      t.string   :confirm_success_url
       t.string   :unconfirmed_email # Only if using reconfirmable
 
       ## Lockable
@@ -39,18 +40,26 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
       t.string :name
       t.string :nickname
       t.string :image
-      t.string :email
+
+      ## Identifiers used for allowing users to authenticate multiple ways
+      t.integer :twitter_id
+      t.integer :facebook_user_id
 
       ## Tokens
-      <%= json_supported_database? ? 't.json :tokens' : 't.text :tokens' %>
+      if json_supported_database?
+        t.json :tokens
+      else
+        t.text :tokens
+      end
 
       t.timestamps
     end
 
-    add_index :<%= user_class.pluralize.underscore %>, :email
-    add_index :<%= user_class.pluralize.underscore %>, [:uid, :provider],     :unique => true
-    add_index :<%= user_class.pluralize.underscore %>, :reset_password_token, :unique => true
-    # add_index :<%= user_class.pluralize.underscore %>, :confirmation_token,   :unique => true
-    # add_index :<%= user_class.pluralize.underscore %>, :unlock_token,         :unique => true
+    add_index :multi_auth_users, :email
+    add_index :multi_auth_users, :reset_password_token, :unique => true
+    add_index :multi_auth_users, :confirmation_token,   :unique => true
+    add_index :multi_auth_users, :nickname,             :unique => true
+    add_index :multi_auth_users, :twitter_id,           :unique => true
+    add_index :multi_auth_users, :facebook_user_id,     :unique => true
   end
 end

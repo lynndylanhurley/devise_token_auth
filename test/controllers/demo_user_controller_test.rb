@@ -62,7 +62,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         end
 
         it "should return the user's uid in the auth header" do
-          assert_equal @resource.uid, @resp_uid
+          assert_equal "#{@resource.uid} email", @resp_uid
         end
 
         it 'should not treat this request as a batch request' do
@@ -322,8 +322,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           it 'should not define current_mang' do
             refute_equal @resource, @controller.current_mang
           end
-		  
-		  
+
           it 'should increase the number of tokens by a factor of 2 up to 11' do
             @first_token = @resource.tokens.keys.first
 
