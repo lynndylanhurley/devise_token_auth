@@ -127,7 +127,7 @@ class UserTest < ActiveSupport::TestCase
 
       test 'finding the resource successfully with no custom finder method for an oauth provider' do
         @resource.update_attributes!(provider: 'facebook', uid: '12234567')
-        found_resource = User.find_resource(12234567, 'facebook')
+        found_resource = User.find_resource('12234567', 'facebook')
         assert_equal @resource, found_resource
       end
 
