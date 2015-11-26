@@ -18,10 +18,18 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   # user auth
   def set_user_by_token(mapping=nil)
     # determine target authentication class
-    rc = resource_class(mapping)
+    rc_class = ->(m=nil) do
+      if m
+        Devise.mappings[m]
+      else
+        Devise.mappings[resource_name] || Devise.mappings.values.first
+      end.to
+    end
+
+    rc = resource_class(mapping) rescue rc_class.call(mapping)
 
     # no default user defined
-    return unless rc
+    return nil unless rc
 
     # parse header for values necessary for authentication
     uid        = request.headers['uid'] || params['uid']
@@ -47,10 +55,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # ensure we clear the client_id
     if !@token
       @client_id = nil
-      return
+      return nil
     end
 
-    return false unless @token
+    # return false unless @token
 
     # mitigate timing attacks by finding by uid instead of auth token
     user = uid && rc.find_by_uid(uid)
