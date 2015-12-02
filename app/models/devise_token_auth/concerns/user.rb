@@ -147,14 +147,16 @@ module DeviseTokenAuth::Concerns::User
     # ghetto HashWithIndifferentAccess
     updated_at = self.tokens[client_id]['updated_at'] || self.tokens[client_id][:updated_at]
     last_token = self.tokens[client_id]['last_token'] || self.tokens[client_id][:last_token]
-
+    if !DeviseTokenAuth.mongoid? && updated_at
+      updated_at = Time.parse(updated_at)
+    end
 
     return true if (
       # ensure that the last token and its creation time exist
       updated_at and last_token and
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
+      updated_at > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
 
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
