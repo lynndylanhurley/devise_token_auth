@@ -4,18 +4,18 @@ class EmailValidator < ActiveModel::EachValidator
       record.errors[attribute] << email_invalid_message
     end
   end
-  
+
   private
-  
+
   def email_invalid_message
     # Try strictly set message:
     message = options[:message]
-    
+
     if message.nil?
       # Try DeviceTokenAuth translations or fallback to ActiveModel translations
-      message = I18n.t(:'errors.not_email', default: :'errors.messages.invalid')
+      message = I18n.t(:'errors.messages.not_email', default: :'errors.messages.invalid')
     end
-    
+
     message
-  end  
+  end
 end

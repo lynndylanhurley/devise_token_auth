@@ -8,19 +8,19 @@ pt-BR:
     token_validations:
       invalid: "Dados de login inválidos."
     registrations:
-      missing_confirm_success_url: "Parâmetro `confirm_success_url` não informado."
-      redirect_url_not_allowed: "Redirecionamento para %{redirect_url} não permitido."
-      email_already_exists: "Já existe uma conta com o email %{email}."
-      account_with_uid_destroyed: "A conta com uid %{uid} foi excluída."
+      missing_confirm_success_url: "Parâmetro 'confirm_success_url' não informado."
+      redirect_url_not_allowed: "Redirecionamento para '%{redirect_url}' não permitido."
+      email_already_exists: "Já existe uma conta com o email '%{email}'."
+      account_with_uid_destroyed: "A conta com uid '%{uid}' foi excluída."
       account_to_destroy_not_found: "Não foi possível encontrar a conta para exclusão."
       user_not_found: "Usuário não encontrado."
     passwords:
       missing_email: "Informe o endereço de e-mail."
       missing_redirect_url: "URL para redirecionamento não informada."
-      not_allowed_redirect_url: "Redirecionamento para %{redirect_url} não permitido."
+      not_allowed_redirect_url: "Redirecionamento para '%{redirect_url}' não permitido."
       sended: "Você receberá um e-mail com instruções sobre como redefinir sua senha."
       user_not_found: "Não existe um usuário com o e-mail '%{email}'."
-      password_not_required: "Esta conta não necessita de uma senha. Faça login utilizando %{provider}."
+      password_not_required: "Esta conta não necessita de uma senha. Faça login utilizando '%{provider}'."
       missing_passwords: 'Preencha a senha e a confirmação de senha.'
       successfully_updated: "Senha atualizada com sucesso."
   errors:
