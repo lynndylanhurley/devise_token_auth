@@ -161,22 +161,23 @@ module DeviseTokenAuth::Concerns::User
 
 
   # update user's auth token (should happen on each request)
-  def create_new_auth_token(client_id=nil)
-    client_id  ||= SecureRandom.urlsafe_base64(nil, false)
+  def create_new_auth_token(client_id=nil, options = {})
+	client_id  ||= SecureRandom.urlsafe_base64(nil, false)
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = ::BCrypt::Password.create(token)
     expiry       = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+    validate_resource = options.fetch(:validate_resource, true)
 
     if self.tokens[client_id] and self.tokens[client_id]['token']
       last_token = self.tokens[client_id]['token']
     end
 
     self.tokens[client_id] = {
-      token:      token_hash,
-      expiry:     expiry,
-      last_token: last_token,
-      updated_at: Time.now
+        token:      token_hash,
+        expiry:     expiry,
+        last_token: last_token,
+        updated_at: Time.now
     }
 	
     max_clients = DeviseTokenAuth.max_number_of_devices
@@ -185,11 +186,10 @@ module DeviseTokenAuth::Concerns::User
       self.tokens.delete(oldest_token.first)
     end	
 
-    self.save!
+    self.save!(validate: validate_resource)
 
     return build_auth_header(token, client_id)
   end
-
 
   def build_auth_header(token, client_id='default')
     client_id ||= 'default'
