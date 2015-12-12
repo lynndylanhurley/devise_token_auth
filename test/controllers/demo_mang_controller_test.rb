@@ -61,7 +61,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
         end
 
         it "should return the user's uid in the auth header" do
-          assert_equal @resource.uid, @resp_uid
+          assert_equal "#{@resource.uid} email", @resp_uid
         end
 
         it 'should not treat this request as a batch request' do
