@@ -178,12 +178,12 @@ module DeviseTokenAuth::Concerns::User
       last_token: last_token,
       updated_at: Time.now
     }
-	
+
     max_clients = DeviseTokenAuth.max_number_of_devices
     while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
       oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
       self.tokens.delete(oldest_token.first)
-    end	
+    end
 
     self.save!
 
@@ -239,7 +239,7 @@ module DeviseTokenAuth::Concerns::User
   # only validate unique email among users that registered by email
   def unique_email_user
     if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
-      errors.add(:email, :already_in_use)
+      errors.add(:email, I18n.t("errors.messages.already_in_use"))
     end
   end
 
