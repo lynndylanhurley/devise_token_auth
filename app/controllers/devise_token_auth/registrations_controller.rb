@@ -195,11 +195,11 @@ module DeviseTokenAuth
     end
 
     def validate_sign_up_params
-      validate_post_data sign_up_params, I18n.t("errors.validate_sign_up_params")
+      validate_post_data sign_up_params, I18n.t("errors.messages.validate_sign_up_params")
     end
 
     def validate_account_update_params
-      validate_post_data account_update_params, I18n.t("errors.validate_account_update_params")
+      validate_post_data account_update_params, I18n.t("errors.messages.validate_account_update_params")
     end
 
     def validate_post_data which, message
