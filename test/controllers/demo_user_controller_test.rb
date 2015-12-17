@@ -284,6 +284,48 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         end
       end
 
+      describe 'successful password change' do
+        before do
+          DeviseTokenAuth.remove_tokens_after_password_reset = true
+
+          # adding one more token to simulate another logged in device
+          @old_auth_headers = @auth_headers
+          @auth_headers = @resource.create_new_auth_token
+          age_token(@resource, @client_id)
+          assert @resource.tokens.count > 1
+
+          # password changed from new device
+          @resource.update_attributes({
+            password: 'newsecret123',
+            password_confirmation: 'newsecret123'
+          })
+
+          get '/demo/members_only', {}, @auth_headers
+        end
+
+        after do
+          DeviseTokenAuth.remove_tokens_after_password_reset = false
+        end
+
+        it 'should have only one token' do
+          assert_equal 1, @resource.tokens.count
+        end
+
+        it 'new request should be successful' do
+          assert 200, response.status
+        end
+
+        describe 'another device should not be abble to login' do
+
+          it 'should return forbidden status' do
+            get '/demo/members_only', {}, @old_auth_headers
+            assert 401, response.status
+          end
+          
+        end
+
+      end
+
     end
 
     describe 'enable_standard_devise_support' do

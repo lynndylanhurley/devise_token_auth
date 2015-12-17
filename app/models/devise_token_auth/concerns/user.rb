@@ -44,6 +44,9 @@ module DeviseTokenAuth::Concerns::User
     # get rid of dead tokens
     before_save :destroy_expired_tokens
 
+    # remove old tokens if password has changed
+    before_save :remove_tokens_after_password_reset
+
     # allows user to change password without current_password
     attr_writer :allow_password_change
     def allow_password_change
@@ -257,6 +260,17 @@ module DeviseTokenAuth::Concerns::User
         expiry = v[:expiry] || v["expiry"]
         DateTime.strptime(expiry.to_s, '%s') < Time.now
       end
+    end
+  end
+
+  def remove_tokens_after_password_reset
+    there_is_more_than_one_token = self.tokens && self.tokens.keys.length > 1
+    should_remove_old_tokens = DeviseTokenAuth.remove_tokens_after_password_reset &&
+                               encrypted_password_changed? && there_is_more_than_one_token
+
+    if should_remove_old_tokens
+      latest_token = self.tokens.max_by { |cid, v| v[:expiry] || v["expiry"] }
+      self.tokens = {latest_token.first => latest_token.last}
     end
   end
 
