@@ -11,7 +11,7 @@ module DeviseTokenAuth
 
       # derive target redirect route from 'resource_class' param, which was set
       # before authentication.
-      devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
+      devise_mapping = request.env['omniauth.params']['resource_class'].underscore.gsub("/", "_").to_sym
       redirect_route = "#{request.protocol}#{request.host_with_port}/#{Devise.mappings[devise_mapping].fullpath}/#{params[:provider]}/callback"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
