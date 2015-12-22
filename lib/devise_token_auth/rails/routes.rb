@@ -33,6 +33,9 @@ module ActionDispatch::Routing
         # get full url path as if it were namespaced
         full_path = "#{@scope[:path]}/#{opts[:at]}"
 
+        # get namespace name
+        namespace_name = @scope[:as]
+
         # clear scope so controller routes aren't namespaced
         @scope = ActionDispatch::Routing::Mapper::Scope.new(
           path:         "",
@@ -43,7 +46,10 @@ module ActionDispatch::Routing
           parent:       nil
         )
 
-        devise_scope resource.underscore.gsub('/', '_').to_sym do
+        mapping_name = resource.underscore.gsub('/', '_')
+        mapping_name = "#{namespace_name}_#{mapping_name}" if namespace_name
+
+        devise_scope mapping_name.to_sym do
           # path to verify token validity
           get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
 
