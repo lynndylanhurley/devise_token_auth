@@ -46,6 +46,9 @@ module DeviseTokenAuth::Concerns::User
     # get rid of dead tokens
     before_save :destroy_expired_tokens
 
+    # remove old tokens if password has changed
+    before_save :remove_tokens_after_password_reset
+
     # allows user to change password without current_password
     attr_writer :allow_password_change
     def allow_password_change
@@ -183,6 +186,12 @@ module DeviseTokenAuth::Concerns::User
       updated_at: Time.now
     }
 
+    max_clients = DeviseTokenAuth.max_number_of_devices
+    while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
+      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
+      self.tokens.delete(oldest_token.first)
+    end
+
     self.save!
 
     return build_auth_header(token, client_id)
@@ -237,7 +246,7 @@ module DeviseTokenAuth::Concerns::User
   # only validate unique email among users that registered by email
   def unique_email_user
     if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
-      errors.add(:email, :already_in_use)
+      errors.add(:email, I18n.t("errors.messages.already_in_use"))
     end
   end
 
@@ -255,6 +264,17 @@ module DeviseTokenAuth::Concerns::User
         expiry = v[:expiry] || v["expiry"]
         DateTime.strptime(expiry.to_s, '%s') < Time.now
       end
+    end
+  end
+
+  def remove_tokens_after_password_reset
+    there_is_more_than_one_token = self.tokens && self.tokens.keys.length > 1
+    should_remove_old_tokens = DeviseTokenAuth.remove_tokens_after_password_reset &&
+                               encrypted_password_changed? && there_is_more_than_one_token
+
+    if should_remove_old_tokens
+      latest_token = self.tokens.max_by { |cid, v| v[:expiry] || v["expiry"] }
+      self.tokens = {latest_token.first => latest_token.last}
     end
   end
 
