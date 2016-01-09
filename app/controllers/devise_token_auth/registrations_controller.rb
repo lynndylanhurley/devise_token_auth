@@ -33,51 +33,41 @@ module DeviseTokenAuth
           return render_create_error_redirect_url_not_allowed
         end
       end
-      if DeviseTokenAuth.mongoid?
-        begin
-          self.save_registration
-        end
-      else
-        begin
-          self.save_registration
-        rescue ActiveRecord::RecordNotUnique
-          clean_up_passwords @resource
-          render_create_error_email_already_exists
-        end
-      end
-    end
+      begin
+        # override email confirmation, must be sent manually from ctrl
+        resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        if @resource.save
+          yield @resource if block_given?
 
-    def save_registration
-      # override email confirmation, must be sent manually from ctrl
-      resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
-      if @resource.save
-        yield @resource if block_given?
+          unless @resource.confirmed?
+            # user will require email authentication
+            @resource.send_confirmation_instructions({
+              client_config: params[:config_name],
+              redirect_url: @redirect_url
+            })
 
-        unless @resource.confirmed?
-          # user will require email authentication
-          @resource.send_confirmation_instructions({
-            client_config: params[:config_name],
-            redirect_url: @redirect_url
-          })
+          else
+            # email auth has been bypassed, authenticate user
+            @client_id = SecureRandom.urlsafe_base64(nil, false)
+            @token     = SecureRandom.urlsafe_base64(nil, false)
 
+            @resource.tokens[@client_id] = {
+              token: BCrypt::Password.create(@token),
+              expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+            }
+
+            @resource.save!
+
+            update_auth_header
+          end
+          render_create_success
         else
-          # email auth has been bypassed, authenticate user
-          @client_id = SecureRandom.urlsafe_base64(nil, false)
-          @token     = SecureRandom.urlsafe_base64(nil, false)
-
-          @resource.tokens[@client_id] = {
-            token: BCrypt::Password.create(@token),
-            expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
-          }
-
-          @resource.save!
-
-          update_auth_header
+          clean_up_passwords @resource
+          render_create_error
         end
-        render_create_success
-      else
+      rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
-        render_create_error
+        render_create_error_email_already_exists
       end
     end
 
