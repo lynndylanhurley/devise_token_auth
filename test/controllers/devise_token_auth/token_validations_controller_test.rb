@@ -63,4 +63,29 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
     end
 
   end
+
+  describe 'using namespaces with unused resource' do
+
+    before do
+      @resource = scoped_users(:confirmed_email_user)
+      @resource.skip_confirmation!
+      @resource.save!
+
+      @auth_headers = @resource.create_new_auth_token
+
+      @token     = @auth_headers['access-token']
+      @client_id = @auth_headers['client']
+      @expiry    = @auth_headers['expiry']
+
+      # ensure that request is not treated as batch request
+      age_token(@resource, @client_id)
+    end
+
+    test "should be successful" do
+      get '/api_v2/auth/validate_token', {}, @auth_headers
+      assert_equal 200, response.status
+    end
+
+  end
+
 end
