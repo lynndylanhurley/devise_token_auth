@@ -7,13 +7,14 @@ module DeviseTokenAuth
 
     argument :user_class, type: :string, default: "User"
     argument :mount_path, type: :string, default: 'auth'
+    argument :orm, type: :string, default: 'ActiveRecord'
 
     def create_initializer_file
-      copy_file("devise_token_auth.rb", "config/initializers/devise_token_auth.rb")
+      template("devise_token_auth.rb", "config/initializers/devise_token_auth.rb")
     end
 
     def copy_migrations
-      if !DeviseTokenAuth.mongoid?
+      if !mongoid?
         if self.class.migration_exists?("db/migrate", "devise_token_auth_create_#{ user_class.underscore }")
           say_status("skipped", "Migration 'devise_token_auth_create_#{ user_class.underscore }' already exists")
         else
@@ -28,11 +29,15 @@ module DeviseTokenAuth
     def create_user_model
       fname = "app/models/#{ user_class.underscore }.rb"
       unless File.exist?(File.join(destination_root, fname))
-        template("user.rb", fname)
+        if mongoid?
+          template("user_mongoid.rb", fname)
+        else
+          template("user.rb", fname)
+        end
       else
         inclusion = "include DeviseTokenAuth::Concerns::User"
         unless parse_file_for_line(fname, inclusion)
-          if DeviseTokenAuth.mongoid?
+          if mongoid?
             inject_into_file fname, after: "class #{user_class}\n include Mongoid::Document\n" do <<-'RUBY'
     # Include default devise modules.
     devise :database_authenticatable, :registerable,
@@ -177,7 +182,7 @@ module DeviseTokenAuth
     end
 
     def json_supported_database?
-      (postgres? && postgres_correct_version?) || (mysql? && mysql_correct_version?) || DeviseTokenAuth.mongoid?
+      (postgres? && postgres_correct_version?) || (mysql? && mysql_correct_version?) || mongoid?
     end
 
     def postgres?
@@ -203,5 +208,10 @@ module DeviseTokenAuth
     def database_version
       ActiveRecord::Base.connection.select_value('SELECT VERSION()')
     end
+
+    def mongoid?
+      orm == 'Mongoid'
+    end
+
   end
 end

@@ -34,4 +34,9 @@ DeviseTokenAuth.setup do |config|
   # If, however, you wish to integrate with legacy Devise authentication, you can
   # do so by enabling this flag. NOTE: This feature is highly experimental!
   # enable_standard_devise_support = false
+
+  # By default, the used orm is ActiveRecord.
+  # If, you wish to use MongoId, you can by enabling the flag use_mongoid
+  <%= '# ' if !mongoid? %>config.use_mongoid = true
+
 end
