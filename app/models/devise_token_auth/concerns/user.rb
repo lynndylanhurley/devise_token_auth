@@ -1,5 +1,4 @@
 require 'bcrypt'
-require 'mongoid-locker' if DeviseTokenAuth.mongoid?
 
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
@@ -16,7 +15,10 @@ module DeviseTokenAuth::Concerns::User
   end
 
   included do
-    include Mongoid::Locker if DeviseTokenAuth.mongoid?
+    if DeviseTokenAuth.mongoid?(self)
+      require 'mongoid-locker'
+      include Mongoid::Locker
+    end
     # Hack to check if devise is already enabled
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
@@ -102,7 +104,7 @@ module DeviseTokenAuth::Concerns::User
 
 
     def tokens_has_json_column_type?
-      DeviseTokenAuth.mongoid? || (table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb]))
+      DeviseTokenAuth.mongoid?(self) || (table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb]))
     end
   end
 
@@ -150,7 +152,7 @@ module DeviseTokenAuth::Concerns::User
     # ghetto HashWithIndifferentAccess
     updated_at = self.tokens[client_id]['updated_at'] || self.tokens[client_id][:updated_at]
     last_token = self.tokens[client_id]['last_token'] || self.tokens[client_id][:last_token]
-    if !DeviseTokenAuth.mongoid? && updated_at
+    if !DeviseTokenAuth.mongoid?(self.class) && updated_at
       updated_at = Time.parse(updated_at)
     end
 

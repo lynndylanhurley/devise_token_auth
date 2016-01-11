@@ -33,8 +33,7 @@ module DeviseTokenAuth
       else
         @email = resource_params[:email]
       end
-
-      if DeviseTokenAuth.mongoid?
+      if DeviseTokenAuth.mongoid?(resource_class)
         @resource = resource_class.where(uid: @email, provider: 'email').first
       else
         q = "uid = ? AND provider='email'"
@@ -43,7 +42,7 @@ module DeviseTokenAuth
         if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
           q = "BINARY uid = ? AND provider='email'"
         end
-        
+
         @resource = resource_class.where(q, @email).first
       end
 

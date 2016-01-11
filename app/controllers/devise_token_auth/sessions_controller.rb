@@ -19,11 +19,7 @@ module DeviseTokenAuth
         if resource_class.case_insensitive_keys.include?(field)
           q_value.downcase!
         end
-
-        if DeviseTokenAuth.mongoid?
-          if resource_class.case_insensitive_keys.include?(field)
-            q_value.downcase!
-          end
+        if DeviseTokenAuth.mongoid?(resource_class)
           @resource = resource_class.where(field.to_s.to_sym => q_value, provider: 'email').first
         else
           q = "#{field.to_s} = ? AND provider='email'"

@@ -19,12 +19,9 @@ Devise.setup do |config|
   # Load and configure the ORM. Supports :active_record (default) and
   # :mongoid (bson_ext recommended) by default. Other ORMs may be
   # available as additional gems.
-  if DeviseTokenAuth.mongoid?
-    require 'devise/orm/mongoid'
-  else
-    require 'devise/orm/active_record'
-  end
-  
+  require 'devise/orm/mongoid' if DeviseTokenAuth.add_mongoid_support
+  require 'devise/orm/active_record' if !DeviseTokenAuth.use_only_mongoid
+
   # ==> Configuration for any authentication mechanism
   # Configure which keys are used when authenticating a user. The default is
   # just :email. You can configure it to use [:username, :subdomain], so for

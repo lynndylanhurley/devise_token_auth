@@ -19,7 +19,8 @@ module DeviseTokenAuth
                  :redirect_whitelist,
                  :check_current_password_before_update,
                  :enable_standard_devise_support,
-                 :use_mongoid,
+                 :add_mongoid_support,
+                 :use_only_mongoid,
                  :remove_tokens_after_password_reset
 
   self.change_headers_on_each_request       = true
@@ -32,7 +33,8 @@ module DeviseTokenAuth
   self.redirect_whitelist                   = nil
   self.check_current_password_before_update = false
   self.enable_standard_devise_support       = false
-  self.use_mongoid                          = false
+  self.add_mongoid_support                  = false
+  self.use_only_mongoid                     = false
   self.remove_tokens_after_password_reset   = false
 
   def self.setup(&block)
@@ -80,7 +82,8 @@ module DeviseTokenAuth
     end
   end
 
-  def self.mongoid?
-    DeviseTokenAuth.use_mongoid
+  def self.mongoid?(user_class)
+    DeviseTokenAuth.add_mongoid_support &&
+    ( DeviseTokenAuth.use_only_mongoid || user_class.included_modules.include?(Mongoid::Document) )
   end
 end

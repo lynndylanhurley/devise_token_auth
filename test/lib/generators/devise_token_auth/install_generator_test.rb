@@ -77,7 +77,6 @@ end
       setup :prepare_destination
 
       before do
-        DeviseTokenAuth.use_mongoid = true
         @dir = File.join(destination_root, "app", "models")
 
         @fname = File.join(@dir, "user.rb")
