@@ -87,7 +87,7 @@ end
         @f = File.open(@fname, 'w') {|f|
           f.write <<-RUBY
 class User
- include Mongoid::Document
+  include Mongoid::Document
 
   def whatever
     puts 'whatever'
@@ -106,7 +106,7 @@ end
       end
 
       test 'subsequent runs do not modify file' do
-        run_generator
+        run_generator %w(User auth Mongoid)
         assert_file 'app/models/user.rb' do |model|
           matches = model.scan(/include DeviseTokenAuth::Concerns::User/m).size
           assert_equal 1, matches
