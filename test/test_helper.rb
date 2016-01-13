@@ -35,6 +35,8 @@ class ActiveSupport::TestCase
   include FactoryGirl::Syntax::Methods
   ActiveRecord::Migration.check_pending!
 
+  # Clean mongodb
+  Mongoid.purge!
   # Register factories that it used for mongoid object
   FactoryGirl.definition_file_paths = [File.expand_path('../factories', __FILE__)]
   FactoryGirl.find_definitions
