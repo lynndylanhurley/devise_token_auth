@@ -16,7 +16,7 @@ services:
 
 script:
   - RAILS_ENV=test bundle exec rake --trace db:migrate
-  # - RAILS_ENV=test CODECLIMATE_REPO_TOKEN=44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d bundle exec rake
+  - RAILS_ENV=test bundle exec rake
 
 before_script:
   - mysql -e 'create database devise_token_auth_test'
