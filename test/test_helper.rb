@@ -14,6 +14,9 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path("../dummy/config/environment", __FILE__)
 require "rails/test_help"
 require "minitest/rails"
+require 'rails/mongoid'
+Mongoid.load!(Rails.root.join("config", "mongoid.yml"))
+Mongo::Logger.logger.level = ::Logger::FATAL
 
 # To add Capybara feature tests add `gem "minitest-rails-capybara"`
 # to the test group in the Gemfile and uncomment the following:
@@ -29,7 +32,12 @@ ActionDispatch::IntegrationTest.fixture_path = File.expand_path("../fixtures", _
 Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
 
 class ActiveSupport::TestCase
+  include FactoryGirl::Syntax::Methods
   ActiveRecord::Migration.check_pending!
+
+  # Register factories that it used for mongoid object
+  FactoryGirl.definition_file_paths = [File.expand_path('../factories', __FILE__)]
+  FactoryGirl.find_definitions
 
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
   #

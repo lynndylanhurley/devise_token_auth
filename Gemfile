@@ -35,6 +35,8 @@ group :development, :test do
   gem 'faker'
   gem 'fuzz_ball'
   gem 'mocha'
+  gem "factory_girl_rails", "~> 4.0"
+  gem "factory_girl", "~> 4.0"
 end
 
 # code coverage, metrics

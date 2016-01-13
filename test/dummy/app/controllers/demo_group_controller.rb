@@ -1,5 +1,5 @@
 class DemoGroupController < ApplicationController
-  devise_token_auth_group :member, contains: [:user, :mang]
+  devise_token_auth_group :member, contains: [:user, :mang, :mongoid_user]
   before_action :authenticate_member!
 
   def members_only
