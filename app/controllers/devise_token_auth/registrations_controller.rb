@@ -36,7 +36,7 @@ module DeviseTokenAuth
 
       begin
         # override email confirmation, must be sent manually from ctrl
-        resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions, raise: false)
         if @resource.save
           yield @resource if block_given?
 
