@@ -62,6 +62,14 @@ class ActiveSupport::TestCase
       user.save!
     end
   end
+
+  def get_confirmed_email_user_obj(test_mongoid)
+    if test_mongoid
+      create(:mongoid_user)
+    else
+      users(:confirmed_email_user)
+    end
+  end
 end
 
 class ActionController::TestCase

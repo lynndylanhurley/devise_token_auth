@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   # need to be defined within a devise_scope as shown below
   mount_devise_token_auth_for "Mang", at: 'mangs'
 
+  mount_devise_token_auth_for "MongoidMang", at: 'mongoid_mangs'
+
   mount_devise_token_auth_for 'EvilUser', at: 'evil_user_auth', controllers: {
     confirmations:      'overrides/confirmations',
     passwords:          'overrides/passwords',
@@ -40,6 +42,7 @@ Rails.application.routes.draw do
   namespace :api do
     scope :v1 do
       mount_devise_token_auth_for 'User', at: 'auth'
+      mount_devise_token_auth_for 'MongoidUser', at: 'mongoid_user_auth'
     end
   end
 

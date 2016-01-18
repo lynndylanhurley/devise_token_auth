@@ -1,7 +1,7 @@
 FactoryGirl.define do
   timestamp = DateTime.parse(2.weeks.ago.to_s).to_time.strftime("%F %T")
 
-  factory :mongoid_user, class: MongoidUser do |u|
+  factory :mongoid_mang, class: MongoidMang do |u|
     name 'John Doe'
     sequence(:email) { |n| "user#{n}@example.com" }
     provider 'email'
