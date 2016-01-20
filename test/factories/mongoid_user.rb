@@ -10,7 +10,7 @@ FactoryGirl.define do
     created_at { timestamp }
     updated_at { timestamp }
     password 'secret123'
-    encrypted_password { User.new.send(:password_digest, 'secret123') }
+    encrypted_password { MongoidUser.new.send(:password_digest, 'secret123') }
     trait :facebook do
       provider 'facebook'
       uid { Faker::Number.number(10) }

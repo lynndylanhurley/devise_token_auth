@@ -6,7 +6,6 @@ require 'test_helper'
 #  was the correct object stored in the response?
 #  was the appropriate message delivered in the json payload?
 
-
 class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   test_registrations = lambda do |orm|
     test_mongoid = (orm == 'Mongoid')
@@ -16,13 +15,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       mang_auth_url = 'mongoid_mangs'
       user_class = MongoidUser
       mang_class = MongoidMang
-      describe_orm_txt = "For Mongoid user"
+      describe_orm_txt = "Mongoid user"
     else
       auth_url = 'auth'
       mang_auth_url = 'mangs'
       user_class = User
       mang_class = Mang
-      describe_orm_txt = "For ActiveRecord user"
+      describe_orm_txt = "ActiveRecord user"
     end
 
     describe describe_orm_txt do

@@ -57,6 +57,15 @@ Rails.application.routes.draw do
         confirmations:      "api_v2/confirmations",
         passwords:          "api_v2/passwords"
       }
+    mount_devise_token_auth_for "MongoidScopedUser",
+      at:          "mongoid_user_auth",
+      controllers: {
+        omniauth_callbacks: "api_v2/omniauth_callbacks",
+        sessions:           "api_v2/sessions",
+        registrations:      "api_v2/registrations",
+        confirmations:      "api_v2/confirmations",
+        passwords:          "api_v2/passwords"
+      }
   end
 
   # this route will authorize visitors using the User class
