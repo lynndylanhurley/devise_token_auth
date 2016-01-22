@@ -4,6 +4,10 @@ module DeviseTokenAuth
 
     protected
 
+    def params_for_resource(resource)
+      devise_parameter_sanitizer.instance_values['permitted'][resource]
+    end
+
     def resource_class(m=nil)
       if m
         mapping = Devise.mappings[m]

@@ -97,11 +97,11 @@ module DeviseTokenAuth
     end
 
     def sign_up_params
-      params.permit(devise_parameter_sanitizer.for(:sign_up))
+      params.permit(*params_for_resource(:sign_up))
     end
 
     def account_update_params
-      params.permit(devise_parameter_sanitizer.for(:account_update))
+      params.permit(*params_for_resource(:account_update))
     end
 
     protected
