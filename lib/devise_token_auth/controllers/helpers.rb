@@ -21,8 +21,8 @@ module DeviseTokenAuth
         #     current_bloggers       # Currently signed in user and admin
         #
         #   Use:
-        #     before_filter :authenticate_blogger!              # Redirects unless either a user or an admin are authenticated
-        #     before_filter ->{ authenticate_blogger! :admin }  # Redirects to the admin login page
+        #     before_action :authenticate_blogger!              # Redirects unless either a user or an admin are authenticated
+        #     before_action ->{ authenticate_blogger! :admin }  # Redirects to the admin login page
         #     current_blogger :user                             # Preferably returns a User if one is signed in
         #
         def devise_token_auth_group(group_name, opts={})
@@ -74,7 +74,7 @@ module DeviseTokenAuth
       end
 
       # Define authentication filters and accessor helpers based on mappings.
-      # These filters should be used inside the controllers as before_filters,
+      # These filters should be used inside the controllers as before_actions,
       # so you can control the scope of the user who should be signed in to
       # access that specific controller/action.
       # Example:
@@ -94,8 +94,8 @@ module DeviseTokenAuth
       #     admin_session       # Session data available only to the admin scope
       #
       #   Use:
-      #     before_filter :authenticate_user!  # Tell devise to use :user map
-      #     before_filter :authenticate_admin! # Tell devise to use :admin map
+      #     before_action :authenticate_user!  # Tell devise to use :user map
+      #     before_action :authenticate_admin! # Tell devise to use :admin map
       #
       def self.define_helpers(mapping) #:nodoc:
         mapping = mapping.name
