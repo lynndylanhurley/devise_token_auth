@@ -1,6 +1,6 @@
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:update]
+    before_action :set_user_by_token, :only => [:update]
     skip_after_filter :update_auth_header, :only => [:create, :edit]
 
     # this action is responsible for generating password reset tokens and
