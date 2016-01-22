@@ -86,7 +86,7 @@ module DeviseTokenAuth
 
     # derive allowed params from the standard devise parameter sanitizer
     def whitelisted_params
-      whitelist = devise_parameter_sanitizer.for(:sign_up)
+      whitelist = params_for_resource(:sign_up)
 
       whitelist.inject({}){|coll, key|
         param = omniauth_params[key.to_s]
