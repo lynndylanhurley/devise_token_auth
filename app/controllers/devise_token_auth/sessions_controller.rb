@@ -53,7 +53,7 @@ module DeviseTokenAuth
     end
 
     def destroy
-      # remove auth instance variables so that after_filter does not run
+      # remove auth instance variables so that after_action does not run
       user = remove_instance_variable(:@resource) if @resource
       client_id = remove_instance_variable(:@client_id) if @client_id
       remove_instance_variable(:@token) if @token
