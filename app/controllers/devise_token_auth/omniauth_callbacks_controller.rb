@@ -2,7 +2,6 @@ module DeviseTokenAuth
   class OmniauthCallbacksController < DeviseTokenAuth::ApplicationController
 
     attr_reader :auth_params
-    skip_before_filter :set_user_by_token
     skip_after_filter :update_auth_header
 
     # intermediary route for successful omniauth authentication. omniauth does
