@@ -1,9 +1,9 @@
 module DeviseTokenAuth
   class RegistrationsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:destroy, :update]
-    before_filter :validate_sign_up_params, :only => :create
-    before_filter :validate_account_update_params, :only => :update
-    skip_after_filter :update_auth_header, :only => [:create, :destroy]
+    before_action :set_user_by_token, :only => [:destroy, :update]
+    before_action :validate_sign_up_params, :only => :create
+    before_action :validate_account_update_params, :only => :update
+    skip_after_action :update_auth_header, :only => [:create, :destroy]
 
     def create
       @resource            = resource_class.new(sign_up_params)
@@ -195,11 +195,11 @@ module DeviseTokenAuth
     end
 
     def validate_sign_up_params
-      validate_post_data sign_up_params, I18n.t("errors.validate_sign_up_params")
+      validate_post_data sign_up_params, I18n.t("errors.messages.validate_sign_up_params")
     end
 
     def validate_account_update_params
-      validate_post_data account_update_params, I18n.t("errors.validate_account_update_params")
+      validate_post_data account_update_params, I18n.t("errors.messages.validate_account_update_params")
     end
 
     def validate_post_data which, message

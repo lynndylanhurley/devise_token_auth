@@ -1,3 +1,3 @@
 module DeviseTokenAuth
-  VERSION = "0.1.34"
+  VERSION = "0.1.37.beta4"
 end

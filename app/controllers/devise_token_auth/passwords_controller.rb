@@ -90,6 +90,9 @@ module DeviseTokenAuth
         # ensure that user is confirmed
         @resource.skip_confirmation! if @resource.devise_modules.include?(:confirmable) && !@resource.confirmed_at
 
+        # allow user to change password once without current_password
+        @resource.allow_password_change = true;
+
         @resource.save!
         yield if block_given?
 
@@ -121,6 +124,8 @@ module DeviseTokenAuth
       end
 
       if @resource.send(resource_update_method, password_resource_params)
+        @resource.allow_password_change = false
+
         yield if block_given?
         return render_update_success
       else
@@ -131,10 +136,10 @@ module DeviseTokenAuth
     protected
 
     def resource_update_method
-      if DeviseTokenAuth.check_current_password_before_update != false
-        "update_with_password"
-      else
+      if DeviseTokenAuth.check_current_password_before_update == false or @resource.allow_password_change == true
         "update_attributes"
+      else
+        "update_with_password"
       end
     end
 
@@ -175,9 +180,7 @@ module DeviseTokenAuth
     end
 
     def render_edit_error
-      render json: {
-        success: false
-      }, status: 404
+      raise ActionController::RoutingError.new('Not Found')
     end
 
     def render_update_error_unauthorized
