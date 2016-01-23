@@ -12,25 +12,19 @@ module DeviseTokenAuth
       # Check
       field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
 
-      @resource = nil
-      if field
-        q_value = resource_params[field]
-
-        if resource_class.case_insensitive_keys.include?(field)
-          q_value.downcase!
-        end
-
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.where(q, q_value).first
+      q_value = resource_params[field]
+      if resource_class.case_insensitive_keys.include?(field)
+        q_value.downcase!
       end
 
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
-        # create client id
+      set_resource(field, q_value)
+      unless @resource.present?
+        render_create_error_bad_credentials
+        return
+      end
+
+      if resource_params[:password].present? && @resource.valid_password?(resource_params[:password]) \
+        && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
 
@@ -41,11 +35,9 @@ module DeviseTokenAuth
         @resource.save
 
         sign_in(:user, @resource, store: false, bypass: false)
-
         yield if block_given?
-
         render_create_success
-      elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      elsif @resource.respond_to?(:active_for_authentication?) && !@resource.active_for_authentication?
         render_create_error_not_confirmed
       else
         render_create_error_bad_credentials
@@ -71,10 +63,6 @@ module DeviseTokenAuth
     end
 
     protected
-
-    def valid_params?(key, val)
-      resource_params[:password] && key && val
-    end
 
     def get_auth_params
       auth_key = nil
@@ -141,7 +129,9 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(*params_for_resource(:sign_in))
+      allowed_params = params_for_resource(:sign_in)
+      allowed_params += [:backup_field_name, :backup_field_class]
+      params.permit(*allowed_params)
     end
 
   end
