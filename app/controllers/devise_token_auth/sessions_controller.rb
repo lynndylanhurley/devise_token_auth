@@ -1,7 +1,7 @@
 # see http://www.emilsoman.com/blog/2013/05/18/building-a-tested/
 module DeviseTokenAuth
   class SessionsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:destroy]
+    before_action :set_user_by_token, :only => [:destroy]
     after_action :reset_session, :only => [:destroy]
 
     def new
@@ -53,7 +53,7 @@ module DeviseTokenAuth
     end
 
     def destroy
-      # remove auth instance variables so that after_filter does not run
+      # remove auth instance variables so that after_action does not run
       user = remove_instance_variable(:@resource) if @resource
       client_id = remove_instance_variable(:@client_id) if @client_id
       remove_instance_variable(:@token) if @token
@@ -141,7 +141,7 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(devise_parameter_sanitizer.for(:sign_in))
+      params.permit(*params_for_resource(:sign_in))
     end
 
   end

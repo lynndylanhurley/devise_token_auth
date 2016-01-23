@@ -1,7 +1,7 @@
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:update]
-    skip_after_filter :update_auth_header, :only => [:create, :edit]
+    before_action :set_user_by_token, :only => [:update]
+    skip_after_action :update_auth_header, :only => [:create, :edit]
 
     # this action is responsible for generating password reset tokens and
     # sending emails
@@ -228,7 +228,7 @@ module DeviseTokenAuth
     end
 
     def password_resource_params
-      params.permit(devise_parameter_sanitizer.for(:account_update))
+      params.permit(*params_for_resource(:account_update))
     end
 
   end
