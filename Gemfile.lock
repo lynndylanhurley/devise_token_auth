@@ -34,7 +34,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.1.37.beta4)
+    devise_token_auth (0.1.37)
       devise (> 3.5.2, < 4.1)
       rails (< 6)
 
@@ -86,7 +86,10 @@ GEM
     codeclimate-test-reporter (0.4.8)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
+    colorize (0.7.7)
     concurrent-ruby (1.0.0)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
     devise (3.5.5)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -104,6 +107,16 @@ GEM
     ffi (1.9.10)
     formatador (0.2.5)
     fuzz_ball (0.9.1)
+    github_api (0.13.1)
+      addressable (~> 2.4.0)
+      descendants_tracker (~> 0.0.4)
+      faraday (~> 0.8, < 0.10)
+      hashie (>= 3.4)
+      multi_json (>= 1.7.5, < 2.0)
+      oauth2
+    github_changelog_generator (1.10.1)
+      colorize (~> 0.7)
+      github_api (~> 0.12)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     guard (2.13.0)
@@ -246,6 +259,7 @@ DEPENDENCIES
   faker
   figaro!
   fuzz_ball
+  github_changelog_generator
   guard
   guard-minitest
   minitest
