@@ -124,9 +124,14 @@ module DeviseTokenAuth
     end
 
     def render_create_success
+      response_data = @resource.as_json
+      if defined?(ActiveModel::Serializer) &&
+        ActiveModel::Serializer.config.adapter == :json_api
+        response_data['type'] = @resource.class.name.parameterize
+      end
       render json: {
         status: 'success',
-        data:   @resource.as_json
+        data:   response_data
       }
     end
 
