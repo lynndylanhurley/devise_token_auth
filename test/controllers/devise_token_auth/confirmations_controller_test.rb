@@ -45,6 +45,21 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         test "should redirect to success url" do
           assert_redirected_to(/^#{@redirect_url}/)
         end
+
+        test "the sign_in_count should be 1" do
+          assert @resource.sign_in_count == 1
+        end
+        test "User shoud have the signed in info filled" do
+          assert @resource.current_sign_in_at?
+        end
+        test "User shoud have the Last checkin filled" do
+          assert @resource.last_sign_in_at?
+        end
+        test "user already confirmed" do 
+          assert @resource.sign_in_count > 0 do 
+            assert expiry == (Time.now + Time.now + 1.second).to_i
+          end
+        end
       end
 
       describe "failure" do
