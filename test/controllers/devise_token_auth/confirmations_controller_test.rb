@@ -61,6 +61,12 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         test 'User shoud have the Last checkin filled' do
           assert @resource.last_sign_in_at?
         end
+        
+        test 'user already confirmed' do
+          assert @resource.sign_in_count > 0 do
+            assert expiry == (Time.now + Time.now + 1.second).to_i
+          end
+        end
       end
 
       describe 'failure' do
