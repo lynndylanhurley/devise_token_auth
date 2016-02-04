@@ -76,6 +76,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # should not append auth header if @resource related token was
       # cleared by sign out in the meantime
       return if @resource.reload.tokens[@client_id].nil?
+
       auth_header = @resource.build_auth_header(@token, @client_id)
       # update the response header
       response.headers.merge!(auth_header)
