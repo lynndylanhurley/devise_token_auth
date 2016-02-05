@@ -19,7 +19,8 @@ module DeviseTokenAuth
                  :redirect_whitelist,
                  :check_current_password_before_update,
                  :enable_standard_devise_support,
-                 :remove_tokens_after_password_reset
+                 :remove_tokens_after_password_reset,
+                 :default_callbacks
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -32,6 +33,7 @@ module DeviseTokenAuth
   self.check_current_password_before_update = false
   self.enable_standard_devise_support       = false
   self.remove_tokens_after_password_reset   = false
+  self.default_callbacks                    = true
 
   def self.setup(&block)
     yield self
