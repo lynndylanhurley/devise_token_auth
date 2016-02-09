@@ -7,7 +7,7 @@ module DeviseTokenAuth::Concerns::User
     @token_equality_cache ||= {}
 
     key = "#{token_hash}/#{token}"
-    result = @token_equality_cache[key] ||= (::BCrypt::Password.new(token_hash) == token)
+    result = @token_equality_cache[key] ||= (Digest::MD5.hexdigest(token_hash) == token)
     if @token_equality_cache.size > 10000
       @token_equality_cache = {}
     end
@@ -158,7 +158,7 @@ module DeviseTokenAuth::Concerns::User
       Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
 
       # ensure that the token is valid
-      ::BCrypt::Password.new(last_token) == token
+      Digest::MD5.hexdigest(last_token) == token
     )
   end
 
