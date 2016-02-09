@@ -845,7 +845,7 @@ These measures are taken by default when using this gem.
 
 ## About batch requests
 
-By default, the API should update the auth token for each request ([read more](#about-token-management)). But sometimes it's neccessary to make several concurrent requests to the API, for example:
+By default, the API should update the auth token for each request ([read more](#about-token-management)). But sometimes it's necessary to make several concurrent requests to the API, for example:
 
 #####Batch request example
 ~~~javascript

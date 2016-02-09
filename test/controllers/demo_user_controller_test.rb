@@ -315,7 +315,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           assert 200, response.status
         end
 
-        describe 'another device should not be abble to login' do
+        describe 'another device should not be able to login' do
 
           it 'should return forbidden status' do
             get '/demo/members_only', {}, @old_auth_headers

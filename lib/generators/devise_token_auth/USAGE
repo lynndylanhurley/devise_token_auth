@@ -1,6 +1,6 @@
 Description:
   This generator will install all the necessary configuration and migration
-  files for the devies_token_auth gem. See
+  files for the devise_token_auth gem. See
   https://github.com/lynndylanhurley/devise_token_auth for more information.
 
 Arguments:
