@@ -263,7 +263,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       assert_equal({"error"=>"invalid_credentials", "message"=>"authFailure"}, data)
     end
 
-    test 'renders somethign with no auth_origin_url' do
+    test 'renders something with no auth_origin_url' do
       get_via_redirect '/auth/facebook'
       assert_equal 200, response.status
       assert_select "body", "invalid_credentials"
