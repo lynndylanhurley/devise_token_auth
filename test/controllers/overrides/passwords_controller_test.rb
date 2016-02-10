@@ -42,7 +42,7 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
       @override_proof = @qs["override_proof"]
     end
 
-    test 'respones should have success redirect status' do
+    test 'response should have success redirect status' do
       assert_equal 302, response.status
     end
 
