@@ -115,7 +115,7 @@ module DeviseTokenAuth
     def render_create_error_not_confirmed
       render json: {
         success: false,
-        errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
+        errors: [ I18n.t("devise_token_auth.sessions.#{@resource.inactive_message}", email: @resource.email) ]
       }, status: 401
     end
 
