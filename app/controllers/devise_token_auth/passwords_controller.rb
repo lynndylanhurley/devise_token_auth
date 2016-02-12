@@ -160,14 +160,15 @@ module DeviseTokenAuth
     def render_create_error_not_allowed_redirect_url
       render json: {
         status: 'error',
-        data:   @resource.as_json,
+        data:   resource_data,
         errors: [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)]
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_success
       render json: {
         success: true,
+        data: resource_data,
         message: I18n.t("devise_token_auth.passwords.sended", email: @email)
       }
     end
@@ -207,17 +208,15 @@ module DeviseTokenAuth
     def render_update_success
       render json: {
         success: true,
-        data: {
-          user: @resource,
-          message: I18n.t("devise_token_auth.passwords.successfully_updated")
-        }
+        data: resource_data,
+        message: I18n.t("devise_token_auth.passwords.successfully_updated")
       }
     end
 
     def render_update_error
       return render json: {
         success: false,
-        errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+        errors: resource_errors
       }, status: 422
     end
 
