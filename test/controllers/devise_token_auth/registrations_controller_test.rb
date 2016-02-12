@@ -131,7 +131,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         }
         @data = JSON.parse(response.body)
 
-        assert_equal 403, response.status
+        assert_equal 422, response.status
         assert @data["errors"]
         assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @bad_redirect_url)]
       end
@@ -147,7 +147,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           unpermitted_param: '(x_x)'
         }
 
-        assert_equal 403, response.status
+        assert_equal 422, response.status
       end
 
       test "request to non-whitelisted redirect should fail" do
@@ -311,7 +311,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "request should not be successful" do
-        assert_equal 403, response.status
+        assert_equal 422, response.status
       end
 
       test "user should not have been created" do
@@ -340,7 +340,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "request should not be successful" do
-        assert_equal 403, response.status
+        assert_equal 422, response.status
       end
 
       test "user should not have been created" do
@@ -370,7 +370,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "request should not be successful" do
-        assert_equal 403, response.status
+        assert_equal 422, response.status
       end
 
       test "user should have been created" do
@@ -402,7 +402,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test "request should not be successful" do
-        assert_equal 403, response.status
+        assert_equal 422, response.status
       end
 
       test "user should have been created" do
@@ -563,7 +563,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             end
 
             test "Request was NOT successful" do
-              assert_equal 403, response.status
+              assert_equal 422, response.status
             end
 
             test "Errors were provided with response" do
@@ -627,7 +627,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
             test "Request was NOT successful" do
               put "/auth", @request_params, @auth_headers
-              assert_equal 403, response.status
+              assert_equal 422, response.status
             end
           end
         end
@@ -671,7 +671,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
             test "Request was NOT successful" do
               put "/auth", @request_params, @auth_headers
-              assert_equal 403, response.status
+              assert_equal 422, response.status
             end
           end
         end

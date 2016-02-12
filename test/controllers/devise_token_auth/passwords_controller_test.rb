@@ -256,7 +256,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             redirect_url: @bad_redirect_url
           }
 
-          assert_equal 403, response.status
+          assert_equal 422, response.status
         end
         test "request to non-whitelisted redirect should return error message" do
           xhr :post, :create, {
