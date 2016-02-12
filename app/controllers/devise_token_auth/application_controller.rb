@@ -2,6 +2,10 @@ module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
 
+    def resource_errors
+      return @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+    end
+
     protected
 
     def params_for_resource(resource)
