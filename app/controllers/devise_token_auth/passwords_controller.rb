@@ -162,7 +162,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)]
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_success

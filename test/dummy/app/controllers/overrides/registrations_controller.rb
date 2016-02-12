@@ -14,7 +14,7 @@ module Overrides
           render json: {
             status: 'error',
             errors: @resource.errors
-          }, status: 403
+          }, status: 422
         end
       else
         render json: {

@@ -112,7 +112,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_error_redirect_url_not_allowed
@@ -120,7 +120,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)]
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_success
@@ -140,7 +140,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_error_email_already_exists
@@ -148,7 +148,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   @resource.as_json,
         errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
-      }, status: 403
+      }, status: 422
     end
 
     def render_update_success
@@ -162,7 +162,7 @@ module DeviseTokenAuth
       render json: {
         status: 'error',
         errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-      }, status: 403
+      }, status: 422
     end
 
     def render_update_error_user_not_found
