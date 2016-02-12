@@ -217,7 +217,7 @@ module DeviseTokenAuth
     def render_update_error
       return render json: {
         success: false,
-        errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+        errors: resource_errors
       }, status: 422
     end
 

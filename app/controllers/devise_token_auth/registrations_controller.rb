@@ -139,7 +139,7 @@ module DeviseTokenAuth
       render json: {
         status: 'error',
         data:   @resource.as_json,
-        errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+        errors: resource_errors
       }, status: 422
     end
 
@@ -161,7 +161,7 @@ module DeviseTokenAuth
     def render_update_error
       render json: {
         status: 'error',
-        errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+        errors: resource_errors
       }, status: 422
     end
 
