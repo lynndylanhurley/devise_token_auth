@@ -380,8 +380,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           test "request should return success message" do
-            assert @data["data"]["message"]
-            assert_equal @data["data"]["message"], I18n.t("devise_token_auth.passwords.successfully_updated")
+            assert @data["message"]
+            assert_equal @data["message"], I18n.t("devise_token_auth.passwords.successfully_updated")
           end
 
           test "new password should authenticate user" do
