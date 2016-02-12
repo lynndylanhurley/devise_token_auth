@@ -34,14 +34,7 @@ module DeviseTokenAuth
         @email = resource_params[:email]
       end
 
-      q = "uid = ? AND provider='email'"
-
-      # fix for mysql default case insensitivity
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
-      end
-
-      @resource = resource_class.where(q, @email).first
+      set_resource('uid', @email)
 
       @errors = nil
       @error_status = 400
@@ -224,7 +217,10 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token)
+      params.permit(
+        :email, :password, :password_confirmation, :current_password,
+        :reset_password_token, :backup_field_name, :backup_field_class
+      )
     end
 
     def password_resource_params
