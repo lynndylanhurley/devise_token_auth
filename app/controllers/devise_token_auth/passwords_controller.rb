@@ -27,26 +27,14 @@ module DeviseTokenAuth
         end
       end
 
-      # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        @email = resource_params[:email].downcase
-      else
-        @email = resource_params[:email]
-      end
-
-      q = "uid = ? AND provider='email'"
-
-      # fix for mysql default case insensitivity
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
-      end
-
-      @resource = resource_class.where(q, @email).first
+      set_resource('uid')
 
       @errors = nil
       @error_status = 400
 
       if @resource
+        @email = @resource.email
+
         yield if block_given?
         @resource.send_reset_password_instructions({
           email: @email,
@@ -61,6 +49,7 @@ module DeviseTokenAuth
           @errors = @resource.errors
         end
       else
+        @email = resource_params[:email]
         @errors = [I18n.t("devise_token_auth.passwords.user_not_found", email: @email)]
         @error_status = 404
       end
