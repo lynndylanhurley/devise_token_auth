@@ -126,7 +126,9 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(*params_for_resource(:sign_in))
+      allowed_params = params_for_resource(:sign_in)
+      allowed_params += [:backup_field_name, :backup_field_class]
+      params.permit(*allowed_params)
     end
 
   end

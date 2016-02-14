@@ -35,6 +35,12 @@ module DeviseTokenAuth
       return unless default_identification.present?
 
       resource_list = [[resource_class.name, default_identification]]
+      backup_identification = resource_params[:backup_field_name]
+      if backup_identification.present?
+        backup_class = resource_params[:backup_field_class]
+        backup_class ||= resource_class.name
+        resource_list << [backup_class, backup_identification]
+      end
       resource_list.map!{ |tmp_array| tmp_array.map(&:to_s) }
 
       resource_class_name = resource_class.name.parameterize.to_sym
