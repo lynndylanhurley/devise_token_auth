@@ -7,6 +7,16 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
+
+  def get_mail_info
+    @mail = ActionMailer::Base.deliveries.last
+    @resource.reload
+
+    @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
+    @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+    @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+  end
+
   describe DeviseTokenAuth::PasswordsController do
     describe "Password reset" do
       before do
@@ -81,13 +91,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               redirect_url: @redirect_url
             }
 
-            @mail = ActionMailer::Base.deliveries.last
-            @resource.reload
+            get_mail_info()
             @data = JSON.parse(response.body)
-
-            @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
-            @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
-            @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
           end
 
           test 'response should return success status' do
@@ -442,12 +447,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           redirect_url: @redirect_url
         }
 
-        @mail = ActionMailer::Base.deliveries.last
-        @resource.reload
-
-        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
-        @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+        get_mail_info()
       end
 
       test 'response should return success status' do
@@ -473,12 +473,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           redirect_url: @redirect_url
         }
 
-        @mail = ActionMailer::Base.deliveries.last
-        @resource.reload
-
-        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
-        @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+        get_mail_info()
 
         xhr :get, :edit, {
           reset_password_token: @mail_reset_token,
@@ -506,12 +501,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           redirect_url: @redirect_url
         }
 
-        @mail = ActionMailer::Base.deliveries.last
-        @resource.reload
-
-        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
-        @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+        get_mail_info()
 
         xhr :get, :edit, {
           reset_password_token: @mail_reset_token,
@@ -534,16 +524,58 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           config_name:  @config_name
         }
 
-        @mail = ActionMailer::Base.deliveries.last
-        @resource.reload
-
-        @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
-        @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
-        @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+        get_mail_info()
       end
 
       test 'config_name param is included in the confirmation email link' do
         assert_equal @config_name, @mail_config_name
+      end
+    end
+
+    describe 'backup authorization field' do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:account]
+      end
+
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
+
+      before do
+        @resource = accounts(:one)
+        @redirect_url = 'http://ng-token-auth.dev'
+      end
+
+      test 'for same resource' do
+        xhr :post, :create, {
+          email: @resource.nickname,
+          redirect_url: @redirect_url,
+          backup_field_name: 'nickname'
+        }
+        get_mail_info()
+        assert_equal @mail.to.first, @resource.email
+      end
+
+      test 'for basic relationship' do
+        xhr :post, :create, {
+          email: @resource.profile.other_field,
+          redirect_url: @redirect_url,
+          backup_field_name: 'other_field',
+          backup_field_class: 'profile'
+        }
+        get_mail_info()
+        assert_equal @mail.to.first, @resource.email
+      end
+
+      test 'for polymorphic relationship' do
+        xhr :post, :create, {
+          email: @resource.owner.other_field,
+          redirect_url: @redirect_url,
+          backup_field_name: 'other_field',
+          backup_field_class: 'company'
+        }
+        get_mail_info()
+        assert_equal @mail.to.first, @resource.email
       end
     end
   end

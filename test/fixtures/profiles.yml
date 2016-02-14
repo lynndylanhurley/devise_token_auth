@@ -1,0 +1,10 @@
+# Read about fixtures at
+# http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  account: one
+  other_field: <%= Faker::Internet.user_name %>
+
+two:
+  account: two
+  other_field: <%= Faker::Internet.user_name %>
