@@ -321,11 +321,40 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             get '/demo/members_only', {}, @old_auth_headers
             assert 401, response.status
           end
-          
+
         end
 
       end
 
+      describe 'request including destroy of token' do
+        describe 'when change_headers_on_each_request is set to false' do
+          before do
+            DeviseTokenAuth.change_headers_on_each_request = false
+            age_token(@resource, @client_id)
+
+            get '/demo/members_only_remove_token', {}, @auth_headers
+          end
+
+          after do
+            DeviseTokenAuth.change_headers_on_each_request = true
+          end
+
+          it 'should not return auth-headers' do
+            refute response.headers['access-token']
+          end
+        end
+
+        describe 'when change_headers_on_each_request is set to true' do
+          before do
+            age_token(@resource, @client_id)
+            get '/demo/members_only_remove_token', {}, @auth_headers
+          end
+
+          it 'should not return auth-headers' do
+            refute response.headers['access-token']
+          end
+        end
+      end
     end
 
     describe 'enable_standard_devise_support' do
@@ -364,8 +393,8 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           it 'should not define current_mang' do
             refute_equal @resource, @controller.current_mang
           end
-		  
-		  
+
+
           it 'should increase the number of tokens by a factor of 2 up to 11' do
             @first_token = @resource.tokens.keys.first
 
@@ -459,6 +488,5 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
       end
 
     end
-
   end
 end
