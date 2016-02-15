@@ -69,6 +69,7 @@ module ActionDispatch::Routing
 
               # append name of current resource
               qs["resource_class"] = [resource]
+              qs["namespace_name"] = [namespace_name] if namespace_name
 
               set_omniauth_path_prefix!(DeviseTokenAuth.omniauth_prefix)
 
