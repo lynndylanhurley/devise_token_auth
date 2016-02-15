@@ -110,54 +110,54 @@ module DeviseTokenAuth
     def render_create_error_missing_confirm_success_url
       render json: {
         status: 'error',
-        data:   @resource.as_json,
+        data:   resource_data,
         errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_error_redirect_url_not_allowed
       render json: {
         status: 'error',
-        data:   @resource.as_json,
+        data:   resource_data,
         errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)]
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_success
       render json: {
         status: 'success',
-        data:   @resource.as_json
+        data:   resource_data
       }
     end
 
     def render_create_error
       render json: {
         status: 'error',
-        data:   @resource.as_json,
-        errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-      }, status: 403
+        data:   resource_data,
+        errors: resource_errors
+      }, status: 422
     end
 
     def render_create_error_email_already_exists
       render json: {
         status: 'error',
-        data:   @resource.as_json,
+        data:   resource_data,
         errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
-      }, status: 403
+      }, status: 422
     end
 
     def render_update_success
       render json: {
         status: 'success',
-        data:   @resource.as_json
+        data:   resource_data
       }
     end
 
     def render_update_error
       render json: {
         status: 'error',
-        errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
-      }, status: 403
+        errors: resource_errors
+      }, status: 422
     end
 
     def render_update_error_user_not_found
