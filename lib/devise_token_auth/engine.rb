@@ -41,6 +41,9 @@ module DeviseTokenAuth
     yield self
 
     Rails.application.config.after_initialize do
+      # Require Devise ORM libs depending of config init
+      require 'devise/orm/active_record' unless self.use_only_mongoid
+      require 'devise/orm/mongoid' if self.add_mongoid_support
       if defined?(::OmniAuth)
         ::OmniAuth::config.path_prefix = Devise.omniauth_path_prefix = self.omniauth_prefix
 
