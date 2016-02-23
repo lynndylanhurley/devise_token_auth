@@ -1,7 +1,7 @@
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
-    before_filter :set_user_by_token, :only => [:update]
-    skip_after_filter :update_auth_header, :only => [:create, :edit]
+    before_action :set_user_by_token, :only => [:update]
+    skip_after_action :update_auth_header, :only => [:create, :edit]
 
     # this action is responsible for generating password reset tokens and
     # sending emails
@@ -163,14 +163,15 @@ module DeviseTokenAuth
     def render_create_error_not_allowed_redirect_url
       render json: {
         status: 'error',
-        data:   @resource.as_json,
+        data:   resource_data,
         errors: [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)]
-      }, status: 403
+      }, status: 422
     end
 
     def render_create_success
       render json: {
         success: true,
+        data: resource_data,
         message: I18n.t("devise_token_auth.passwords.sended", email: @email)
       }
     end
@@ -210,17 +211,15 @@ module DeviseTokenAuth
     def render_update_success
       render json: {
         success: true,
-        data: {
-          user: @resource,
-          message: I18n.t("devise_token_auth.passwords.successfully_updated")
-        }
+        data: resource_data,
+        message: I18n.t("devise_token_auth.passwords.successfully_updated")
       }
     end
 
     def render_update_error
       return render json: {
         success: false,
-        errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+        errors: resource_errors
       }, status: 422
     end
 
@@ -231,7 +230,7 @@ module DeviseTokenAuth
     end
 
     def password_resource_params
-      params.permit(devise_parameter_sanitizer.for(:account_update))
+      params.permit(*params_for_resource(:account_update))
     end
 
   end

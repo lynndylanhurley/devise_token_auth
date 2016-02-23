@@ -31,19 +31,13 @@ module DeviseTokenAuth::Concerns::User
       serialize :tokens, JSON
     end
 
-    validates :email, presence: true, email: true, if: Proc.new { |u| u.provider == 'email' }
-    validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
-
-    # only validate unique emails among email registration users
-    validate :unique_email_user, on: :create
+    if DeviseTokenAuth.default_callbacks
+      include DeviseTokenAuth::Concerns::UserOmniauthCallbacks
+    end
 
     # can't set default on text fields in mysql, simulate here instead.
     after_save :set_empty_token_hash
     after_initialize :set_empty_token_hash
-
-    # keep uid in sync with email
-    before_save :sync_uid
-    before_create :sync_uid
 
     # get rid of dead tokens
     before_save :destroy_expired_tokens
@@ -202,18 +196,23 @@ module DeviseTokenAuth::Concerns::User
 
   def build_auth_header(token, client_id='default')
     client_id ||= 'default'
+    
+    if !DeviseTokenAuth.change_headers_on_each_request && self.tokens[client_id].nil?
+      create_new_auth_token(client_id)
+    else
 
-    # client may use expiry to prevent validation request if expired
-    # must be cast as string or headers will break
-    expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
-
-    return {
-      "access-token" => token,
-      "token-type"   => "Bearer",
-      "client"       => client_id,
-      "expiry"       => expiry.to_s,
-      "uid"          => self.uid
-    }
+      # client may use expiry to prevent validation request if expired
+      # must be cast as string or headers will break
+      expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
+  
+      return {
+        "access-token" => token,
+        "token-type"   => "Bearer",
+        "client"       => client_id,
+        "expiry"       => expiry.to_s,
+        "uid"          => self.uid
+      }
+    end
   end
 
 
@@ -245,19 +244,8 @@ module DeviseTokenAuth::Concerns::User
 
   protected
 
-  # only validate unique email among users that registered by email
-  def unique_email_user
-    if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
-      errors.add(:email, I18n.t("errors.messages.already_in_use"))
-    end
-  end
-
   def set_empty_token_hash
     self.tokens ||= {} if has_attribute?(:tokens)
-  end
-
-  def sync_uid
-    self.uid = email if provider == 'email'
   end
 
   def destroy_expired_tokens

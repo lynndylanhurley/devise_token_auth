@@ -167,6 +167,7 @@ The following settings are available for configuration in `config/initializers/d
 | **`redirect_whitelist`** | `nil` | As an added security measure, you can limit the URLs to which the API will redirect after email token validation (password reset, email confirmation, etc.). This value should be an array containing exact matches to the client URLs to be visited after validation. |
 | **`enable_standard_devise_support`** | `false` | By default, only Bearer Token authentication is implemented out of the box. If, however, you wish to integrate with legacy Devise authentication, you can do so by enabling this flag. NOTE: This feature is highly experimental! |
 | **`remove_tokens_after_password_reset`** | `false` | By default, old tokens are not invalidated when password is changed. Enable this option if you want to make passwords updates to logout other devices. |
+| **`default_callbacks`** | `true` | By default User model will include the `DeviseTokenAuth::Concerns::UserOmniauthCallbacks` concern, which has `email`, `uid` validations & `uid` synchronization callbacks. |
 
 
 Additionally, you can configure other aspects of devise by manually creating the traditional devise.rb file at `config/initializers/devise.rb`. Here are some examples of what you can do in this file:
@@ -845,7 +846,7 @@ These measures are taken by default when using this gem.
 
 ## About batch requests
 
-By default, the API should update the auth token for each request ([read more](#about-token-management)). But sometimes it's neccessary to make several concurrent requests to the API, for example:
+By default, the API should update the auth token for each request ([read more](#about-token-management)). But sometimes it's necessary to make several concurrent requests to the API, for example:
 
 #####Batch request example
 ~~~javascript

@@ -30,7 +30,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           before do
             # need to post empty data
             post "/#{auth_url}", {}
-
             @resource = assigns(:resource)
             @data = JSON.parse(response.body)
           end
@@ -74,7 +73,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test "user should have been created" do
-            assert @resource.created_at
+            assert @resource.id
           end
 
           test "user should not be confirmed" do
@@ -148,7 +147,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             }
             @data = JSON.parse(response.body)
 
-            assert_equal 403, response.status
+            assert_equal 422, response.status
             assert @data["errors"]
             assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @bad_redirect_url)]
           end
@@ -164,7 +163,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               unpermitted_param: '(x_x)'
             }
 
-            assert_equal 403, response.status
+            assert_equal 422, response.status
           end
 
           test "request to non-whitelisted redirect should fail" do
@@ -328,7 +327,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test "request should not be successful" do
-            assert_equal 403, response.status
+            assert_equal 422, response.status
           end
 
           test "user should not have been created" do
@@ -357,7 +356,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test "request should not be successful" do
-            assert_equal 403, response.status
+            assert_equal 422, response.status
           end
 
           test "user should not have been created" do
@@ -387,7 +386,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test "request should not be successful" do
-            assert_equal 403, response.status
+            assert_equal 422, response.status
           end
 
           test "user should not have been created" do
@@ -418,7 +417,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test "request should not be successful" do
-            assert_equal 403, response.status
+            assert_equal 422, response.status
           end
 
           test "user should not have been created" do
@@ -586,7 +585,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
                 end
 
                 test "Request was NOT successful" do
-                  assert_equal 403, response.status
+                  assert_equal 422, response.status
                 end
 
                 test "Errors were provided with response" do
@@ -657,7 +656,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
                 test "Request was NOT successful" do
                   put "/#{auth_url}", @request_params, @auth_headers
-                  assert_equal 403, response.status
+                  assert_equal 422, response.status
                 end
               end
             end
@@ -708,7 +707,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
                 test "Request was NOT successful" do
                   put "/#{auth_url}", @request_params, @auth_headers
-                  assert_equal 403, response.status
+                  assert_equal 422, response.status
                 end
               end
             end
@@ -821,7 +820,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             refute mang_class.where(id: @resource.id).first
           end
         end
-        #
+
         describe "Passing client config name" do
           before do
             @config_name = 'altUser'
@@ -890,8 +889,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             assert @resource.valid_token?(@token, @client_id)
           end
         end
-
-
       end
     end
   end

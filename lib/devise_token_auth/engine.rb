@@ -21,7 +21,8 @@ module DeviseTokenAuth
                  :enable_standard_devise_support,
                  :add_mongoid_support,
                  :use_only_mongoid,
-                 :remove_tokens_after_password_reset
+                 :remove_tokens_after_password_reset,
+                 :default_callbacks
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -36,6 +37,7 @@ module DeviseTokenAuth
   self.add_mongoid_support                  = false
   self.use_only_mongoid                     = false
   self.remove_tokens_after_password_reset   = false
+  self.default_callbacks                    = true
 
   def self.setup(&block)
     yield self
