@@ -32,7 +32,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         assert @new_user.confirmation_token
       end
 
-      describe "success" do
+      describe "show success" do
         before do
           xhr :get, :show, {confirmation_token: @token, redirect_url: @redirect_url}
           @resource = assigns(:resource)
@@ -49,13 +49,33 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
 
       describe "failure" do
         test "user should not be confirmed" do
-          assert_raises(ActionController::RoutingError) {
-            xhr :get, :show, {confirmation_token: "bogus"}
-          }
-          @resource = assigns(:resource)
-          refute @resource.confirmed?
+          xhr :get, :show, {confirmation_token: "bogus"}
+          assert_equal 401, response.status
         end
       end
+
+      describe "create success" do
+        before do
+          xhr :get, :create, {confirmation_token: @token, redirect_url: @redirect_url}
+          @resource = assigns(:resource)
+        end
+
+        test "user should now be confirmed" do
+          assert @resource.confirmed?
+        end
+
+        test "should redirect to success url" do
+          assert_equal 200, response.status
+        end
+      end
+
+      describe "failure" do
+        test "user should not be confirmed" do
+          xhr :get, :create, {confirmation_token: "bogus"}
+          assert_equal 401, response.status
+        end
+      end
+
     end
 
     # test with non-standard user class
