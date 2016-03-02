@@ -1,7 +1,6 @@
 module DeviseTokenAuth
   class RegistrationsController < DeviseTokenAuth::ApplicationController
     before_action :set_user_by_token, :only => [:destroy, :update]
-    before_action :validate_sign_up_params, :only => :create
     before_action :validate_account_update_params, :only => :update
     skip_after_action :update_auth_header, :only => [:create, :destroy]
 
@@ -65,7 +64,7 @@ module DeviseTokenAuth
           render_create_success
         else
           clean_up_passwords @resource
-          render_create_error
+          render_save_error
         end
       rescue ActiveRecord::RecordNotUnique
         clean_up_passwords @resource
@@ -79,7 +78,7 @@ module DeviseTokenAuth
           yield @resource if block_given?
           render_update_success
         else
-          render_update_error
+          render_save_error
         end
       else
         render_update_error_user_not_found
@@ -124,40 +123,23 @@ module DeviseTokenAuth
     end
 
     def render_create_success
-      render json: {
-        status: 'success',
-        data:   resource_data
-      }
+      render json: @resource, status: 201
     end
 
-    def render_create_error
-      render json: {
-        status: 'error',
-        data:   resource_data,
-        errors: resource_errors
-      }, status: 422
+    def render_save_error
+      render json: @resource, meta: { errors: @resource.errors.to_hash },
+        status: 422
     end
 
     def render_create_error_email_already_exists
-      render json: {
-        status: 'error',
-        data:   resource_data,
-        errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
-      }, status: 422
+      errors = @resource.errors.to_hash
+      errors.merge!(email: I18n.t("devise_token_auth.registrations.email_already_exists"))
+      render json: @resource, meta: { errors: errors },
+        status: 422
     end
 
     def render_update_success
-      render json: {
-        status: 'success',
-        data:   resource_data
-      }
-    end
-
-    def render_update_error
-      render json: {
-        status: 'error',
-        errors: resource_errors
-      }, status: 422
+      render json: @resource, status: 201
     end
 
     def render_update_error_user_not_found
