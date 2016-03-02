@@ -38,7 +38,7 @@ module DeviseTokenAuth
           token: BCrypt::Password.create(@token),
           expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
         }
-        @resource.save
+        @resource.save!
 
         sign_in(:user, @resource, store: false, bypass: false)
 
