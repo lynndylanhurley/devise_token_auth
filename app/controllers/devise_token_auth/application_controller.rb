@@ -2,8 +2,8 @@ module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
 
-    def resource_data
-      response_data = @resource.as_json
+    def resource_data(opts={})
+      response_data = opts[:resource_json] || @resource.as_json
       if is_json_api
         response_data['type'] = @resource.class.name.parameterize
       end
