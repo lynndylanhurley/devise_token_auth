@@ -34,11 +34,13 @@ module DeviseTokenAuth
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
 
-        @resource.tokens[@client_id] = {
-          token: BCrypt::Password.create(@token),
-          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
-        }
-        @resource.save
+        @resource.with_lock do
+          @resource.tokens[@client_id] = {
+            token: BCrypt::Password.create(@token),
+            expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          }
+          @resource.save
+        end
 
         sign_in(:user, @resource, store: false, bypass: false)
 
@@ -107,9 +109,7 @@ module DeviseTokenAuth
     end
 
     def render_create_success
-      render json: {
-        data: @resource.token_validation_response
-      }
+      render json: @resource
     end
 
     def render_create_error_not_confirmed
@@ -121,7 +121,9 @@ module DeviseTokenAuth
 
     def render_create_error_bad_credentials
       render json: {
-        errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
+        meta: { errors: {
+          auth: [ I18n.t("devise_token_auth.sessions.bad_credentials") ]
+        }}
       }, status: 401
     end
 
