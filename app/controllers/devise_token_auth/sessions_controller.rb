@@ -128,14 +128,14 @@ module DeviseTokenAuth
     end
 
     def render_destroy_success
-      render json: {
-        success:true
-      }, status: 200
+      head :ok
     end
 
     def render_destroy_error
       render json: {
-        errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
+        meta: { errors: {
+          auth: [ I18n.t("devise_token_auth.sessions.user_not_found") ]
+        }}
       }, status: 404
     end
 
