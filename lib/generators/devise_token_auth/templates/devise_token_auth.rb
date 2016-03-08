@@ -38,4 +38,9 @@ DeviseTokenAuth.setup do |config|
   # If, however, you wish to integrate with legacy Devise authentication, you can
   # do so by enabling this flag. NOTE: This feature is highly experimental!
   # config.enable_standard_devise_support = false
+
+  # By default all responses will be in a custom JSON format.
+  # Uncomment this if you wish to use the JSON API v1.0 compliant format.
+  # See http://jsonapi.org for more information on the JSON API specification.
+  # config.response_format = :json_api
 end

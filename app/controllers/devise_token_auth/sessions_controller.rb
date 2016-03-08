@@ -100,7 +100,7 @@ module DeviseTokenAuth
       }
     end
 
-    def render_new_error(format = :custom)
+    def render_new_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -113,7 +113,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_success(format = :custom)
+    def render_create_success(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -126,7 +126,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_not_confirmed(format = :custom)
+    def render_create_error_not_confirmed(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -140,7 +140,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_bad_credentials(format = :custom)
+    def render_create_error_bad_credentials(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -153,7 +153,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_destroy_success(format = :custom)
+    def render_destroy_success(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -166,7 +166,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_destroy_error(format = :custom)
+    def render_destroy_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {

@@ -143,7 +143,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_missing_email(format = :custom)
+    def render_create_error_missing_email(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -157,7 +157,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_missing_redirect_url(format = :custom)
+    def render_create_error_missing_redirect_url(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -171,7 +171,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_not_allowed_redirect_url(format = :custom)
+    def render_create_error_not_allowed_redirect_url(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -186,7 +186,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_success(format = :custom)
+    def render_create_success(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -201,7 +201,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error(format = :custom)
+    def render_create_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -215,7 +215,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_edit_error(format = :custom)
+    def render_edit_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         raise ActionController::RoutingError.new('Not Found')
@@ -226,7 +226,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_error_unauthorized(format = :custom)
+    def render_update_error_unauthorized(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -240,7 +240,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_error_password_not_required(format = :custom)
+    def render_update_error_password_not_required(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -254,7 +254,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_error_missing_password(format = :custom)
+    def render_update_error_missing_password(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -268,7 +268,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_success(format = :custom)
+    def render_update_success(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -283,7 +283,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_error(format = :custom)
+    def render_update_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         return render json: {

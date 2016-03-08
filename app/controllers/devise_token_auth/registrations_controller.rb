@@ -107,7 +107,7 @@ module DeviseTokenAuth
 
     protected
 
-    def render_create_error_missing_confirm_success_url(format = :custom)
+    def render_create_error_missing_confirm_success_url(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -122,7 +122,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_redirect_url_not_allowed(format = :custom)
+    def render_create_error_redirect_url_not_allowed(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -137,7 +137,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_success(format = :custom)
+    def render_create_success(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -151,7 +151,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error(format = :custom)
+    def render_create_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -166,7 +166,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_email_already_exists(format = :custom)
+    def render_create_error_email_already_exists(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -181,7 +181,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_success(format = :custom)
+    def render_update_success(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -195,7 +195,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_error(format = :custom)
+    def render_update_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -209,7 +209,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_update_error_user_not_found(format = :custom)
+    def render_update_error_user_not_found(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -223,7 +223,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_destroy_success(format = :custom)
+    def render_destroy_success(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
@@ -237,7 +237,7 @@ module DeviseTokenAuth
       end
     end
 
-    def render_destroy_error(format = :custom)
+    def render_destroy_error(format = configured_format)
       case format
       when :custom    # custom JSON response format
         render json: {
