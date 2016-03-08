@@ -100,8 +100,8 @@ module DeviseTokenAuth
       }
     end
 
-    def render_new_error(format = configured_format)
-      case format
+    def render_new_error
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           errors: [I18n.t("devise_token_auth.sessions.not_supported")]
@@ -113,8 +113,8 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_success(format = configured_format)
-      case format
+    def render_create_success
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           data: @resource.token_validation_response
@@ -126,8 +126,8 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_not_confirmed(format = configured_format)
-      case format
+    def render_create_error_not_confirmed
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           success: false,
@@ -140,8 +140,8 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_bad_credentials(format = configured_format)
-      case format
+    def render_create_error_bad_credentials
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
@@ -153,8 +153,8 @@ module DeviseTokenAuth
       end
     end
 
-    def render_destroy_success(format = configured_format)
-      case format
+    def render_destroy_success
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           success: true
@@ -166,8 +166,8 @@ module DeviseTokenAuth
       end
     end
 
-    def render_destroy_error(format = configured_format)
-      case format
+    def render_destroy_error
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           errors: [I18n.t("devise_token_auth.sessions.user_not_found")]

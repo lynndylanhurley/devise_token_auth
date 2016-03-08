@@ -9,7 +9,7 @@ module DeviseTokenAuth::Concerns::JsonApiHelpers
 
   # Sets the JSON API media type headers on the response object.
   def set_json_api_headers
-    if configured_format == :json_api && response.present?
+    if response_format == :json_api && response.present?
       response.headers['HTTP_ACCEPT']   = 'application/vnd.api+json'
       response.headers['CONTENT_TYPE']  = 'application/vnd.api+json'
     end
@@ -21,7 +21,7 @@ module DeviseTokenAuth::Concerns::JsonApiHelpers
   end
 
   # Returns the response rendering format specified in the config.
-  def configured_format
+  def response_format
     DeviseTokenAuth.response_format
   end
 

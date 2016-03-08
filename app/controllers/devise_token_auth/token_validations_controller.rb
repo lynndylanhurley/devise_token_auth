@@ -15,8 +15,8 @@ module DeviseTokenAuth
 
     protected
 
-    def render_validate_token_success(format = configured_format)
-      case format
+    def render_validate_token_success
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           success: true,
@@ -29,8 +29,8 @@ module DeviseTokenAuth
       end
     end
 
-    def render_validate_token_error(format = configured_format)
-      case format
+    def render_validate_token_error
+      case response_format
       when :custom    # custom JSON response format
         render json: {
           success: false,
