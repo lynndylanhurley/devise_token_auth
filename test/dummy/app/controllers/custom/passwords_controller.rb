@@ -32,7 +32,7 @@ class Custom::PasswordsController < DeviseTokenAuth::PasswordsController
 
   protected
 
-  def render_update_success(format = configured_format)
+  def render_update_success
     render json: {custom: "foo"}
   end
 
