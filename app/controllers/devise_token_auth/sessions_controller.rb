@@ -101,40 +101,82 @@ module DeviseTokenAuth
     end
 
     def render_new_error(format = :custom)
-      render json: {
-        errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
-      }, status: 405
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          errors: [I18n.t("devise_token_auth.sessions.not_supported")]
+        }, status: 405
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_success(format = :custom)
-      render json: {
-        data: @resource.token_validation_response
-      }
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          data: @resource.token_validation_response
+        }
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_not_confirmed(format = :custom)
-      render json: {
-        success: false,
-        errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
-      }, status: 401
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  [I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email)]
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_bad_credentials(format = :custom)
-      render json: {
-        errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
-      }, status: 401
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_destroy_success(format = :custom)
-      render json: {
-        success:true
-      }, status: 200
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          success: true
+        }, status: 200
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_destroy_error(format = :custom)
-      render json: {
-        errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
-      }, status: 404
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
+        }, status: 404
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
 

@@ -16,17 +16,31 @@ module DeviseTokenAuth
     protected
 
     def render_validate_token_success(format = :custom)
-      render json: {
-        success: true,
-        data: @resource.token_validation_response
-      }
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          success: true,
+          data: @resource.token_validation_response
+        }
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_validate_token_error(format = :custom)
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.token_validations.invalid")]
-      }, status: 401
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors: [I18n.t("devise_token_auth.token_validations.invalid")]
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
   end
 end

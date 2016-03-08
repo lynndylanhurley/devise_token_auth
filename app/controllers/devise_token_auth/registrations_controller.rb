@@ -108,77 +108,147 @@ module DeviseTokenAuth
     protected
 
     def render_create_error_missing_confirm_success_url(format = :custom)
-      render json: {
-        status: 'error',
-        data:   resource_data,
-        errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
-      }, status: 422
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'error',
+          data:   resource_data,
+          errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_redirect_url_not_allowed(format = :custom)
-      render json: {
-        status: 'error',
-        data:   resource_data,
-        errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)]
-      }, status: 422
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'error',
+          data:   resource_data,
+          errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)]
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_success(format = :custom)
-      render json: {
-        status: 'success',
-        data:   resource_data
-      }
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'success',
+          data:   resource_data
+        }
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error(format = :custom)
-      render json: {
-        status: 'error',
-        data:   resource_data,
-        errors: resource_errors
-      }, status: 422
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'error',
+          data:   resource_data,
+          errors: resource_errors
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_email_already_exists(format = :custom)
-      render json: {
-        status: 'error',
-        data:   resource_data,
-        errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
-      }, status: 422
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'error',
+          data:   resource_data,
+          errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_success(format = :custom)
-      render json: {
-        status: 'success',
-        data:   resource_data
-      }
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'success',
+          data:   resource_data
+        }
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_error(format = :custom)
-      render json: {
-        status: 'error',
-        errors: resource_errors
-      }, status: 422
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'error',
+          errors: resource_errors
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_error_user_not_found(format = :custom)
-      render json: {
-        status: 'error',
-        errors: [I18n.t("devise_token_auth.registrations.user_not_found")]
-      }, status: 404
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'error',
+          errors: [I18n.t("devise_token_auth.registrations.user_not_found")]
+        }, status: 404
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_destroy_success(format = :custom)
-      render json: {
-        status: 'success',
-        message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
-      }
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'success',
+          message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
+        }
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_destroy_error(format = :custom)
-      render json: {
-        status: 'error',
-        errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
-      }, status: 404
+      case format
+      when :custom    # custom JSON response format
+        render json: {
+          status: 'error',
+          errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
+        }, status: 404
+      when :json_api  # JSON API specification compliant response format
+        # TODO: JSON API response not yet implemented
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     private
