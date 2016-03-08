@@ -107,7 +107,7 @@ module DeviseTokenAuth
 
     protected
 
-    def render_create_error_missing_confirm_success_url
+    def render_create_error_missing_confirm_success_url(format = :custom)
       render json: {
         status: 'error',
         data:   resource_data,
@@ -115,7 +115,7 @@ module DeviseTokenAuth
       }, status: 422
     end
 
-    def render_create_error_redirect_url_not_allowed
+    def render_create_error_redirect_url_not_allowed(format = :custom)
       render json: {
         status: 'error',
         data:   resource_data,
@@ -123,14 +123,14 @@ module DeviseTokenAuth
       }, status: 422
     end
 
-    def render_create_success
+    def render_create_success(format = :custom)
       render json: {
         status: 'success',
         data:   resource_data
       }
     end
 
-    def render_create_error
+    def render_create_error(format = :custom)
       render json: {
         status: 'error',
         data:   resource_data,
@@ -138,7 +138,7 @@ module DeviseTokenAuth
       }, status: 422
     end
 
-    def render_create_error_email_already_exists
+    def render_create_error_email_already_exists(format = :custom)
       render json: {
         status: 'error',
         data:   resource_data,
@@ -146,35 +146,35 @@ module DeviseTokenAuth
       }, status: 422
     end
 
-    def render_update_success
+    def render_update_success(format = :custom)
       render json: {
         status: 'success',
         data:   resource_data
       }
     end
 
-    def render_update_error
+    def render_update_error(format = :custom)
       render json: {
         status: 'error',
         errors: resource_errors
       }, status: 422
     end
 
-    def render_update_error_user_not_found
+    def render_update_error_user_not_found(format = :custom)
       render json: {
         status: 'error',
         errors: [I18n.t("devise_token_auth.registrations.user_not_found")]
       }, status: 404
     end
 
-    def render_destroy_success
+    def render_destroy_success(format = :custom)
       render json: {
         status: 'success',
         message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
       }
     end
 
-    def render_destroy_error
+    def render_destroy_error(format = :custom)
       render json: {
         status: 'error',
         errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]

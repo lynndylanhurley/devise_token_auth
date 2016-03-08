@@ -12,7 +12,7 @@ class Custom::TokenValidationsController < DeviseTokenAuth::TokenValidationsCont
 
   protected
 
-  def render_validate_token_success
+  def render_validate_token_success(format = :custom)
     render json: {custom: "foo"}
   end
 

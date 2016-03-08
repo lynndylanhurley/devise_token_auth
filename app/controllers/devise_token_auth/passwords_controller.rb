@@ -143,21 +143,21 @@ module DeviseTokenAuth
       end
     end
 
-    def render_create_error_missing_email
+    def render_create_error_missing_email(format = :custom)
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.missing_email")]
       }, status: 401
     end
 
-    def render_create_error_missing_redirect_url
+    def render_create_error_missing_redirect_url(format = :custom)
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
       }, status: 401
     end
 
-    def render_create_error_not_allowed_redirect_url
+    def render_create_error_not_allowed_redirect_url(format = :custom)
       render json: {
         status: 'error',
         data:   resource_data,
@@ -165,7 +165,7 @@ module DeviseTokenAuth
       }, status: 422
     end
 
-    def render_create_success
+    def render_create_success(format = :custom)
       render json: {
         success: true,
         data: resource_data,
@@ -173,39 +173,39 @@ module DeviseTokenAuth
       }
     end
 
-    def render_create_error
+    def render_create_error(format = :custom)
       render json: {
         success: false,
         errors: @errors,
       }, status: @error_status
     end
 
-    def render_edit_error
+    def render_edit_error(format = :custom)
       raise ActionController::RoutingError.new('Not Found')
     end
 
-    def render_update_error_unauthorized
+    def render_update_error_unauthorized(format = :custom)
       render json: {
         success: false,
         errors: ['Unauthorized']
       }, status: 401
     end
 
-    def render_update_error_password_not_required
+    def render_update_error_password_not_required(format = :custom)
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)]
       }, status: 422
     end
 
-    def render_update_error_missing_password
+    def render_update_error_missing_password(format = :custom)
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.passwords.missing_passwords")]
       }, status: 422
     end
 
-    def render_update_success
+    def render_update_success(format = :custom)
       render json: {
         success: true,
         data: resource_data,
@@ -213,7 +213,7 @@ module DeviseTokenAuth
       }
     end
 
-    def render_update_error
+    def render_update_error(format = :custom)
       return render json: {
         success: false,
         errors: resource_errors

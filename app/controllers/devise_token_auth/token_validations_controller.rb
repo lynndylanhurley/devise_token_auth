@@ -13,16 +13,16 @@ module DeviseTokenAuth
       end
     end
 
-    protected 
+    protected
 
-    def render_validate_token_success
+    def render_validate_token_success(format = :custom)
       render json: {
         success: true,
         data: @resource.token_validation_response
       }
     end
 
-    def render_validate_token_error
+    def render_validate_token_error(format = :custom)
       render json: {
         success: false,
         errors: [I18n.t("devise_token_auth.token_validations.invalid")]
