@@ -62,4 +62,9 @@ class ActionController::TestCase
     @routes = Dummy::Application.routes
     @request.env['devise.mapping'] = Devise.mappings[:user]
   end
+
+  before do
+    # TODO: remove once JSON API compliant requests ready -- default to custom format until then
+    DeviseTokenAuth.response_format = :custom
+  end
 end
