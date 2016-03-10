@@ -35,6 +35,7 @@ group :development, :test do
   gem 'faker'
   gem 'fuzz_ball'
   gem 'mocha'
+  gem 'json_expressions'
 end
 
 # code coverage, metrics

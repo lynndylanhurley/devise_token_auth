@@ -135,6 +135,7 @@ GEM
     hashie (3.4.3)
     i18n (0.7.0)
     json (1.8.3)
+    json_expressions (0.8.3)
     jwt (1.5.2)
     listen (3.0.5)
       rb-fsevent (>= 0.9.3)
@@ -262,6 +263,7 @@ DEPENDENCIES
   github_changelog_generator
   guard
   guard-minitest
+  json_expressions
   minitest
   minitest-focus
   minitest-rails

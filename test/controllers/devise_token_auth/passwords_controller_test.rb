@@ -34,6 +34,35 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         end
       end
 
+      describe 'not email should return 401' do
+        before do
+          DeviseTokenAuth.response_format = :json_api
+
+          @auth_headers = @resource.create_new_auth_token
+          @new_password = Faker::Internet.password
+
+          xhr :post, :create, {
+            redirect_url: @redirect_url
+          }
+          @data = JSON.parse(response.body)
+          DeviseTokenAuth.response_format = :custom
+        end
+
+        test 'response should fail' do
+          assert_equal 401, response.status
+        end
+        test 'error message should be returned' do
+          assert_json_match @data, {
+            errors: [{
+              source: {
+                parameter: 'email'
+              },
+              detail: I18n.t("devise_token_auth.passwords.missing_email")
+            }]
+          }
+        end
+      end
+
       describe 'not redirect_url should return 401' do
         before do
           @auth_headers = @resource.create_new_auth_token
