@@ -29,8 +29,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           assert_equal 401, response.status
         end
         test 'error message should be returned' do
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_email")]
+          assert_json_match @data, {
+            success: false,
+            errors: [I18n.t("devise_token_auth.passwords.missing_email")]
+          }
         end
       end
 
