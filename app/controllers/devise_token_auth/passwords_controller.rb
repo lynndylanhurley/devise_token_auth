@@ -151,7 +151,10 @@ module DeviseTokenAuth
           errors:  [I18n.t("devise_token_auth.passwords.missing_email")]
         }, status: 401
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'email' },
+          detail: I18n.t("devise_token_auth.passwords.missing_email")
+        }], 401
       else
         raise_unknown_format_argument_error
       end
