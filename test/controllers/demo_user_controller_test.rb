@@ -355,6 +355,27 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
         end
       end
+
+      describe 'when access-token name has been changed' do
+        before do
+          # ensure that request is not treated as batch request
+          DeviseTokenAuth.headers_names[:'access-token'] = 'new-access-token'
+          auth_headers_modified = @resource.create_new_auth_token
+          client_id = auth_headers_modified['client']
+          age_token(@resource, client_id)
+
+          get '/demo/members_only', {}, auth_headers_modified
+          @resp_token = response.headers['new-access-token']
+        end
+
+        it 'should have "new-access-token" header' do
+          assert @resp_token.present?
+        end
+
+        after do
+          DeviseTokenAuth.headers_names[:'access-token'] = 'access-token'
+        end
+      end
     end
 
     describe 'enable_standard_devise_support' do
