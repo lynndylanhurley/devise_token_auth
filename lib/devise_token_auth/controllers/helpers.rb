@@ -39,7 +39,7 @@ module DeviseTokenAuth
 
                 unless current_#{group_name}
                   return render json: {
-                    errors: ["Authorized users only."]
+                    meta: { errors: { authentication: [ 'is required' ] } }
                   }, status: 401
                 end
               end
