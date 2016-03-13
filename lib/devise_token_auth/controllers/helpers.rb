@@ -110,7 +110,7 @@ module DeviseTokenAuth
           def authenticate_#{mapping}!
             unless current_#{mapping}
               return render json: {
-                errors: ["Authorized users only."]
+                meta: { errors: { authentication: [ 'is required' ] } }
               }, status: 401
             end
           end
