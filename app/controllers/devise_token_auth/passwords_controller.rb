@@ -1,6 +1,5 @@
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
-    before_action :set_user_by_token, :only => [:update]
     skip_after_action :update_auth_header, :only => [:create, :edit]
 
     # this action is responsible for generating password reset tokens and
@@ -8,16 +7,6 @@ module DeviseTokenAuth
     def create
       unless resource_params[:email]
         return render_create_error_missing_email
-      end
-
-      # give redirect value from params priority
-      @redirect_url = params[:redirect_url]
-
-      # fall back to default value if provided
-      @redirect_url ||= DeviseTokenAuth.default_password_reset_url
-
-      unless @redirect_url
-        return render_create_error_missing_redirect_url
       end
 
       # if whitelist is set, validate redirect_url against whitelist
@@ -66,7 +55,9 @@ module DeviseTokenAuth
       end
 
       if @errors
-        return render_create_error
+        # NOTE: Do not inform the client that the user was not found to
+        # discourage user fishing.
+        head :created
       end
     end
 
@@ -108,24 +99,23 @@ module DeviseTokenAuth
     end
 
     def update
-      # make sure user is authorized
+      @resource = resource_class.reset_password_by_token(params)
+
       unless @resource
-        return render_update_error_unauthorized
+        return render_update_error
       end
 
-      # make sure account doesn't use oauth2 provider
-      unless @resource.provider == 'email'
-        return render_update_error_password_not_required
-      end
+      if @resource.errors.empty?
+        @client_id = SecureRandom.urlsafe_base64(nil, false)
+        @token     = SecureRandom.urlsafe_base64(nil, false)
 
-      # ensure that password params were sent
-      unless password_resource_params[:password] and password_resource_params[:password_confirmation]
-        return render_update_error_missing_password
-      end
-
-      if @resource.send(resource_update_method, password_resource_params)
-        @resource.allow_password_change = false
-
+        @resource.with_lock do
+          @resource.tokens[@client_id] = {
+            token: BCrypt::Password.create(@token),
+            expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          }
+          @resource.save
+        end
         yield if block_given?
         return render_update_success
       else
@@ -145,9 +135,10 @@ module DeviseTokenAuth
 
     def render_create_error_missing_email
       render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_email")]
-      }, status: 401
+        meta: { errors: {
+          email: [I18n.t("devise_token_auth.passwords.missing_email")]
+        } }
+      }, status: 422
     end
 
     def render_create_error_missing_redirect_url
@@ -166,11 +157,7 @@ module DeviseTokenAuth
     end
 
     def render_create_success
-      render json: {
-        success: true,
-        data: resource_data,
-        message: I18n.t("devise_token_auth.passwords.sended", email: @email)
-      }
+      head :created
     end
 
     def render_create_error
@@ -184,11 +171,13 @@ module DeviseTokenAuth
       raise ActionController::RoutingError.new('Not Found')
     end
 
-    def render_update_error_unauthorized
-      render json: {
-        success: false,
-        errors: ['Unauthorized']
-      }, status: 401
+    def render_update_error
+      if @resource.nil? || (@resource && resource_errors.empty?)
+        errors = { reset_password_token: [ "is invalid or expired" ] }
+      else
+        errors = resource_errors
+      end
+      render json: { meta: { errors: errors } }, status: 422
     end
 
     def render_update_error_password_not_required
@@ -200,24 +189,12 @@ module DeviseTokenAuth
 
     def render_update_error_missing_password
       render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_passwords")]
+        meta: { errors: { password: [ I18n.t("devise_token_auth.passwords.missing_passwords") ] } }
       }, status: 422
     end
 
     def render_update_success
-      render json: {
-        success: true,
-        data: resource_data,
-        message: I18n.t("devise_token_auth.passwords.successfully_updated")
-      }
-    end
-
-    def render_update_error
-      return render json: {
-        success: false,
-        errors: resource_errors
-      }, status: 422
+      render json: @resource
     end
 
     private
