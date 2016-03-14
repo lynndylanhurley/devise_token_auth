@@ -20,7 +20,8 @@ module DeviseTokenAuth
                  :check_current_password_before_update,
                  :enable_standard_devise_support,
                  :remove_tokens_after_password_reset,
-                 :default_callbacks
+                 :default_callbacks,
+                 :headers_names
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -34,6 +35,11 @@ module DeviseTokenAuth
   self.enable_standard_devise_support       = false
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
+  self.headers_names                        = {:'access-token' => 'access-token',
+                                               :'client' => 'client',
+                                               :'expiry' => 'expiry',
+                                               :'uid' => 'uid',
+                                               :'token-type' => 'token-type' }
 
   def self.setup(&block)
     yield self

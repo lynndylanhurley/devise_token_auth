@@ -200,11 +200,11 @@ module DeviseTokenAuth::Concerns::User
       expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
   
       return {
-        "access-token" => token,
-        "token-type"   => "Bearer",
-        "client"       => client_id,
-        "expiry"       => expiry.to_s,
-        "uid"          => self.uid
+        DeviseTokenAuth.headers_names[:"access-token"] => token,
+        DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
+        DeviseTokenAuth.headers_names[:"client"]       => client_id,
+        DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
+        DeviseTokenAuth.headers_names[:"uid"]          => self.uid
       }
     end
   end
