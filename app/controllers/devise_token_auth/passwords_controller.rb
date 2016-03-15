@@ -204,7 +204,11 @@ module DeviseTokenAuth
           message: I18n.t("devise_token_auth.passwords.sended", email: @email)
         }
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_data({
+          type:         response_data['type'],
+          id:           response_data['id'].to_s,
+          attributes:   response_data.except('type', 'id')
+        })
       else
         raise_unknown_format_argument_error
       end
@@ -218,7 +222,8 @@ module DeviseTokenAuth
           errors:  @errors,
         }, status: @error_status
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        object_errors = ValidationErrors.new(@resource)
+        render_json_api_errors object_errors.json_api_errors, @error_status
       else
         raise_unknown_format_argument_error
       end
@@ -229,7 +234,7 @@ module DeviseTokenAuth
       when :custom    # custom JSON response format
         raise ActionController::RoutingError.new('Not Found')
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        raise ActionController::RoutingError.new('Not Found')
       else
         raise_unknown_format_argument_error
       end
@@ -243,7 +248,9 @@ module DeviseTokenAuth
           errors:  ['Unauthorized']
         }, status: 401
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          detail: 'Unauthorized'
+        }], 401
       else
         raise_unknown_format_argument_error
       end
@@ -257,7 +264,10 @@ module DeviseTokenAuth
           errors:  [I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)]
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'password' },
+          detail: I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)
+        }], 422
       else
         raise_unknown_format_argument_error
       end
@@ -271,7 +281,10 @@ module DeviseTokenAuth
           errors:  [I18n.t("devise_token_auth.passwords.missing_passwords")]
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'password' },
+          detail: I18n.t("devise_token_auth.passwords.missing_passwords")
+        }], 422
       else
         raise_unknown_format_argument_error
       end
@@ -286,7 +299,11 @@ module DeviseTokenAuth
           message: I18n.t("devise_token_auth.passwords.successfully_updated")
         }
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_data({
+          type:         response_data['type'],
+          id:           response_data['id'].to_s,
+          attributes:   response_data.except('type', 'id')
+        })
       else
         raise_unknown_format_argument_error
       end
@@ -300,7 +317,8 @@ module DeviseTokenAuth
           errors:  resource_errors
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        object_errors = ValidationErrors.new(@resource)
+        render_json_api_errors object_errors.json_api_errors, 422
       else
         raise_unknown_format_argument_error
       end
