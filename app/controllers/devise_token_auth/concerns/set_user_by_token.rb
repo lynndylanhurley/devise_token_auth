@@ -65,25 +65,27 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
   end
 
-
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless @resource and @resource.valid? and @client_id
+    return unless @resource and @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
 
     if @used_auth_by_token and not DeviseTokenAuth.change_headers_on_each_request
+      # should not append auth header if @resource related token was
+      # cleared by sign out in the meantime
+      return if @resource.reload.tokens[@client_id].nil?
       auth_header = @resource.build_auth_header(@token, @client_id)
-
       # update the response header
       response.headers.merge!(auth_header)
-
     else
-
       # Lock the user record during any auth_header updates to ensure
       # we don't have write contention from multiple threads
       @resource.with_lock do
+        # should not append auth header if @resource related token was
+        # cleared by sign out in the meantime
+        return if @used_auth_by_token && @resource.tokens[@client_id].nil?
 
         # determine batch request status after request processing, in case
         # another processes has updated it during that processing
@@ -103,11 +105,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
           # update the response header
           response.headers.merge!(auth_header)
         end
-
       end # end lock
-
     end
-
   end
 
   def resource_class(m=nil)

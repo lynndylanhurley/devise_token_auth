@@ -53,15 +53,16 @@ module DeviseTokenAuth
     end
 
     def destroy
-      # remove auth instance variables so that after_filter does not run
+      # remove auth instance variables so that after_action does not run
       user = remove_instance_variable(:@resource) if @resource
       client_id = remove_instance_variable(:@client_id) if @client_id
       remove_instance_variable(:@token) if @token
 
       if user and client_id and user.tokens[client_id]
+        # replaced save! by update_columns to avoid
+        # callbacks & validations
         user.tokens.delete(client_id)
-        user.save!
-
+        user.update_columns(tokens: user.tokens)
         yield if block_given?
 
         render_destroy_success
