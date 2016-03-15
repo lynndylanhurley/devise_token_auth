@@ -73,20 +73,53 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         before do
           @auth_headers = @resource.create_new_auth_token
           @new_password = Faker::Internet.password
-
-          xhr :post, :create, {
-            email:        'chester@cheet.ah',
-          }
-          @data = JSON.parse(response.body)
         end
 
-        test 'response should fail' do
-          assert_equal 401, response.status
+        describe 'custom json format' do
+          before do
+            DeviseTokenAuth.response_format = :custom
+            xhr :post, :create, {
+              email:        'chester@cheet.ah',
+            }
+            @data = JSON.parse(response.body)
+          end
+
+          test 'response should fail' do
+            assert_equal 401, response.status
+          end
+          test 'error message should be returned' do
+            assert_json_match @data, {
+              success: false,
+              errors: [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
+            }
+          end
         end
-        test 'error message should be returned' do
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
+
+        describe 'JSON API compliant format' do
+          before do
+            # TODO: replace with JSON API compliant request
+            DeviseTokenAuth.response_format = :json_api
+            xhr :post, :create, {
+              email:        'chester@cheet.ah',
+            }
+            @data = JSON.parse(response.body)
+          end
+
+          test 'response should fail' do
+            assert_equal 401, response.status
+          end
+          test 'error message should be returned' do
+            assert_json_match @data, {
+              errors: [{
+                source: {
+                  parameter: 'redirect_url'
+                },
+                detail: I18n.t("devise_token_auth.passwords.missing_redirect_url")
+              }]
+            }
+          end
         end
+
       end
 
       describe 'request password reset' do

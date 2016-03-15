@@ -168,7 +168,10 @@ module DeviseTokenAuth
           errors:  [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
         }, status: 401
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'redirect_url' },
+          detail: I18n.t("devise_token_auth.passwords.missing_redirect_url")
+        }], 401
       else
         raise_unknown_format_argument_error
       end
@@ -183,7 +186,10 @@ module DeviseTokenAuth
           errors:  [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)]
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'redirect_url' },
+          detail: I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)
+        }], 422
       else
         raise_unknown_format_argument_error
       end
