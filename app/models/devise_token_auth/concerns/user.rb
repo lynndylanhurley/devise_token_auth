@@ -70,6 +70,7 @@ module DeviseTokenAuth::Concerns::User
       if pending_reconfirmation?
         opts[:to] = unconfirmed_email
       end
+      opts[:redirect_url] ||= DeviseTokenAuth.default_confirm_success_url
 
       send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
     end
