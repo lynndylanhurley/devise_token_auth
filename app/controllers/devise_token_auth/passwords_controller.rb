@@ -222,8 +222,10 @@ module DeviseTokenAuth
           errors:  @errors,
         }, status: @error_status
       when :json_api  # JSON API specification compliant response format
-        object_errors = ValidationErrors.new(@resource)
-        render_json_api_errors object_errors.json_api_errors, @error_status
+        render_json_api_errors [{
+          source: { parameter: 'email' },
+          detail: @errors.join(', ')
+        }], @error_status
       else
         raise_unknown_format_argument_error
       end
@@ -317,8 +319,10 @@ module DeviseTokenAuth
           errors:  resource_errors
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        object_errors = ValidationErrors.new(@resource)
-        render_json_api_errors object_errors.json_api_errors, 422
+        render_json_api_errors [{
+          source: { parameter: 'email' },
+          detail: @errors.join(', ')
+        }], 422
       else
         raise_unknown_format_argument_error
       end

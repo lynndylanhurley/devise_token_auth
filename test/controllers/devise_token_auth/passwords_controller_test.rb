@@ -68,7 +68,6 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
 
-
       describe 'not redirect_url should return 401' do
         before do
           @auth_headers = @resource.create_new_auth_token
@@ -124,20 +123,51 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
       describe 'request password reset' do
         describe 'unknown user should return 404' do
-          before do
-            xhr :post, :create, {
-              email:        'chester@cheet.ah',
-              redirect_url: @redirect_url
-            }
-            @data = JSON.parse(response.body)
-          end
-          test 'unknown user should return 404' do
-            assert_equal 404, response.status
+          describe 'custom json format' do
+            before do
+              DeviseTokenAuth.response_format = :custom
+              xhr :post, :create, {
+                email:        'chester@cheet.ah',
+                redirect_url: @redirect_url
+              }
+              @data = JSON.parse(response.body)
+            end
+            test 'unknown user should return 404' do
+              assert_equal 404, response.status
+            end
+
+            test 'errors should be returned' do
+              assert_json_match @data, {
+                success: false,
+                errors: [I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')]
+              }
+            end
+
           end
 
-          test 'errors should be returned' do
-            assert @data["errors"]
-            assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')]
+          describe 'JSON API compliant format' do
+            before do
+              # TODO: replace with JSON API compliant request
+              DeviseTokenAuth.response_format = :json_api
+              xhr :post, :create, {
+                email:        'chester@cheet.ah',
+                redirect_url: @redirect_url
+              }
+              @data = JSON.parse(response.body)
+            end
+            test 'unknown user should return 404' do
+              assert_equal 404, response.status
+            end
+
+            test 'errors should be returned' do
+              assert_json_match @data, {
+                errors: [{
+                  source: { parameter: 'email' },
+                  detail: I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')
+                }]
+              }
+            end
+
           end
         end
 

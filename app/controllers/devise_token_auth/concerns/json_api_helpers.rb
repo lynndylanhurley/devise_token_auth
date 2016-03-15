@@ -40,28 +40,3 @@ module DeviseTokenAuth::Concerns::JsonApiHelpers
   end
 
 end
-
-
-class ValidationErrors < RuntimeError
-  attr_reader :error_messages
-
-  def initialize(resource)
-    @error_messages = resource.model_error_messages
-  end
-
-  def json_api_errors
-    error_messages.map do |attribute, messages|
-      json_api_error(attribute, messages.join(', '))
-    end
-  end
-
-  private
-
-  def json_api_error(attribute, message)
-    {
-      source: { parameter: attribute.to_s },
-      detail: message
-    }
-  end
-
-end
