@@ -205,9 +205,9 @@ module DeviseTokenAuth
         }
       when :json_api  # JSON API specification compliant response format
         render_json_api_data({
-          type:         response_data['type'],
-          id:           response_data['id'].to_s,
-          attributes:   response_data.except('type', 'id')
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
         })
       else
         raise_unknown_format_argument_error
@@ -302,9 +302,9 @@ module DeviseTokenAuth
         }
       when :json_api  # JSON API specification compliant response format
         render_json_api_data({
-          type:         response_data['type'],
-          id:           response_data['id'].to_s,
-          attributes:   response_data.except('type', 'id')
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
         })
       else
         raise_unknown_format_argument_error
