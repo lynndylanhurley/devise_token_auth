@@ -91,6 +91,21 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
       end
 
+      describe 'header sign_in is supported' do
+        before do
+          request.headers.merge!(
+            'email' => @existing_user.email,
+            'password' => 'secret123')
+
+          xhr :head, :create
+          @data = JSON.parse(response.body)
+        end
+
+        test 'user can sign in using header request' do
+          assert_equal 200, response.status
+        end
+      end
+
       describe 'alt auth keys' do
         before do
           xhr :post, :create, {
