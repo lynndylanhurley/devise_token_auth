@@ -208,6 +208,8 @@ module DeviseTokenAuth
           type:         @resource.class.name.parameterize,
           id:           resource_data['id'].to_s,
           attributes:   resource_data.except('type', 'id')
+        }, 200, {
+          message: I18n.t("devise_token_auth.passwords.sended", email: @email)
         })
       else
         raise_unknown_format_argument_error
@@ -305,6 +307,8 @@ module DeviseTokenAuth
           type:         @resource.class.name.parameterize,
           id:           resource_data['id'].to_s,
           attributes:   resource_data.except('type', 'id')
+        }, 200, {
+          message: I18n.t("devise_token_auth.passwords.successfully_updated")
         })
       else
         raise_unknown_format_argument_error

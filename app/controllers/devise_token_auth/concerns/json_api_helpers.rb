@@ -7,11 +7,12 @@ module DeviseTokenAuth::Concerns::JsonApiHelpers
 
   protected
 
-  def render_json_api_data(data_hash, status = 200)
+  def render_json_api_data(data_hash, status = 200, meta_hash = nil)
+    content_hash = { data: data_hash }
+    content_hash[:meta] = meta_hash if meta_hash.present?
+
     self.set_json_api_headers
-    render json: {
-      data: data_hash
-    }, status: status
+    render json: content_hash, status: status
   end
 
   def render_json_api_errors(errors_array, status = 400)
