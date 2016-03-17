@@ -33,10 +33,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             assert_equal 401, response.status
           end
           test 'error message should be returned' do
-            assert_json_match @data, {
+            assert_json_match({
               success: false,
               errors: [I18n.t("devise_token_auth.passwords.missing_email")]
-            }
+            }, @data)
           end
         end
 
@@ -54,19 +54,18 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             assert_equal 401, response.status
           end
           test 'error message should be returned' do
-            assert_json_match @data, {
+            assert_json_match({
               errors: [{
                 source: {
                   parameter: 'email'
                 },
                 detail: I18n.t("devise_token_auth.passwords.missing_email")
               }]
-            }
+            }, @data)
           end
         end
 
       end
-
 
       describe 'not redirect_url should return 401' do
         before do
@@ -87,10 +86,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             assert_equal 401, response.status
           end
           test 'error message should be returned' do
-            assert_json_match @data, {
+            assert_json_match({
               success: false,
               errors: [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
-            }
+            }, @data)
           end
         end
 
@@ -108,14 +107,14 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             assert_equal 401, response.status
           end
           test 'error message should be returned' do
-            assert_json_match @data, {
+            assert_json_match({
               errors: [{
                 source: {
                   parameter: 'redirect_url'
                 },
                 detail: I18n.t("devise_token_auth.passwords.missing_redirect_url")
               }]
-            }
+            }, @data)
           end
         end
 
@@ -123,6 +122,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
       describe 'request password reset' do
         describe 'unknown user should return 404' do
+
           describe 'custom json format' do
             before do
               DeviseTokenAuth.response_format = :custom
@@ -137,10 +137,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             end
 
             test 'errors should be returned' do
-              assert_json_match @data, {
+              assert_json_match({
                 success: false,
                 errors: [I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')]
-              }
+              }, @data)
             end
 
           end
@@ -160,12 +160,12 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             end
 
             test 'errors should be returned' do
-              assert_json_match @data, {
+              assert_json_match({
                 errors: [{
                   source: { parameter: 'email' },
                   detail: I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')
                 }]
-              }
+              }, @data)
             end
 
           end
@@ -295,16 +295,12 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             end
 
             test 'response contains message' do
-              assert_json_match @data, {
-                data: {
-                  type: 'user',
-                  id: @resource.id.to_s,
-                  attributes: {
-                    email: String
-                  }.ignore_extra_keys!
+              assert_json_match({
+                data: Hash,
+                meta: {
+                  message: I18n.t("devise_token_auth.passwords.sended", email: @resource.email)
                 }
-              }
-              assert_equal @data["message"], I18n.t("devise_token_auth.passwords.sended", email: @resource.email)
+              }, @data)
             end
 
             describe 'password reset link failure' do
@@ -412,33 +408,71 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           @redirect_url = 'http://ng-token-auth.dev'
 
           DeviseTokenAuth.default_password_reset_url = @redirect_url
-
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @redirect_url
-          }
-
-          @mail = ActionMailer::Base.deliveries.last
-          @resource.reload
-
-          @sent_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
         end
 
-        teardown do
-          DeviseTokenAuth.default_password_reset_url = nil
+        describe 'custom json format' do
+          DeviseTokenAuth.response_format = :custom
+          before do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @redirect_url
+            }
+
+            @mail = ActionMailer::Base.deliveries.last
+            @resource.reload
+
+            @sent_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+          end
+
+          teardown do
+            DeviseTokenAuth.default_password_reset_url = nil
+          end
+
+          test 'response should return success status' do
+            assert_equal 200, response.status
+          end
+
+          test 'action should send an email' do
+            assert @mail
+          end
+
+          test 'the email body should contain a link with redirect url as a query param' do
+            assert_equal @redirect_url, @sent_redirect_url
+          end
         end
 
-        test 'response should return success status' do
-          assert_equal 200, response.status
+        describe 'JSON API compliant format' do
+          before do
+            # TODO: replace with JSON API compliant request
+            DeviseTokenAuth.response_format = :json_api
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @redirect_url
+            }
+
+            @mail = ActionMailer::Base.deliveries.last
+            @resource.reload
+
+            @sent_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+          end
+
+          teardown do
+            DeviseTokenAuth.default_password_reset_url = nil
+          end
+
+          test 'response should return success status' do
+            assert_equal 200, response.status
+          end
+
+          test 'action should send an email' do
+            assert @mail
+          end
+
+          test 'the email body should contain a link with redirect url as a query param' do
+            assert_equal @redirect_url, @sent_redirect_url
+          end
         end
 
-        test 'action should send an email' do
-          assert @mail
-        end
-
-        test 'the email body should contain a link with redirect url as a query param' do
-          assert_equal @redirect_url, @sent_redirect_url
-        end
       end
 
       describe 'Using redirect_whitelist' do
@@ -453,32 +487,75 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           DeviseTokenAuth.redirect_whitelist = nil
         end
 
-        test "request to whitelisted redirect should be successful" do
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @good_redirect_url
-          }
+        describe 'custom json format' do
+          before do
+            DeviseTokenAuth.response_format = :custom
+          end
+          test "request to whitelisted redirect should be successful" do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @good_redirect_url
+            }
 
-          assert_equal 200, response.status
+            assert_equal 200, response.status
+          end
+
+          test "request to non-whitelisted redirect should fail" do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @bad_redirect_url
+            }
+
+            assert_equal 422, response.status
+          end
+          test "request to non-whitelisted redirect should return error message" do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @bad_redirect_url
+            }
+
+            @data = JSON.parse(response.body)
+            assert @data["errors"]
+            assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @bad_redirect_url)]
+          end
         end
 
-        test "request to non-whitelisted redirect should fail" do
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @bad_redirect_url
-          }
+        describe 'JSON API compliant format' do
+          before do
+            # TODO: replace with JSON API compliant request
+            DeviseTokenAuth.response_format = :json_api
+          end
+          test "request to whitelisted redirect should be successful" do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @good_redirect_url
+            }
 
-          assert_equal 422, response.status
-        end
-        test "request to non-whitelisted redirect should return error message" do
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @bad_redirect_url
-          }
+            assert_equal 200, response.status
+          end
 
-          @data = JSON.parse(response.body)
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @bad_redirect_url)]
+          test "request to non-whitelisted redirect should fail" do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @bad_redirect_url
+            }
+
+            assert_equal 422, response.status
+          end
+          test "request to non-whitelisted redirect should return error message" do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @bad_redirect_url
+            }
+
+            @data = JSON.parse(response.body)
+            assert_json_match({
+              errors: [{
+                source: { parameter: 'redirect_url' },
+                detail: I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @bad_redirect_url)
+              }]
+            }, @data)
+          end
         end
       end
 
@@ -497,58 +574,126 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
             @resource.update password: 'secret123', password_confirmation: 'secret123'
-
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password,
-              current_password: 'secret123'
-            }
-
-            @data = JSON.parse(response.body)
-            @resource.reload
           end
 
-          test "request should be successful" do
-            assert_equal 200, response.status
+          describe 'custom json format' do
+            before do
+              DeviseTokenAuth.response_format = :custom
+              xhr :put, :update, {
+                password: @new_password,
+                password_confirmation: @new_password,
+                current_password: 'secret123'
+              }
+
+              @data = JSON.parse(response.body)
+              @resource.reload
+            end
+
+            test "request should be successful" do
+              assert_equal 200, response.status
+            end
+          end
+
+          describe 'JSON API compliant format' do
+            before do
+              # TODO: change request
+              DeviseTokenAuth.response_format = :json_api
+              xhr :put, :update, {
+                password: @new_password,
+                password_confirmation: @new_password,
+                current_password: 'secret123'
+              }
+
+              @data = JSON.parse(response.body)
+              @resource.reload
+            end
+
+            test "request should be successful" do
+              assert_equal 200, response.status
+            end
           end
         end
 
         describe 'success with after password reset' do
-          before do
-            xhr :post, :create, {
-              email:        @resource.email,
-              redirect_url: @redirect_url
-            }
+          describe 'custom json format' do
+            before do
+              DeviseTokenAuth.response_format = :custom
+              xhr :post, :create, {
+                email:        @resource.email,
+                redirect_url: @redirect_url
+              }
 
-            @mail = ActionMailer::Base.deliveries.last
-            @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
-            @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+              @mail = ActionMailer::Base.deliveries.last
+              @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+              @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
 
-            xhr :get, :edit, {
-              reset_password_token: @mail_reset_token,
-              redirect_url: @mail_redirect_url
-            }
+              xhr :get, :edit, {
+                reset_password_token: @mail_reset_token,
+                redirect_url: @mail_redirect_url
+              }
 
-            @auth_headers = @resource.create_new_auth_token
-            request.headers.merge!(@auth_headers)
-            @new_password = Faker::Internet.password
+              @auth_headers = @resource.create_new_auth_token
+              request.headers.merge!(@auth_headers)
+              @new_password = Faker::Internet.password
 
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password
-            }
+              xhr :put, :update, {
+                password: @new_password,
+                password_confirmation: @new_password
+              }
 
-            @data = JSON.parse(response.body)
-            @allow_password_change = @resource.allow_password_change
-            @resource.reload
+              @data = JSON.parse(response.body)
+              @allow_password_change = @resource.allow_password_change
+              @resource.reload
+            end
+
+            test "request should be successful" do
+              assert_equal 200, response.status
+            end
+
+            test "sets allow_password_change false" do
+              assert_equal false, @allow_password_change
+            end
           end
 
-          test "request should be successful" do
-            assert_equal 200, response.status
-          end
+          describe 'JSON API compliant format' do
+            before do
+              # TODO: change request
+              DeviseTokenAuth.response_format = :json_api
+              xhr :post, :create, {
+                email:        @resource.email,
+                redirect_url: @redirect_url
+              }
 
-          test "sets allow_password_change false" do
-            assert_equal false, @allow_password_change
+              @mail = ActionMailer::Base.deliveries.last
+              @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+              @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+
+              xhr :get, :edit, {
+                reset_password_token: @mail_reset_token,
+                redirect_url: @mail_redirect_url
+              }
+
+              @auth_headers = @resource.create_new_auth_token
+              request.headers.merge!(@auth_headers)
+              @new_password = Faker::Internet.password
+
+              xhr :put, :update, {
+                password: @new_password,
+                password_confirmation: @new_password
+              }
+
+              @data = JSON.parse(response.body)
+              @allow_password_change = @resource.allow_password_change
+              @resource.reload
+            end
+
+            test "request should be successful" do
+              assert_equal 200, response.status
+            end
+
+            test "sets allow_password_change false" do
+              assert_equal false, @allow_password_change
+            end
           end
         end
 
@@ -573,31 +718,69 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
       describe "change password" do
         describe 'success' do
-          before do
-            @auth_headers = @resource.create_new_auth_token
-            request.headers.merge!(@auth_headers)
-            @new_password = Faker::Internet.password
+          describe 'custom json format' do
+            before do
+              DeviseTokenAuth.response_format = :custom
+              @auth_headers = @resource.create_new_auth_token
+              request.headers.merge!(@auth_headers)
+              @new_password = Faker::Internet.password
 
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password
-            }
+              xhr :put, :update, {
+                password: @new_password,
+                password_confirmation: @new_password
+              }
 
-            @data = JSON.parse(response.body)
-            @resource.reload
+              @data = JSON.parse(response.body)
+              @resource.reload
+            end
+
+            test "request should be successful" do
+              assert_equal 200, response.status
+            end
+
+            test "request should return success message" do
+              assert @data["message"]
+              assert_equal @data["message"], I18n.t("devise_token_auth.passwords.successfully_updated")
+            end
+
+            test "new password should authenticate user" do
+              assert @resource.valid_password?(@new_password)
+            end
           end
 
-          test "request should be successful" do
-            assert_equal 200, response.status
-          end
+          describe 'JSON API compliant format' do
+            before do
+              # TODO: change request
+              DeviseTokenAuth.response_format = :json_api
+              @auth_headers = @resource.create_new_auth_token
+              request.headers.merge!(@auth_headers)
+              @new_password = Faker::Internet.password
 
-          test "request should return success message" do
-            assert @data["message"]
-            assert_equal @data["message"], I18n.t("devise_token_auth.passwords.successfully_updated")
-          end
+              xhr :put, :update, {
+                password: @new_password,
+                password_confirmation: @new_password
+              }
 
-          test "new password should authenticate user" do
-            assert @resource.valid_password?(@new_password)
+              @data = JSON.parse(response.body)
+              @resource.reload
+            end
+
+            test "request should be successful" do
+              assert_equal 200, response.status
+            end
+
+            test "request should return success message" do
+              assert_json_match({
+                data: Hash,
+                meta: {
+                  message: I18n.t("devise_token_auth.passwords.successfully_updated")
+                }
+              }, @data)
+            end
+
+            test "new password should authenticate user" do
+              assert @resource.valid_password?(@new_password)
+            end
           end
         end
 
