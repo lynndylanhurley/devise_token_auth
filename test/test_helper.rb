@@ -1,5 +1,5 @@
-require "codeclimate-test-reporter"
 #require 'simplecov'
+require 'codeclimate-test-reporter'
 
 #SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   #SimpleCov::Formatter::HTMLFormatter,
@@ -8,12 +8,13 @@ require "codeclimate-test-reporter"
 
 #SimpleCov.start 'rails'
 CodeClimate::TestReporter.start
+require 'codeclimate-test-reporter'
 
-ENV["RAILS_ENV"] = "test"
+ENV["RAILS_ENV"] = 'test'
 
 require File.expand_path("../dummy/config/environment", __FILE__)
-require "rails/test_help"
-require "minitest/rails"
+require 'rails/test_help'
+require 'minitest/rails'
 require 'json_expressions/minitest'
 
 # To add Capybara feature tests add `gem "minitest-rails-capybara"`
@@ -21,7 +22,7 @@ require 'json_expressions/minitest'
 # require "minitest/rails/capybara"
 
 # Uncomment for awesome colorful output
-require "minitest/pride"
+require 'minitest/pride'
 
 ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)
 ActionDispatch::IntegrationTest.fixture_path = File.expand_path("../fixtures", __FILE__)
