@@ -258,7 +258,7 @@ module DeviseTokenAuth::Concerns::User
 
     if should_remove_old_tokens
       latest_token = self.tokens.max_by { |cid, v| v[:expiry] || v["expiry"] }
-      self.tokens = {latest_token.first => latest_token.last}
+      self.tokens = { latest_token.first => latest_token.last }
     end
   end
 
