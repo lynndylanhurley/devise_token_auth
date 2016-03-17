@@ -1,14 +1,16 @@
-#require 'simplecov'
 require 'codeclimate-test-reporter'
+require 'simplecov'
 
-#SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  #SimpleCov::Formatter::HTMLFormatter,
-  #CodeClimate::TestReporter::Formatter
-#]
+if ENV['CODECLIMATE_REPO_TOKEN']
+  CodeClimate::TestReporter.start
+else
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+    SimpleCov::Formatter::HTMLFormatter,
+    CodeClimate::TestReporter::Formatter
+  ]
 
-#SimpleCov.start 'rails'
-CodeClimate::TestReporter.start
-require 'codeclimate-test-reporter'
+  SimpleCov.start 'rails'
+end
 
 ENV["RAILS_ENV"] = 'test'
 
