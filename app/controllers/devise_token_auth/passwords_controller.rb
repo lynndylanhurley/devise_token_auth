@@ -325,7 +325,7 @@ module DeviseTokenAuth
       when :json_api  # JSON API specification compliant response format
         render_json_api_errors [{
           source: { parameter: 'email' },
-          detail: @errors.join(', ')
+          detail: @errors.present? ? @errors.join(', ') : nil
         }], 422
       else
         raise_unknown_format_argument_error
