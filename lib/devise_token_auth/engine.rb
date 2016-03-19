@@ -21,7 +21,7 @@ module DeviseTokenAuth
                  :enable_standard_devise_support,
                  :remove_tokens_after_password_reset,
                  :default_callbacks,
-                 :response_format
+                 :json_api_enabled
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -35,7 +35,7 @@ module DeviseTokenAuth
   self.enable_standard_devise_support       = false
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
-  self.response_format                      = :custom
+  self.json_api_enabled                     = true
 
   def self.setup(&block)
     yield self

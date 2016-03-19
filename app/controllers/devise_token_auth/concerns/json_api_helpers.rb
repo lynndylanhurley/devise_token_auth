@@ -43,8 +43,11 @@ module DeviseTokenAuth::Concerns::JsonApiHelpers
 
   # Returns the response rendering format specified in the config.
   def response_format
-    # TODO: automatically detect response format by looking at request HTTP ACCEPT
-    DeviseTokenAuth.response_format
+    if request.present? && request.env['HTTP_ACCEPT'].present? && request.env['HTTP_ACCEPT'].include?('application/vnd.api+json')
+      :json_api
+    else
+      :custom
+    end
   end
 
 end
