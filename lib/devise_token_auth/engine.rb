@@ -21,6 +21,7 @@ module DeviseTokenAuth
                  :enable_standard_devise_support,
                  :remove_tokens_after_password_reset,
                  :default_callbacks,
+                 :json_api_enabled,
                  :headers_names
 
   self.change_headers_on_each_request       = true
@@ -35,6 +36,7 @@ module DeviseTokenAuth
   self.enable_standard_devise_support       = false
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
+  self.json_api_enabled                     = true
   self.headers_names                        = {:'access-token' => 'access-token',
                                                :'client' => 'client',
                                                :'expiry' => 'expiry',

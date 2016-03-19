@@ -1,26 +1,25 @@
-require "codeclimate-test-reporter"
-#require 'simplecov'
+require 'codeclimate-test-reporter'
+require 'simplecov'
 
-#SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  #SimpleCov::Formatter::HTMLFormatter,
-  #CodeClimate::TestReporter::Formatter
-#]
+if ENV['CODECLIMATE_REPO_TOKEN']
+  CodeClimate::TestReporter.start
+else
+  SimpleCov.start 'rails'
+end
 
-#SimpleCov.start 'rails'
-CodeClimate::TestReporter.start
-
-ENV["RAILS_ENV"] = "test"
+ENV["RAILS_ENV"] = 'test'
 
 require File.expand_path("../dummy/config/environment", __FILE__)
-require "rails/test_help"
-require "minitest/rails"
+require 'rails/test_help'
+require 'minitest/rails'
+require 'json_expressions/minitest'
 
 # To add Capybara feature tests add `gem "minitest-rails-capybara"`
 # to the test group in the Gemfile and uncomment the following:
 # require "minitest/rails/capybara"
 
 # Uncomment for awesome colorful output
-require "minitest/pride"
+require 'minitest/pride'
 
 ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)
 ActionDispatch::IntegrationTest.fixture_path = File.expand_path("../fixtures", __FILE__)

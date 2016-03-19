@@ -15,7 +15,7 @@ gemspec
 
 group :development, :test do
   gem 'thor'
-  gem "figaro",                 :github => 'laserlemon/figaro'
+  gem 'figaro',                 :github => 'laserlemon/figaro'
   gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
   gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'
   gem 'omniauth-google-oauth2', :git => 'git://github.com/zquestz/omniauth-google-oauth2.git'
@@ -24,8 +24,8 @@ group :development, :test do
 
   # testing
   #gem 'spring'
-  gem "pry"
-  gem "pry-remote"
+  gem 'pry'
+  gem 'pry-remote'
   gem 'minitest'
   gem 'minitest-rails'
   gem 'minitest-focus'
@@ -35,13 +35,14 @@ group :development, :test do
   gem 'faker'
   gem 'fuzz_ball'
   gem 'mocha'
+  gem 'json_expressions'
 end
 
 # code coverage, metrics
 group :test do
-  gem "codeclimate-test-reporter", require: nil
+  gem 'codeclimate-test-reporter', require: nil
 end
 
 group :development do
-  gem "github_changelog_generator"
+  gem 'github_changelog_generator'
 end

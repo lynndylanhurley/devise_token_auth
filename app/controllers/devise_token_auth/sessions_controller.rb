@@ -101,40 +101,95 @@ module DeviseTokenAuth
     end
 
     def render_new_error
-      render json: {
-        errors: [ I18n.t("devise_token_auth.sessions.not_supported")]
-      }, status: 405
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          errors: [I18n.t("devise_token_auth.sessions.not_supported")]
+        }, status: 405
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          detail: I18n.t("devise_token_auth.sessions.not_supported")
+        }], 405
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_success
-      render json: {
-        data: resource_data(resource_json: @resource.token_validation_response)
-      }
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          data: resource_data(resource_json: @resource.token_validation_response)
+        }
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_meta({
+          data: resource_data(resource_json: @resource.token_validation_response)
+        })
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_not_confirmed
-      render json: {
-        success: false,
-        errors: [ I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email) ]
-      }, status: 401
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  [I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email)]
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          detail: I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email)
+        }], 401
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_bad_credentials
-      render json: {
-        errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
-      }, status: 401
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          detail: I18n.t("devise_token_auth.sessions.bad_credentials")
+        }], 401
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_destroy_success
-      render json: {
-        success:true
-      }, status: 200
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: true
+        }, status: 200
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_meta({
+          success: true
+        })
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_destroy_error
-      render json: {
-        errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
-      }, status: 404
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
+        }, status: 404
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'uid' },
+          detail: I18n.t("devise_token_auth.sessions.user_not_found")
+        }], 404
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
 

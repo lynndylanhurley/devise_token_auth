@@ -144,80 +144,192 @@ module DeviseTokenAuth
     end
 
     def render_create_error_missing_email
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_email")]
-      }, status: 401
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  [I18n.t("devise_token_auth.passwords.missing_email")]
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'email' },
+          detail: I18n.t("devise_token_auth.passwords.missing_email")
+        }], 401
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_missing_redirect_url
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
-      }, status: 401
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'redirect_url' },
+          detail: I18n.t("devise_token_auth.passwords.missing_redirect_url")
+        }], 401
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error_not_allowed_redirect_url
-      render json: {
-        status: 'error',
-        data:   resource_data,
-        errors: [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)]
-      }, status: 422
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          status:  'error',
+          data:    resource_data,
+          errors:  [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)]
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'redirect_url' },
+          detail: I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)
+        }], 422
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_success
-      render json: {
-        success: true,
-        data: resource_data,
-        message: I18n.t("devise_token_auth.passwords.sended", email: @email)
-      }
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: true,
+          data:    resource_data,
+          message: I18n.t("devise_token_auth.passwords.sended", email: @email)
+        }
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_data({
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
+        }, 200, {
+          message: I18n.t("devise_token_auth.passwords.sended", email: @email)
+        })
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_create_error
-      render json: {
-        success: false,
-        errors: @errors,
-      }, status: @error_status
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  @errors,
+        }, status: @error_status
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'email' },
+          detail: @errors.join(', ')
+        }], @error_status
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_edit_error
-      raise ActionController::RoutingError.new('Not Found')
+      case response_format
+      when :custom    # custom JSON response format
+        raise ActionController::RoutingError.new('Not Found')
+      when :json_api  # JSON API specification compliant response format
+        raise ActionController::RoutingError.new('Not Found')
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_error_unauthorized
-      render json: {
-        success: false,
-        errors: ['Unauthorized']
-      }, status: 401
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  ['Unauthorized']
+        }, status: 401
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          detail: 'Unauthorized'
+        }], 401
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_error_password_not_required
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)]
-      }, status: 422
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  [I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)]
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'password' },
+          detail: I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)
+        }], 422
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_error_missing_password
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_passwords")]
-      }, status: 422
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: false,
+          errors:  [I18n.t("devise_token_auth.passwords.missing_passwords")]
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'password' },
+          detail: I18n.t("devise_token_auth.passwords.missing_passwords")
+        }], 422
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_success
-      render json: {
-        success: true,
-        data: resource_data,
-        message: I18n.t("devise_token_auth.passwords.successfully_updated")
-      }
+      case response_format
+      when :custom    # custom JSON response format
+        render json: {
+          success: true,
+          data:    resource_data,
+          message: I18n.t("devise_token_auth.passwords.successfully_updated")
+        }
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_data({
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
+        }, 200, {
+          message: I18n.t("devise_token_auth.passwords.successfully_updated")
+        })
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     def render_update_error
-      return render json: {
-        success: false,
-        errors: resource_errors
-      }, status: 422
+      case response_format
+      when :custom    # custom JSON response format
+        return render json: {
+          success: false,
+          errors:  resource_errors
+        }, status: 422
+      when :json_api  # JSON API specification compliant response format
+        render_json_api_errors [{
+          source: { parameter: 'email' },
+          detail: @errors.present? ? @errors.join(', ') : nil
+        }], 422
+      else
+        raise_unknown_format_argument_error
+      end
     end
 
     private
