@@ -417,7 +417,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           end
 
           test "request should return user data" do
-            assert_equal @existing_user.email, @data['data']['attributes']['email']
+            assert_equal @existing_user.email, @data['meta']['data']['email']
           end
 
           describe 'trackable' do
@@ -479,7 +479,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
           test 'user can sign in using nickname' do
             assert_equal 200, response.status
-            assert_equal @existing_user.email, @data['data']['attributes']['email']
+            assert_equal @existing_user.email, @data['meta']['data']['email']
           end
         end
 
@@ -656,7 +656,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
 
         test "request should return user data" do
-          assert_equal @recent_unconfirmed_user.email, @data['data']['attributes']['email']
+          assert_equal @recent_unconfirmed_user.email, @data['meta']['data']['email']
         end
       end
 
@@ -733,7 +733,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
 
         test "request should return user data" do
-          assert_equal @existing_user.email, @data['data']['attributes']['email']
+          assert_equal @existing_user.email, @data['meta']['data']['email']
         end
       end
 
