@@ -21,7 +21,8 @@ module DeviseTokenAuth
                  :enable_standard_devise_support,
                  :remove_tokens_after_password_reset,
                  :default_callbacks,
-                 :json_api_enabled
+                 :json_api_enabled,
+                 :headers_names
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -36,6 +37,11 @@ module DeviseTokenAuth
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
   self.json_api_enabled                     = true
+  self.headers_names                        = {:'access-token' => 'access-token',
+                                               :'client' => 'client',
+                                               :'expiry' => 'expiry',
+                                               :'uid' => 'uid',
+                                               :'token-type' => 'token-type' }
 
   def self.setup(&block)
     yield self

@@ -3,8 +3,8 @@ module DeviseTokenAuth
     include DeviseTokenAuth::Concerns::SetUserByToken
     include DeviseTokenAuth::Concerns::JsonApiHelpers
 
-    def resource_data
-      response_data = @resource.as_json
+    def resource_data(opts={})
+      response_data = opts[:resource_json] || @resource.as_json
       if is_json_api
         response_data['type'] = @resource.class.name.parameterize
       end

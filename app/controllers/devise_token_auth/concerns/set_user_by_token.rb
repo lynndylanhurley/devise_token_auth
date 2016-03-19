@@ -23,10 +23,15 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # no default user defined
     return unless rc
 
+    #gets the headers names, which was set in the initilize file
+    uid_name = DeviseTokenAuth.headers_names[:'uid']
+    access_token_name = DeviseTokenAuth.headers_names[:'access-token']
+    client_name = DeviseTokenAuth.headers_names[:'client']
+
     # parse header for values necessary for authentication
-    uid        = request.headers['uid'] || params['uid']
-    @token     = request.headers['access-token'] || params['access-token']
-    @client_id = request.headers['client'] || params['client']
+    uid        = request.headers[uid_name] || params[uid_name]
+    @token     = request.headers[access_token_name] || params[access_token_name]
+    @client_id = request.headers[client_name] || params[client_name]
 
     # client_id isn't required, set to 'default' if absent
     @client_id ||= 'default'

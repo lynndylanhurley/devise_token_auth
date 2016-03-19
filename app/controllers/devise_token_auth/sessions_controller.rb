@@ -119,11 +119,11 @@ module DeviseTokenAuth
       case response_format
       when :custom    # custom JSON response format
         render json: {
-          data: @resource.token_validation_response
+          data: resource_data(resource_json: @resource.token_validation_response)
         }
       when :json_api  # JSON API specification compliant response format
         render_json_api_meta({
-          data: @resource.token_validation_response
+          data: resource_data(resource_json: @resource.token_validation_response)
         })
       else
         raise_unknown_format_argument_error
