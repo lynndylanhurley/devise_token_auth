@@ -23,7 +23,11 @@ module DeviseTokenAuth
           data: @resource.token_validation_response
         }
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_data({
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
+        })
       else
         raise_unknown_format_argument_error
       end
@@ -37,7 +41,9 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.token_validations.invalid")]
         }, status: 401
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          detail: I18n.t("devise_token_auth.token_validations.invalid")
+        }], 401
       else
         raise_unknown_format_argument_error
       end
