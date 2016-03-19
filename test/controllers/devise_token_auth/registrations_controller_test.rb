@@ -31,10 +31,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           assert_not_empty @data['errors']
         end
 
-        test 'return error status' do
-          assert_equal 'error', @data['status']
-        end
-
         test 'user should not have been saved' do
           assert @resource.nil?
         end
@@ -919,10 +915,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           assert_not_empty @data['errors']
         end
 
-        test 'return error status' do
-          assert_equal 'error', @data['status']
-        end
-
         test 'user should not have been saved' do
           assert @resource.nil?
         end
@@ -958,7 +950,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         end
 
         test "new user data should be returned as json" do
-          assert @data['data']['email']
+          assert @data['data']['attributes']['email']
         end
 
         test "new user should receive confirmation email" do
@@ -1145,7 +1137,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           post '/auth', @request_params
           assert_equal 200, response.status
           @data = JSON.parse(response.body)
-          assert_equal "alternatingcase@example.com", @data['data']['uid']
+          assert_json_match({
+            data: {
+              attributes: {
+                'uid' => 'alternatingcase@example.com'
+              }.ignore_extra_keys!
+            }.ignore_extra_keys!
+          }, @data)
         end
 
         test "request should not downcase uid if not configured" do
@@ -1153,7 +1151,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           post '/auth', @request_params
           assert_equal 200, response.status
           @data = JSON.parse(response.body)
-          assert_equal "AlternatingCase@example.com", @data['data']['uid']
+          assert_json_match({
+            data: {
+              attributes: {
+                'uid' => 'AlternatingCase@example.com'
+              }.ignore_extra_keys!
+            }.ignore_extra_keys!
+          }, @data)
         end
 
       end
@@ -1223,8 +1227,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           assert @data['errors'].length
         end
 
-        test "full_messages should be included in error hash" do
-          assert @data['errors']['full_messages'].length
+        test "messages should be used in error hash" do
+          assert_json_match({
+            errors: [{
+              source: { parameter: 'email'},
+              detail: 'Is not an email.'
+            }]
+          }, @data)
         end
       end
 
@@ -1252,8 +1261,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           assert @data['errors'].length
         end
 
-        test "full_messages should be included in error hash" do
-          assert @data['errors']['full_messages'].length
+        test "messages should be used in error hash" do
+          assert_json_match({
+            errors: [{
+              source: Hash,
+              detail: String
+            }]
+          }, @data)
         end
       end
 
@@ -1283,7 +1297,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         end
 
         test "full_messages should be included in error hash" do
-          assert @data['errors']['full_messages'].length
+          assert_json_match({
+            errors: [{
+              source: Hash,
+              detail: String
+            }]
+          }, @data)
         end
       end
 
@@ -1336,8 +1355,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test "message should be returned" do
-            assert @data["message"]
-            assert_equal @data["message"], I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @existing_user.uid)
+            assert_json_match({
+              meta: {
+                message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @existing_user.uid)
+              }
+            }, @data)
           end
           test "existing user should be deleted" do
             refute User.where(id: @existing_user.id).first
@@ -1355,8 +1377,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test 'error should be returned' do
-            assert @data['errors'].length
-            assert_equal @data['errors'], [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
+            assert_json_match({
+              errors: [{
+                source: { parameter: 'uid' },
+                detail: I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")
+              }]
+            }, @data)
           end
         end
       end
@@ -1440,10 +1466,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
               test 'returns error message' do
                 assert_not_empty @data['errors']
-              end
-
-              test 'return error status' do
-                assert_equal 'error', @data['status']
               end
 
               test 'user should not have been saved' do
@@ -1603,8 +1625,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           end
 
           test "error should be returned" do
-            assert @data["errors"].length
-            assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.user_not_found")]
+            assert_json_match({
+              errors: [{
+                source: { parameter: 'uid' },
+                detail: I18n.t("devise_token_auth.registrations.user_not_found")
+              }]
+            }, @data)
           end
 
           test "User should not be updated" do
@@ -1637,7 +1663,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         end
 
         test "new user data should be returned as json" do
-          assert @data['data']['email']
+          assert @data['data']['attributes']['email']
         end
       end
 

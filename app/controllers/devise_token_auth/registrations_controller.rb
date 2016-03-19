@@ -247,7 +247,7 @@ module DeviseTokenAuth
         }, status: 404
       when :json_api  # JSON API specification compliant response format
         render_json_api_errors [{
-          source: { parameter: 'id' },
+          source: { parameter: 'uid' },
           detail: I18n.t("devise_token_auth.registrations.user_not_found")
         }], 404
       else
@@ -280,7 +280,7 @@ module DeviseTokenAuth
         }, status: 404
       when :json_api  # JSON API specification compliant response format
         render_json_api_errors [{
-          source: { parameter: 'id' },
+          source: { parameter: 'uid' },
           detail: I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")
         }], 404
       else
