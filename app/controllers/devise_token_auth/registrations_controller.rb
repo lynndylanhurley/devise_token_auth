@@ -263,9 +263,9 @@ module DeviseTokenAuth
           message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
         }
       when :json_api  # JSON API specification compliant response format
-        render_json_api_meta {
+        render_json_api_meta({
           message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
-        }
+        })
       else
         raise_unknown_format_argument_error
       end

@@ -9,6 +9,7 @@ require 'test_helper'
 
 class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   describe DeviseTokenAuth::RegistrationsController do
+
     describe 'custom json format' do
       before do
         DeviseTokenAuth.response_format = :custom
@@ -895,6 +896,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         end
       end
     end
+
     describe 'JSON API compliant format' do
       before do
         # TODO: implicitly set response format by request
@@ -1023,8 +1025,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           @data = JSON.parse(response.body)
 
           assert_equal 422, response.status
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @bad_redirect_url)]
+          assert_json_match({
+            errors: [{
+              source: { parameter: 'redirect_url' },
+              detail: I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @bad_redirect_url)
+            }]
+          }, @data)
         end
       end
 
@@ -1050,8 +1056,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           }
           @data = JSON.parse(response.body)
 
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
+          assert_json_match({
+            errors: [{
+              source: { parameter: 'confirm_success_url' },
+              detail: I18n.t("devise_token_auth.registrations.missing_confirm_success_url")
+            }]
+          }, @data)
         end
       end
 
