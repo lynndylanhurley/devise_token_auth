@@ -116,7 +116,10 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.registrations.missing_confirm_success_url")]
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'confirm_success_url' },
+          detail: I18n.t("devise_token_auth.registrations.missing_confirm_success_url")
+        }], 422
       else
         raise_unknown_format_argument_error
       end
@@ -131,7 +134,10 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)]
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'redirect_url' },
+          detail: I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)
+        }], 422
       else
         raise_unknown_format_argument_error
       end
@@ -145,7 +151,11 @@ module DeviseTokenAuth
           data:   resource_data
         }
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_data({
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
+        })
       else
         raise_unknown_format_argument_error
       end
@@ -160,7 +170,13 @@ module DeviseTokenAuth
           errors: resource_errors
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        json_api_errors = @resource.errors.messages.reduce([]) do |memo, param_and_errors|
+          memo << {
+            source: { parameter: param_and_errors[0] },
+            detail: (param_and_errors[1].join(', ') + '.').capitalize
+          }
+        end
+        render_json_api_errors json_api_errors, 422
       else
         raise_unknown_format_argument_error
       end
@@ -175,7 +191,10 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)]
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'email' },
+          detail: I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)
+        }], 422
       else
         raise_unknown_format_argument_error
       end
@@ -189,7 +208,11 @@ module DeviseTokenAuth
           data:   resource_data
         }
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_data({
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
+        })
       else
         raise_unknown_format_argument_error
       end
@@ -203,7 +226,13 @@ module DeviseTokenAuth
           errors: resource_errors
         }, status: 422
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        json_api_errors = @resource.errors.messages.reduce([]) do |memo, param_and_errors|
+          memo << {
+            source: { parameter: param_and_errors[0] },
+            detail: (param_and_errors[1].join(', ') + '.').capitalize
+          }
+        end
+        render_json_api_errors json_api_errors, 422
       else
         raise_unknown_format_argument_error
       end
@@ -217,7 +246,10 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.registrations.user_not_found")]
         }, status: 404
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'id' },
+          detail: I18n.t("devise_token_auth.registrations.user_not_found")
+        }], 404
       else
         raise_unknown_format_argument_error
       end
@@ -231,7 +263,9 @@ module DeviseTokenAuth
           message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
         }
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_meta {
+          message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
+        }
       else
         raise_unknown_format_argument_error
       end
@@ -245,7 +279,10 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")]
         }, status: 404
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'id' },
+          detail: I18n.t("devise_token_auth.registrations.account_to_destroy_not_found")
+        }], 404
       else
         raise_unknown_format_argument_error
       end
@@ -274,10 +311,21 @@ module DeviseTokenAuth
     end
 
     def validate_post_data which, message
-      render json: {
-         status: 'error',
-         errors: [message]
-      }, status: :unprocessable_entity if which.empty?
+      if which.empty?
+        case response_format
+        when :custom    # custom JSON response format
+          render json: {
+             status: 'error',
+             errors: [message]
+          }, status: :unprocessable_entity
+        when :json_api  # JSON API specification compliant response format
+          render_json_api_errors [{
+            detail: message
+          }], :unprocessable_entity
+        else
+          raise_unknown_format_argument_error
+        end
+      end
     end
   end
 end

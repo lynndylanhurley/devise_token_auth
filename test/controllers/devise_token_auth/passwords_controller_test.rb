@@ -9,6 +9,9 @@ require 'test_helper'
 class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::PasswordsController do
     describe 'custom json format' do
+      before do
+        DeviseTokenAuth.response_format = :custom
+      end
       describe "Password reset" do
         before do
           @resource = users(:confirmed_email_user)

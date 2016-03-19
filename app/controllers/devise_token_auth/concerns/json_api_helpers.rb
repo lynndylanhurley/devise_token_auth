@@ -22,6 +22,13 @@ module DeviseTokenAuth::Concerns::JsonApiHelpers
     }, status: status
   end
 
+  def render_json_api_meta(meta_hash, status = 200)
+    content_hash = { meta: meta_hash }
+
+    self.set_json_api_headers
+    render json: content_hash, status: status
+  end
+
   # Sets the JSON API media type headers on the response object.
   def set_json_api_headers
     if response_format == :json_api && response.present?
