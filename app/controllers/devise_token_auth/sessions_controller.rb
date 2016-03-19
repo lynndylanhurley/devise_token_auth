@@ -107,7 +107,9 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.sessions.not_supported")]
         }, status: 405
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          detail: I18n.t("devise_token_auth.sessions.not_supported")
+        }], 405
       else
         raise_unknown_format_argument_error
       end
@@ -120,7 +122,11 @@ module DeviseTokenAuth
           data: @resource.token_validation_response
         }
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_data({
+          type:         @resource.class.name.parameterize,
+          id:           resource_data['id'].to_s,
+          attributes:   resource_data.except('type', 'id')
+        })
       else
         raise_unknown_format_argument_error
       end
@@ -134,7 +140,9 @@ module DeviseTokenAuth
           errors:  [I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email)]
         }, status: 401
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          detail: I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email)
+        }], 401
       else
         raise_unknown_format_argument_error
       end
@@ -147,7 +155,9 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.sessions.bad_credentials")]
         }, status: 401
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          detail: I18n.t("devise_token_auth.sessions.bad_credentials")
+        }], 401
       else
         raise_unknown_format_argument_error
       end
@@ -160,7 +170,9 @@ module DeviseTokenAuth
           success: true
         }, status: 200
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_meta({
+          success: true
+        })
       else
         raise_unknown_format_argument_error
       end
@@ -173,7 +185,10 @@ module DeviseTokenAuth
           errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
         }, status: 404
       when :json_api  # JSON API specification compliant response format
-        # TODO: JSON API response not yet implemented
+        render_json_api_errors [{
+          source: { parameter: 'uid' },
+          detail: I18n.t("devise_token_auth.sessions.user_not_found")
+        }], 404
       else
         raise_unknown_format_argument_error
       end
