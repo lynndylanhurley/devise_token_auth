@@ -4,11 +4,6 @@ require 'simplecov'
 if ENV['CODECLIMATE_REPO_TOKEN']
   CodeClimate::TestReporter.start
 else
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    SimpleCov::Formatter::HTMLFormatter,
-    CodeClimate::TestReporter::Formatter
-  ]
-
   SimpleCov.start 'rails'
 end
 
@@ -64,10 +59,5 @@ class ActionController::TestCase
   setup do
     @routes = Dummy::Application.routes
     @request.env['devise.mapping'] = Devise.mappings[:user]
-  end
-
-  before do
-    # TODO: remove once JSON API compliant requests ready -- default to custom format until then
-    DeviseTokenAuth.response_format = :custom
   end
 end

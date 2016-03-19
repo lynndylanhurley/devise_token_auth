@@ -9,9 +9,6 @@ require 'test_helper'
 class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::IntegrationTest
 
   describe 'custom json format' do
-    before do
-      DeviseTokenAuth.response_format = :custom
-    end
 
     describe DeviseTokenAuth::TokenValidationsController do
       before do
@@ -98,8 +95,8 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
   describe 'JSON API compliant format' do
     before do
-      # TODO: implicitly set response format by JSON API compliant requests
-      DeviseTokenAuth.response_format = :json_api
+      @request.env['HTTP_ACCEPT'] = 'application/vnd.api+json' if @request.present?
+      @accept_header = { 'HTTP_ACCEPT' => 'application/vnd.api+json' }
     end
 
     describe DeviseTokenAuth::TokenValidationsController do
@@ -121,7 +118,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
       describe 'vanilla user' do
         before do
-          get '/auth/validate_token', {}, @auth_headers
+          get '/auth/validate_token', {}, @auth_headers.merge(@accept_header)
           @resp = JSON.parse(response.body)
         end
 
@@ -143,7 +140,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
       describe 'failure' do
         before do
-          get '/api/v1/auth/validate_token', {}, @auth_headers.merge({"access-token" => "12345"})
+          get '/api/v1/auth/validate_token', {}, @auth_headers.merge({"access-token" => "12345"}).merge(@accept_header)
           @resp = JSON.parse(response.body)
         end
 
@@ -180,7 +177,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
       end
 
       test "should be successful" do
-        get '/api_v2/auth/validate_token', {}, @auth_headers
+        get '/api_v2/auth/validate_token', {}, @auth_headers.merge(@accept_header)
         assert_equal 200, response.status
       end
 

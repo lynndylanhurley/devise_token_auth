@@ -9,9 +9,6 @@ require 'test_helper'
 class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::PasswordsController do
     describe 'custom json format' do
-      before do
-        DeviseTokenAuth.response_format = :custom
-      end
       describe "Password reset" do
         before do
           @resource = users(:confirmed_email_user)
@@ -556,8 +553,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
     describe 'JSON API compliant format' do
       before do
-        # TODO: implicitly set response format by sending JSON API compliant request
-        DeviseTokenAuth.response_format = :json_api
+        @request.env['HTTP_ACCEPT'] = 'application/vnd.api+json' if @request.present?
+        @accept_header = { 'HTTP_ACCEPT' => 'application/vnd.api+json' }
       end
 
       describe "Password reset" do

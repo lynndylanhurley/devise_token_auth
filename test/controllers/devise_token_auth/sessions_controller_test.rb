@@ -9,9 +9,6 @@ require 'test_helper'
 class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::SessionsController do
     describe 'custom json format' do
-      before do
-        DeviseTokenAuth.response_format = :custom
-      end
       describe "Confirmed user" do
         before do
           @existing_user = users(:confirmed_email_user)
@@ -382,8 +379,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
     describe 'JSON API compliant format' do
       before do
-        # TODO: implicitly set response format by JSON API compliant requests
-        DeviseTokenAuth.response_format = :json_api
+        @request.env['HTTP_ACCEPT'] = 'application/vnd.api+json' if @request.present?
+        @accept_header = { 'HTTP_ACCEPT' => 'application/vnd.api+json' }
       end
       describe "Confirmed user" do
         before do

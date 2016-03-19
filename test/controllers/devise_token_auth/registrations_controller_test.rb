@@ -11,9 +11,6 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
   describe DeviseTokenAuth::RegistrationsController do
 
     describe 'custom json format' do
-      before do
-        DeviseTokenAuth.response_format = :custom
-      end
       describe 'Validate non-empty body' do
         before do
           # need to post empty data
@@ -895,13 +892,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
     describe 'JSON API compliant format' do
       before do
-        # TODO: implicitly set response format by request
-        DeviseTokenAuth.response_format = :json_api
+        @request.env['HTTP_ACCEPT'] = 'application/vnd.api+json' if @request.present?
+        @accept_header = { 'HTTP_ACCEPT' => 'application/vnd.api+json' }
       end
       describe 'Validate non-empty body' do
         before do
           # need to post empty data
-          post '/auth', {}
+          post '/auth', {}, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -930,7 +927,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -975,7 +972,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
 
@@ -1001,7 +998,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password_confirmation: "secret123",
             confirm_success_url: @good_redirect_url,
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
 
           assert_equal 200, response.status
         end
@@ -1013,7 +1010,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password_confirmation: "secret123",
             confirm_success_url: @bad_redirect_url,
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
           @data = JSON.parse(response.body)
 
           assert_equal 422, response.status
@@ -1034,7 +1031,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
 
           assert_equal 422, response.status
         end
@@ -1045,7 +1042,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
           @data = JSON.parse(response.body)
 
           assert_json_match({
@@ -1069,7 +1066,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1104,7 +1101,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1134,7 +1131,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         test "success should downcase uid if configured" do
           @resource_class.case_insensitive_keys = [:email]
-          post '/auth', @request_params
+          post '/auth', @request_params, @accept_header
           assert_equal 200, response.status
           @data = JSON.parse(response.body)
           assert_json_match({
@@ -1148,7 +1145,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         test "request should not downcase uid if not configured" do
           @resource_class.case_insensitive_keys = []
-          post '/auth', @request_params
+          post '/auth', @request_params, @accept_header
           assert_equal 200, response.status
           @data = JSON.parse(response.body)
           assert_json_match({
@@ -1174,7 +1171,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             confirm_success_url: @redirect_url,
             favorite_color: @fav_color,
             operating_thetan: @operating_thetan
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1209,7 +1206,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1243,7 +1240,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1278,7 +1275,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "bogus",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1315,7 +1312,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1345,7 +1342,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             # ensure request is not treated as batch request
             age_token(@existing_user, @client_id)
 
-            delete "/auth", {}, @auth_headers
+            delete "/auth", {}, @auth_headers.merge(@accept_header)
 
             @data = JSON.parse(response.body)
           end
@@ -1368,7 +1365,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         describe 'failure: no auth headers' do
           before do
-            delete "/auth"
+            delete "/auth", nil, @accept_header
             @data = JSON.parse(response.body)
           end
 
@@ -1413,13 +1410,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 assert_equal 200, response.status
               end
 
               test "Case sensitive attributes update" do
                 @resource_class.case_insensitive_keys = []
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 @data = JSON.parse(response.body)
                 @existing_user.reload
                 assert_equal @new_operating_thetan, @existing_user.operating_thetan
@@ -1429,7 +1426,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
               test "Case insensitive attributes update" do
                 @resource_class.case_insensitive_keys = [:email]
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 @data = JSON.parse(response.body)
                 @existing_user.reload
                 assert_equal @new_operating_thetan, @existing_user.operating_thetan
@@ -1443,7 +1440,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
                   email: "new.email@example.com",
                 )
 
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 @data = JSON.parse(response.body)
                 @existing_user.reload
                 assert_equal @existing_user.email, "new.email@example.com"
@@ -1454,7 +1451,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               before do
                 # get the email so we can check it wasn't updated
                 @email = @existing_user.email
-                put '/auth', {}, @auth_headers
+                put '/auth', {}, @auth_headers.merge(@accept_header)
 
                 @data = JSON.parse(response.body)
                 @existing_user.reload
@@ -1479,7 +1476,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
                 @new_operating_thetan = "blegh"
                 put "/auth", {
                   operating_thetan: @new_operating_thetan
-                }, @auth_headers
+                }, @auth_headers.merge(@accept_header)
 
                 @data = JSON.parse(response.body)
                 @existing_user.reload
@@ -1517,7 +1514,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 assert_equal 200, response.status
               end
             end
@@ -1533,7 +1530,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 assert_equal 200, response.status
               end
             end
@@ -1549,7 +1546,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               end
 
               test "Request was NOT successful" do
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 assert_equal 422, response.status
               end
             end
@@ -1577,7 +1574,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 assert_equal 200, response.status
               end
             end
@@ -1593,7 +1590,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               end
 
               test "Request was NOT successful" do
-                put "/auth", @request_params, @auth_headers
+                put "/auth", @request_params, @auth_headers.merge(@accept_header)
                 assert_equal 422, response.status
               end
             end
@@ -1614,7 +1611,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
             put "/auth", {
               operating_thetan: @new_operating_thetan
-            }, @auth_headers
+            }, @auth_headers.merge(@accept_header)
 
             @data = JSON.parse(response.body)
             @existing_user.reload
@@ -1648,7 +1645,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1674,7 +1671,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1715,7 +1712,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             config_name: @config_name
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1741,7 +1738,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               password: "secret123",
               password_confirmation: "secret123",
               confirm_success_url: Faker::Internet.url
-            }
+            }, @accept_header
           }
         end
       end
@@ -1755,7 +1752,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          }, @accept_header
 
           @resource  = assigns(:resource)
           @token     = response.headers["access-token"]
@@ -1798,7 +1795,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             unpermitted_param: '(x_x)'
-          }
+          }, @accept_header
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
