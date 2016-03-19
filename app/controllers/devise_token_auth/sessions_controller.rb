@@ -122,10 +122,8 @@ module DeviseTokenAuth
           data: @resource.token_validation_response
         }
       when :json_api  # JSON API specification compliant response format
-        render_json_api_data({
-          type:         @resource.class.name.parameterize,
-          id:           resource_data['id'].to_s,
-          attributes:   resource_data.except('type', 'id')
+        render_json_api_meta({
+          data: @resource.token_validation_response
         })
       else
         raise_unknown_format_argument_error
