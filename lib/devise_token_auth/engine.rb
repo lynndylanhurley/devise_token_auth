@@ -19,10 +19,11 @@ module DeviseTokenAuth
                  :redirect_whitelist,
                  :check_current_password_before_update,
                  :enable_standard_devise_support,
-                 :add_mongoid_support,
-                 :use_only_mongoid,
                  :remove_tokens_after_password_reset,
-                 :default_callbacks
+                 :default_callbacks,
+                 :headers_names,
+                 :add_mongoid_support,
+                 :use_only_mongoid
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -34,10 +35,15 @@ module DeviseTokenAuth
   self.redirect_whitelist                   = nil
   self.check_current_password_before_update = false
   self.enable_standard_devise_support       = false
-  self.add_mongoid_support                  = false
-  self.use_only_mongoid                     = false
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
+  self.headers_names                        = {:'access-token' => 'access-token',
+                                               :'client' => 'client',
+                                               :'expiry' => 'expiry',
+                                               :'uid' => 'uid',
+                                               :'token-type' => 'token-type' }
+  self.add_mongoid_support                  = false
+  self.use_only_mongoid                     = false
 
   def self.setup(&block)
     yield self

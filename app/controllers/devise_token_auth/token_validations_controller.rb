@@ -13,12 +13,12 @@ module DeviseTokenAuth
       end
     end
 
-    protected 
+    protected
 
     def render_validate_token_success
       render json: {
         success: true,
-        data: @resource.token_validation_response
+        data: resource_data(resource_json: @resource.token_validation_response)
       }
     end
 
