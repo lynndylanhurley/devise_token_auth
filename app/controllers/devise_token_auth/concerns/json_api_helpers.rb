@@ -52,15 +52,15 @@ module DeviseTokenAuth::Concerns::JsonApiHelpers
   end
 
   def json_api_meta_params
-    ActionController::Parameters.new(params.require(:meta))
+    ActionController::Parameters.new(params.slice(:meta))
   end
 
   def json_api_data_params
-    ActionController::Parameters.new(params.require(:data))
+    ActionController::Parameters.new(params.slice(:data))
   end
 
   def json_api_data_attributes
-    ActionController::Parameters.new(self.data_params.require(:attributes))
+    ActionController::Parameters.new(self.json_api_data_params.slice(:attributes))
   end
 
   # Sets the JSON API media type headers on the response object.

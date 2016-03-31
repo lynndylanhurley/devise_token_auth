@@ -892,8 +892,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
     describe 'JSON API compliant format' do
       before do
+        @request.env['HTTP_CONTENT_TYPE'] = 'application/vnd.api+json' if @request.present?
         @request.env['HTTP_ACCEPT'] = 'application/vnd.api+json' if @request.present?
-        @accept_header = { 'HTTP_ACCEPT' => 'application/vnd.api+json' }
+        @additional_headers = {
+          'HTTP_ACCEPT' => 'application/vnd.api+json',
+          'HTTP_CONTENT_TYPE' => 'application/vnd.api+json'
+        }
       end
       describe 'Validate non-empty body' do
         before do

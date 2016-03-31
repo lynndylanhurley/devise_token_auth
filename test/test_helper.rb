@@ -51,6 +51,12 @@ class ActiveSupport::TestCase
       user.save!
     end
   end
+
+  def json_api_params(attributes_hash, meta_hash = {})
+    params = { data: { attributes: attributes_hash } }
+    params[:meta] = meta_hash
+    params
+  end
 end
 
 class ActionController::TestCase
