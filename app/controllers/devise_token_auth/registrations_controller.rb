@@ -17,7 +17,7 @@ module DeviseTokenAuth
       end
 
       # give redirect value from params priority
-      @redirect_url = params[:confirm_success_url]
+      @redirect_url = meta_params[:confirm_success_url]
 
       # fall back to default value if provided
       @redirect_url ||= DeviseTokenAuth.default_confirm_success_url
@@ -44,7 +44,7 @@ module DeviseTokenAuth
           unless @resource.confirmed?
             # user will require email authentication
             @resource.send_confirmation_instructions({
-              client_config: params[:config_name],
+              client_config: meta_params[:config_name],
               redirect_url: @redirect_url
             })
 
@@ -98,11 +98,11 @@ module DeviseTokenAuth
     end
 
     def sign_up_params
-      params.permit(*params_for_resource(:sign_up))
+      data_attributes.permit(*params_for_resource(:sign_up))
     end
 
     def account_update_params
-      params.permit(*params_for_resource(:account_update))
+      data_attributes.permit(*params_for_resource(:account_update))
     end
 
     protected

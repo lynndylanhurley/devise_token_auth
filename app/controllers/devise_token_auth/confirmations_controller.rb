@@ -1,7 +1,7 @@
 module DeviseTokenAuth
   class ConfirmationsController < DeviseTokenAuth::ApplicationController
     def show
-      @resource = resource_class.confirm_by_token(params[:confirmation_token])
+      @resource = resource_class.confirm_by_token(meta_params[:confirmation_token])
 
       if @resource and @resource.id
         # create client id
@@ -19,11 +19,11 @@ module DeviseTokenAuth
 
         yield if block_given?
 
-        redirect_to(@resource.build_auth_url(params[:redirect_url], {
+        redirect_to(@resource.build_auth_url(meta_params[:redirect_url], {
           token:                        token,
           client_id:                    client_id,
           account_confirmation_success: true,
-          config:                       params[:config]
+          config:                       meta_params[:config]
         }))
       else
         raise ActionController::RoutingError.new('Not Found')

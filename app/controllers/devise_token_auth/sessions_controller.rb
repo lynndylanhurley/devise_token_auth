@@ -196,7 +196,7 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(*params_for_resource(:sign_in))
+      data_attributes.permit(*params_for_resource(:sign_in))
     end
 
   end
