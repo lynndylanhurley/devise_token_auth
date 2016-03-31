@@ -902,7 +902,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       describe 'Validate non-empty body' do
         before do
           # need to post empty data
-          post '/auth', {}, @accept_header
+          post '/auth', json_api_params({}), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -925,13 +925,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         before do
           @mails_sent = ActionMailer::Base.deliveries.count
 
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -971,12 +971,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         test 'can use + sign in email addresses' do
           @plus_email = 'ak+testing@gmail.com'
 
-          post '/auth', {
+          post '/auth', json_api_params({
             email: @plus_email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
 
@@ -996,25 +996,25 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         end
 
         test "request to whitelisted redirect should be successful" do
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: @good_redirect_url,
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
 
           assert_equal 200, response.status
         end
 
         test "request to non-whitelisted redirect should fail" do
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: @bad_redirect_url,
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
           @data = JSON.parse(response.body)
 
           assert_equal 422, response.status
@@ -1030,23 +1030,23 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       describe 'failure if not redirecturl' do
 
         test "request should fail if not redirect_url" do
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
 
           assert_equal 422, response.status
         end
 
         test "request to non-whitelisted redirect should fail" do
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
           @data = JSON.parse(response.body)
 
           assert_json_match({
@@ -1065,12 +1065,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
           DeviseTokenAuth.default_confirm_success_url = @redirect_url
 
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1099,13 +1099,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         before do
           @mails_sent = ActionMailer::Base.deliveries.count
 
-          post '/api/v1/auth', {
+          post '/api/v1/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1125,17 +1125,17 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         before do
           @resource_class = User
-          @request_params = {
+          @request_params = json_api_params({
             email: "AlternatingCase@example.com",
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }
+          })
         end
 
         test "success should downcase uid if configured" do
           @resource_class.case_insensitive_keys = [:email]
-          post '/auth', @request_params, @accept_header
+          post '/auth', @request_params, @additional_headers
           assert_equal 200, response.status
           @data = JSON.parse(response.body)
           assert_json_match({
@@ -1149,7 +1149,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         test "request should not downcase uid if not configured" do
           @resource_class.case_insensitive_keys = []
-          post '/auth', @request_params, @accept_header
+          post '/auth', @request_params, @additional_headers
           assert_equal 200, response.status
           @data = JSON.parse(response.body)
           assert_json_match({
@@ -1168,14 +1168,14 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           @redirect_url     = Faker::Internet.url
           @operating_thetan = 2
 
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: @redirect_url,
             favorite_color: @fav_color,
             operating_thetan: @operating_thetan
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1205,12 +1205,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       describe 'bad email' do
         before do
-          post '/auth', {
+          post '/auth', json_api_params({
             email: "false_email@",
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1240,11 +1240,11 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       describe 'missing email' do
         before do
-          post '/auth', {
+          post '/auth', json_api_params({
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1274,12 +1274,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       describe "Mismatched passwords" do
         before do
-          post '/auth', {
+          post '/auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "bogus",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1311,12 +1311,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         before do
           @existing_user = users(:confirmed_email_user)
 
-          post "/auth", {
+          post "/auth", json_api_params({
             email: @existing_user.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1346,7 +1346,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             # ensure request is not treated as batch request
             age_token(@existing_user, @client_id)
 
-            delete "/auth", {}, @auth_headers.merge(@accept_header)
+            delete "/auth", json_api_params({}), @auth_headers.merge(@additional_headers)
 
             @data = JSON.parse(response.body)
           end
@@ -1369,7 +1369,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         describe 'failure: no auth headers' do
           before do
-            delete "/auth", nil, @accept_header
+            delete "/auth", nil, @additional_headers
             @data = JSON.parse(response.body)
           end
 
@@ -1407,20 +1407,20 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
                 @resource_class = User
                 @new_operating_thetan = 1000000
                 @email = "AlternatingCase2@example.com"
-                @request_params = {
+                @request_params = json_api_params({
                   operating_thetan: @new_operating_thetan,
                   email: @email
-                }
+                })
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 assert_equal 200, response.status
               end
 
               test "Case sensitive attributes update" do
                 @resource_class.case_insensitive_keys = []
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 @data = JSON.parse(response.body)
                 @existing_user.reload
                 assert_equal @new_operating_thetan, @existing_user.operating_thetan
@@ -1430,7 +1430,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
               test "Case insensitive attributes update" do
                 @resource_class.case_insensitive_keys = [:email]
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 @data = JSON.parse(response.body)
                 @existing_user.reload
                 assert_equal @new_operating_thetan, @existing_user.operating_thetan
@@ -1444,7 +1444,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
                   email: "new.email@example.com",
                 )
 
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 @data = JSON.parse(response.body)
                 @existing_user.reload
                 assert_equal @existing_user.email, "new.email@example.com"
@@ -1455,7 +1455,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               before do
                 # get the email so we can check it wasn't updated
                 @email = @existing_user.email
-                put '/auth', {}, @auth_headers.merge(@accept_header)
+                put '/auth', json_api_params({}), @auth_headers.merge(@additional_headers)
 
                 @data = JSON.parse(response.body)
                 @existing_user.reload
@@ -1478,9 +1478,9 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               before do
                 # test invalid update param
                 @new_operating_thetan = "blegh"
-                put "/auth", {
+                put "/auth", json_api_params({
                   operating_thetan: @new_operating_thetan
-                }, @auth_headers.merge(@accept_header)
+                }), @auth_headers.merge(@additional_headers)
 
                 @data = JSON.parse(response.body)
                 @existing_user.reload
@@ -1511,14 +1511,14 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
                 @resource_class = User
                 @new_operating_thetan = 1000000
                 @email = "AlternatingCase2@example.com"
-                @request_params = {
+                @request_params = json_api_params({
                   operating_thetan: @new_operating_thetan,
                   email: @email
-                }
+                })
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 assert_equal 200, response.status
               end
             end
@@ -1526,15 +1526,15 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             describe "success with password update" do
               before do
                 @existing_user.update password: 'secret123', password_confirmation: 'secret123'
-                @request_params = {
+                @request_params = json_api_params({
                   password: 'the_new_secret456',
                   password_confirmation: 'the_new_secret456',
                   current_password: 'secret123'
-                }
+                })
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 assert_equal 200, response.status
               end
             end
@@ -1542,15 +1542,15 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             describe "error with password mismatch" do
               before do
                 @existing_user.update password: 'secret123', password_confirmation: 'secret123'
-                @request_params = {
+                @request_params = json_api_params({
                   password: 'the_new_secret456',
                   password_confirmation: 'the_new_secret456',
                   current_password: 'not_so_secret321'
-                }
+                })
               end
 
               test "Request was NOT successful" do
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 assert_equal 422, response.status
               end
             end
@@ -1570,15 +1570,15 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             describe "success with password update" do
               before do
                 @existing_user.update password: 'secret123', password_confirmation: 'secret123'
-                @request_params = {
+                @request_params = json_api_params({
                   operating_thetan: @new_operating_thetan,
                   email: @email,
                   current_password: 'secret123'
-                }
+                })
               end
 
               test "Request was successful" do
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 assert_equal 200, response.status
               end
             end
@@ -1586,15 +1586,15 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             describe "error with password mismatch" do
               before do
                 @existing_user.update password: 'secret123', password_confirmation: 'secret123'
-                @request_params = {
+                @request_params = json_api_params({
                   operating_thetan: @new_operating_thetan,
                   email: @email,
                   current_password: 'not_so_secret321'
-                }
+                })
               end
 
               test "Request was NOT successful" do
-                put "/auth", @request_params, @auth_headers.merge(@accept_header)
+                put "/auth", @request_params, @auth_headers.merge(@additional_headers)
                 assert_equal 422, response.status
               end
             end
@@ -1613,9 +1613,9 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             # test valid update param
             @new_operating_thetan = 3
 
-            put "/auth", {
+            put "/auth", json_api_params({
               operating_thetan: @new_operating_thetan
-            }, @auth_headers.merge(@accept_header)
+            }), @auth_headers.merge(@additional_headers)
 
             @data = JSON.parse(response.body)
             @existing_user.reload
@@ -1644,12 +1644,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         before do
           @existing_user = users(:duplicate_email_facebook_user)
 
-          post "/auth", {
+          post "/auth", json_api_params({
             email: @existing_user.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1670,12 +1670,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       describe "Alternate user class" do
         before do
-          post "/mangs", {
+          post "/mangs", json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1699,7 +1699,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           # ensure request is not treated as batch request
           age_token(@resource, @client_id)
 
-          xhr :delete,  "/mangs", {}, @auth_headers
+          xhr :delete,  "/mangs", json_api_params({}), @auth_headers
 
           assert_equal 200, response.status
           refute Mang.where(id: @resource.id).first
@@ -1710,13 +1710,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         before do
           @config_name = 'altUser'
 
-          post "/mangs", {
+          post "/mangs", json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             config_name: @config_name
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -1737,12 +1737,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       describe 'Excluded :registrations module' do
         test 'UnregisterableUser should not be able to access registration routes' do
           assert_raises(ActionController::RoutingError) {
-            post '/unregisterable_user_auth', {
+            post '/unregisterable_user_auth', json_api_params({
               email: Faker::Internet.email,
               password: "secret123",
               password_confirmation: "secret123",
               confirm_success_url: Faker::Internet.url
-            }, @accept_header
+            }), @additional_headers
           }
         end
       end
@@ -1751,12 +1751,12 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         setup do
           User.set_callback(:create, :before, :skip_confirmation!)
 
-          post "/auth", {
+          post "/auth", json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url
-          }, @accept_header
+          }), @additional_headers
 
           @resource  = assigns(:resource)
           @token     = response.headers["access-token"]
@@ -1793,13 +1793,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         setup do
           @mails_sent = ActionMailer::Base.deliveries.count
 
-          post '/only_email_auth', {
+          post '/only_email_auth', json_api_params({
             email: Faker::Internet.email,
             password: "secret123",
             password_confirmation: "secret123",
             confirm_success_url: Faker::Internet.url,
             unpermitted_param: '(x_x)'
-          }, @accept_header
+          }), @additional_headers
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)

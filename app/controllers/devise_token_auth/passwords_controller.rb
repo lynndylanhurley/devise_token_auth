@@ -11,7 +11,7 @@ module DeviseTokenAuth
       end
 
       # give redirect value from params priority
-      @redirect_url = meta_params[:redirect_url]
+      @redirect_url = data_attributes[:redirect_url]
 
       # fall back to default value if provided
       @redirect_url ||= DeviseTokenAuth.default_password_reset_url
@@ -52,7 +52,7 @@ module DeviseTokenAuth
           email: @email,
           provider: 'email',
           redirect_url: @redirect_url,
-          client_config: meta_params[:config_name]
+          client_config: data_attributes[:config_name]
         })
 
         if @resource.errors.empty?
@@ -96,11 +96,11 @@ module DeviseTokenAuth
         @resource.save!
         yield if block_given?
 
-        redirect_to(@resource.build_auth_url(meta_params[:redirect_url], {
+        redirect_to(@resource.build_auth_url(data_attributes[:redirect_url], {
           token:          token,
           client_id:      client_id,
           reset_password: true,
-          config:         meta_params[:config]
+          config:         data_attributes[:config]
         }))
       else
         render_edit_error

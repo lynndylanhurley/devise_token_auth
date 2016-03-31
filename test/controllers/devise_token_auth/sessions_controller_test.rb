@@ -401,10 +401,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             @old_sign_in_ip         = @existing_user.current_sign_in_ip
             @old_last_sign_in_ip    = @existing_user.last_sign_in_ip
 
-            xhr :post, :create, {
+            xhr :post, :create, json_api_params({
               email: @existing_user.email,
               password: 'secret123'
-            }
+            })
 
             @resource = assigns(:resource)
             @data = JSON.parse(response.body)
@@ -453,10 +453,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         describe 'get sign_in is not supported' do
           before do
-            xhr :get, :new, {
+            xhr :get, :new, json_api_params({
               nickname: @existing_user.nickname,
               password: 'secret123'
-            }
+            })
             @data = JSON.parse(response.body)
           end
 
@@ -474,10 +474,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         describe 'alt auth keys' do
           before do
-            xhr :post, :create, {
+            xhr :post, :create, json_api_params({
               nickname: @existing_user.nickname,
               password: 'secret123'
-            }
+            })
             @data = JSON.parse(response.body)
           end
 
@@ -533,10 +533,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         describe 'failure' do
           before do
-            xhr :post, :create, {
+            xhr :post, :create, json_api_params({
               email: @existing_user.email,
               password: 'bogus'
-            }
+            })
 
             @resource = assigns(:resource)
             @data = JSON.parse(response.body)
@@ -563,10 +563,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             # which initializes client_id
             @controller.current_user
 
-            xhr :post, :create, {
+            xhr :post, :create, json_api_params({
               email: @existing_user.email,
               password: 'bogus'
-            }
+            })
 
             @resource = assigns(:resource)
             @data = JSON.parse(response.body)
@@ -593,10 +593,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
           before do
             @resource_class = User
-            @request_params = {
+            @request_params = json_api_params({
               email: @existing_user.email.upcase,
               password: 'secret123'
-            }
+            })
           end
 
           test "request should succeed if configured" do
@@ -617,10 +617,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       describe "Unconfirmed user" do
         before do
           @unconfirmed_user = users(:unconfirmed_email_user)
-          xhr :post, :create, {
+          xhr :post, :create, json_api_params({
             email: @unconfirmed_user.email,
             password: 'secret123'
-          }
+          })
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
         end
@@ -643,10 +643,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @original_duration = Devise.allow_unconfirmed_access_for
           Devise.allow_unconfirmed_access_for = 3.days
           @recent_unconfirmed_user = users(:recent_unconfirmed_email_user)
-          xhr :post, :create, {
+          xhr :post, :create, json_api_params({
             email: @recent_unconfirmed_user.email,
             password: 'secret123'
-          }
+          })
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
         end
@@ -669,10 +669,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @original_duration = Devise.allow_unconfirmed_access_for
           Devise.allow_unconfirmed_access_for = 3.days
           @unconfirmed_user = users(:unconfirmed_email_user)
-          xhr :post, :create, {
+          xhr :post, :create, json_api_params({
             email: @unconfirmed_user.email,
             password: 'secret123'
-          }
+          })
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
         end
@@ -692,8 +692,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe "Non-existing user" do
         before do
-          xhr :post, :create, {
-            email: -> { Faker::Internet.email },
+          xhr :post, :create, json_api_params({
+            email: -> { Faker::Internet.email }),
             password: -> { Faker::Number.number(10) }
           }
           @resource = assigns(:resource)
@@ -723,10 +723,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @existing_user.skip_confirmation!
           @existing_user.save!
 
-          xhr :post, :create, {
+          xhr :post, :create, json_api_params({
             email: @existing_user.email,
             password: 'secret123'
-          }
+          })
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -754,10 +754,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @existing_user = only_email_users(:user)
           @existing_user.save!
 
-          xhr :post, :create, {
+          xhr :post, :create, json_api_params({
             email: @existing_user.email,
             password: 'secret123'
-          }
+          })
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)

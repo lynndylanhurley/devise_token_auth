@@ -122,7 +122,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
       describe 'vanilla user' do
         before do
-          get '/auth/validate_token', {}, @auth_headers.merge(@accept_header)
+          get '/auth/validate_token', json_api_params({}), @auth_headers.merge(@additional_headers)
           @resp = JSON.parse(response.body)
         end
 
@@ -133,7 +133,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
       describe 'using namespaces' do
         before do
-          get '/api/v1/auth/validate_token', {}, @auth_headers
+          get '/api/v1/auth/validate_token', json_api_params({}), @auth_headers
           @resp = JSON.parse(response.body)
         end
 
@@ -144,7 +144,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
       describe 'failure' do
         before do
-          get '/api/v1/auth/validate_token', {}, @auth_headers.merge({"access-token" => "12345"}).merge(@accept_header)
+          get '/api/v1/auth/validate_token', json_api_params({}), @auth_headers.merge({"access-token" => "12345"}).merge(@additional_headers)
           @resp = JSON.parse(response.body)
         end
 
@@ -181,7 +181,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
       end
 
       test "should be successful" do
-        get '/api_v2/auth/validate_token', {}, @auth_headers.merge(@accept_header)
+        get '/api_v2/auth/validate_token', json_api_params({}), @auth_headers.merge(@additional_headers)
         assert_equal 200, response.status
       end
 
