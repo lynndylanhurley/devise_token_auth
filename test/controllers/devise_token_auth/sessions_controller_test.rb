@@ -693,9 +693,9 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       describe "Non-existing user" do
         before do
           xhr :post, :create, json_api_params({
-            email: -> { Faker::Internet.email }),
+            email: -> { Faker::Internet.email },
             password: -> { Faker::Number.number(10) }
-          }
+          })
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
         end
