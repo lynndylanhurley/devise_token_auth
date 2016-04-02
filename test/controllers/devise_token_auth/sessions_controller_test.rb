@@ -245,7 +245,22 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
       end
 
-      describe "Unconfirmed user with allowed unconfirmed access" do
+      describe 'header sign_in is supported' do
+        before do
+          request.headers.merge!(
+            'email' => @existing_user.email,
+            'password' => 'secret123')
+
+          xhr :head, :create
+          @data = JSON.parse(response.body)
+        end
+
+        test 'user can sign in using header request' do
+          assert_equal 200, response.status
+        end
+      end
+
+      describe 'alt auth keys' do
         before do
           @original_duration = Devise.allow_unconfirmed_access_for
           Devise.allow_unconfirmed_access_for = 3.days
