@@ -2,8 +2,8 @@ module DeviseTokenAuth
   class OmniauthCallbacksController < DeviseTokenAuth::ApplicationController
 
     attr_reader :auth_params
-    skip_before_filter :set_user_by_token
-    skip_after_filter :update_auth_header
+    skip_before_action :set_user_by_token, raise: false
+    skip_after_action :update_auth_header
 
     # intermediary route for successful omniauth authentication. omniauth does
     # not support multiple models, so we must resort to this terrible hack.
@@ -11,8 +11,9 @@ module DeviseTokenAuth
 
       # derive target redirect route from 'resource_class' param, which was set
       # before authentication.
-      devise_mapping = request.env['omniauth.params']['resource_class'].underscore.to_sym
-      redirect_route = "#{request.protocol}#{request.host_with_port}/#{Devise.mappings[devise_mapping].fullpath}/#{params[:provider]}/callback"
+      devise_mapping = [request.env['omniauth.params']['namespace_name'],
+                        request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
+      redirect_route = "#{request.protocol}#{request.host_with_port}/#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
       # auth response to avoid CookieOverflow.
@@ -86,7 +87,7 @@ module DeviseTokenAuth
 
     # derive allowed params from the standard devise parameter sanitizer
     def whitelisted_params
-      whitelist = devise_parameter_sanitizer.for(:sign_up)
+      whitelist = params_for_resource(:sign_up)
 
       whitelist.inject({}){|coll, key|
         param = omniauth_params[key.to_s]
@@ -142,7 +143,8 @@ module DeviseTokenAuth
     # necessary for access to devise_parameter_sanitizers
     def devise_mapping
       if omniauth_params
-        Devise.mappings[omniauth_params['resource_class'].underscore.to_sym]
+        Devise.mappings[[omniauth_params['namespace_name'],
+                         omniauth_params['resource_class'].underscore].compact.join('_').to_sym]
       else
         request.env['devise.mapping']
       end

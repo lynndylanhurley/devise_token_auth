@@ -120,7 +120,20 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
           end
         end
       end
+
+      describe 'failed access' do
+        before do
+          get '/demo/members_only_group', {}, @mang_auth_headers.merge({'access-token' => "bogus"})
+        end
+
+        it 'should not return any auth headers' do
+          refute response.headers['access-token']
+        end
+
+        it 'should return error: unauthorized status' do
+          assert_equal 401, response.status
+        end      
+      end
     end
   end
 end
-

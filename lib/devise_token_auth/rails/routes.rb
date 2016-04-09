@@ -33,6 +33,9 @@ module ActionDispatch::Routing
         # get full url path as if it were namespaced
         full_path = "#{@scope[:path]}/#{opts[:at]}"
 
+        # get namespace name
+        namespace_name = @scope[:as]
+
         # clear scope so controller routes aren't namespaced
         @scope = ActionDispatch::Routing::Mapper::Scope.new(
           path:         "",
@@ -43,7 +46,10 @@ module ActionDispatch::Routing
           parent:       nil
         )
 
-        devise_scope resource.underscore.gsub('/', '_').to_sym do
+        mapping_name = resource.underscore.gsub('/', '_')
+        mapping_name = "#{namespace_name}_#{mapping_name}" if namespace_name
+
+        devise_scope mapping_name.to_sym do
           # path to verify token validity
           get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
 
@@ -52,8 +58,8 @@ module ActionDispatch::Routing
             match "#{full_path}/failure",             controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
             match "#{full_path}/:provider/callback",  controller: omniauth_ctrl, action: "omniauth_success", via: [:get]
 
-            match "#{DeviseTokenAuth.omniauth_prefix}/:provider/callback", controller: omniauth_ctrl, action: "redirect_callbacks", via: [:get]
-            match "#{DeviseTokenAuth.omniauth_prefix}/failure", controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
+            match "#{DeviseTokenAuth.omniauth_prefix}/:provider/callback", controller: omniauth_ctrl, action: "redirect_callbacks", via: [:get, :post]
+            match "#{DeviseTokenAuth.omniauth_prefix}/failure", controller: omniauth_ctrl, action: "omniauth_failure", via: [:get, :post]
 
             # preserve the resource class thru oauth authentication by setting name of
             # resource as "resource_class" param
@@ -63,6 +69,7 @@ module ActionDispatch::Routing
 
               # append name of current resource
               qs["resource_class"] = [resource]
+              qs["namespace_name"] = [namespace_name] if namespace_name
 
               set_omniauth_path_prefix!(DeviseTokenAuth.omniauth_prefix)
 
