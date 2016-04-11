@@ -182,7 +182,9 @@ module DeviseTokenAuth::Concerns::User
       self.tokens.delete(oldest_token.first)
     end
 
-    self.save!
+    # replaced save! by update_columns to avoid
+    # callbacks & validations
+    self.update_columns(tokens: self.tokens)
 
     return build_auth_header(token, client_id)
   end
