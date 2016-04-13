@@ -191,7 +191,7 @@ module DeviseTokenAuth::Concerns::User
   def build_auth_header(token, client_id='default')
     client_id ||= 'default'
 
-    if !DeviseTokenAuth.change_headers_on_each_request && self.tokens[client_id].nil?
+    if token.nil? !DeviseTokenAuth.change_headers_on_each_request && self.tokens[client_id].nil?
       create_new_auth_token(client_id)
     else
 
