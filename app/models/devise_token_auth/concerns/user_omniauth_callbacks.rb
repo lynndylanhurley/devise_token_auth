@@ -6,23 +6,22 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
 
     # only validate unique emails among email registration users
-    validate :unique_email_user, on: :create
+    validate :unique_email_user, if: Proc.new { |u| u.provider == 'email' && u.email_change }
 
     # keep uid in sync with email
-    before_save :sync_uid
-    before_create :sync_uid
+    before_save :sync_uid, if: Proc.new { |u| u.provider == 'email' }
   end
 
   protected
 
   # only validate unique email among users that registered by email
   def unique_email_user
-    if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
+    if self.class.where(provider: 'email', email: email).exists?
       errors.add(:email, I18n.t("errors.messages.already_in_use"))
     end
   end
 
   def sync_uid
-    self.uid = email if provider == 'email'
+    self.uid = email
   end
 end
