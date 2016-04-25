@@ -23,6 +23,8 @@ en:
       password_not_required: "This account does not require a password. Sign in using your '%{provider}' account instead."
       missing_passwords: "You must fill out the fields labeled 'Password' and 'Password confirmation'."
       successfully_updated: "Your password has been successfully updated."
+    confirmations:
+      bad_token: "Invalid confirmation token. Please try email link again."
   errors:
     messages:
       already_in_use: "already in use"
