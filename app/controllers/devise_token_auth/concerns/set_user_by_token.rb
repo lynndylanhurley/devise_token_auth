@@ -101,6 +101,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
         # extend expiration of batch buffer to account for the duration of
         # this request
+        p 'request'
+        p @is_batch_request
         if @is_batch_request
           auth_header = @resource.extend_batch_buffer(@client_id)
         # update Authorization response header with new token
