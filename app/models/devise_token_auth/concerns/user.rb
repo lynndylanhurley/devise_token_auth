@@ -224,6 +224,8 @@ module DeviseTokenAuth::Concerns::User
     self.tokens[client_id]['updated_at'] = Time.now
     self.save!
 
+    p self.tokens[client_id]['token']
+
     return build_auth_header(self.tokens[client_id]['token'], client_id)
   end
 
