@@ -220,11 +220,11 @@ module DeviseTokenAuth::Concerns::User
   end
 
 
-  def extend_batch_buffer(token, client_id)
+  def extend_batch_buffer(client_id)
     self.tokens[client_id]['updated_at'] = Time.now
     self.save!
 
-    return build_auth_header(token, client_id)
+    return build_auth_header(self.tokens[client_id]['token'], client_id)
   end
 
   def confirmed?
