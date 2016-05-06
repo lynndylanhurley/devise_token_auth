@@ -83,8 +83,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       return if @resource.reload.tokens[@client_id].nil?
 
       auth_header = @resource.build_auth_header(@token, @client_id)
-      # update the response header
-      response.headers.merge!(auth_header)
     else
       # Lock the user record during any auth_header updates to ensure
       # we don't have write contention from multiple threads
@@ -107,9 +105,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
         else
           auth_header = @resource.create_new_auth_token(@client_id)
         end
-        # update the response header
-        response.headers.merge!(auth_header)
       end # end lock
+
+      # update the response header
+      response.headers.merge!(auth_header)
     end
   end
 
