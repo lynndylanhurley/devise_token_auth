@@ -1,0 +1,24 @@
+<% timestamp = DateTime.parse(2.weeks.ago.to_s).to_time.strftime("%F %T") %>
+<% @email = Faker::Internet.email %>
+one:
+  owner:              one (Company)
+  uid:                "<%= @email %>"
+  email:              "<%= @email %>"
+  nickname:           'roofus'
+  provider:           'email'
+  confirmed_at:       '<%= timestamp %>'
+  created_at:         '<%= timestamp %>'
+  updated_at:         '<%= timestamp %>'
+  encrypted_password: <%= Account.new.send(:password_digest, 'secret123') %>
+
+<% @second_email = Faker::Internet.email %>
+two:
+  owner:              two (Company)
+  uid:                "<%= @second_email %>"
+  email:              "<%= @second_email %>"
+  nickname:           'roofus2'
+  provider:           'email'
+  confirmed_at:       '<%= timestamp %>'
+  created_at:         '<%= timestamp %>'
+  updated_at:         '<%= timestamp %>'
+  encrypted_password: <%= Account.new.send(:password_digest, 'secret321') %>

@@ -1,0 +1,8 @@
+# Read about fixtures at
+# http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  other_field: <%= Faker::Company.name %>
+
+two:
+  other_field: <%= Faker::Company.name %>

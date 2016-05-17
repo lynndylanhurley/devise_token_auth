@@ -389,5 +389,56 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         refute OnlyEmailUser.method_defined?(:confirmed_at)
       end
     end
+
+    describe "backup authorization field" do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:account]
+      end
+
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
+
+      before do
+        @existing_user = accounts(:one)
+        @existing_user.skip_confirmation!
+        @existing_user.save!
+      end
+
+      test 'for same resource' do
+        xhr :post, :create, {
+          email: @existing_user.nickname,
+          password: 'secret123',
+          backup_field_name: 'nickname'
+        }
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        assert_equal @existing_user.email, @data['data']['email']
+      end
+
+      test 'for basic relationship' do
+        xhr :post, :create, {
+          email: @existing_user.profile.other_field,
+          password: 'secret123',
+          backup_field_name: 'other_field',
+          backup_field_class: 'profile'
+        }
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        assert_equal @existing_user.email, @data['data']['email']
+      end
+
+      test 'for polymorphic relationship' do
+        xhr :post, :create, {
+          email: @existing_user.owner.other_field,
+          password: 'secret123',
+          backup_field_name: 'other_field',
+          backup_field_class: 'company'
+        }
+        @resource = assigns(:resource)
+        @data = JSON.parse(response.body)
+        assert_equal @existing_user.email, @data['data']['email']
+      end
+    end
   end
 end

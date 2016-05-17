@@ -10,6 +10,10 @@ Rails.application.routes.draw do
   # need to be defined within a devise_scope as shown below
   mount_devise_token_auth_for "Mang", at: 'mangs'
 
+  # define :accounts as the second devise mapping. routes using this class will
+  # need to be defined within a devise_scope as shown below
+  mount_devise_token_auth_for "Account", at: 'accounts'
+
   mount_devise_token_auth_for 'EvilUser', at: 'evil_user_auth', controllers: {
     confirmations:      'overrides/confirmations',
     passwords:          'overrides/passwords',
