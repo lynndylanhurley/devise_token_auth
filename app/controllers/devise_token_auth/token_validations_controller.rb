@@ -6,7 +6,7 @@ module DeviseTokenAuth
     def validate_token
       # @resource will have been set by set_user_token concern
       if @resource
-        yield if block_given?
+        yield @resource if block_given?
         render_validate_token_success
       else
         render_validate_token_error

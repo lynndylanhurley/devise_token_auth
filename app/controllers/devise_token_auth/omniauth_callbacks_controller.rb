@@ -38,7 +38,7 @@ module DeviseTokenAuth
 
       @resource.save!
 
-      yield if block_given?
+      yield @resource if block_given?
 
       render_data_or_redirect('deliverCredentials', @auth_params.as_json, @resource.as_json)
     end

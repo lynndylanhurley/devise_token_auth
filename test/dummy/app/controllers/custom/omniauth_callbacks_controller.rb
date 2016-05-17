@@ -2,7 +2,7 @@ class Custom::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCallbacksCo
 
   def omniauth_success
     super do |resource|
-      @omniauth_success_block_called = true
+      @omniauth_success_block_called = true unless resource.nil?
     end
   end
 

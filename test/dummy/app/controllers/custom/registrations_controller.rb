@@ -8,13 +8,13 @@ class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
 
   def update
     super do |resource|
-      @update_block_called = true
+      @update_block_called = true unless resource.nil?
     end
   end
 
   def destroy
     super do |resource|
-      @destroy_block_called = true
+      @destroy_block_called = true unless resource.nil?
     end
   end
 
