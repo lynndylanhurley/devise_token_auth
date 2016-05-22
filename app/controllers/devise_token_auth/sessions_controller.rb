@@ -42,7 +42,7 @@ module DeviseTokenAuth
 
         sign_in(:user, @resource, store: false, bypass: false)
 
-        yield if block_given?
+        yield @resource if block_given?
 
         render_create_success
       elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
@@ -63,7 +63,7 @@ module DeviseTokenAuth
         # callbacks & validations
         user.tokens.delete(client_id)
         user.update_columns(tokens: user.tokens)
-        yield if block_given?
+        yield user if block_given?
 
         render_destroy_success
       else

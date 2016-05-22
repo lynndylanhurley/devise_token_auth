@@ -47,7 +47,7 @@ module DeviseTokenAuth
       @error_status = 400
 
       if @resource
-        yield if block_given?
+        yield @resource if block_given?
         @resource.send_reset_password_instructions({
           email: @email,
           provider: 'email',
@@ -94,7 +94,7 @@ module DeviseTokenAuth
         @resource.allow_password_change = true;
 
         @resource.save!
-        yield if block_given?
+        yield @resource if block_given?
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
           token:          token,
@@ -126,7 +126,7 @@ module DeviseTokenAuth
       if @resource.send(resource_update_method, password_resource_params)
         @resource.allow_password_change = false
 
-        yield if block_given?
+        yield @resource if block_given?
         return render_update_success
       else
         return render_update_error
