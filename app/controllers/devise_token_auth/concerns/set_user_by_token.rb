@@ -23,7 +23,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # no default user defined
     return unless rc
 
-    #gets the headers names, which was set in the initilize file
+    #gets the headers names, which was set in the initialize file
     uid_name = DeviseTokenAuth.headers_names[:'uid']
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
