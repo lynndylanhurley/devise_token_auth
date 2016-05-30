@@ -8,6 +8,12 @@ require 'test_helper'
 
 class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::ConfirmationsController do
+    def token_and_client_config_from(body)
+      token         = body.match(/confirmation_token=([^&]*)&/)[1]
+      client_config = body.match(/config=([^&]*)&/)[1]
+      [token, client_config]
+    end
+
     describe "Confirmation" do
       before do
         @redirect_url = Faker::Internet.url
@@ -15,9 +21,8 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         @new_user.send_confirmation_instructions({
           redirect_url: @redirect_url
         })
-        @mail          = ActionMailer::Base.deliveries.last
-        @token         = @mail.body.match(/confirmation_token=([^&]*)&/)[1]
-        @client_config = @mail.body.match(/config=([^&]*)&/)[1]
+        mail = ActionMailer::Base.deliveries.last
+        @token, @client_config = token_and_client_config_from(mail.body)
       end
 
       test 'should generate raw token' do
@@ -74,9 +79,8 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
 
         @new_user.send_confirmation_instructions(client_config: @config_name)
 
-        @mail          = ActionMailer::Base.deliveries.last
-        @token         = @mail.body.match(/confirmation_token=(.*)\"/)[1]
-        @client_config = @mail.body.match(/config=(.*)\&/)[1]
+        mail = ActionMailer::Base.deliveries.last
+        @token, @client_config = token_and_client_config_from(mail.body)
       end
 
       test 'should generate raw token' do
