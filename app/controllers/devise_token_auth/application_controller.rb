@@ -35,7 +35,9 @@ module DeviseTokenAuth
 
     def is_json_api
       return false unless defined?(ActiveModel::Serializer)
-      return ActiveModel::Serializer.config.adapter == :json_api
+      return ActiveModel::Serializer.setup do |config|
+        config.adapter == :json_api
+      end
     end
 
   end
