@@ -177,6 +177,17 @@ module DeviseTokenAuth::Concerns::User
       updated_at: Time.now
     }
 
+    return build_auth_header(token, client_id)
+  end
+
+
+  def build_auth_header(token, client_id='default')
+    client_id ||= 'default'
+
+    # client may use expiry to prevent validation request if expired
+    # must be cast as string or headers will break
+    expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
+
     max_clients = DeviseTokenAuth.max_number_of_devices
     while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
       oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
@@ -185,29 +196,13 @@ module DeviseTokenAuth::Concerns::User
 
     self.save!
 
-    return build_auth_header(token, client_id)
-  end
-
-
-  def build_auth_header(token, client_id='default')
-    client_id ||= 'default'
-
-    if !DeviseTokenAuth.change_headers_on_each_request && self.tokens[client_id].nil?
-      create_new_auth_token(client_id)
-    else
-
-      # client may use expiry to prevent validation request if expired
-      # must be cast as string or headers will break
-      expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
-
-      return {
-        DeviseTokenAuth.headers_names[:"access-token"] => token,
-        DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
-        DeviseTokenAuth.headers_names[:"client"]       => client_id,
-        DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
-        DeviseTokenAuth.headers_names[:"uid"]          => self.uid
-      }
-    end
+    return {
+      DeviseTokenAuth.headers_names[:"access-token"] => token,
+      DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
+      DeviseTokenAuth.headers_names[:"client"]       => client_id,
+      DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
+      DeviseTokenAuth.headers_names[:"uid"]          => self.uid
+    }
   end
 
 
@@ -221,7 +216,6 @@ module DeviseTokenAuth::Concerns::User
 
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
-    self.save!
 
     return build_auth_header(token, client_id)
   end
