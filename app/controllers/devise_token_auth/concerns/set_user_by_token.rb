@@ -61,7 +61,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     user = uid && rc.find_by_uid(uid)
 
     if user && user.valid_token?(@token, @client_id)
-      sign_in(:user, user, store: false, bypass: true)
+      # sign_in with bypass: true will be deprecated in the next version of Devise
+      if self.respond_to? :bypass_sign_in
+        bypass_sign_in(user, scope: :user)
+      else
+        sign_in(:user, user, store: false, bypass: true)
+      end
       return @resource = user
     else
       # zero all values previously set values
