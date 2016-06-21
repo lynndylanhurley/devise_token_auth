@@ -16,9 +16,11 @@ module DeviseTokenAuth::Concerns::User
 
   included do
     # Hack to check if devise is already enabled
+    # Yeah... after losing some time debugging this,
+    # I can confirm that this is a hack.
     unless self.method_defined?(:devise_modules)
-      devise :database_authenticatable, :registerable,
-          :recoverable, :trackable, :validatable, :confirmable
+      # devise :database_authenticatable, :registerable,
+          # :recoverable, :trackable, :validatable, :confirmable
     else
       self.devise_modules.delete(:omniauthable)
     end
