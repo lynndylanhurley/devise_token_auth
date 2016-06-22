@@ -2,7 +2,10 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
   extend ActiveSupport::Concern
 
   included do
-    validates :email, presence: true, email: true, if: Proc.new { |u| u.provider == 'email' }
+    # NOTE: validating the email happens in the validatable submodule
+    # FIX: validating the email twice when different validations needed for validatable
+    # validates :email, presence: true, email: true, if: Proc.new { |u| u.provider == 'email' }
+
     validates_presence_of :uid, if: Proc.new { |u| u.provider != 'email' }
 
     # only validate unique emails among email registration users
