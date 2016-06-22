@@ -782,7 +782,7 @@ Yes! But you will need to enable the support use separate routes for standard De
 #### config/initializers/devise_token_auth.rb
 ~~~ruby
 DeviseTokenAuth.setup do |config|
-  # enable_standard_devise_support = false
+  # config.enable_standard_devise_support = false
 end
 ~~~
 
