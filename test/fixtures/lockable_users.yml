@@ -1,0 +1,22 @@
+<% @locked_user = Faker::Internet.email %>
+<% timestamp = DateTime.parse(1.day.ago.to_s).to_time.strftime("%F %T") %>
+unlocked_user:
+  uid:                "<%= @locked_user %>"
+  email:              "<%= @locked_user %>"
+  provider:           'email'
+  created_at:         '<%= timestamp %>'
+  updated_at:         '<%= timestamp %>'
+  encrypted_password: <%= User.new.send(:password_digest, 'secret123') %>
+
+<% @locked_user = Faker::Internet.email %>
+<% timestamp = DateTime.parse(1.day.ago.to_s).to_time.strftime("%F %T") %>
+locked_user:
+  uid:                "<%= @locked_user %>"
+  email:              "<%= @locked_user %>"
+  provider:           'email'
+  created_at:         '<%= timestamp %>'
+  updated_at:         '<%= timestamp %>'
+  encrypted_password: <%= User.new.send(:password_digest, 'secret123') %>
+  locked_at:          '<%= timestamp %>'
+  failed_attempts:    5
+
