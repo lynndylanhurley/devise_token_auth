@@ -3,7 +3,6 @@ cache: bundler
 sudo: false
 
 rvm:
-  - 1.9.3
   - 2.1
 
 env:
@@ -20,4 +19,4 @@ before_script:
   - psql -c 'create database devise_token_auth_test' -U postgres
 
 addons:
-  postgresql: "9.3"
+  postgresql: "9.4"
