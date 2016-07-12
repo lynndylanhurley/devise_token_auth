@@ -13,7 +13,8 @@ module DeviseTokenAuth
       # before authentication.
       devise_mapping = [request.env['omniauth.params']['namespace_name'],
                         request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
-      redirect_route = "#{request.protocol}#{request.host_with_port}/#{Rails.application.config.relative_url_root}/#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
+      relative_url_root_part = Rails.application.config.relative_url_root.present? ? Rails.application.config.relative_url_root + '/' : ''
+      redirect_route = "#{request.protocol}#{request.host_with_port}/#{relative_url_root_part}#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
       # auth response to avoid CookieOverflow.
