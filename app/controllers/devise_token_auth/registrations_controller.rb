@@ -41,14 +41,7 @@ module DeviseTokenAuth
         if @resource.save
           yield @resource if block_given?
 
-          unless @resource.confirmed?
-            # user will require email authentication
-            @resource.send_confirmation_instructions({
-              client_config: params[:config_name],
-              redirect_url: @redirect_url
-            })
-
-          else
+          if @resource.confirmed?
             # email auth has been bypassed, authenticate user
             @client_id = SecureRandom.urlsafe_base64(nil, false)
             @token     = SecureRandom.urlsafe_base64(nil, false)
