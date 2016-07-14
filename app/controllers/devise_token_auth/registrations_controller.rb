@@ -38,10 +38,19 @@ module DeviseTokenAuth
         # override email confirmation, must be sent manually from ctrl
         resource_class.set_callback("create", :after, :send_on_create_confirmation_instructions)
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        # Fix duplicate e-mails by disabling Devise confirmation e-mail
+        @resource.skip_confirmation_notification!
         if @resource.save
           yield @resource if block_given?
 
-          if @resource.confirmed?
+          unless @resource.confirmed?
+            # user will require email authentication
+            @resource.send_confirmation_instructions({
+              client_config: params[:config_name],
+              redirect_url: @redirect_url
+            })
+
+          else
             # email auth has been bypassed, authenticate user
             @client_id = SecureRandom.urlsafe_base64(nil, false)
             @token     = SecureRandom.urlsafe_base64(nil, false)
