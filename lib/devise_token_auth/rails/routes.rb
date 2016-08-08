@@ -73,8 +73,11 @@ module ActionDispatch::Routing
 
               set_omniauth_path_prefix!(DeviseTokenAuth.omniauth_prefix)
 
+              # if app is running in sub directory, trim the first slash
+              path_prefix = Rails.application.config.relative_url_root.present? ? ::OmniAuth.config.path_prefix.sub('/', '') : ::OmniAuth.config.path_prefix
+
               # re-construct the path for omniauth
-              "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
+              "#{path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
             }, via: [:get]
           end
         end
