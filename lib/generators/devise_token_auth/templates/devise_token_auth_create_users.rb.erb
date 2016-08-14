@@ -1,4 +1,4 @@
-class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
+class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration<%= '[' << Rails::VERSION::STRING[0..2] << ']'%>
   def change
     create_table(:<%= user_class.pluralize.underscore %>) do |t|
       ## Required
