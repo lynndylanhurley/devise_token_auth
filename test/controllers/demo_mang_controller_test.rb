@@ -196,7 +196,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not return auth headers for second (batched) requests' do
-            refute @second_access_token
+            assert_equal ' ', @second_access_token
           end
         end
 
@@ -260,4 +260,3 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
     end
   end
 end
-
