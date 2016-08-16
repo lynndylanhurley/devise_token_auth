@@ -1,5 +1,29 @@
 # Change Log
 
+## [v0.1.39](https://github.com/lynndylanhurley/devise_token_auth/tree/v0.1.39) (2016-08-16)
+[Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v0.1.38...v0.1.39)
+
+**Closed issues:**
+
+- "Covert Redirect" Vulnerability [\#696](https://github.com/lynndylanhurley/devise_token_auth/issues/696)
+- No route matches \[POST\] "/api/v1/auth" [\#694](https://github.com/lynndylanhurley/devise_token_auth/issues/694)
+- Got this error with ActiveAdmin "wrong number of arguments \(1 for 0\)" [\#692](https://github.com/lynndylanhurley/devise_token_auth/issues/692)
+- using devise\_token\_auth for API alongside standard devise gem for HTML view [\#689](https://github.com/lynndylanhurley/devise_token_auth/issues/689)
+- No Headers after sign\_in for new Users created by Admin [\#685](https://github.com/lynndylanhurley/devise_token_auth/issues/685)
+- NoMethodError \(undefined method `headers\_names' for DeviseTokenAuth:Module\) [\#684](https://github.com/lynndylanhurley/devise_token_auth/issues/684)
+- Fast page refresh problem [\#683](https://github.com/lynndylanhurley/devise_token_auth/issues/683)
+- IndexError: string not matched on User sign\_in [\#681](https://github.com/lynndylanhurley/devise_token_auth/issues/681)
+- skip\_confirmation\_notification! not working [\#679](https://github.com/lynndylanhurley/devise_token_auth/issues/679)
+- Bump version to support devise 4.1.1 [\#659](https://github.com/lynndylanhurley/devise_token_auth/issues/659)
+- not working with latest version of active\_model\_serializers [\#600](https://github.com/lynndylanhurley/devise_token_auth/issues/600)
+
+**Merged pull requests:**
+
+- Fix Migration Deprecation Warning [\#700](https://github.com/lynndylanhurley/devise_token_auth/pull/700) ([juddey](https://github.com/juddey))
+- Apply `redirect\_whitelist` to OAuth redirect URI. [\#699](https://github.com/lynndylanhurley/devise_token_auth/pull/699) ([lynndylanhurley](https://github.com/lynndylanhurley))
+- add zh-CN.yml [\#697](https://github.com/lynndylanhurley/devise_token_auth/pull/697) ([halfray](https://github.com/halfray))
+- update README.md [\#693](https://github.com/lynndylanhurley/devise_token_auth/pull/693) ([nhattan](https://github.com/nhattan))
+
 ## [0.1.38](https://github.com/lynndylanhurley/devise_token_auth/tree/HEAD)
 
 [Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v0.1.37...HEAD)
