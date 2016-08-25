@@ -320,5 +320,17 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       data = ActiveSupport::JSON.decode(data_json)
       assert_equal @user_email, data['email']
     end
+
+    test 'should support wildcards' do
+      DeviseTokenAuth.redirect_whitelist = ["#{@good_redirect_url[0..8]}*"]
+      get_via_redirect '/auth/facebook',
+                       auth_origin_url: @good_redirect_url,
+                       omniauth_window_type: 'newWindow'
+
+      data_json = @response.body.match(/var data \= (.+)\;/)[1]
+      data = ActiveSupport::JSON.decode(data_json)
+      assert_equal @user_email, data['email']
+    end
+
   end
 end

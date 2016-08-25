@@ -77,7 +77,7 @@ module ActionDispatch::Routing
 
               if DeviseTokenAuth.redirect_whitelist
                 redirect_url = request.params['auth_origin_url']
-                unless DeviseTokenAuth.redirect_whitelist.include?(redirect_url)
+                unless DeviseTokenAuth::Url.whitelisted?(redirect_url)
                   message = I18n.t(
                     'devise_token_auth.registrations.redirect_url_not_allowed',
                     redirect_url: redirect_url
