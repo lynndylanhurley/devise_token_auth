@@ -22,7 +22,7 @@ module DeviseTokenAuth
 
       # if whitelist is set, validate redirect_url against whitelist
       if DeviseTokenAuth.redirect_whitelist
-        unless DeviseTokenAuth.redirect_whitelist.include?(@redirect_url)
+        unless DeviseTokenAuth::Url.whitelisted?(@redirect_url)
           return render_create_error_not_allowed_redirect_url
         end
       end
