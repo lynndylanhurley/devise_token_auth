@@ -777,7 +777,7 @@ When posting issues, please include the following information to speed up the tr
 
 ### Can I use this gem alongside standard Devise?
 
-Yes! But you will need to enable the support use separate routes for standard Devise. So do something like this:
+Yes! But you will need to enable the support of separate routes for standard Devise. So do something like this:
 
 #### config/initializers/devise_token_auth.rb
 ~~~ruby
