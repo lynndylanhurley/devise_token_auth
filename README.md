@@ -12,7 +12,10 @@
 
 This gem provides the following features:
 
-* Seamless integration with both the the venerable [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module for [angular.js](https://github.com/angular/angular.js) and the outstanding [jToker](https://github.com/lynndylanhurley/j-toker) plugin for [jQuery](https://jquery.com/).
+* Seamless integration with:
+  * [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for [AngularJS](https://github.com/angular/angular.js)
+  * [Angular2-Token](https://github.com/neroniaky/angular2-token) for [Angular2](https://github.com/angular/angular)
+  * [jToker](https://github.com/lynndylanhurley/j-toker) for [jQuery](https://jquery.com/)
 * Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
 * Email authentication using [Devise](https://github.com/plataformatec/devise), including:
   * User registration
@@ -24,7 +27,9 @@ This gem provides the following features:
 
 # Live Demos
 
-[Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module and [AngularJS](https://angularjs.org/).
+[Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module and [AngularJS](https://github.com/angular/angular.js).
+
+[Here is a demo](https://angular2-token.herokuapp.com) of this app running with the [Angular2-Token](https://github.com/neroniaky/angular2-token) service and [Angular2](https://github.com/angular/angular).
 
 [Here is a demo](https://j-toker-demo.herokuapp.com/) of this app using the [jToker](https://github.com/lynndylanhurley/j-toker) plugin and [React](http://facebook.github.io/react/).
 
@@ -499,6 +504,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
 ### View Live Multi-User Demos
 
 * [AngularJS](http://ng-token-auth-demo.herokuapp.com/multi-user)
+* [Angular2](https://angular2-token.herokuapp.com)
 * [React + jToker](http://j-toker-demo.herokuapp.com/#/alt-user)
 
 This gem supports the use of multiple user models. One possible use case is to authenticate visitors using a model called `User`, and to authenticate administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
@@ -764,14 +770,14 @@ These files may be edited to suit your taste. You can customize the e-mail subje
 
 When posting issues, please include the following information to speed up the troubleshooting process:
 
-* **Version**: which version of this gem (and [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) / [jToker](https://github.com/lynndylanhurley/j-toker) if applicable) are you using?
+* **Version**: which version of this gem (and [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker) or [Angular2-Token](https://github.com/neroniaky/angular2-token) if applicable) are you using?
 * **Request and response headers**: these can be found in the "Network" tab of your browser's web inspector.
 * **Rails Stacktrace**: this can be found in the `log/development.log` of your API.
 * **Environmental Info**: How is your application different from the [reference implementation](https://github.com/lynndylanhurley/devise_token_auth_demo)? This may include (but is not limited to) the following details:
   * **Routes**: are you using some crazy namespace, scope, or constraint?
   * **Gems**: are you using MongoDB, Grape, RailsApi, ActiveAdmin, etc.?
   * **Custom Overrides**: what have you done in terms of [custom controller overrides](#custom-controller-overrides)?
-  * **Custom Frontend**: are you using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker), or something else?
+  * **Custom Frontend**: are you using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker), [Angular2-Token](https://github.com/neroniaky/angular2-token), or something else?
 
 # FAQ
 
