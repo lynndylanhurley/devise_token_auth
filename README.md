@@ -936,6 +936,7 @@ To run the test suite do the following:
 The last command will open the [guard](https://github.com/guard/guard) test-runner. Guard will re-run each test suite when changes are made to its corresponding files.
 
 To run just one test:
+
 1. Clone this repo
 2. Run `bundle install`
 3. Run `rake db:migrate`
