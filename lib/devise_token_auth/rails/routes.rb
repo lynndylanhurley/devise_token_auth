@@ -73,8 +73,22 @@ module ActionDispatch::Routing
 
               set_omniauth_path_prefix!(DeviseTokenAuth.omniauth_prefix)
 
+              redirect_params = {}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}
+
+              if DeviseTokenAuth.redirect_whitelist
+                redirect_url = request.params['auth_origin_url']
+                unless DeviseTokenAuth::Url.whitelisted?(redirect_url)
+                  message = I18n.t(
+                    'devise_token_auth.registrations.redirect_url_not_allowed',
+                    redirect_url: redirect_url
+                  )
+                  redirect_params['message'] = message
+                  next "#{::OmniAuth.config.path_prefix}/failure?#{redirect_params.to_param}"
+                end
+              end
+
               # re-construct the path for omniauth
-              "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
+              "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{redirect_params.to_param}"
             }, via: [:get]
           end
         end
