@@ -47,8 +47,28 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           assert @resource.confirmed?
         end
 
-        test "should redirect to success url" do
-          assert_redirected_to(/^#{@redirect_url}/)
+        test "should render respond with a json" do
+          assert JSON.parse(response.body).is_a? Hash
+        end
+
+        describe "json response" do
+          before { @json = JSON.parse(response.body) }
+
+          test "should include token key" do
+            assert @json.has_key? 'token'
+          end
+
+          test "should include client_id key" do
+            assert @json.has_key? 'client_id'
+          end
+
+          test "should include account_confirmation_success key" do
+            assert @json.has_key? 'account_confirmation_success'
+          end
+
+          test "should include config key" do
+            assert @json.has_key? 'config'
+          end
         end
       end
 
