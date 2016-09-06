@@ -47,7 +47,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           assert @resource.confirmed?
         end
 
-        test "should render respond with a json" do
+        test "should respond with json" do
           assert JSON.parse(response.body).is_a? Hash
         end
 
@@ -69,16 +69,37 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           test "should include config key" do
             assert @json.has_key? 'config'
           end
+
+          test "account_confirmation_success should be true" do
+            assert @json['account_confirmation_success']
+          end
         end
       end
 
       describe "failure" do
+        before do
+          xhr :get, :show, {confirmation_token: "bogus"}
+        end
+
         test "user should not be confirmed" do
-          assert_raises(ActionController::RoutingError) {
-            xhr :get, :show, {confirmation_token: "bogus"}
-          }
           @resource = assigns(:resource)
           refute @resource.confirmed?
+        end
+
+        test "should respond with json" do
+          assert JSON.parse(response.body).is_a? Hash
+        end
+
+        describe "json response" do
+          before { @json = JSON.parse(response.body) }
+
+          test "should include account_confirmation_success key" do
+            assert @json.has_key? 'account_confirmation_success'
+          end
+
+          test "account_confirmation_success should be false" do
+            refute @json['account_confirmation_success']
+          end
         end
       end
     end

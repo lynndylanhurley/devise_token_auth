@@ -26,7 +26,9 @@ module DeviseTokenAuth
           config:                       params[:config]
         }
       else
-        raise ActionController::RoutingError.new('Not Found')
+        render json: {
+          account_confirmation_success: false
+        }
       end
     end
   end
