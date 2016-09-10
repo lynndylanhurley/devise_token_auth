@@ -6,15 +6,7 @@ module DeviseTokenAuth
     skip_after_action :update_auth_header, :only => [:create, :destroy]
 
     def create
-      @resource            = resource_class.new(sign_up_params)
-      @resource.provider   = "email"
-
-      # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        @resource.email = sign_up_params[:email].try :downcase
-      else
-        @resource.email = sign_up_params[:email]
-      end
+      build_resource
 
       # give redirect value from params priority
       @redirect_url = params[:confirm_success_url]
@@ -105,6 +97,17 @@ module DeviseTokenAuth
       params.permit(*params_for_resource(:account_update))
     end
 
+    def build_resource
+      @resource            = resource_class.new(sign_up_params)
+      @resource.provider   = "email"
+
+      # honor devise configuration for case_insensitive_keys
+      if resource_class.case_insensitive_keys.include?(:email)
+        @resource.email = sign_up_params[:email].try :downcase
+      else
+        @resource.email = sign_up_params[:email]
+      end
+    end
     protected
 
     def render_create_error_missing_confirm_success_url
