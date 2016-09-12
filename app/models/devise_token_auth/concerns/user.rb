@@ -127,10 +127,10 @@ module DeviseTokenAuth::Concerns::User
 
     return true if (
       # ensure that expiry and token are set
-      expiry and token and
+      expiry && token &&
 
       # ensure that the token has not yet expired
-      DateTime.strptime(expiry.to_s, '%s') > Time.now and
+      DateTime.strptime(expiry.to_s, '%s') > Time.now &&
 
       # ensure that the token is valid
       DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
@@ -147,10 +147,10 @@ module DeviseTokenAuth::Concerns::User
 
     return true if (
       # ensure that the last token and its creation time exist
-      updated_at and last_token and
+      updated_at && last_token &&
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
+      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
@@ -166,7 +166,7 @@ module DeviseTokenAuth::Concerns::User
     token_hash   = ::BCrypt::Password.create(token)
     expiry       = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
-    if self.tokens[client_id] and self.tokens[client_id]['token']
+    if self.tokens[client_id] && self.tokens[client_id]['token']
       last_token = self.tokens[client_id]['token']
     end
 
@@ -189,7 +189,7 @@ module DeviseTokenAuth::Concerns::User
     expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
 
     max_clients = DeviseTokenAuth.max_number_of_devices
-    while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
+    while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
       oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
       self.tokens.delete(oldest_token.first)
     end

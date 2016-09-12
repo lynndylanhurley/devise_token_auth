@@ -57,7 +57,7 @@ module ActionDispatch::Routing
           get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
 
           # omniauth routes. only define if omniauth is installed and not skipped.
-          if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
+          if defined?(::OmniAuth) && !opts[:skip].include?(:omniauth_callbacks)
             match "#{full_path}/failure",             controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
             match "#{full_path}/:provider/callback",  controller: omniauth_ctrl, action: "omniauth_success", via: [:get]
 
