@@ -29,7 +29,7 @@ module DeviseTokenAuth
         @resource = resource_class.where(q, q_value).first
       end
 
-      if @resource and valid_params?(field, q_value) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
         valid_password = @resource.valid_password?(resource_params[:password])
         if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
           render_create_error_bad_credentials
@@ -50,7 +50,7 @@ module DeviseTokenAuth
         yield @resource if block_given?
 
         render_create_success
-      elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      elsif @resource && !(!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
         render_create_error_not_confirmed
       else
         render_create_error_bad_credentials
@@ -63,7 +63,7 @@ module DeviseTokenAuth
       client_id = remove_instance_variable(:@client_id) if @client_id
       remove_instance_variable(:@token) if @token
 
-      if user and client_id and user.tokens[client_id]
+      if user && client_id && user.tokens[client_id]
         user.tokens.delete(client_id)
         user.save!
 

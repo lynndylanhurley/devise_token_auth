@@ -47,7 +47,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     # user has already been found and authenticated
-    return @resource if @resource and @resource.class == rc
+    return @resource if @resource && @resource.class == rc
 
     # ensure we clear the client_id
     if !@token
@@ -78,12 +78,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless @resource and @resource.valid? and @client_id
+    return unless @resource && @resource.valid? && @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
 
-    if @used_auth_by_token and not DeviseTokenAuth.change_headers_on_each_request
+    if @used_auth_by_token && !DeviseTokenAuth.change_headers_on_each_request
       # should not append auth header if @resource related token was
       # cleared by sign out in the meantime
       return if @resource.reload.tokens[@client_id].nil?
