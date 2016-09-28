@@ -1,4 +1,4 @@
-en:
+ro:
   devise_token_auth:
     sessions:
       not_confirmed: "Un email de confirmare a fost trimis către contul tău la '%{email}'. Pentru a-ți activa contul este necesar să urmezi instrucțiunile din acesta."
