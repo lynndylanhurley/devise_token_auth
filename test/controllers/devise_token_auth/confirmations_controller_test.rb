@@ -62,6 +62,10 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
             assert @json.has_key? 'client_id'
           end
 
+          test "should include uid key" do
+            assert @json.has_key? 'uid'
+          end
+
           test "should include account_confirmation_success key" do
             assert @json.has_key? 'account_confirmation_success'
           end

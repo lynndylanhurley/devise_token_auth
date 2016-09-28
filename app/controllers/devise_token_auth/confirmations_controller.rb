@@ -20,10 +20,12 @@ module DeviseTokenAuth
         yield @resource if block_given?
 
         render json: {
+          account_confirmation_success: true,
           token:                        token,
           client_id:                    client_id,
-          account_confirmation_success: true,
-          config:                       params[:config]
+          uid:                          @resource.uid,
+          config:                       params[:config],
+          expiry:                       expiry
         }
       else
         render json: {
