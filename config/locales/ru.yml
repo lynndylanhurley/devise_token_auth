@@ -24,11 +24,10 @@ ru:
       missing_passwords: "Вы должны заполнить поля 'пароль' и 'повторите пароль'."
       successfully_updated: "Ваш пароль успешно обновлён."
   errors:
-    validate_sign_up_params: "Пожалуйста, укажите надлежащие данные для регистрации в теле запроса."
-    validate_account_update_params: "Пожалуйста, укажите надлежащие данные для обновления учетной записи в теле запроса."
-    not_email: "не является электронной почтой"
     messages:
-      already_in_use: "уже используется"
+      validate_sign_up_params: "Пожалуйста, укажите надлежащие данные для регистрации в теле запроса."
+      validate_account_update_params: "Пожалуйста, укажите надлежащие данные для обновления учетной записи в теле запроса."
+      not_email: "не является электронной почтой"
   devise:
     mailer:
       confirmation_instructions:

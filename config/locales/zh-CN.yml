@@ -25,7 +25,6 @@ zh-CN:
       successfully_updated: "您的密码已被修改。"
   errors:
     messages:
-      already_in_use: "已被使用。"
       validate_sign_up_params: "请在request body中填入有效的注册内容"
       validate_account_update_params: "请在request body中填入有效的更新帐号资料"
       not_email: "这不是一个合适的邮箱。"
@@ -43,12 +42,5 @@ zh-CN:
         account_lock_msg: "由于多次登入失败，我们已锁定你的帐号"
         unlock_link_msg: "可以使用下面的链接解锁你的帐号"
         unlock_link: "解锁帐号"
-  activerecord:
-    errors:
-      models:
-        user:
-          attributes:
-            email:
-              already_in_use: "邮箱已被使用"
   hello: "你好"
   welcome: "欢迎"
