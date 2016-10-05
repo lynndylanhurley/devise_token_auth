@@ -25,7 +25,6 @@ en:
       successfully_updated: "Your password has been successfully updated."
   errors:
     messages:
-      already_in_use: "already in use"
       validate_sign_up_params: "Please submit proper sign up data in request body."
       validate_account_update_params: "Please submit proper account update data in request body."
       not_email: "is not an email"

@@ -27,7 +27,6 @@ zh-TW:
       successfully_updated: "您的密碼已被修改。"
   errors:
     messages:
-      already_in_use: "已被使用。"
       validate_sign_up_params: "請在request body中填入有效的註冊內容"
       validate_account_update_params: "請在request body中填入有效的更新帳號資料"
       not_email: "這不是一個合適的電郵。"
