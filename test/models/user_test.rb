@@ -35,6 +35,28 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+    describe 'email uniqueness' do
+      test 'model should not save if email is taken' do
+        provider = 'email'
+
+        User.create(
+          email: @email,
+          provider: provider,
+          password: @password,
+          password_confirmation: @password
+        )
+
+        @resource.email                 = @email
+        @resource.provider              = provider
+        @resource.password              = @password
+        @resource.password_confirmation = @password
+
+        refute @resource.save
+        assert @resource.errors.messages[:email] == [I18n.t('errors.messages.taken')]
+        assert @resource.errors.messages[:email].none? { |e| e =~ /translation missing/ }
+      end
+    end
+
     describe 'oauth2 authentication' do
       test 'model should save even if email is blank' do
         @resource.provider              = 'facebook'

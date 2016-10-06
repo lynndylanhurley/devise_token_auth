@@ -28,7 +28,6 @@ de:
       validate_sign_up_params: "Bitte übermitteln sie vollständige Anmeldeinformationen im Body des Requests."
       validate_account_update_params: "Bitte übermitteln sie vollständige Informationen zur Aktualisierung im Body des Requests."
       not_email: "ist keine E-Mail Adresse"
-      already_in_use: "bereits in Verwendung"
   devise:
     mailer:
       confirmation_instructions:

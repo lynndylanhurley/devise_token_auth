@@ -28,7 +28,6 @@ es:
       validate_sign_up_params: "Los datos introducidos en la solicitud de acceso no son válidos."
       validate_account_update_params: "Los datos introducidos en la solicitud de actualización no son válidos."
       not_email: "no es un correo electrónico"
-      already_in_use: "ya ha sido ocupado"
   devise:
     mailer:
       confirmation_instructions:

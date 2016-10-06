@@ -25,7 +25,6 @@ ro:
       successfully_updated: "Parola contului a fost schimbată cu succes."
   errors:
     messages:
-      already_in_use: "este deja folosit"
       validate_sign_up_params: "Trimite credențiale valide în body-ul request-ului."
       validate_account_update_params: "Trimite credențiale valide în body-ul request-ului."
       not_email: "nu este un email"

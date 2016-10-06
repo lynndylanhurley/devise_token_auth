@@ -25,7 +25,6 @@ ja:
       successfully_updated: "パスワードの更新に成功しました。"
   errors:
     messages:
-      already_in_use: "すでに利用されています。"
       validate_sign_up_params: "リクエストボディに適切なアカウント新規登録データを送信してください。"
       validate_account_update_params: "リクエストボディに適切なアカウント更新のデータを送信してください。"
       not_email: "はメールアドレスではありません"
