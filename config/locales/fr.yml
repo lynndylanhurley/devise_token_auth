@@ -25,7 +25,6 @@ fr:
       successfully_updated: "Votre mot de passe a été correctement mis à jour."
   errors:
     messages:
-      already_in_use: "déjà utilisé(e)"
       validate_sign_up_params: "Les données d'inscription dans le corps de la requête ne sont pas valides."
       validate_account_update_params: "Les données de mise à jour dans le corps de la requête ne sont pas valides."
       not_email: "n'est pas une adresse e-mail"
