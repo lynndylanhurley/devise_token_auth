@@ -38,9 +38,7 @@ module DeviseTokenAuth
                 end
 
                 unless current_#{group_name}
-                  return render json: {
-                    errors: ["Authorized users only."]
-                  }, status: 401
+                  return render_authenticate_error
                 end
               end
             end
@@ -109,9 +107,7 @@ module DeviseTokenAuth
         class_eval <<-METHODS, __FILE__, __LINE__ + 1
           def authenticate_#{mapping}!
             unless current_#{mapping}
-              return render json: {
-                errors: ["Authorized users only."]
-              }, status: 401
+              return render_authenticate_error
             end
           end
 
@@ -134,6 +130,14 @@ module DeviseTokenAuth
           end
         end
       end
+
+      protected
+      def render_authenticate_error
+        render json: {
+          errors: [I18n.t('devise_token_auth.sessions.only_authorized')]
+        }, status: 401
+      end
+
     end
   end
 end
