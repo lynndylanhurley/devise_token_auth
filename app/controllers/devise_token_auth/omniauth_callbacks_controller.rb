@@ -168,8 +168,8 @@ module DeviseTokenAuth
 
     def create_auth_params
       @auth_params = {
-        auth_token:     @token,
-        client_id: @client_id,
+        "access-token" => @token,
+        client:    @client_id,
         uid:       @resource.uid,
         expiry:    @expiry,
         config:    @config
