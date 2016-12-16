@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/SoapSeller/omniauth-facebook-access-token
+  revision: 1125e764ef8d997b20a3bedf068cc1b135cb5700
+  specs:
+    omniauth-facebook-access-token (0.1.8)
+      oauth2 (~> 1.0.0)
+      omniauth (~> 1.2)
+
+GIT
   remote: git://github.com/intridea/omniauth-github.git
   revision: 45f2fc73d6d06f30863adac0e6aa112bcaaadf67
   specs:
@@ -273,6 +281,7 @@ DEPENDENCIES
   mocha
   mysql2
   omniauth-facebook!
+  omniauth-facebook-access-token!
   omniauth-github!
   omniauth-google-oauth2!
   pg
@@ -283,4 +292,4 @@ DEPENDENCIES
   thor
 
 BUNDLED WITH
-   1.11.2
+   1.13.6
