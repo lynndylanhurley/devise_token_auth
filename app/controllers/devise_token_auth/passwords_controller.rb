@@ -168,7 +168,6 @@ module DeviseTokenAuth
     def render_create_success
       render json: {
         success: true,
-        data: resource_data,
         message: I18n.t("devise_token_auth.passwords.sended", email: @email)
       }
     end
