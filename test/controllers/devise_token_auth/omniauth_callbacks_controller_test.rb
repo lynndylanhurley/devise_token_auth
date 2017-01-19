@@ -66,6 +66,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       get_success
     end
 
+    test 'should be redirected via valid url' do
+      get_success
+      assert_equal 'http://www.example.com/auth/facebook/callback', request.original_url
+    end
+
     describe 'with default user model' do
       before do
         get_success
