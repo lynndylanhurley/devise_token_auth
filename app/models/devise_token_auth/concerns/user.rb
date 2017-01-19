@@ -95,7 +95,15 @@ module DeviseTokenAuth::Concerns::User
 
 
     def tokens_has_json_column_type?
-      table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+      database_exists? && table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+    end
+
+    def database_exists?
+      ActiveRecord::Base.connection
+    rescue ActiveRecord::NoDatabaseError
+      false
+    else
+      true
     end
   end
 
