@@ -9,27 +9,9 @@ module DeviseTokenAuth
     end
 
     def create
-      # Check
-      field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
+      @resource = current_resource
 
-      @resource = nil
-      if field
-        q_value = resource_params[field]
-
-        if resource_class.case_insensitive_keys.include?(field)
-          q_value.downcase!
-        end
-
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.where(q, q_value).first
-      end
-
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      if @resource && valid_resource_for_session_auth?
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
@@ -142,6 +124,36 @@ module DeviseTokenAuth
 
     def resource_params
       params.permit(*params_for_resource(:sign_in))
+    end
+
+    def current_resource
+      field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
+
+      resource = nil
+      if field
+        q_value = resource_params[field]
+
+        if resource_class.case_insensitive_keys.include?(field)
+          q_value.downcase!
+        end
+
+        q = "#{field.to_s} = ? AND provider='email'"
+
+        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+          q = "BINARY " + q
+        end
+
+        resource = resource_class.where(q, q_value).first
+      end
+      resource
+    end
+
+    def valid_resource_for_session_auth?
+      false unless resource_params[:password]
+      false unless @resource.valid_password?(resource_params[:password])
+      false unless (!@resource.respond_to?(:active_for_authentication?) or
+          @resource.active_for_authentication?)
+      true
     end
 
   end
