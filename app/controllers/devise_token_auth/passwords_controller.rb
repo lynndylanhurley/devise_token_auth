@@ -222,7 +222,7 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token)
+      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token, :redirect_url, :config)
     end
 
     def password_resource_params
