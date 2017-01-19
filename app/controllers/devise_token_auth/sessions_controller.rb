@@ -29,7 +29,12 @@ module DeviseTokenAuth
         @resource = resource_class.where(q, q_value).first
       end
 
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      if @resource and valid_params?(field, q_value) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+        valid_password = @resource.valid_password?(resource_params[:password])
+        if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
+          render_create_error_bad_credentials
+          return
+        end
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
