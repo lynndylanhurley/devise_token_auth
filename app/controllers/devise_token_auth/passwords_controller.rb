@@ -76,7 +76,7 @@ module DeviseTokenAuth
         reset_password_token: resource_params[:reset_password_token]
       })
 
-      if @resource and @resource.id
+      if @resource && @resource.id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
@@ -119,7 +119,7 @@ module DeviseTokenAuth
       end
 
       # ensure that password params were sent
-      unless password_resource_params[:password] and password_resource_params[:password_confirmation]
+      unless password_resource_params[:password] && password_resource_params[:password_confirmation]
         return render_update_error_missing_password
       end
 
