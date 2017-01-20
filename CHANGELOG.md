@@ -1,5 +1,56 @@
 # Change Log
 
+## [v0.1.40](https://github.com/lynndylanhurley/devise_token_auth/tree/v0.1.40) (2017-01-20)
+[Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v0.1.39...v0.1.40)
+
+
+**Closed issues:**
+
+- Support for multiple providers during same session [\#815](https://github.com/lynndylanhurley/devise_token_auth/issues/815)
+- not supporting for angular1.6 [\#810](https://github.com/lynndylanhurley/devise_token_auth/issues/810)
+- Add has one/belongs to assotiation [\#807](https://github.com/lynndylanhurley/devise_token_auth/issues/807)
+- redirect\_url required but not permitted in strong parameters [\#805](https://github.com/lynndylanhurley/devise_token_auth/issues/805)
+- Rails 5 API Mode Not Authorizing [\#796](https://github.com/lynndylanhurley/devise_token_auth/issues/796)
+- wrong constant name user [\#784](https://github.com/lynndylanhurley/devise_token_auth/issues/784)
+- current\_user returns nill [\#779](https://github.com/lynndylanhurley/devise_token_auth/issues/779)
+- ActionController::RoutingError - undefined method `helper\_method' [\#776](https://github.com/lynndylanhurley/devise_token_auth/issues/776)
+- Minimum Limits on a token? [\#764](https://github.com/lynndylanhurley/devise_token_auth/issues/764)
+- Octopus throwing error when deleting expired tokens [\#761](https://github.com/lynndylanhurley/devise_token_auth/issues/761)
+- Only one User model return the correct headers [\#757](https://github.com/lynndylanhurley/devise_token_auth/issues/757)
+- ArgumentError in Devise::RegistrationsController\#new [\#750](https://github.com/lynndylanhurley/devise_token_auth/issues/750)
+- Rails 5 API deployed as microservices [\#741](https://github.com/lynndylanhurley/devise_token_auth/issues/741)
+- Query params left in url after facebook login cause authentication to fail on refresh [\#734](https://github.com/lynndylanhurley/devise_token_auth/issues/734)
+- Can't permit parameters in rails engine [\#731](https://github.com/lynndylanhurley/devise_token_auth/issues/731)
+- Cannot integrate with omniauth-facebook  [\#729](https://github.com/lynndylanhurley/devise_token_auth/issues/729)
+- Two models, one not working [\#726](https://github.com/lynndylanhurley/devise_token_auth/issues/726)
+- API response bodies are empty when using active\_model\_serializers [\#715](https://github.com/lynndylanhurley/devise_token_auth/issues/715)
+- /sign\_out route is returning 404 not found [\#713](https://github.com/lynndylanhurley/devise_token_auth/issues/713)
+- Why is `tokens` field a json type and how to create a query based on inside values? [\#707](https://github.com/lynndylanhurley/devise_token_auth/issues/707)
+- Deprecation Error Message on 5.0 [\#698](https://github.com/lynndylanhurley/devise_token_auth/issues/698)
+
+
+**Merged pull requests:**
+
+- Update german translation. [\#816](https://github.com/lynndylanhurley/devise_token_auth/pull/816) ([gobijan](https://github.com/gobijan))
+- Add support for italian locale [\#811](https://github.com/lynndylanhurley/devise_token_auth/pull/811) ([Chosko](https://github.com/Chosko))
+- Fix privacy issue with password reset request [\#808](https://github.com/lynndylanhurley/devise_token_auth/pull/808) ([biomancer](https://github.com/biomancer))
+- Add missing parameter :redirect\_url, fixes \#805 [\#806](https://github.com/lynndylanhurley/devise_token_auth/pull/806) ([Rush](https://github.com/Rush))
+- Fix language errors in German locale [\#800](https://github.com/lynndylanhurley/devise_token_auth/pull/800) ([morgler](https://github.com/morgler))
+- Don't send extra data on request password reset [\#798](https://github.com/lynndylanhurley/devise_token_auth/pull/798) ([Mrjaco12](https://github.com/Mrjaco12))
+- Travis: use the code\_climate addon config [\#786](https://github.com/lynndylanhurley/devise_token_auth/pull/786) ([olleolleolle](https://github.com/olleolleolle))
+- Update link [\#782](https://github.com/lynndylanhurley/devise_token_auth/pull/782) ([dijonkitchen](https://github.com/dijonkitchen))
+- Add index for confirmation\_token [\#767](https://github.com/lynndylanhurley/devise_token_auth/pull/767) ([dijonkitchen](https://github.com/dijonkitchen))
+- Fixes constructing redirect\_route [\#765](https://github.com/lynndylanhurley/devise_token_auth/pull/765) ([piotrkaczmarek](https://github.com/piotrkaczmarek))
+- Use standart ActiveRecord error message for email uniqueness validation [\#746](https://github.com/lynndylanhurley/devise_token_auth/pull/746) ([mpugach](https://github.com/mpugach))
+- Add Romanian locale. [\#743](https://github.com/lynndylanhurley/devise_token_auth/pull/743) ([razvanmitre](https://github.com/razvanmitre))
+- Update indexes on template [\#724](https://github.com/lynndylanhurley/devise_token_auth/pull/724) ([dijonkitchen](https://github.com/dijonkitchen))
+- Add an extra line to the "contributing" list [\#720](https://github.com/lynndylanhurley/devise_token_auth/pull/720) ([jahammo2](https://github.com/jahammo2))
+- Fix grammar [\#712](https://github.com/lynndylanhurley/devise_token_auth/pull/712) ([dijonkitchen](https://github.com/dijonkitchen))
+- Added reference to Angular2-Token to README [\#710](https://github.com/lynndylanhurley/devise_token_auth/pull/710) ([neroniaky](https://github.com/neroniaky))
+- feat\(whitelist\): add wildcard support for redirect\_whitelist patterns [\#709](https://github.com/lynndylanhurley/devise_token_auth/pull/709) ([booleanbetrayal](https://github.com/booleanbetrayal))
+
+# Change Log
+
 ## [v0.1.39](https://github.com/lynndylanhurley/devise_token_auth/tree/v0.1.39) (2016-08-16)
 [Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v0.1.38...v0.1.39)
 
@@ -814,6 +865,8 @@
 - README and travis config tweaks [\#7](https://github.com/lynndylanhurley/devise_token_auth/pull/7) ([guilhermesimoes](https://github.com/guilhermesimoes))
 
 
+
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
 
 \* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
 
