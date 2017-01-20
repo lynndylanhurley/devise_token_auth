@@ -65,8 +65,8 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           assert_equal @resource.uid, @resp_uid
         end
 
-        it 'should not treat this request as a batch request' do
-          refute assigns(:is_batch_request)
+        it 'should treat this request as a batch request' do
+          assert assigns(:is_batch_request)
         end
 
         describe 'subsequent requests' do
@@ -196,8 +196,8 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             assert @first_access_token
           end
 
-          it 'should not return auth headers for second (batched) requests' do
-            refute @second_access_token
+          it 'should return auth headers for second (batched) requests' do
+            assert @second_access_token
           end
         end
 
