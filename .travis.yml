@@ -11,7 +11,7 @@ env:
   matrix:
     - DB=sqlite
     - DB=mysql
-    - DB=postgresq
+    - DB=postgresql
 
 services:
   - mongodb
