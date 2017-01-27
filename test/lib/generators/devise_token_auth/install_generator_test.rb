@@ -28,6 +28,10 @@ module DeviseTokenAuth
         assert_migration 'db/migrate/devise_token_auth_create_users.rb'
       end
 
+      test 'migration file contains rails version' do
+        assert_migration 'db/migrate/devise_token_auth_create_users.rb', /4.2/
+      end
+
       test 'subsequent runs raise no errors' do
         run_generator
       end

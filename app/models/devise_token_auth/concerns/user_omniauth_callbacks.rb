@@ -17,8 +17,8 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
 
   # only validate unique email among users that registered by email
   def unique_email_user
-    if provider == 'email' and self.class.where(provider: 'email', email: email).count > 0
-      errors.add(:email, I18n.t("errors.messages.already_in_use"))
+    if provider == 'email' && self.class.where(provider: 'email', email: email).count > 0
+      errors.add(:email, :taken)
     end
   end
 

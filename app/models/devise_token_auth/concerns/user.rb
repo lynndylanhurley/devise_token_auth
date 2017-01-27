@@ -74,6 +74,7 @@ module DeviseTokenAuth::Concerns::User
       if pending_reconfirmation?
         opts[:to] = unconfirmed_email
       end
+      opts[:redirect_url] ||= DeviseTokenAuth.default_confirm_success_url
 
       send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
     end
@@ -98,7 +99,15 @@ module DeviseTokenAuth::Concerns::User
 
 
     def tokens_has_json_column_type?
-      DeviseTokenAuth.mongoid?(self) || (table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb]))
+      DeviseTokenAuth.mongoid?(self) || (database_exists? && table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb]))
+    end
+
+    def database_exists?
+      ActiveRecord::Base.connection
+    rescue ActiveRecord::NoDatabaseError
+      false
+    else
+      true
     end
   end
 
@@ -130,10 +139,10 @@ module DeviseTokenAuth::Concerns::User
 
     return true if (
       # ensure that expiry and token are set
-      expiry and token and
+      expiry && token &&
 
       # ensure that the token has not yet expired
-      DateTime.strptime(expiry.to_s, '%s') > Time.now and
+      DateTime.strptime(expiry.to_s, '%s') > Time.now &&
 
       # ensure that the token is valid
       DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
@@ -146,16 +155,20 @@ module DeviseTokenAuth::Concerns::User
     # ghetto HashWithIndifferentAccess
     updated_at = self.tokens[client_id]['updated_at'] || self.tokens[client_id][:updated_at]
     last_token = self.tokens[client_id]['last_token'] || self.tokens[client_id][:last_token]
-    if !DeviseTokenAuth.mongoid?(self.class) && updated_at
-      updated_at = Time.parse(updated_at)
+    if updated_at
+      begin
+        updated_at = Time.parse(updated_at)
+      rescue TypeError
+        # it means that we use mongoid, we don't need to parse
+      end
     end
 
     return true if (
       # ensure that the last token and its creation time exist
-      updated_at and last_token and
+      updated_at && last_token &&
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      updated_at > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
+      updated_at > Time.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
@@ -171,7 +184,7 @@ module DeviseTokenAuth::Concerns::User
     token_hash   = ::BCrypt::Password.create(token)
     expiry       = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
-    if self.tokens[client_id] and self.tokens[client_id]['token']
+    if self.tokens[client_id] && self.tokens[client_id]['token']
       last_token = self.tokens[client_id]['token']
     end
 
@@ -182,14 +195,6 @@ module DeviseTokenAuth::Concerns::User
       updated_at: Time.now
     }
 
-    max_clients = DeviseTokenAuth.max_number_of_devices
-    while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
-      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
-      self.tokens.delete(oldest_token.first)
-    end
-
-    self.save!
-
     return build_auth_header(token, client_id)
   end
 
@@ -197,22 +202,24 @@ module DeviseTokenAuth::Concerns::User
   def build_auth_header(token, client_id='default')
     client_id ||= 'default'
 
-    if !DeviseTokenAuth.change_headers_on_each_request && self.tokens[client_id].nil?
-      create_new_auth_token(client_id)
-    else
+    # client may use expiry to prevent validation request if expired
+    # must be cast as string or headers will break
+    expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
 
-      # client may use expiry to prevent validation request if expired
-      # must be cast as string or headers will break
-      expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
-
-      return {
-        DeviseTokenAuth.headers_names[:"access-token"] => token,
-        DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
-        DeviseTokenAuth.headers_names[:"client"]       => client_id,
-        DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
-        DeviseTokenAuth.headers_names[:"uid"]          => self.uid
-      }
+    max_clients = DeviseTokenAuth.max_number_of_devices
+    while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
+      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
+      self.tokens.delete(oldest_token.first)
     end
+    self.save!
+
+    return {
+      DeviseTokenAuth.headers_names[:"access-token"] => token,
+      DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
+      DeviseTokenAuth.headers_names[:"client"]       => client_id,
+      DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
+      DeviseTokenAuth.headers_names[:"uid"]          => self.uid
+    }
   end
 
 
@@ -226,7 +233,6 @@ module DeviseTokenAuth::Concerns::User
 
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
-    self.save!
 
     return build_auth_header(token, client_id)
   end

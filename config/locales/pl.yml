@@ -27,8 +27,6 @@ pl:
     validate_sign_up_params: "Proszę dostarczyć odpowiednie dane logowania w ciele zapytania."
     validate_account_update_params: "Proszę dostarczyć odpowiednie dane aktualizacji konta w ciele zapytania."
     not_email: "nie jest prawidłowym adresem e-mail"
-    messages:
-      already_in_use: "już w użyciu"
   devise:
     mailer:
       confirmation_instructions:

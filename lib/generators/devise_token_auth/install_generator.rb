@@ -39,7 +39,7 @@ module DeviseTokenAuth
         unless parse_file_for_line(fname, inclusion)
           if mongoid?
             inject_into_file fname, after: "include Mongoid::Document" do <<-'RUBY'
-  
+
   # Include default devise modules.
   devise :database_authenticatable, :registerable,
           :recoverable, :rememberable, :trackable, :validatable,
@@ -83,7 +83,8 @@ module DeviseTokenAuth
             RUBY
             end
           else
-            inject_into_file fname, after: "class #{user_class} < ActiveRecord::Base\n" do <<-'RUBY'
+            active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
+            inject_into_file fname, after: "class #{user_class} < #{active_record_needle}\n" do <<-'RUBY'
     # Include default devise modules.
     devise :database_authenticatable, :registerable,
             :recoverable, :rememberable, :trackable, :validatable,

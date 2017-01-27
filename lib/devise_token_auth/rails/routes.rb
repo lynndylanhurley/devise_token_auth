@@ -12,12 +12,15 @@ module ActionDispatch::Routing
       confirmations_ctrl     = opts[:controllers][:confirmations] || "devise_token_auth/confirmations"
       token_validations_ctrl = opts[:controllers][:token_validations] || "devise_token_auth/token_validations"
       omniauth_ctrl          = opts[:controllers][:omniauth_callbacks] || "devise_token_auth/omniauth_callbacks"
+      unlocks_ctrl           = opts[:controllers][:unlocks]
 
       # define devise controller mappings
       controllers = {:sessions           => sessions_ctrl,
                      :registrations      => registrations_ctrl,
                      :passwords          => passwords_ctrl,
                      :confirmations      => confirmations_ctrl}
+
+      controllers[:unlocks] = unlocks_ctrl if unlocks_ctrl
 
       # remove any unwanted devise modules
       opts[:skip].each{|item| controllers.delete(item)}
@@ -54,7 +57,7 @@ module ActionDispatch::Routing
           get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
 
           # omniauth routes. only define if omniauth is installed and not skipped.
-          if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
+          if defined?(::OmniAuth) && !opts[:skip].include?(:omniauth_callbacks)
             match "#{full_path}/failure",             controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
             match "#{full_path}/:provider/callback",  controller: omniauth_ctrl, action: "omniauth_success", via: [:get]
 
@@ -73,8 +76,22 @@ module ActionDispatch::Routing
 
               set_omniauth_path_prefix!(DeviseTokenAuth.omniauth_prefix)
 
+              redirect_params = {}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}
+
+              if DeviseTokenAuth.redirect_whitelist
+                redirect_url = request.params['auth_origin_url']
+                unless DeviseTokenAuth::Url.whitelisted?(redirect_url)
+                  message = I18n.t(
+                    'devise_token_auth.registrations.redirect_url_not_allowed',
+                    redirect_url: redirect_url
+                  )
+                  redirect_params['message'] = message
+                  next "#{::OmniAuth.config.path_prefix}/failure?#{redirect_params.to_param}"
+                end
+              end
+
               # re-construct the path for omniauth
-              "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{{}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}.to_param}"
+              "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{redirect_params.to_param}"
             }, via: [:get]
           end
         end

@@ -95,6 +95,7 @@ module DeviseTokenAuth
 
   def self.mongoid?(user_class)
     DeviseTokenAuth.add_mongoid_support &&
-    ( DeviseTokenAuth.use_only_mongoid || user_class.included_modules.include?(Mongoid::Document) )
+    ( DeviseTokenAuth.use_only_mongoid ||
+      ( defined?(::Mongoid) && user_class.included_modules.include?(Mongoid::Document) ) )
   end
 end

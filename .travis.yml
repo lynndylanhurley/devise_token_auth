@@ -3,24 +3,31 @@ cache: bundler
 sudo: false
 
 rvm:
-  - 1.9.3
-  - 2.1
+  - 2.3.1
 
 env:
-  - DB=sqlite
-  - DB=mysql
-  - DB=postgresql
+  global:
+    - RAILS_ENV=test
+  matrix:
+    - DB=sqlite
+    - DB=mysql
+    - DB=postgresql
 
 services:
   - mongodb
 
 script:
-  - RAILS_ENV=test bundle exec rake --trace db:migrate
-  - RAILS_ENV=test CODECLIMATE_REPO_TOKEN=44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d bundle exec rake
+  - bundle exec rake --trace db:migrate
+  - bundle exec rake
 
 before_script:
   - mysql -e 'create database devise_token_auth_test'
   - psql -c 'create database devise_token_auth_test' -U postgres
 
 addons:
-  postgresql: "9.3"
+  postgresql: "9.4"
+  code_climate:
+    - repo_token: 44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d
+
+after_success:
+  - bundle exec codeclimate-test-reporter

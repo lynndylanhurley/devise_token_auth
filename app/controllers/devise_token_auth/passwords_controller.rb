@@ -22,7 +22,7 @@ module DeviseTokenAuth
 
       # if whitelist is set, validate redirect_url against whitelist
       if DeviseTokenAuth.redirect_whitelist
-        unless DeviseTokenAuth.redirect_whitelist.include?(@redirect_url)
+        unless DeviseTokenAuth::Url.whitelisted?(@redirect_url)
           return render_create_error_not_allowed_redirect_url
         end
       end
@@ -50,7 +50,7 @@ module DeviseTokenAuth
       @error_status = 400
 
       if @resource
-        yield if block_given?
+        yield @resource if block_given?
         @resource.send_reset_password_instructions({
           email: @email,
           provider: 'email',
@@ -79,7 +79,7 @@ module DeviseTokenAuth
         reset_password_token: resource_params[:reset_password_token]
       })
 
-      if @resource and @resource.id
+      if @resource && @resource.id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
@@ -97,7 +97,7 @@ module DeviseTokenAuth
         @resource.allow_password_change = true;
 
         @resource.save!
-        yield if block_given?
+        yield @resource if block_given?
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
           token:          token,
@@ -122,14 +122,14 @@ module DeviseTokenAuth
       end
 
       # ensure that password params were sent
-      unless password_resource_params[:password] and password_resource_params[:password_confirmation]
+      unless password_resource_params[:password] && password_resource_params[:password_confirmation]
         return render_update_error_missing_password
       end
 
       if @resource.send(resource_update_method, password_resource_params)
         @resource.allow_password_change = false
 
-        yield if block_given?
+        yield @resource if block_given?
         return render_update_success
       else
         return render_update_error
@@ -171,7 +171,6 @@ module DeviseTokenAuth
     def render_create_success
       render json: {
         success: true,
-        data: resource_data,
         message: I18n.t("devise_token_auth.passwords.sended", email: @email)
       }
     end
@@ -226,7 +225,7 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token)
+      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token, :redirect_url, :config)
     end
 
     def password_resource_params

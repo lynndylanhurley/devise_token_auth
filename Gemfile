@@ -14,6 +14,7 @@ gemspec
 # gem 'debugger'
 
 group :development, :test do
+  gem 'mongoid', '5.1.6'
   gem 'thor'
   gem "figaro",                 :github => 'laserlemon/figaro'
   gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'

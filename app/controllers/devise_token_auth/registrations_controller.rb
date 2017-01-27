@@ -29,7 +29,7 @@ module DeviseTokenAuth
 
       # if whitelist is set, validate redirect_url against whitelist
       if DeviseTokenAuth.redirect_whitelist
-        unless DeviseTokenAuth.redirect_whitelist.include?(@redirect_url)
+        unless DeviseTokenAuth::Url.whitelisted?(@redirect_url)
           return render_create_error_redirect_url_not_allowed
         end
       end
@@ -193,7 +193,7 @@ module DeviseTokenAuth
     def resource_update_method
       if DeviseTokenAuth.check_current_password_before_update == :attributes
         "update_with_password"
-      elsif DeviseTokenAuth.check_current_password_before_update == :password and account_update_params.has_key?(:password)
+      elsif DeviseTokenAuth.check_current_password_before_update == :password && account_update_params.has_key?(:password)
         "update_with_password"
       elsif account_update_params.has_key?(:current_password)
         "update_with_password"

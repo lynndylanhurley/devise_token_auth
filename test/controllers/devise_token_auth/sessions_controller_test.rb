@@ -389,5 +389,94 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         refute OnlyEmailUser.method_defined?(:confirmed_at)
       end
     end
+
+    describe "Lockable User" do
+      setup do
+        @request.env['devise.mapping'] = Devise.mappings[:lockable_user]
+      end
+
+      teardown do
+        @request.env['devise.mapping'] = Devise.mappings[:user]
+      end
+
+      before do
+        @original_lock_strategy = Devise.lock_strategy
+        @original_unlock_strategy = Devise.unlock_strategy
+        @original_maximum_attempts = Devise.maximum_attempts
+        Devise.lock_strategy = :failed_attempts
+        Devise.unlock_strategy = :email
+        Devise.maximum_attempts = 5
+      end
+
+      after do
+        Devise.lock_strategy = @original_lock_strategy
+        Devise.maximum_attempts = @original_maximum_attempts
+        Devise.unlock_strategy = @original_unlock_strategy
+      end
+
+      describe "locked user" do
+        before do
+          @locked_user = lockable_users(:locked_user)
+          xhr :post, :create, {
+            email: @locked_user.email,
+            password: 'secret123'
+          }
+          @data = JSON.parse(response.body)
+        end
+
+        test "request should fail" do
+          assert_equal 401, response.status
+        end
+
+        test "response should contain errors" do
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.not_confirmed", email: @locked_user.email)]
+        end
+      end
+
+      describe "unlocked user with bad password" do
+        before do
+          @unlocked_user = lockable_users(:unlocked_user)
+          xhr :post, :create, {
+            email: @unlocked_user.email,
+            password: 'bad-password'
+          }
+          @data = JSON.parse(response.body)
+        end
+
+        test "request should fail" do
+          assert_equal 401, response.status
+        end
+
+        test "should increase failed_attempts" do
+          assert_equal 1, @unlocked_user.reload.failed_attempts
+        end
+
+        test "response should contain errors" do
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t("devise_token_auth.sessions.bad_credentials")]
+        end
+
+        describe 'after maximum_attempts should block the user' do
+          before do
+            4.times do
+              xhr :post, :create, {
+                email: @unlocked_user.email,
+                password: 'bad-password'
+              }
+            end
+            @data = JSON.parse(response.body)
+          end
+
+          test "should increase failed_attempts" do
+            assert_equal 5, @unlocked_user.reload.failed_attempts
+          end
+
+          test "should block the user" do
+            assert_equal true, @unlocked_user.reload.access_locked?
+          end
+        end
+      end
+    end
   end
 end

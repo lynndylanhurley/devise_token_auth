@@ -1,4 +1,4 @@
-class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
+class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration<%= '[' << Rails::VERSION::STRING[0..2] << ']'%>
   def change
     create_table(:<%= user_class.pluralize.underscore %>) do |t|
       ## Required
@@ -45,10 +45,10 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :<%= user_class.pluralize.underscore %>, :email
-    add_index :<%= user_class.pluralize.underscore %>, [:uid, :provider],     :unique => true
-    add_index :<%= user_class.pluralize.underscore %>, :reset_password_token, :unique => true
-    # add_index :<%= user_class.pluralize.underscore %>, :confirmation_token,   :unique => true
-    # add_index :<%= user_class.pluralize.underscore %>, :unlock_token,         :unique => true
+    add_index :<%= user_class.pluralize.underscore %>, :email,                unique: true
+    add_index :<%= user_class.pluralize.underscore %>, [:uid, :provider],     unique: true
+    add_index :<%= user_class.pluralize.underscore %>, :reset_password_token, unique: true
+    add_index :<%= user_class.pluralize.underscore %>, :confirmation_token,   unique: true
+    # add_index :<%= user_class.pluralize.underscore %>, :unlock_token,       unique: true
   end
 end

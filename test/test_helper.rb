@@ -14,7 +14,7 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path("../dummy/config/environment", __FILE__)
 require "rails/test_help"
 require "minitest/rails"
-require 'rails/mongoid'
+require "rails/mongoid"
 Mongoid.load!(Rails.root.join("config", "mongoid.yml"))
 Mongo::Logger.logger.level = ::Logger::FATAL
 
@@ -73,7 +73,7 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 
   setup do
     @routes = Dummy::Application.routes

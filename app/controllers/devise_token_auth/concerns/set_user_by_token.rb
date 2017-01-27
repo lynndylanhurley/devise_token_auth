@@ -23,15 +23,15 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # no default user defined
     return unless rc
 
-    #gets the headers names, which was set in the initilize file
+    #gets the headers names, which was set in the initialize file
     uid_name = DeviseTokenAuth.headers_names[:'uid']
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
 
     # parse header for values necessary for authentication
     uid        = request.headers[uid_name] || params[uid_name]
-    @token     = request.headers[access_token_name] || params[access_token_name]
-    @client_id = request.headers[client_name] || params[client_name]
+    @token     ||= request.headers[access_token_name] || params[access_token_name]
+    @client_id ||= request.headers[client_name] || params[client_name]
 
     # client_id isn't required, set to 'default' if absent
     @client_id ||= 'default'
@@ -47,7 +47,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     # user has already been found and authenticated
-    return @resource if @resource and @resource.class == rc
+    return @resource if @resource && @resource.class == rc
 
     # ensure we clear the client_id
     if !@token
@@ -65,7 +65,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     if user && user.valid_token?(@token, @client_id)
-      sign_in(:user, user, store: false, bypass: true)
+      # sign_in with bypass: true will be deprecated in the next version of Devise
+      if self.respond_to? :bypass_sign_in
+        bypass_sign_in(user, scope: :user)
+      else
+        sign_in(:user, user, store: false, bypass: true)
+      end
       return @resource = user
     else
       # zero all values previously set values
@@ -77,12 +82,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless @resource and @resource.valid? and @client_id
+    return unless @resource && @resource.valid? && @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
 
-    if @used_auth_by_token and not DeviseTokenAuth.change_headers_on_each_request
+    if @used_auth_by_token && !DeviseTokenAuth.change_headers_on_each_request
       # should not append auth header if @resource related token was
       # cleared by sign out in the meantime
       return if @resource.reload.tokens[@client_id].nil?
@@ -141,15 +146,13 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
 
   def is_batch_request?(user, client_id)
-    token_updated_at = user.tokens[client_id] && user.tokens[client_id]['updated_at']
-    if token_updated_at && !DeviseTokenAuth.mongoid?(user.class)
-      token_updated_at = Time.parse(token_updated_at)
+    if !params[:unbatch] && user.tokens[client_id] && user.tokens[client_id]['updated_at']
+      begin
+        updated_at = Time.parse(user.tokens[client_id]['updated_at'])
+      rescue TypeError
+        updated_at = user.tokens[client_id]['updated_at']
+      end
+      updated_at > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle
     end
-
-    not params[:unbatch] and
-    user.tokens[client_id] and
-    user.tokens[client_id]['updated_at'] and
-    token_updated_at and
-    token_updated_at > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle
   end
 end
