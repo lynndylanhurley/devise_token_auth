@@ -1,4 +1,4 @@
-en:
+sq:
   devise_token_auth:
     sessions:
       not_confirmed: "Një email konfirmues është dërguar tek llogaria juaj '%{email}'. Ju duhet të ndiqni udhëzimet në email përpara se të bëhet aktivizimi i llogarisë tuaj."
