@@ -770,7 +770,7 @@ These files may be edited to suit your taste. You can customize the e-mail subje
 
 When posting issues, please include the information mentioned in the [ISSUE_TEMPLATE.md].
 
-[ISSUE_TEMPLATE.md]: ./.github/ISSUE_TEMPLATE.md
+[ISSUE_TEMPLATE.md]: https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/ISSUE_TEMPLATE.md
 
 # FAQ
 
@@ -913,7 +913,7 @@ Thanks to the following contributors:
 
 See the [CONTRIBUTING.md] document.
 
-[CONTRIBUTING.md]: ./.github/CONTRIBUTING.md
+[CONTRIBUTING.md]: https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/CONTRIBUTING.md
 
 # License
 This project uses the WTFPL
