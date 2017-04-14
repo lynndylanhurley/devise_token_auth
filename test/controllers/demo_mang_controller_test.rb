@@ -46,6 +46,14 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           it 'should not define current_user' do
             refute_equal @resource, @controller.current_user
           end
+
+          it 'should define render_authenticate_user_error' do
+            assert @controller.methods.include?(:render_authenticate_user_error)
+          end
+
+          it 'should define render_authenticate_mang_error' do
+            assert @controller.methods.include?(:render_authenticate_mang_error)
+          end
         end
 
         it 'should return success status' do
@@ -260,4 +268,3 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
     end
   end
 end
-
