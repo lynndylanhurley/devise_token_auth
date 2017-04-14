@@ -109,9 +109,7 @@ module DeviseTokenAuth
         class_eval <<-METHODS, __FILE__, __LINE__ + 1
           def authenticate_#{mapping}!
             unless current_#{mapping}
-              return render json: {
-                errors: ["Authorized users only."]
-              }, status: 401
+              render_authenticate_#{mapping}_error
             end
           end
 
@@ -126,11 +124,17 @@ module DeviseTokenAuth
           def #{mapping}_session
             current_#{mapping} && warden.session(:#{mapping})
           end
+          
+          def render_authenticate_#{mapping}_error
+            return render json: {
+              errors: ["Authorized #{mapping} only."]
+            }, status: 401
+          end
         METHODS
 
         ActiveSupport.on_load(:action_controller) do
           if respond_to?(:helper_method)
-            helper_method "current_#{mapping}", "#{mapping}_signed_in?", "#{mapping}_session"
+            helper_method "current_#{mapping}", "#{mapping}_signed_in?", "#{mapping}_session", "render_authenticate_#{mapping}_error"
           end
         end
       end
