@@ -15,10 +15,11 @@ module DeviseTokenAuth
         #     devise_group :blogger, contains: [:user, :admin]
         #
         #   Generated methods:
-        #     authenticate_blogger!  # Redirects unless user or admin are signed in
-        #     blogger_signed_in?     # Checks whether there is either a user or an admin signed in
-        #     current_blogger        # Currently signed in user or admin
-        #     current_bloggers       # Currently signed in user and admin
+        #     authenticate_blogger!             # Redirects unless user or admin are signed in
+        #     blogger_signed_in?                # Checks whether there is either a user or an admin signed in
+        #     current_blogger                   # Currently signed in user or admin
+        #     current_bloggers                  # Currently signed in user and admin
+        #     render_authenticate_blogger_error # Render error unless user or admin are signed in
         #
         #   Use:
         #     before_action :authenticate_blogger!              # Redirects unless either a user or an admin are authenticated
@@ -94,14 +95,15 @@ module DeviseTokenAuth
       #     Admin
       #
       #   Generated methods:
-      #     authenticate_user!  # Signs user in or 401
-      #     authenticate_admin! # Signs admin in or 401
-      #     user_signed_in?     # Checks whether there is a user signed in or not
-      #     admin_signed_in?    # Checks whether there is an admin signed in or not
-      #     current_user        # Current signed in user
-      #     current_admin       # Current signed in admin
-      #     user_session        # Session data available only to the user scope
-      #     admin_session       # Session data available only to the admin scope
+      #     authenticate_user!                   # Signs user in or 401
+      #     authenticate_admin!                  # Signs admin in or 401
+      #     user_signed_in?                      # Checks whether there is a user signed in or not
+      #     admin_signed_in?                     # Checks whether there is an admin signed in or not
+      #     current_user                         # Current signed in user
+      #     current_admin                        # Current signed in admin
+      #     user_session                         # Session data available only to the user scope
+      #     admin_session                        # Session data available only to the admin scope
+      #     render_authenticate_#{mapping}_error # Render error if
       #
       #   Use:
       #     before_action :authenticate_user!  # Tell devise to use :user map
