@@ -38,9 +38,7 @@ module DeviseTokenAuth
                 end
 
                 unless current_#{group_name}
-                  return render json: {
-                    errors: ["Authorized users only."]
-                  }, status: 401
+                  render_authenticate_#{group_name}_error
                 end
               end
             end
@@ -67,8 +65,14 @@ module DeviseTokenAuth
               end.compact
             end
 
+            def render_authenticate_#{group_name}_error
+              return render json: {
+                errors: ["Authorized #{group_name} only."]
+              }, status: 401
+            end
+
             if respond_to?(:helper_method)
-              helper_method "current_#{group_name}", "current_#{group_name.to_s.pluralize}", "#{group_name}_signed_in?"
+              helper_method "current_#{group_name}", "current_#{group_name.to_s.pluralize}", "#{group_name}_signed_in?", "render_authenticate_#{group_name}_error"
             end
           METHODS
         end
