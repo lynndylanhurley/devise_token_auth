@@ -79,7 +79,7 @@ module DeviseTokenAuth
       if @resource && @resource.id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
-        token_hash = BCrypt::Password.create(token)
+        token_hash = Digest::MD5.hexdigest(token)
         expiry     = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
         @resource.tokens[client_id] = {

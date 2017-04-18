@@ -40,7 +40,7 @@ module DeviseTokenAuth
         @token     = SecureRandom.urlsafe_base64(nil, false)
 
         @resource.tokens[@client_id] = {
-          token: BCrypt::Password.create(@token),
+          token: Digest::MD5.hexdigest(@token),
           expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
         }
         @resource.save

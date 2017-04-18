@@ -182,7 +182,7 @@ module DeviseTokenAuth
 
     def set_token_on_resource
       @resource.tokens[@client_id] = {
-        token: BCrypt::Password.create(@token),
+        token: Digest::MD5.hexdigest(@token),
         expiry: @expiry
       }
     end
