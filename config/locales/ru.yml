@@ -5,6 +5,7 @@ ru:
       bad_credentials: "Неверные логин или пароль. Пожалуйста, попробуйте еще раз."
       not_supported: "Используйте POST /sign_in для входа. GET запросы не поддерживаются."
       user_not_found: "Пользователь не найден или не вошел."
+      only_authorized: "Для продолжения необходима авторизация!"
     token_validations:
       invalid: "Неверные логин или пароль."
     registrations:
