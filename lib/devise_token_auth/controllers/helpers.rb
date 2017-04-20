@@ -103,7 +103,8 @@ module DeviseTokenAuth
       #     current_admin                        # Current signed in admin
       #     user_session                         # Session data available only to the user scope
       #     admin_session                        # Session data available only to the admin scope
-      #     render_authenticate_#{mapping}_error # Render error if
+      #     render_authenticate_user_error       # Render error unless user is signed in
+      #     render_authenticate_admin_error      # Render error unless admin is signed in
       #
       #   Use:
       #     before_action :authenticate_user!  # Tell devise to use :user map
