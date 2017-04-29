@@ -13,6 +13,8 @@ gemspec
 # To use debugger
 # gem 'debugger'
 
+gem  "devise", git: "https://github.com/plataformatec/devise.git"
+
 group :development, :test do
   gem 'thor'
   gem "figaro",                 :github => 'laserlemon/figaro'
