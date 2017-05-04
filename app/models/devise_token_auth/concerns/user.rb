@@ -223,7 +223,9 @@ module DeviseTokenAuth::Concerns::User
 
 
   def extend_batch_buffer(token, client_id)
-    self.tokens[client_id]['updated_at'] = Time.now
+    if self.tokens[client_id] != nil
+      self.tokens[client_id]['updated_at'] = Time.now
+    end
 
     return build_auth_header(token, client_id)
   end
