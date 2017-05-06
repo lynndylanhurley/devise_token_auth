@@ -93,7 +93,7 @@ bundle install
 You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-methods), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following command for an easy one-step installation:
 
 ~~~bash
-rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
+rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH] [ORM]
 ~~~
 
 **Example**:
@@ -108,6 +108,7 @@ This generator accepts the following optional arguments:
 |---|---|---|
 | USER_CLASS | `User` | The name of the class to use for user authentication. |
 | MOUNT_PATH | `auth` | The path at which to mount the authentication routes. [Read more](#usage-tldr). |
+| ORM | `ActiveRecord` | The orm to use ('ActiveRecord' or 'Mongoid'). |
 
 The following events will take place when using the install generator:
 

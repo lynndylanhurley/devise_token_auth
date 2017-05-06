@@ -6,9 +6,13 @@ Rails.application.routes.draw do
   # define :users as the first devise mapping:
   mount_devise_token_auth_for 'User', at: 'auth'
 
+  mount_devise_token_auth_for 'MongoidUser', at: 'mongoid_user_auth'
+
   # define :mangs as the second devise mapping. routes using this class will
   # need to be defined within a devise_scope as shown below
   mount_devise_token_auth_for "Mang", at: 'mangs'
+
+  mount_devise_token_auth_for "MongoidMang", at: 'mongoid_mangs'
 
   mount_devise_token_auth_for 'EvilUser', at: 'evil_user_auth', controllers: {
     confirmations:      'overrides/confirmations',
@@ -40,6 +44,7 @@ Rails.application.routes.draw do
   namespace :api do
     scope :v1 do
       mount_devise_token_auth_for 'User', at: 'auth'
+      mount_devise_token_auth_for 'MongoidUser', at: 'mongoid_user_auth'
     end
   end
 
@@ -47,6 +52,15 @@ Rails.application.routes.draw do
   namespace :api_v2, defaults: { format: :json } do
     mount_devise_token_auth_for "ScopedUser",
       at:          "auth",
+      controllers: {
+        omniauth_callbacks: "api_v2/omniauth_callbacks",
+        sessions:           "api_v2/sessions",
+        registrations:      "api_v2/registrations",
+        confirmations:      "api_v2/confirmations",
+        passwords:          "api_v2/passwords"
+      }
+    mount_devise_token_auth_for "MongoidScopedUser",
+      at:          "mongoid_user_auth",
       controllers: {
         omniauth_callbacks: "api_v2/omniauth_callbacks",
         sessions:           "api_v2/sessions",

@@ -19,14 +19,17 @@ module DeviseTokenAuth
         if resource_class.case_insensitive_keys.include?(field)
           q_value.downcase!
         end
+        if DeviseTokenAuth.mongoid?(resource_class)
+          @resource = resource_class.where(field.to_s.to_sym => q_value, provider: 'email').first
+        else
+          q = "#{field.to_s} = ? AND provider='email'"
 
-        q = "#{field.to_s} = ? AND provider='email'"
+          if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+            q = "BINARY " + q
+          end
 
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
+          @resource = resource_class.where(q, q_value).first
         end
-
-        @resource = resource_class.where(q, q_value).first
       end
 
       if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)

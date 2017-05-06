@@ -13,6 +13,9 @@ env:
     - DB=mysql
     - DB=postgresql
 
+services:
+  - mongodb
+
 script:
   - bundle exec rake --trace db:migrate
   - bundle exec rake

@@ -321,9 +321,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             get '/demo/members_only', {}, @old_auth_headers
             assert 401, response.status
           end
-
         end
-
       end
 
       describe 'request including destroy of token' do

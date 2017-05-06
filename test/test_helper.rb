@@ -12,6 +12,9 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path("../dummy/config/environment", __FILE__)
 require "rails/test_help"
 require "minitest/rails"
+require "rails/mongoid"
+Mongoid.load!(Rails.root.join("config", "mongoid.yml"))
+Mongo::Logger.logger.level = ::Logger::FATAL
 
 # To add Capybara feature tests add `gem "minitest-rails-capybara"`
 # to the test group in the Gemfile and uncomment the following:
@@ -27,7 +30,14 @@ ActionDispatch::IntegrationTest.fixture_path = File.expand_path("../fixtures", _
 Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
 
 class ActiveSupport::TestCase
+  include FactoryGirl::Syntax::Methods
   ActiveRecord::Migration.check_pending!
+
+  # Clean mongodb
+  Mongoid.purge!
+  # Register factories that it used for mongoid object
+  FactoryGirl.definition_file_paths = [File.expand_path('../factories', __FILE__)]
+  FactoryGirl.find_definitions
 
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
   #
@@ -48,6 +58,14 @@ class ActiveSupport::TestCase
     if user.tokens[client_id]
       user.tokens[client_id]['expiry'] = (Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)).to_i
       user.save!
+    end
+  end
+
+  def get_confirmed_email_user_obj(test_mongoid)
+    if test_mongoid
+      create(:mongoid_user)
+    else
+      users(:confirmed_email_user)
     end
   end
 end

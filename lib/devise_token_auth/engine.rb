@@ -21,7 +21,9 @@ module DeviseTokenAuth
                  :enable_standard_devise_support,
                  :remove_tokens_after_password_reset,
                  :default_callbacks,
-                 :headers_names
+                 :headers_names,
+                 :add_mongoid_support,
+                 :use_only_mongoid
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -40,11 +42,16 @@ module DeviseTokenAuth
                                                :'expiry' => 'expiry',
                                                :'uid' => 'uid',
                                                :'token-type' => 'token-type' }
+  self.add_mongoid_support                  = false
+  self.use_only_mongoid                     = false
 
   def self.setup(&block)
     yield self
 
     Rails.application.config.after_initialize do
+      # Require Devise ORM libs depending of config init
+      require 'devise/orm/active_record' unless self.use_only_mongoid
+      require 'devise/orm/mongoid' if self.add_mongoid_support
       if defined?(::OmniAuth)
         ::OmniAuth::config.path_prefix = Devise.omniauth_path_prefix = self.omniauth_prefix
 
@@ -84,5 +91,11 @@ module DeviseTokenAuth
 
       end
     end
+  end
+
+  def self.mongoid?(user_class)
+    DeviseTokenAuth.add_mongoid_support &&
+    ( DeviseTokenAuth.use_only_mongoid ||
+      ( defined?(::Mongoid) && user_class.included_modules.include?(Mongoid::Document) ) )
   end
 end

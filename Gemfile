@@ -14,6 +14,7 @@ gemspec
 # gem 'debugger'
 
 group :development, :test do
+  gem 'mongoid', '5.1.6'
   gem 'thor'
   gem "figaro",                 :github => 'laserlemon/figaro'
   gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
@@ -35,6 +36,8 @@ group :development, :test do
   gem 'faker'
   gem 'fuzz_ball'
   gem 'mocha'
+  gem "factory_girl_rails", "~> 4.0"
+  gem "factory_girl", "~> 4.0"
 end
 
 # code coverage, metrics

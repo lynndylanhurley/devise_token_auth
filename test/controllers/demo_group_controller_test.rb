@@ -31,6 +31,17 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
         @mang_token     = @mang_auth_headers['access-token']
         @mang_client_id = @mang_auth_headers['client']
         @mang_expiry    = @mang_auth_headers['expiry']
+
+        # mongoid user
+        @mongoid_user = create(:mongoid_user)
+        @mongoid_user.skip_confirmation!
+        @mongoid_user.save!
+
+        @mongoid_user_auth_headers = @mongoid_user.create_new_auth_token
+
+        @mongoid_user_token     = @mongoid_user_auth_headers['access-token']
+        @mongoid_user_client_id = @mongoid_user_auth_headers['client']
+        @mongoid_user_expiry    = @mongoid_user_auth_headers['expiry']
       end
 
       describe 'user access' do
@@ -61,6 +72,10 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
 
           it 'should not define current_mang' do
             refute_equal @resource, @controller.current_mang
+          end
+
+          it 'should not define current_mongoid_user' do
+            refute_equal @resource, @controller.current_mongoid_user
           end
 
           it 'should define current_member' do
@@ -103,8 +118,12 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
             assert @controller.mang_signed_in?
           end
 
-          it 'should not define current_mang' do
+          it 'should not define current_user' do
             refute_equal @mang, @controller.current_user
+          end
+
+          it 'should not define current_mongoid_user' do
+            refute_equal @mongoid_user, @controller.current_mongoid_user
           end
 
           it 'should define current_member' do
@@ -132,7 +151,48 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
 
         it 'should return error: unauthorized status' do
           assert_equal 401, response.status
-        end      
+        end
+      end
+
+      describe 'mongoid user access' do
+        before do
+          get '/demo/members_only_group', {}, @mongoid_user_auth_headers
+
+          @resp_token       = response.headers['access-token']
+          @resp_client_id   = response.headers['client']
+          @resp_expiry      = response.headers['expiry']
+          @resp_uid         = response.headers['uid']
+        end
+
+        test 'request is successful' do
+          assert_equal 200, response.status
+        end
+
+        describe 'devise mappings' do
+          it 'should define current_mongoid_user' do
+            assert_equal @mongoid_user, @controller.current_mongoid_user
+          end
+
+          it 'should define mongoid_user_signed_in?' do
+            assert @controller.mongoid_user_signed_in?
+          end
+
+          it 'should not define current_user' do
+            refute_equal @mongoid_user, @controller.current_user
+          end
+
+          it 'should not define current_mang' do
+            refute_equal @mongoid_user, @controller.current_mang
+          end
+
+          it 'should define current_members' do
+            assert @controller.current_members.include? @mongoid_user
+          end
+
+          it 'should define member_signed_in?' do
+            assert @controller.current_members.include? @mongoid_user
+          end
+        end
       end
     end
   end

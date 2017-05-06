@@ -80,6 +80,47 @@ module DeviseTokenAuth
       end
     end
 
+    describe 'existing mongoid user model' do
+      setup :prepare_destination
+
+      before do
+        @dir = File.join(destination_root, "app", "models")
+
+        @fname = File.join(@dir, "user.rb")
+
+        # make dir if not exists
+        FileUtils.mkdir_p(@dir)
+
+        @f = File.open(@fname, 'w') {|f|
+          f.write <<-RUBY
+class User
+  include Mongoid::Document
+
+  def whatever
+    puts 'whatever'
+  end
+end
+          RUBY
+        }
+
+        run_generator %w(User auth Mongoid)
+      end
+
+      test 'user concern is injected into existing model' do
+        assert_file 'app/models/user.rb' do |model|
+          assert_match(/include DeviseTokenAuth::Concerns::User/, model)
+        end
+      end
+
+      test 'subsequent runs do not modify file' do
+        run_generator %w(User auth Mongoid)
+        assert_file 'app/models/user.rb' do |model|
+          matches = model.scan(/include DeviseTokenAuth::Concerns::User/m).size
+          assert_equal 1, matches
+        end
+      end
+    end
+
 
     describe 'routes' do
       setup :prepare_destination

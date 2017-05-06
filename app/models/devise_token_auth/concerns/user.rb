@@ -15,6 +15,10 @@ module DeviseTokenAuth::Concerns::User
   end
 
   included do
+    if DeviseTokenAuth.mongoid?(self)
+      require 'mongoid-locker'
+      include Mongoid::Locker
+    end
     # Hack to check if devise is already enabled
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
@@ -95,7 +99,7 @@ module DeviseTokenAuth::Concerns::User
 
 
     def tokens_has_json_column_type?
-      database_exists? && table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+      DeviseTokenAuth.mongoid?(self) || (database_exists? && table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb]))
     end
 
     def database_exists?
@@ -151,14 +155,20 @@ module DeviseTokenAuth::Concerns::User
     # ghetto HashWithIndifferentAccess
     updated_at = self.tokens[client_id]['updated_at'] || self.tokens[client_id][:updated_at]
     last_token = self.tokens[client_id]['last_token'] || self.tokens[client_id][:last_token]
-
+    if updated_at
+      begin
+        updated_at = Time.parse(updated_at)
+      rescue TypeError
+        # it means that we use mongoid, we don't need to parse
+      end
+    end
 
     return true if (
       # ensure that the last token and its creation time exist
       updated_at && last_token &&
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle &&
+      updated_at > Time.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
@@ -201,7 +211,6 @@ module DeviseTokenAuth::Concerns::User
       oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
       self.tokens.delete(oldest_token.first)
     end
-
     self.save!
 
     return {

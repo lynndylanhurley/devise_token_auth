@@ -81,7 +81,8 @@ GEM
     attr_encrypted (3.0.1)
       encryptor (~> 3.0.0)
     bcrypt (3.1.11)
-    builder (3.2.2)
+    bson (4.2.1)
+    builder (3.2.3)
     codeclimate-test-reporter (0.6.0)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.1)
@@ -98,6 +99,11 @@ GEM
     docile (1.1.5)
     encryptor (3.0.0)
     erubis (2.7.0)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     faker (1.6.5)
       i18n (~> 0.5)
     faraday (0.9.2)
@@ -132,7 +138,7 @@ GEM
       minitest (>= 3.0)
     hashie (3.4.4)
     i18n (0.7.0)
-    json (1.8.3)
+    json (1.8.6)
     jwt (1.5.4)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -149,7 +155,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
-    minitest (5.9.0)
+    minitest (5.10.1)
     minitest-focus (1.1.2)
       minitest (>= 4, < 6)
     minitest-rails (2.2.1)
@@ -162,6 +168,19 @@ GEM
       ruby-progressbar
     mocha (1.1.0)
       metaclass (~> 0.0.1)
+    mongo (2.4.1)
+      bson (>= 4.2.1, < 5.0.0)
+    mongoid (5.1.6)
+      activemodel (~> 4.0)
+      mongo (~> 2.1)
+      origin (~> 2.2)
+      tzinfo (>= 0.3.37)
+    mongoid-compatibility (0.3.1)
+      activesupport
+      mongoid (>= 2.0)
+    mongoid-locker (0.3.4)
+      mongoid (>= 2.8, < 6.0)
+      mongoid-compatibility
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -185,6 +204,7 @@ GEM
     omniauth-oauth2 (1.4.0)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
+    origin (2.3.0)
     orm_adapter (0.5.0)
     pg (0.18.4)
     pkg-config (1.1.7)
@@ -260,6 +280,8 @@ DEPENDENCIES
   attr_encrypted
   codeclimate-test-reporter
   devise_token_auth!
+  factory_girl (~> 4.0)
+  factory_girl_rails (~> 4.0)
   faker
   figaro!
   fuzz_ball
@@ -271,6 +293,8 @@ DEPENDENCIES
   minitest-rails
   minitest-reporters
   mocha
+  mongoid (= 5.1.6)
+  mongoid-locker (~> 0.3.0)
   mysql2
   omniauth-facebook!
   omniauth-github!
@@ -283,4 +307,4 @@ DEPENDENCIES
   thor
 
 BUNDLED WITH
-   1.11.2
+   1.13.7
