@@ -33,7 +33,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.1.40)
+    devise_token_auth (0.1.41)
       devise (> 3.5.2, <= 4.2.1)
       rails (< 6)
 
@@ -86,7 +86,7 @@ GEM
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.1)
     colorize (0.8.1)
-    concurrent-ruby (1.0.2)
+    concurrent-ruby (1.0.5)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     devise (4.2.0)
