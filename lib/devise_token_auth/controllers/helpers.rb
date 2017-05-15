@@ -39,7 +39,7 @@ module DeviseTokenAuth
 
                 unless current_#{group_name}
                   return render json: {
-                    errors: ["Authorized users only."]
+                    errors: [I18n.t('devise.failure.unauthenticated')]
                   }, status: 401
                 end
               end
@@ -110,7 +110,7 @@ module DeviseTokenAuth
           def authenticate_#{mapping}!
             unless current_#{mapping}
               return render json: {
-                errors: ["Authorized users only."]
+                errors: [I18n.t('devise.failure.unauthenticated')]
               }, status: 401
             end
           end
