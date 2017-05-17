@@ -83,9 +83,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             @data = JSON.parse(response.body)
           end
 
-            test 'response should not contain extra data' do
-              assert_equal @data['data'], nil
-            end
+          test 'response should not contain extra data' do
+            assert_nil @data["data"]
+          end
         end
 
 
