@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/intridea/omniauth-github.git
+  remote: https://github.com/intridea/omniauth-github
   revision: a893c2bc45d3c869ada960fddca97d6cba28082d
   specs:
     omniauth-github (1.2.3)
@@ -7,21 +7,21 @@ GIT
       omniauth-oauth2 (>= 1.4.0, < 2.0)
 
 GIT
-  remote: git://github.com/laserlemon/figaro.git
+  remote: https://github.com/laserlemon/figaro
   revision: 8dd678f5075272138acf4b56682b8b1cbcd6ce10
   specs:
     figaro (1.1.1)
       thor (~> 0.14)
 
 GIT
-  remote: git://github.com/mkdynamic/omniauth-facebook.git
+  remote: https://github.com/mkdynamic/omniauth-facebook
   revision: 19634473820d0190a5112f6b42266ef98c8ee276
   specs:
     omniauth-facebook (4.0.0)
       omniauth-oauth2 (~> 1.2)
 
 GIT
-  remote: git://github.com/zquestz/omniauth-google-oauth2.git
+  remote: https://github.com/zquestz/omniauth-google-oauth2
   revision: 9a9ef392fdf93d2e711823b88bf821a3f54b97a4
   specs:
     omniauth-google-oauth2 (0.5.0)
@@ -33,7 +33,7 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (0.1.42)
+    devise_token_auth (0.1.41)
       devise (> 3.5.2, <= 4.3)
       rails (< 6)
 
