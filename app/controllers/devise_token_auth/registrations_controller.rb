@@ -46,7 +46,7 @@ module DeviseTokenAuth
             @resource.send_confirmation_instructions({
               client_config: params[:config_name],
               redirect_url: @redirect_url
-            })
+            }) if !@resource.instance_variable_defined?("@skip_reconfirmation_in_callback") || !@resource.instance_variable_get("@skip_reconfirmation_in_callback")
 
           else
             # email auth has been bypassed, authenticate user
