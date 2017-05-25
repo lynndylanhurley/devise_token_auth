@@ -20,7 +20,7 @@ module DeviseTokenAuth
       @redirect_url = params[:confirm_success_url]
 
       # fall back to default value if provided
-      @redirect_url ||= DeviseTokenAuth.default_confirm_success_url
+      @redirect_url ||= @resource.confirm_success_url || DeviseTokenAuth.default_confirm_success_url
 
       # success redirect url is required
       if resource_class.devise_modules.include?(:confirmable) && !@redirect_url
@@ -46,7 +46,7 @@ module DeviseTokenAuth
             @resource.send_confirmation_instructions({
               client_config: params[:config_name],
               redirect_url: @redirect_url
-            }) if !@resource.instance_variable_defined?("@skip_reconfirmation_in_callback") || !@resource.instance_variable_get("@skip_reconfirmation_in_callback")
+            }) if !@resource.instance_variable_defined?("@skip_reconfirmation_in_callback") || @resource.instance_variable_get("@skip_reconfirmation_in_callback")
 
           else
             # email auth has been bypassed, authenticate user
