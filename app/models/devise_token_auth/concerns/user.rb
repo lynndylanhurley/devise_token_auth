@@ -194,7 +194,7 @@ module DeviseTokenAuth::Concerns::User
 
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
-    expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
+    expiry = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
     max_clients = DeviseTokenAuth.max_number_of_devices
     while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
@@ -223,7 +223,9 @@ module DeviseTokenAuth::Concerns::User
 
 
   def extend_batch_buffer(token, client_id)
-    self.tokens[client_id]['updated_at'] = Time.now
+    if self.tokens[client_id] != nil
+      self.tokens[client_id]['updated_at'] = Time.now
+    end
 
     return build_auth_header(token, client_id)
   end
