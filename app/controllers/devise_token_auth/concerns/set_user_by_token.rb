@@ -113,13 +113,14 @@ module DeviseTokenAuth::Concerns::SetUserByToken
         if @is_batch_request
           auth_header = @resource.extend_batch_buffer(@token, @client_id)
 
-        # update Authorization response header with new token
+          auth_header[DeviseTokenAuth.headers_names[:"access-token"]] = ' '
+          auth_header[DeviseTokenAuth.headers_names[:"expiry"]] = ' '
         else
+          # update Authorization response header with new token
           auth_header = @resource.create_new_auth_token(@client_id)
-
-          # update the response header
-          response.headers.merge!(auth_header)
         end
+        # update the response header
+        response.headers.merge!(auth_header)
 
       end # end lock
 
