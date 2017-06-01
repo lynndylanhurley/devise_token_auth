@@ -35,6 +35,12 @@ module DeviseTokenAuth
       end
 
       begin
+
+        if invalid_password_change?
+          clean_up_passwords @resource
+          return render_create_error
+        end
+
         # override email confirmation, must be sent manually from ctrl
         resource_class.set_callback("create", :after, :send_on_create_confirmation_instructions)
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
@@ -75,6 +81,12 @@ module DeviseTokenAuth
 
     def update
       if @resource
+
+        if invalid_password_change?
+          clean_up_passwords @resource
+          return render_update_error
+        end
+
         if @resource.send(resource_update_method, account_update_params)
           yield @resource if block_given?
           render_update_success
@@ -208,6 +220,10 @@ module DeviseTokenAuth
          status: 'error',
          errors: [message]
       }, status: :unprocessable_entity if which.empty?
+    end
+
+    def invalid_password_change?
+      not params[:password].nil? and params[:password] != params[:password_confirmation]
     end
   end
 end
