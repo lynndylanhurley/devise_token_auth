@@ -37,7 +37,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @client_id ||= 'default'
 
     # check for an existing user, authenticated via warden/devise, if enabled
-    if DeviseTokenAuth.enable_standard_devise_support
+    # but if we specify a uid or a token in the header, that takes precedence
+    if DeviseTokenAuth.enable_standard_devise_support && !uid && !@token
       devise_warden_user = warden.user(rc.to_s.underscore.to_sym)
       if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
         @used_auth_by_token = false
@@ -47,7 +48,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     # user has already been found and authenticated
-    return @resource if @resource && @resource.is_a? rc
+    return @resource if @resource && @resource.is_a?(rc)
 
     # ensure we clear the client_id
     if !@token
