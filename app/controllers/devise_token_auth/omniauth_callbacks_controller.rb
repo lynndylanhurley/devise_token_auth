@@ -42,7 +42,7 @@ module DeviseTokenAuth
 
       yield @resource if block_given?
 
-      render_data_or_redirect('deliverCredentials', @auth_params.as_json, @resource.as_json)
+      render_data_or_redirect('deliverCredentials', @auth_params.as_json, omniauth_resource_serializer(@resource))
     end
 
     def omniauth_failure
@@ -51,6 +51,11 @@ module DeviseTokenAuth
     end
 
     protected
+
+    #override this method to provide your own serialization strategy
+    def omniauth_resource_serializer(resource)
+      resource.as_json
+    end
 
     # this will be determined differently depending on the action that calls
     # it. redirect_callbacks is called upon returning from successful omniauth
