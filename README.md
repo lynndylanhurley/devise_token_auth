@@ -731,7 +731,7 @@ mount_devise_token_auth_for 'User', at: 'auth', controllers: {
 
 ## Overriding the Omniauth Success resource serializer
 
-Rendering an Omniauth success works a litte differently to the other controller which is why there is no render override. Instead we provide a method to override which defines how you want the resource (usually the user object) to be serialized. The default is:
+Rendering an Omniauth success works a litte differently to the other controllers which is why there is no render override. Instead we provide a method to override how you want the resource (usually the user object) to be serialized. The default is:
 
 ~~~ruby
 def serialize_omniauth_success_resource(resource)
