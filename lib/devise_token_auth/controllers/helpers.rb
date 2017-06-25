@@ -68,7 +68,7 @@ module DeviseTokenAuth
 
             def render_authenticate_#{group_name}_error
               return render json: {
-                errors: ["Authorized #{group_name} only."]
+                errors: [I18n.t('devise.failure.unauthenticated')]
               }, status: 401
             end
 
@@ -131,10 +131,10 @@ module DeviseTokenAuth
           def #{mapping}_session
             current_#{mapping} && warden.session(:#{mapping})
           end
-          
+
           def render_authenticate_#{mapping}_error
             return render json: {
-              errors: ["Authorized #{mapping} only."]
+              errors: [I18n.t('devise.failure.unauthenticated')]
             }, status: 401
           end
         METHODS
