@@ -15,10 +15,10 @@ gemspec
 
 group :development, :test do
   gem 'thor'
-  gem "figaro",                 :github => 'laserlemon/figaro'
-  gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
-  gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'
-  gem 'omniauth-google-oauth2', :git => 'git://github.com/zquestz/omniauth-google-oauth2.git'
+  gem "figaro",                 :git => 'https://github.com/laserlemon/figaro'
+  gem 'omniauth-github',        :git => 'https://github.com/intridea/omniauth-github'
+  gem 'omniauth-facebook',      :git => 'https://github.com/mkdynamic/omniauth-facebook'
+  gem 'omniauth-google-oauth2', :git => 'https://github.com/zquestz/omniauth-google-oauth2'
   gem 'rack-cors',              :require => 'rack/cors'
   gem 'attr_encrypted'
 

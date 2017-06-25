@@ -853,7 +853,8 @@ These measures are taken by default when using this gem.
 
 By default, the API should update the auth token for each request ([read more](#about-token-management)). But sometimes it's necessary to make several concurrent requests to the API, for example:
 
-#####Batch request example
+##### Batch request example
+
 ~~~javascript
 $scope.getResourceData = function() {
 
