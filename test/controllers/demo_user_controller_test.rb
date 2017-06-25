@@ -48,11 +48,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             refute_equal @resource, @controller.current_mang
           end
 
-          it 'should define render_authenticate_user_error' do
-            assert @controller.methods.include?(:render_authenticate_error)
-          end
-
-          it 'should define render_authenticate_mang_error' do
+          it 'should define render_authenticate_error' do
             assert @controller.methods.include?(:render_authenticate_error)
           end
         end
