@@ -75,15 +75,7 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
             assert @controller.current_members.include? @resource
           end
 
-          it 'should define render_authenticate_user_error' do
-            assert @controller.methods.include?(:render_authenticate_error)
-          end
-
-          it 'should define render_authenticate_mang_error' do
-            assert @controller.methods.include?(:render_authenticate_error)
-          end
-
-          it 'should define render_authenticate_member_error' do
+          it 'should define render_authenticate_error' do
             assert @controller.methods.include?(:render_authenticate_error)
           end
         end
