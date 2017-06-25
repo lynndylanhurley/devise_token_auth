@@ -49,11 +49,11 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should define render_authenticate_user_error' do
-            assert @controller.methods.include?(:render_authenticate_user_error)
+            assert @controller.methods.include?(:render_authenticate_error)
           end
 
           it 'should define render_authenticate_mang_error' do
-            assert @controller.methods.include?(:render_authenticate_mang_error)
+            assert @controller.methods.include?(:render_authenticate_error)
           end
         end
 
