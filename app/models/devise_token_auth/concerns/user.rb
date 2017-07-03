@@ -19,8 +19,6 @@ module DeviseTokenAuth::Concerns::User
     unless self.method_defined?(:devise_modules)
       devise :database_authenticatable, :registerable,
           :recoverable, :trackable, :validatable, :confirmable
-    else
-      self.devise_modules.delete(:omniauthable)
     end
 
     unless tokens_has_json_column_type?
