@@ -47,8 +47,9 @@ module DeviseTokenAuth
               client_config: params[:config_name],
               redirect_url: @redirect_url
             })
+          end
 
-          else
+          if @resource.confirmed? || (@resource.respond_to?(:active_for_authentication?) && @resource.active_for_authentication?)
             # email auth has been bypassed, authenticate user
             @client_id = SecureRandom.urlsafe_base64(nil, false)
             @token     = SecureRandom.urlsafe_base64(nil, false)
