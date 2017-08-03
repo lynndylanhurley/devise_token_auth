@@ -61,8 +61,12 @@ module DeviseTokenAuth
           @errors = @resource.errors
         end
       else
-        @errors = [I18n.t("devise_token_auth.passwords.user_not_found", email: @email)]
-        @error_status = 404
+        if Devise.paranoid
+          return render_create_success
+        else
+          @errors = [I18n.t("devise_token_auth.passwords.user_not_found", email: @email)]
+          @error_status = 404
+        end
       end
 
       if @errors
