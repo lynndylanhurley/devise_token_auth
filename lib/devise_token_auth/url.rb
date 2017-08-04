@@ -1,5 +1,4 @@
 module DeviseTokenAuth::Url
-
   def self.generate(url, params = {})
     uri = URI(url)
 
@@ -33,5 +32,4 @@ module DeviseTokenAuth::Url
       !!@regex.match(str)
     end
   end
-
 end

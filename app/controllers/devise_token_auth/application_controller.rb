@@ -11,7 +11,7 @@ module DeviseTokenAuth
     end
 
     def resource_errors
-      return @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+      @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
     end
 
     protected
@@ -23,14 +23,12 @@ module DeviseTokenAuth
       devise_parameter_sanitizer.instance_values['permitted'][resource]
     end
 
-    def resource_class(m=nil)
-      if m
-        mapping = Devise.mappings[m]
+    def resource_class(mapping=nil)
+      if mapping
+        Devise.mappings[mapping]
       else
-        mapping = Devise.mappings[resource_name] || Devise.mappings.values.first
-      end
-
-      mapping.to
+        Devise.mappings[resource_name] || Devise.mappings.values.first
+      end.to
     end
 
     def is_json_api
@@ -40,6 +38,5 @@ module DeviseTokenAuth
       end if ActiveModel::Serializer.respond_to?(:setup)
       return ActiveModelSerializers.config.adapter == :json_api
     end
-
   end
 end
