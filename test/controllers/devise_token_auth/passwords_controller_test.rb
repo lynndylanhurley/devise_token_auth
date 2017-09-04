@@ -73,6 +73,21 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
         end
 
+        describe 'successfully requested password reset' do
+          before do
+            xhr :post, :create, {
+              email:        @resource.email,
+              redirect_url: @redirect_url
+            }
+
+            @data = JSON.parse(response.body)
+          end
+
+          test 'response should not contain extra data' do
+            assert_nil @data["data"]
+          end
+        end
+
 
         describe 'case-sensitive email' do
           before do

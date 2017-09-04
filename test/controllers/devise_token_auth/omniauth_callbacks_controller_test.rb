@@ -16,6 +16,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     @redirect_url = "http://ng-token-auth.dev/"
   end
 
+  def get_parsed_data_json
+    encoded_json_data = @response.body.match(/var data \= JSON.parse\(decodeURIComponent\(\'(.+)\'\)\)\;/)[1]
+    JSON.parse(URI::unescape(encoded_json_data))
+  end
+
   describe 'success callback' do
     setup do
       OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
@@ -64,6 +69,11 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     test 'sign_in was called' do
       User.any_instance.expects(:sign_in)
       get_success
+    end
+
+    test 'should be redirected via valid url' do
+      get_success
+      assert_equal 'http://www.example.com/auth/facebook/callback', request.original_url
     end
 
     describe 'with default user model' do
@@ -202,8 +212,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     def assert_expected_data_in_new_window
-      data_json = @response.body.match(/var data \= (.+)\;/)[1]
-      data = ActiveSupport::JSON.decode(data_json)
+      data = get_parsed_data_json
       expected_data = @resource.as_json.merge(controller.auth_params.as_json)
       expected_data = ActiveSupport::JSON.decode(expected_data.to_json)
       assert_equal(expected_data.merge("message" => "deliverCredentials"), data)
@@ -257,8 +266,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       }
       assert_equal 200, response.status
 
-      data_json = @response.body.match(/var data \= (.+)\;/)[1]
-      data = ActiveSupport::JSON.decode(data_json)
+      data = get_parsed_data_json
 
       assert_equal({"error"=>"invalid_credentials", "message"=>"authFailure"}, data)
     end
@@ -305,9 +313,8 @@ class OmniauthTest < ActionDispatch::IntegrationTest
                        auth_origin_url: @bad_redirect_url,
                        omniauth_window_type: 'newWindow'
 
-      data_json = @response.body.match(/var data \= (.+)\;/)[1]
-      data = ActiveSupport::JSON.decode(data_json)
-      assert_equal "Redirect to '#{@bad_redirect_url}' not allowed.",
+      data = get_parsed_data_json
+      assert_equal "Redirect to &#39;#{@bad_redirect_url}&#39; not allowed.",
                    data['error']
     end
 
@@ -316,8 +323,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
                        auth_origin_url: @good_redirect_url,
                        omniauth_window_type: 'newWindow'
 
-      data_json = @response.body.match(/var data \= (.+)\;/)[1]
-      data = ActiveSupport::JSON.decode(data_json)
+      data = get_parsed_data_json
       assert_equal @user_email, data['email']
     end
 
@@ -327,8 +333,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
                        auth_origin_url: @good_redirect_url,
                        omniauth_window_type: 'newWindow'
 
-      data_json = @response.body.match(/var data \= (.+)\;/)[1]
-      data = ActiveSupport::JSON.decode(data_json)
+      data = get_parsed_data_json
       assert_equal @user_email, data['email']
     end
 
