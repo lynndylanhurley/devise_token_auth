@@ -1,5 +1,5 @@
 bug-labels=bug,Bug,fix,Fix
 enhancement-labels=enhancement,Enhancement,feat,Feat
-somce=tag=v0.1.40
-unreleased-label=v0.1.41
+since-tag=v0.1.42
+unreleased-label=v0.1.43
 base=CHANGELOG.md
