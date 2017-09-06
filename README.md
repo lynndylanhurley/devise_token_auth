@@ -880,7 +880,7 @@ The following diagram details the relationship between the client, server, and a
 
 ![batch request detail](https://github.com/lynndylanhurley/ng-token-auth/raw/master/test/app/images/flow/batch-request-detail.jpg)
 
-Note that when the server identifies that a request is part of a batch request, the user's auth token is not updated. The auth token will be updated for the first request in the batch, and then that same token will be returned in the responses for each subsequent request in the batch (as shown in the diagram).
+Note that when the server identifies that a request is part of a batch request, the user's auth token is not updated. The auth token will be updated and returned with the first request in the batch, and the subsequent requests in the batch will not return a token. This is necessary because the order of the responses cannot be guaranteed to the client, and we need to be sure that the client does not receive an outdated token *after* the the last valid token is returned.
 
 This gem automatically manages batch requests. You can change the time buffer for what is considered a batch request using the `batch_request_buffer_throttle` parameter in `config/initializers/devise_token_auth.rb`.
 
