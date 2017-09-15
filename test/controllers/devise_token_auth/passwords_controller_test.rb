@@ -163,7 +163,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               @client_id      = @qs["client_id"]
               @expiry         = @qs["expiry"]
               @reset_password = @qs["reset_password"]
-              @token          = @qs["token"]
+              @token          = @qs["token_hash"]
               @uid            = @qs["uid"]
             end
 
