@@ -8,6 +8,52 @@ require 'test_helper'
 
 class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::SessionsController do
+    describe "Confirmed user using login key" do
+      before do
+        @existing_user = users(:confirmed_email_user)
+        @existing_user.skip_confirmation!
+        @existing_user.save!
+      end
+
+      describe 'success' do
+        before do
+          xhr :post, :create, {
+            login: @existing_user.email,
+            password: 'secret123'
+          }
+
+          @resource = assigns(:resource)
+          @data = JSON.parse(response.body)
+        end
+
+        test "request should succeed" do
+          assert_equal 200, response.status
+        end
+
+        test "request should return user data" do
+          assert_equal @existing_user.email, @data['data']['email']
+        end
+      end
+
+      describe 'login with nickname' do
+        before do
+          xhr :post, :create, {
+            login: @existing_user.nickname,
+            password: 'secret123'
+          }
+          @data = JSON.parse(response.body)
+        end
+
+        test "request should succeed" do
+          assert_equal 200, response.status
+        end
+
+        test "request should return user data" do
+          assert_equal @existing_user.email, @data['data']['email']
+        end
+      end
+    end
+
     describe "Confirmed user" do
       before do
         @existing_user = users(:confirmed_email_user)
