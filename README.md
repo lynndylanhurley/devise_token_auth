@@ -60,6 +60,7 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [Custom Controller Overrides](#custom-controller-overrides)
   * [Passing blocks to Controllers](#passing-blocks-controllers)
   * [Email Template Overrides](#email-template-overrides)
+  * [Testing](#testing)
 * [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
@@ -434,7 +435,7 @@ The authentication information should be included by the client in the headers o
 "uid":          "zzzzz"
 ~~~
 
-The authentication headers consists of the following params:
+The authentication headers (each one is a seperate header) consists of the following params:
 
 | param | description |
 |---|---|
@@ -765,6 +766,16 @@ This will create two new files:
 These files may be edited to suit your taste. You can customize the e-mail subjects like [this](#customizing-devise-verbiage).
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
+
+## Testing
+
+In order to authorise a request when testing your API you will need to pass the four headers through with your request, the easiest way to gain appropriate values for those headers is to use `resource.create_new_auth_token` e.g.
+
+```Ruby
+  request.headers.merge! resource.create_new_auth_token
+  get '/api/authenticated_resource'
+  # success
+```
 
 # Issue Reporting
 
