@@ -844,6 +844,10 @@ class ApplicationController < ActionController::Base
 end
 ~~~
 
+### How can I use this gem with Grape?
+
+You may be interested in [GrapeTokenAuth](https://github.com/mcordell/grape_token_auth) or [GrapeDeviseTokenAuth](https://github.com/mcordell/grape_devise_token_auth).
+
 # Conceptual
 
 None of the following information is required to use this gem, but read on if you're curious.
