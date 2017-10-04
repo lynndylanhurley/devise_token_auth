@@ -779,16 +779,9 @@ In order to authorise a request when testing your API you will need to pass the 
 
 # Issue Reporting
 
-When posting issues, please include the following information to speed up the troubleshooting process:
+When posting issues, please include the information mentioned in the [ISSUE_TEMPLATE.md].
 
-* **Version**: which version of this gem (and [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker) or [Angular2-Token](https://github.com/neroniaky/angular2-token) if applicable) are you using?
-* **Request and response headers**: these can be found in the "Network" tab of your browser's web inspector.
-* **Rails Stacktrace**: this can be found in the `log/development.log` of your API.
-* **Environmental Info**: How is your application different from the [reference implementation](https://github.com/lynndylanhurley/devise_token_auth_demo)? This may include (but is not limited to) the following details:
-  * **Routes**: are you using some crazy namespace, scope, or constraint?
-  * **Gems**: are you using MongoDB, Grape, RailsApi, ActiveAdmin, etc.?
-  * **Custom Overrides**: what have you done in terms of [custom controller overrides](#custom-controller-overrides)?
-  * **Custom Frontend**: are you using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker), [Angular2-Token](https://github.com/neroniaky/angular2-token), or something else?
+[ISSUE_TEMPLATE.md]: https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/ISSUE_TEMPLATE.md
 
 # FAQ
 
@@ -934,30 +927,9 @@ Thanks to the following contributors:
 
 # Contributing
 
-1. Create a feature branch with your changes.
-2. Write some test cases.
-3. Make all the tests pass.
-4. Issue a pull request.
+See the [CONTRIBUTING.md] document.
 
-I will grant you commit access if you send quality pull requests.
-
-To run the test suite do the following:
-
-1. Clone this repo
-2. Run `bundle install`
-3. Run `rake db:migrate`
-4. Run `RAILS_ENV=test rake db:migrate`
-5. Run `guard`
-
-The last command will open the [guard](https://github.com/guard/guard) test-runner. Guard will re-run each test suite when changes are made to its corresponding files.
-
-To run just one test:
-
-1. Clone this repo
-2. Run `bundle install`
-3. Run `rake db:migrate`
-4. Run `RAILS_ENV=test rake db:migrate`
-5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/
+[CONTRIBUTING.md]: https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/CONTRIBUTING.md
 
 # License
 This project uses the WTFPL
