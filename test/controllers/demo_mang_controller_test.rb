@@ -13,7 +13,6 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
         @resource = mangs(:confirmed_email_user)
         @resource.skip_confirmation!
         @resource.save!
-
         @auth_headers = @resource.create_new_auth_token
 
         @token     = @auth_headers['access-token']
@@ -32,6 +31,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           @resp_client_id   = response.headers['client']
           @resp_expiry      = response.headers['expiry']
           @resp_uid         = response.headers['uid']
+          @resp_provider    = response.headers['provider']
         end
 
         describe 'devise mappings' do
@@ -62,6 +62,10 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
 
         it "should return the user's uid in the auth header" do
           assert_equal @resource.uid, @resp_uid
+        end
+
+        it "should return the user's provider in the auth header" do
+          assert_equal @resource.provider, @resp_provider
         end
 
         it 'should not treat this request as a batch request' do
@@ -260,4 +264,3 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
     end
   end
 end
-

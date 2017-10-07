@@ -174,7 +174,8 @@ module DeviseTokenAuth
         client_id: @client_id,
         uid:       @resource.uid,
         expiry:    @expiry,
-        config:    @config
+        config:    @config,
+        provider:  @resource.provider
       }
       @auth_params.merge!(oauth_registration: true) if @oauth_registration
       @auth_params

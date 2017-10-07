@@ -39,7 +39,8 @@ module DeviseTokenAuth
                                                :'client' => 'client',
                                                :'expiry' => 'expiry',
                                                :'uid' => 'uid',
-                                               :'token-type' => 'token-type' }
+                                               :'token-type' => 'token-type',
+                                               :'provider' => 'provider'}
 
   def self.setup(&block)
     yield self

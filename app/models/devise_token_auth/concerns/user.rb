@@ -205,14 +205,16 @@ module DeviseTokenAuth::Concerns::User
       DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
       DeviseTokenAuth.headers_names[:"client"]       => client_id,
       DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
-      DeviseTokenAuth.headers_names[:"uid"]          => self.uid
+      DeviseTokenAuth.headers_names[:"uid"]          => self.uid,
+      DeviseTokenAuth.headers_names[:"provider"]     => self.provider
     }
   end
 
 
   def build_auth_url(base_url, args)
-    args[:uid]    = self.uid
-    args[:expiry] = self.tokens[args[:client_id]]['expiry']
+    args[:uid]      = self.uid
+    args[:expiry]   = self.tokens[args[:client_id]]['expiry']
+    args[:provider] = self.provider
 
     DeviseTokenAuth::Url.generate(base_url, args)
   end
