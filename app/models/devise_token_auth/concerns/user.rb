@@ -93,7 +93,6 @@ module DeviseTokenAuth::Concerns::User
   module ClassMethods
     protected
 
-
     def tokens_has_json_column_type?
       database_exists? && table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
     end
@@ -102,7 +101,6 @@ module DeviseTokenAuth::Concerns::User
       ActiveRecord::Base.connection_pool.with_connection { |con| con.active? } rescue false
     end
   end
-
 
   def valid_token?(token, client_id='default')
     client_id ||= 'default'
@@ -113,9 +111,8 @@ module DeviseTokenAuth::Concerns::User
     return true if token_can_be_reused?(token, client_id)
 
     # return false if none of the above conditions are met
-    return false
+    false
   end
-
 
   # this must be done from the controller so that additional params
   # can be passed on from the client
@@ -123,22 +120,18 @@ module DeviseTokenAuth::Concerns::User
     false
   end
 
-
   def token_is_current?(token, client_id)
     # ghetto HashWithIndifferentAccess
     expiry     = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
     token_hash = self.tokens[client_id]['token'] || self.tokens[client_id][:token]
 
-    return true if (
-      # ensure that expiry and token are set
-      expiry && token &&
-
+    # ensure that expiry and token are set
+    expiry &&
+      token &&
       # ensure that the token has not yet expired
       DateTime.strptime(expiry.to_s, '%s') > Time.now &&
-
       # ensure that the token is valid
       DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
-    )
   end
 
 
@@ -149,16 +142,13 @@ module DeviseTokenAuth::Concerns::User
     last_token = self.tokens[client_id]['last_token'] || self.tokens[client_id][:last_token]
 
 
-    return true if (
-      # ensure that the last token and its creation time exist
-      updated_at && last_token &&
-
+    # ensure that the last token and its creation time exist
+    updated_at &&
+      last_token &&
       # ensure that previous token falls within the batch buffer throttle time of the last request
       Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle &&
-
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
-    )
   end
 
 
@@ -181,7 +171,7 @@ module DeviseTokenAuth::Concerns::User
       updated_at: Time.now
     }
 
-    return build_auth_header(token, client_id)
+    build_auth_header(token, client_id)
   end
 
 
@@ -200,12 +190,12 @@ module DeviseTokenAuth::Concerns::User
 
     self.save!
 
-    return {
-      DeviseTokenAuth.headers_names[:"access-token"] => token,
-      DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
-      DeviseTokenAuth.headers_names[:"client"]       => client_id,
-      DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
-      DeviseTokenAuth.headers_names[:"uid"]          => self.uid
+    {
+      DeviseTokenAuth.access_token_name => token,
+      DeviseTokenAuth.token_type_name => "Bearer",
+      DeviseTokenAuth.client_name => client_id,
+      DeviseTokenAuth.expiry_name => expiry.to_s,
+      DeviseTokenAuth.uid_name => self.uid
     }
   end
 
@@ -221,7 +211,7 @@ module DeviseTokenAuth::Concerns::User
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
 
-    return build_auth_header(token, client_id)
+    build_auth_header(token, client_id)
   end
 
   def confirmed?
@@ -233,7 +223,6 @@ module DeviseTokenAuth::Concerns::User
       :tokens, :created_at, :updated_at
     ])
   end
-
 
   protected
 
@@ -260,5 +249,4 @@ module DeviseTokenAuth::Concerns::User
       self.tokens = { latest_token.first => latest_token.last }
     end
   end
-
 end
