@@ -490,7 +490,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   # store client + token in user's token hash
   @resource.tokens[client_id] = {
     token: BCrypt::Password.create(token),
-    expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+    expiry: (Time.now + @resource.token_lifespan).to_i
   }
 
   # generate auth headers for response
