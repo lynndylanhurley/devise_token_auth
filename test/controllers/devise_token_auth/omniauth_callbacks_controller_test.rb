@@ -50,8 +50,8 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     test 'user should be assigned token' do
       get_success
-      client_id = controller.auth_params[:client_id]
-      token = controller.auth_params[:auth_token]
+      client_id = controller.auth_params[:client]
+      token = controller.auth_params["access-token"]
       expiry = controller.auth_params[:expiry]
 
       # the expiry should have been set
@@ -235,7 +235,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         assert(uid = controller.params['uid'], "No uid found")
 
         # check that all the auth stuff is there
-        [:auth_token, :client_id, :uid, :expiry, :config].each do |key|
+        ["access-token", :client, :uid, :expiry, :config].each do |key|
           assert(controller.params.key?(key), "No value for #{key.inspect}")
         end
       end
@@ -328,7 +328,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     test 'should support wildcards' do
-      DeviseTokenAuth.redirect_whitelist = ["#{@good_redirect_url[0..8]}*"]
+     DeviseTokenAuth.redirect_whitelist = ["#{@good_redirect_url[0..8]}*"]
       get_via_redirect '/auth/facebook',
                        auth_origin_url: @good_redirect_url,
                        omniauth_window_type: 'newWindow'
