@@ -36,55 +36,55 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
         @resource = lockable_users(:unlocked_user)
       end
 
-      # describe 'not email should return 401' do
-      #   before do
-      #     @auth_headers = @resource.create_new_auth_token
-      #     @new_password = Faker::Internet.password
+      describe 'not email should return 401' do
+        before do
+          @auth_headers = @resource.create_new_auth_token
+          @new_password = Faker::Internet.password
 
-      #     xhr :post, :create, {}
-      #     @data = JSON.parse(response.body)
-      #   end
+          xhr :post, :create, {}
+          @data = JSON.parse(response.body)
+        end
 
-      #   test 'response should fail' do
-      #     assert_equal 401, response.status
-      #   end
-      #   test 'error message should be returned' do
-      #     assert @data["errors"]
-      #     assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_email")]
-      #   end
-      # end
+        test 'response should fail' do
+          assert_equal 401, response.status
+        end
+        test 'error message should be returned' do
+          assert @data["errors"]
+          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_email")]
+        end
+      end
 
       describe 'request unlock' do
-        # describe 'unknown user should return 404' do
-        #   before do
-        #     xhr :post, :create, {
-        #       email:        'chester@cheet.ah'
-        #     }
-        #     @data = JSON.parse(response.body)
-        #   end
-        #   test 'unknown user should return 404' do
-        #     assert_equal 404, response.status
-        #   end
+        describe 'unknown user should return 404' do
+          before do
+            xhr :post, :create, {
+              email:        'chester@cheet.ah'
+            }
+            @data = JSON.parse(response.body)
+          end
+          test 'unknown user should return 404' do
+            assert_equal 404, response.status
+          end
 
-        #   test 'errors should be returned' do
-        #     assert @data["errors"]
-        #     assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')]
-        #   end
-        # end
+          test 'errors should be returned' do
+            assert @data["errors"]
+            assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')]
+          end
+        end
 
-        # describe 'successfully requested unlock' do
-        #   before do
-        #     xhr :post, :create, {
-        #       email:        @resource.email
-        #     }
+        describe 'successfully requested unlock' do
+          before do
+            xhr :post, :create, {
+              email:        @resource.email
+            }
 
-        #     @data = JSON.parse(response.body)
-        #   end
+            @data = JSON.parse(response.body)
+          end
 
-        #   test 'response should not contain extra data' do
-        #     assert_nil @data["data"]
-        #   end
-        # end
+          test 'response should not contain extra data' do
+            assert_nil @data["data"]
+          end
+        end
 
         describe 'case-sensitive email' do
           before do

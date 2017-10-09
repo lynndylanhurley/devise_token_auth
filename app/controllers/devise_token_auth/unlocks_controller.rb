@@ -83,7 +83,6 @@ module DeviseTokenAuth
     private
     def after_unlock_path_for(resource)
       #TODO: This should probably be a configuration option at the very least.
-      # root_url
       '/'
     end
 
