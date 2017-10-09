@@ -14,7 +14,7 @@ module DeviseTokenAuth::Url
   end
 
   def self.whitelisted?(url)
-    !!DeviseTokenAuth.redirect_whitelist.find { |pattern| !!Wildcat.new(pattern).match(url) }
+    url.nil? || !!DeviseTokenAuth.redirect_whitelist.find { |pattern| !!Wildcat.new(pattern).match(url) }
   end
 
 

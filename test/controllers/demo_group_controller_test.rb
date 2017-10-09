@@ -74,6 +74,10 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
           it 'should define member_signed_in?' do
             assert @controller.current_members.include? @resource
           end
+
+          it 'should define render_authenticate_error' do
+            assert @controller.methods.include?(:render_authenticate_error)
+          end
         end
       end
 
@@ -118,6 +122,10 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
           it 'should define member_signed_in?' do
             assert @controller.current_members.include? @mang
           end
+
+          it 'should define render_authenticate_error' do
+            assert @controller.methods.include?(:render_authenticate_error)
+          end
         end
       end
 
@@ -132,7 +140,7 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
 
         it 'should return error: unauthorized status' do
           assert_equal 401, response.status
-        end      
+        end
       end
     end
   end
