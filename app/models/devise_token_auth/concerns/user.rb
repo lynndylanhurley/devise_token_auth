@@ -88,6 +88,21 @@ module DeviseTokenAuth::Concerns::User
 
       token
     end
+
+    # override devise method to include additional info as opts hash
+    def send_unlock_instructions(opts=nil)
+      raw, enc = Devise.token_generator.generate(self.class, :unlock_token)
+      self.unlock_token = enc
+      save(validate: false)
+
+      opts ||= {}
+
+      # fall back to "default" config name
+      opts[:client_config] ||= "default"
+
+      send_devise_notification(:unlock_instructions, raw, opts)
+      raw
+    end
   end
 
   module ClassMethods
