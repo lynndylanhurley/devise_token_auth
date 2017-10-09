@@ -113,6 +113,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
         if @is_batch_request
           auth_header = @resource.extend_batch_buffer(@token, @client_id)
 
+          # update the response header
+          response.headers.merge!(auth_header)
+
         # update Authorization response header with new token
         else
           auth_header = @resource.create_new_auth_token(@client_id)
