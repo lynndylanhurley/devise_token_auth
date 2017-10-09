@@ -99,11 +99,7 @@ module DeviseTokenAuth::Concerns::User
     end
 
     def database_exists?
-      ActiveRecord::Base.connection
-    rescue ActiveRecord::NoDatabaseError
-      false
-    else
-      true
+      ActiveRecord::Base.connection_pool.with_connection { |con| con.active? } rescue false
     end
   end
 
@@ -172,7 +168,7 @@ module DeviseTokenAuth::Concerns::User
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = ::BCrypt::Password.create(token)
-    expiry       = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+    expiry       = (Time.now + token_lifespan).to_i
 
     if self.tokens[client_id] && self.tokens[client_id]['token']
       last_token = self.tokens[client_id]['token']
@@ -238,6 +234,9 @@ module DeviseTokenAuth::Concerns::User
     ])
   end
 
+  def token_lifespan
+    DeviseTokenAuth.token_lifespan
+  end
 
   protected
 

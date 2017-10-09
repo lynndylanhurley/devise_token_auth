@@ -20,7 +20,7 @@ module DeviseTokenAuth
           q_value.downcase!
         end
 
-        q = "#{field.to_s} = ? AND provider='email'"
+        q = "#{field.to_s} = ? AND provider='#{provider}'"
 
         if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
           q = "BINARY " + q
@@ -41,7 +41,7 @@ module DeviseTokenAuth
 
         @resource.tokens[@client_id] = {
           token: BCrypt::Password.create(@token),
-          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          expiry: (Time.now + @resource.token_lifespan).to_i
         }
         @resource.save
 
@@ -142,6 +142,11 @@ module DeviseTokenAuth
       }, status: 404
     end
 
+    protected
+
+    def provider
+      'email'
+    end
 
     private
 

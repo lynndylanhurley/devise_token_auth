@@ -1,3 +1,9 @@
+# Contributors wanted!
+
+See our [Contribution Guidelines](https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/CONTRIBUTING.md). We're making an effort to bring back this gem and fix everything open! Feel free to submit pull requests, review pull requests, or review open issues. If you'd like to get in contact, [Zach Feldman](https://github.com/zachfeldman) has been wrangling this effort, you can reach him with his name @gmail. Further discussion of this in [this issue](https://github.com/lynndylanhurley/devise_token_auth/issues/969).
+
+<hr>
+
 ![Serious Trust](https://github.com/lynndylanhurley/devise_token_auth/raw/master/test/dummy/app/assets/images/logo.jpg "Serious Trust")
 
 [![Gem Version](https://badge.fury.io/rb/devise_token_auth.svg)](http://badge.fury.io/rb/devise_token_auth)
@@ -60,6 +66,7 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [Custom Controller Overrides](#custom-controller-overrides)
   * [Passing blocks to Controllers](#passing-blocks-controllers)
   * [Email Template Overrides](#email-template-overrides)
+  * [Testing](#testing)
 * [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
 * [Conceptual Diagrams](#conceptual)
@@ -140,7 +147,7 @@ The following routes are available for use by your client. These routes live rel
 
 | path | method | purpose |
 |:-----|:-------|:--------|
-| /    | POST   | Email registration. Requires **`email`**, **`password`**, and **`password_confirmation`** params. A verification email will be sent to the email address provided. Accepted params can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. |
+| /    | POST   | Email registration. Requires **`email`**, **`password`**, **`password_confirmation`**, and **`confirm_success_url`** params (this last one can be omitted if you have set `config.default_confirm_success_url` in `config/initializers/devise_token_auth.rb`). A verification email will be sent to the email address provided. Upon clicking the link in the confirmation email, the API will redirect to the URL specified in **`confirm_success_url`**. Accepted params can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. |
 | / | DELETE | Account deletion. This route will destroy users identified by their **`uid`**, **`access-token`** and **`client`** headers. |
 | / | PUT | Account updates. This route will update an existing user's account settings. The default accepted params are **`password`** and **`password_confirmation`**, but this can be customized using the [`devise_parameter_sanitizer`](https://github.com/plataformatec/devise#strong-parameters) system. If **`config.check_current_password_before_update`** is set to `:attributes` the **`current_password`** param is checked before any update, if it is set to `:password` the **`current_password`** param is checked only if the request updates user password. |
 | /sign_in | POST | Email authentication. Requires **`email`** and **`password`** as params. This route will return a JSON representation of the `User` model on successful login along with the `access-token` and `client` in the header of the response. |
@@ -434,7 +441,7 @@ The authentication information should be included by the client in the headers o
 "uid":          "zzzzz"
 ~~~
 
-The authentication headers consists of the following params:
+The authentication headers (each one is a seperate header) consists of the following params:
 
 | param | description |
 |---|---|
@@ -489,7 +496,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   # store client + token in user's token hash
   @resource.tokens[client_id] = {
     token: BCrypt::Password.create(token),
-    expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+    expiry: (Time.now + @resource.token_lifespan).to_i
   }
 
   # generate auth headers for response
@@ -766,18 +773,21 @@ These files may be edited to suit your taste. You can customize the e-mail subje
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.
 
+## Testing
+
+In order to authorise a request when testing your API you will need to pass the four headers through with your request, the easiest way to gain appropriate values for those headers is to use `resource.create_new_auth_token` e.g.
+
+```Ruby
+  request.headers.merge! resource.create_new_auth_token
+  get '/api/authenticated_resource'
+  # success
+```
+
 # Issue Reporting
 
-When posting issues, please include the following information to speed up the troubleshooting process:
+When posting issues, please include the information mentioned in the [ISSUE_TEMPLATE.md].
 
-* **Version**: which version of this gem (and [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker) or [Angular2-Token](https://github.com/neroniaky/angular2-token) if applicable) are you using?
-* **Request and response headers**: these can be found in the "Network" tab of your browser's web inspector.
-* **Rails Stacktrace**: this can be found in the `log/development.log` of your API.
-* **Environmental Info**: How is your application different from the [reference implementation](https://github.com/lynndylanhurley/devise_token_auth_demo)? This may include (but is not limited to) the following details:
-  * **Routes**: are you using some crazy namespace, scope, or constraint?
-  * **Gems**: are you using MongoDB, Grape, RailsApi, ActiveAdmin, etc.?
-  * **Custom Overrides**: what have you done in terms of [custom controller overrides](#custom-controller-overrides)?
-  * **Custom Frontend**: are you using [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth), [jToker](https://github.com/lynndylanhurley/j-toker), [Angular2-Token](https://github.com/neroniaky/angular2-token), or something else?
+[ISSUE_TEMPLATE.md]: https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/ISSUE_TEMPLATE.md
 
 # FAQ
 
@@ -833,6 +843,10 @@ class ApplicationController < ActionController::Base
 end
 ~~~
 
+### How can I use this gem with Grape?
+
+You may be interested in [GrapeTokenAuth](https://github.com/mcordell/grape_token_auth) or [GrapeDeviseTokenAuth](https://github.com/mcordell/grape_devise_token_auth).
+
 # Conceptual
 
 None of the following information is required to use this gem, but read on if you're curious.
@@ -880,7 +894,7 @@ The following diagram details the relationship between the client, server, and a
 
 ![batch request detail](https://github.com/lynndylanhurley/ng-token-auth/raw/master/test/app/images/flow/batch-request-detail.jpg)
 
-Note that when the server identifies that a request is part of a batch request, the user's auth token is not updated. The auth token will be updated for the first request in the batch, and then that same token will be returned in the responses for each subsequent request in the batch (as shown in the diagram).
+Note that when the server identifies that a request is part of a batch request, the user's auth token is not updated. The auth token will be updated and returned with the first request in the batch, and the subsequent requests in the batch will not return a token. This is necessary because the order of the responses cannot be guaranteed to the client, and we need to be sure that the client does not receive an outdated token *after* the the last valid token is returned.
 
 This gem automatically manages batch requests. You can change the time buffer for what is considered a batch request using the `batch_request_buffer_throttle` parameter in `config/initializers/devise_token_auth.rb`.
 
@@ -919,30 +933,9 @@ Thanks to the following contributors:
 
 # Contributing
 
-1. Create a feature branch with your changes.
-2. Write some test cases.
-3. Make all the tests pass.
-4. Issue a pull request.
+See the [CONTRIBUTING.md] document.
 
-I will grant you commit access if you send quality pull requests.
-
-To run the test suite do the following:
-
-1. Clone this repo
-2. Run `bundle install`
-3. Run `rake db:migrate`
-4. Run `RAILS_ENV=test rake db:migrate`
-5. Run `guard`
-
-The last command will open the [guard](https://github.com/guard/guard) test-runner. Guard will re-run each test suite when changes are made to its corresponding files.
-
-To run just one test:
-
-1. Clone this repo
-2. Run `bundle install`
-3. Run `rake db:migrate`
-4. Run `RAILS_ENV=test rake db:migrate`
-5. See this link for various ways to run a single file or a single test: http://flavio.castelli.name/2010/05/28/rails_execute_single_test/
+[CONTRIBUTING.md]: https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/CONTRIBUTING.md
 
 # License
 This project uses the WTFPL
