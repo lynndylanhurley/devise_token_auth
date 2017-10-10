@@ -36,7 +36,7 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
         @resource = lockable_users(:unlocked_user)
       end
 
-      describe 'not email should return 401' do
+      describe 'request unlock without email' do
         before do
           @auth_headers = @resource.create_new_auth_token
           @new_password = Faker::Internet.password
