@@ -853,6 +853,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         assert response.headers["client"]
         assert response.headers["expiry"]
         assert response.headers["uid"]
+        assert response.headers["provider"]
       end
 
       test "response token is valid" do

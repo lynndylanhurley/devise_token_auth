@@ -33,6 +33,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           @resp_client_id   = response.headers['client']
           @resp_expiry      = response.headers['expiry']
           @resp_uid         = response.headers['uid']
+          @resp_provider    = response.headers['provider']
         end
 
         describe 'devise mappings' do
@@ -67,6 +68,10 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
         it "should return the user's uid in the auth header" do
           assert_equal @resource.uid, @resp_uid
+        end
+
+        it "should return the user's provider in the auth header" do
+          assert_equal @resource.provider, @resp_provider
         end
 
         it 'should not treat this request as a batch request' do
@@ -404,6 +409,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           @resp_client_id   = response.headers['client']
           @resp_expiry      = response.headers['expiry']
           @resp_uid         = response.headers['uid']
+          @resp_provider    = response.headers['provider']
         end
 
         describe 'devise mappings' do
@@ -452,6 +458,10 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         it "should return the user's uid in the auth header" do
           assert @resp_uid
         end
+
+        it "should return the user's provider in the auth header" do
+          assert @resp_provider
+        end
       end
 
       describe 'existing Warden authentication with ignored token data' do
@@ -467,6 +477,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           @resp_client_id   = response.headers['client']
           @resp_expiry      = response.headers['expiry']
           @resp_uid         = response.headers['uid']
+          @resp_provider    = response.headers['provider']
         end
 
         describe 'devise mappings' do
@@ -509,6 +520,10 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
         it "should not return the token user's uid in the auth header" do
           refute_equal @resp_uid, @auth_headers['uid']
+        end
+
+        it "should return the user's provider in the auth header" do
+          assert @resp_provider
         end
       end
 
