@@ -55,7 +55,7 @@ module DeviseTokenAuth
 
             @resource.tokens[@client_id] = {
               token: BCrypt::Password.create(@token),
-              expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+              expiry: (Time.now + @resource.token_lifespan).to_i
             }
 
             @resource.save!
@@ -186,7 +186,7 @@ module DeviseTokenAuth
     def resource_update_method
       if DeviseTokenAuth.check_current_password_before_update == :attributes
         "update_with_password"
-      elsif DeviseTokenAuth.check_current_password_before_update == :password and account_update_params.has_key?(:password)
+      elsif DeviseTokenAuth.check_current_password_before_update == :password && account_update_params.has_key?(:password)
         "update_with_password"
       elsif account_update_params.has_key?(:current_password)
         "update_with_password"

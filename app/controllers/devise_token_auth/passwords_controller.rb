@@ -27,21 +27,8 @@ module DeviseTokenAuth
         end
       end
 
-      # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        @email = resource_params[:email].downcase
-      else
-        @email = resource_params[:email]
-      end
-
-      q = "uid = ? AND provider='email'"
-
-      # fix for mysql default case insensitivity
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
-      end
-
-      @resource = resource_class.where(q, @email).first
+      @email = get_case_insensitive_field_from_resource_params(:email)
+      @resource = find_resource(:uid, @email)
 
       @errors = nil
       @error_status = 400
@@ -76,11 +63,11 @@ module DeviseTokenAuth
         reset_password_token: resource_params[:reset_password_token]
       })
 
-      if @resource and @resource.id
+      if @resource && @resource.id
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
-        expiry     = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+        expiry     = (Time.now + @resource.token_lifespan).to_i
 
         @resource.tokens[client_id] = {
           token:  token_hash,
@@ -119,7 +106,7 @@ module DeviseTokenAuth
       end
 
       # ensure that password params were sent
-      unless password_resource_params[:password] and password_resource_params[:password_confirmation]
+      unless password_resource_params[:password] && password_resource_params[:password_confirmation]
         return render_update_error_missing_password
       end
 
@@ -168,7 +155,6 @@ module DeviseTokenAuth
     def render_create_success
       render json: {
         success: true,
-        data: resource_data,
         message: I18n.t("devise_token_auth.passwords.sended", email: @email)
       }
     end
@@ -223,7 +209,7 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token)
+      params.permit(:email, :password, :password_confirmation, :current_password, :reset_password_token, :redirect_url, :config)
     end
 
     def password_resource_params

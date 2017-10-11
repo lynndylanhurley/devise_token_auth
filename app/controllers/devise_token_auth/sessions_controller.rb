@@ -14,29 +14,24 @@ module DeviseTokenAuth
 
       @resource = nil
       if field
-        q_value = resource_params[field]
+        q_value = get_case_insensitive_field_from_resource_params(field)
 
-        if resource_class.case_insensitive_keys.include?(field)
-          q_value.downcase!
-        end
-
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.where(q, q_value).first
+        @resource = find_resource(field, q_value)
       end
 
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
+        valid_password = @resource.valid_password?(resource_params[:password])
+        if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
+          render_create_error_bad_credentials
+          return
+        end
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
 
         @resource.tokens[@client_id] = {
           token: BCrypt::Password.create(@token),
-          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          expiry: (Time.now + @resource.token_lifespan).to_i
         }
         @resource.save
 
@@ -45,7 +40,7 @@ module DeviseTokenAuth
         yield @resource if block_given?
 
         render_create_success
-      elsif @resource and not (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      elsif @resource && !(!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
         render_create_error_not_confirmed
       else
         render_create_error_bad_credentials
@@ -58,7 +53,7 @@ module DeviseTokenAuth
       client_id = remove_instance_variable(:@client_id) if @client_id
       remove_instance_variable(:@token) if @token
 
-      if user and client_id and user.tokens[client_id]
+      if user && client_id && user.tokens[client_id]
         user.tokens.delete(client_id)
         user.save!
 
@@ -137,6 +132,11 @@ module DeviseTokenAuth
       }, status: 404
     end
 
+    protected
+
+    def provider
+      'email'
+    end
 
     private
 

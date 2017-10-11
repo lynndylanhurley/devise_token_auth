@@ -3,7 +3,7 @@ module Overrides
     OVERRIDE_PROOF = "(^^,)"
 
     def create
-      @resource = resource_class.find_by_email(resource_params[:email])
+      @resource = resource_class.find_by(email: resource_params[:email])
 
       if @resource and valid_params?(:email, resource_params[:email]) and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id
@@ -12,7 +12,7 @@ module Overrides
 
         @resource.tokens[@client_id] = {
           token: BCrypt::Password.create(@token),
-          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          expiry: (Time.now + @resource.token_lifespan).to_i
         }
         @resource.save
 

@@ -88,6 +88,21 @@ module DeviseTokenAuth::Concerns::User
 
       token
     end
+
+    # override devise method to include additional info as opts hash
+    def send_unlock_instructions(opts=nil)
+      raw, enc = Devise.token_generator.generate(self.class, :unlock_token)
+      self.unlock_token = enc
+      save(validate: false)
+
+      opts ||= {}
+
+      # fall back to "default" config name
+      opts[:client_config] ||= "default"
+
+      send_devise_notification(:unlock_instructions, raw, opts)
+      raw
+    end
   end
 
   module ClassMethods
@@ -95,7 +110,11 @@ module DeviseTokenAuth::Concerns::User
 
 
     def tokens_has_json_column_type?
-      table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+      database_exists? && table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+    end
+
+    def database_exists?
+      ActiveRecord::Base.connection_pool.with_connection { |con| con.active? } rescue false
     end
   end
 
@@ -127,10 +146,10 @@ module DeviseTokenAuth::Concerns::User
 
     return true if (
       # ensure that expiry and token are set
-      expiry and token and
+      expiry && token &&
 
       # ensure that the token has not yet expired
-      DateTime.strptime(expiry.to_s, '%s') > Time.now and
+      DateTime.strptime(expiry.to_s, '%s') > Time.now &&
 
       # ensure that the token is valid
       DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
@@ -147,10 +166,10 @@ module DeviseTokenAuth::Concerns::User
 
     return true if (
       # ensure that the last token and its creation time exist
-      updated_at and last_token and
+      updated_at && last_token &&
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
+      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
@@ -164,9 +183,9 @@ module DeviseTokenAuth::Concerns::User
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = ::BCrypt::Password.create(token)
-    expiry       = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+    expiry       = (Time.now + token_lifespan).to_i
 
-    if self.tokens[client_id] and self.tokens[client_id]['token']
+    if self.tokens[client_id] && self.tokens[client_id]['token']
       last_token = self.tokens[client_id]['token']
     end
 
@@ -189,7 +208,7 @@ module DeviseTokenAuth::Concerns::User
     expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
 
     max_clients = DeviseTokenAuth.max_number_of_devices
-    while self.tokens.keys.length > 0 and max_clients < self.tokens.keys.length
+    while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
       oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
       self.tokens.delete(oldest_token.first)
     end
@@ -230,6 +249,9 @@ module DeviseTokenAuth::Concerns::User
     ])
   end
 
+  def token_lifespan
+    DeviseTokenAuth.token_lifespan
+  end
 
   protected
 

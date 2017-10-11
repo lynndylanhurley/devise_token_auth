@@ -47,6 +47,10 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           it 'should not define current_mang' do
             refute_equal @resource, @controller.current_mang
           end
+
+          it 'should define render_authenticate_error' do
+            assert @controller.methods.include?(:render_authenticate_error)
+          end
         end
 
         it 'should return success status' do
@@ -197,7 +201,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not return auth headers for second (batched) requests' do
-            refute @second_access_token
+            assert_equal ' ', @second_access_token
           end
         end
 

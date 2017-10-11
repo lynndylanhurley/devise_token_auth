@@ -12,12 +12,15 @@ module ActionDispatch::Routing
       confirmations_ctrl     = opts[:controllers][:confirmations] || "devise_token_auth/confirmations"
       token_validations_ctrl = opts[:controllers][:token_validations] || "devise_token_auth/token_validations"
       omniauth_ctrl          = opts[:controllers][:omniauth_callbacks] || "devise_token_auth/omniauth_callbacks"
+      unlocks_ctrl           = opts[:controllers][:unlocks] || "devise_token_auth/unlocks"
 
       # define devise controller mappings
       controllers = {:sessions           => sessions_ctrl,
                      :registrations      => registrations_ctrl,
                      :passwords          => passwords_ctrl,
                      :confirmations      => confirmations_ctrl}
+
+      controllers[:unlocks] = unlocks_ctrl if unlocks_ctrl
 
       # remove any unwanted devise modules
       opts[:skip].each{|item| controllers.delete(item)}
@@ -54,7 +57,7 @@ module ActionDispatch::Routing
           get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
 
           # omniauth routes. only define if omniauth is installed and not skipped.
-          if defined?(::OmniAuth) and not opts[:skip].include?(:omniauth_callbacks)
+          if defined?(::OmniAuth) && !opts[:skip].include?(:omniauth_callbacks)
             match "#{full_path}/failure",             controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
             match "#{full_path}/:provider/callback",  controller: omniauth_ctrl, action: "omniauth_success", via: [:get]
 
