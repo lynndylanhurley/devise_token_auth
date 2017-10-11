@@ -503,6 +503,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @resource.reload
       end
     end
+
     describe 'unconfirmable user' do
       setup do
         @request.env['devise.mapping'] = Devise.mappings[:unconfirmable_user]

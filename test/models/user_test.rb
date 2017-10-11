@@ -87,7 +87,6 @@ class UserTest < ActiveSupport::TestCase
         @resource.tokens[@client_id]['expiry'] = Time.now.to_i - 10.seconds
         refute @resource.token_is_current?(@token, @client_id)
       end
-
     end
 
     describe 'user specific token lifespan' do

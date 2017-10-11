@@ -12,7 +12,7 @@ module ActionDispatch::Routing
       confirmations_ctrl     = opts[:controllers][:confirmations] || "devise_token_auth/confirmations"
       token_validations_ctrl = opts[:controllers][:token_validations] || "devise_token_auth/token_validations"
       omniauth_ctrl          = opts[:controllers][:omniauth_callbacks] || "devise_token_auth/omniauth_callbacks"
-      unlocks_ctrl           = opts[:controllers][:unlocks]
+      unlocks_ctrl           = opts[:controllers][:unlocks] || "devise_token_auth/unlocks"
 
       # define devise controller mappings
       controllers = {:sessions           => sessions_ctrl,

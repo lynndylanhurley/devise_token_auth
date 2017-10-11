@@ -23,6 +23,10 @@ en:
       password_not_required: "This account does not require a password. Sign in using your '%{provider}' account instead."
       missing_passwords: "You must fill out the fields labeled 'Password' and 'Password confirmation'."
       successfully_updated: "Your password has been successfully updated."
+    unlocks:
+      missing_email: "You must provide an email address."
+      sended: "An email has been sent to '%{email}' containing instructions for unlocking your account."
+      user_not_found: "Unable to find user with email '%{email}'."
   errors:
     messages:
       validate_sign_up_params: "Please submit proper sign up data in request body."

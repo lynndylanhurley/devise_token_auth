@@ -1,5 +1,6 @@
 module DeviseTokenAuth::Concerns::SetUserByToken
   extend ActiveSupport::Concern
+  include DeviseTokenAuth::Concerns::ResourceFinder
   include DeviseTokenAuth::Controllers::Helpers
 
   included do
@@ -75,7 +76,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
   end
 
-
   def update_auth_header
     # cannot save object if model has invalid params
     return unless @resource && @resource.valid? && @client_id
@@ -134,17 +134,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
   end
-
-  def resource_class(m=nil)
-    if m
-      mapping = Devise.mappings[m]
-    else
-      mapping = Devise.mappings[resource_name] || Devise.mappings.values.first
-    end
-
-    mapping.to
-  end
-
 
   private
 
