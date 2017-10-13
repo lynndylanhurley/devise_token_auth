@@ -20,14 +20,18 @@ module DeviseTokenAuth
 
         yield @resource if block_given?
 
-        redirect_to(@resource.build_auth_url(params[:redirect_url], {
+        render json: {
+          account_confirmation_success: true,
           token:                        token,
           client_id:                    client_id,
-          account_confirmation_success: true,
-          config:                       params[:config]
-        }))
+          uid:                          @resource.uid,
+          config:                       params[:config],
+          expiry:                       expiry
+        }
       else
-        raise ActionController::RoutingError.new('Not Found')
+        render json: {
+          account_confirmation_success: false
+        }
       end
     end
   end
