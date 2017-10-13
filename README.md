@@ -921,6 +921,8 @@ But the most important step is to use HTTPS. You are on the hook for that.
 Thanks to the following contributors:
 
 * [@booleanbetrayal](https://github.com/booleanbetrayal)
+* [@zachfeldman](https://github.com/zachfeldman)
+* [@MaicolBen](https://github.com/MaicolBen)
 * [@guilhermesimoes](https://github.com/guilhermesimoes)
 * [@jasonswett](https://github.com/jasonswett)
 * [@m2omou](https://github.com/m2omou)
