@@ -35,11 +35,11 @@ module DeviseTokenAuth
   self.enable_standard_devise_support       = false
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
-  self.headers_names                        = {:'access-token' => 'access-token',
-                                               :'client' => 'client',
-                                               :'expiry' => 'expiry',
-                                               :'uid' => 'uid',
-                                               :'token-type' => 'token-type' }
+  self.headers_names                        = {:'access-token' => 'Access-Token',
+                                               :'client' => 'Client',
+                                               :'expiry' => 'Expiry',
+                                               :'uid' => 'Uid',
+                                               :'token-type' => 'Token-Type' }
 
   def self.setup(&block)
     yield self
