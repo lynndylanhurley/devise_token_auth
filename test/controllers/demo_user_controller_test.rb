@@ -263,7 +263,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not treat first request as batch request' do
-            refute @secord_is_batch_request
+            refute @second_is_batch_request
           end
 
           it 'should return auth headers from the first request' do
@@ -271,7 +271,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not treat second request as batch request' do
-            refute @secord_is_batch_request
+            refute @second_is_batch_request
           end
 
           it 'should not return auth headers from the second request' do
