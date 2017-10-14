@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateScopedUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateScopedUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:scoped_users) do |t|
       ## Required

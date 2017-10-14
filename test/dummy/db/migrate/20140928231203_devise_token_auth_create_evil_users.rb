@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateEvilUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateEvilUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:evil_users) do |t|
       ## Database authenticatable

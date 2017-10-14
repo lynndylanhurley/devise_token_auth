@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateNiceUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateNiceUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:nice_users) do |t|
       ## Required

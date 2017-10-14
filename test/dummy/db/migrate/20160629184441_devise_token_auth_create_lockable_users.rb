@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateLockableUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateLockableUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:lockable_users) do |t|
       ## Required
