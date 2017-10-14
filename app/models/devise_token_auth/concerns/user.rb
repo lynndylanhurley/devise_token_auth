@@ -60,6 +60,11 @@ module DeviseTokenAuth::Concerns::User
       false
     end
 
+    def password_required?
+      return false unless provider == 'email'
+      super
+    end
+
     # override devise method to include additional info as opts hash
     def send_confirmation_instructions(opts=nil)
       unless @raw_confirmation_token
