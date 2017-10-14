@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateUnconfirmableUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateUnconfirmableUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:unconfirmable_users) do |t|
       ## Required

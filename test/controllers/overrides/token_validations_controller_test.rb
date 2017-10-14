@@ -22,17 +22,20 @@ class Overrides::TokenValidationsControllerTest < ActionDispatch::IntegrationTes
       # ensure that request is not treated as batch request
       age_token(@resource, @client_id)
 
-      get '/evil_user_auth/validate_token', {}, @auth_headers
+      get '/evil_user_auth/validate_token',
+          params: {},
+          headers: @auth_headers
 
       @resp = JSON.parse(response.body)
     end
 
-    test "token valid" do
+    test 'token valid' do
       assert_equal 200, response.status
     end
 
-    test "controller was overridden" do
-      assert_equal Overrides::TokenValidationsController::OVERRIDE_PROOF, @resp["override_proof"]
+    test 'controller was overridden' do
+      assert_equal Overrides::TokenValidationsController::OVERRIDE_PROOF,
+                   @resp['override_proof']
     end
   end
 end

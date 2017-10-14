@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 # Declare your gem's dependencies in devise_token_auth.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
@@ -14,34 +14,35 @@ gemspec
 # gem 'debugger'
 
 group :development, :test do
-  gem 'thor'
-  gem "figaro",                 :git => 'https://github.com/laserlemon/figaro'
-  gem 'omniauth-github',        :git => 'https://github.com/intridea/omniauth-github'
-  gem 'omniauth-facebook',      :git => 'https://github.com/mkdynamic/omniauth-facebook'
-  gem 'omniauth-google-oauth2', :git => 'https://github.com/zquestz/omniauth-google-oauth2'
-  gem 'rack-cors',              :require => 'rack/cors'
   gem 'attr_encrypted'
+  gem 'figaro', git: 'https://github.com/laserlemon/figaro'
+  gem 'omniauth-facebook', git: 'https://github.com/mkdynamic/omniauth-facebook'
+  gem 'omniauth-github',        git: 'https://github.com/intridea/omniauth-github'
+  gem 'omniauth-google-oauth2', git: 'https://github.com/zquestz/omniauth-google-oauth2'
+  gem 'rack-cors', require: 'rack/cors'
+  gem 'thor'
 
   # testing
-  #gem 'spring'
-  gem "pry"
-  gem "pry-remote"
-  gem 'minitest'
-  gem 'minitest-rails'
-  gem 'minitest-focus'
-  gem 'minitest-reporters'
-  gem 'guard'
-  gem 'guard-minitest'
+  # gem 'spring'
   gem 'faker'
   gem 'fuzz_ball'
+  gem 'guard'
+  gem 'guard-minitest'
+  gem 'minitest'
+  gem 'minitest-focus'
+  gem 'minitest-rails'
+  gem 'minitest-reporters'
   gem 'mocha'
+  gem 'pry'
+  gem 'pry-remote'
 end
 
 # code coverage, metrics
 group :test do
-  gem "codeclimate-test-reporter", require: nil
+  gem 'codeclimate-test-reporter', require: nil
+  gem 'rails-controller-testing'
 end
 
 group :development do
-  gem "github_changelog_generator"
+  gem 'github_changelog_generator'
 end

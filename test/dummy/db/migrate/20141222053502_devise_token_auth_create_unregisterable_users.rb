@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateUnregisterableUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateUnregisterableUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:unregisterable_users) do |t|
       ## Required
