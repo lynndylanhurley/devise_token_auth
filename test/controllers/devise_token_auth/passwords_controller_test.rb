@@ -323,6 +323,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             get :edit, params: { reset_password_token: @mail_reset_token,
                                  redirect_url: @mail_redirect_url }
 
+            @resource.reload
+            @allow_password_change_after_reset = @resource.allow_password_change
+
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
@@ -331,12 +334,17 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
                                    password_confirmation: @new_password }
 
             @data = JSON.parse(response.body)
+            @resource.reload
             @allow_password_change = @resource.allow_password_change
             @resource.reload
           end
 
           test 'request should be successful' do
             assert_equal 200, response.status
+          end
+
+          test 'changes allow_password_change to true on reset' do
+            assert_equal true, @allow_password_change_after_reset
           end
 
           test 'sets allow_password_change false' do
