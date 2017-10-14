@@ -56,6 +56,10 @@ module DeviseTokenAuth::Concerns::User
       false
     end
 
+    def will_save_change_to_email?
+      false
+    end
+
     # override devise method to include additional info as opts hash
     def send_confirmation_instructions(opts=nil)
       unless @raw_confirmation_token
