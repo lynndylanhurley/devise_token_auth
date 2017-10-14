@@ -14,6 +14,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   def set_request_start
     @request_started_at = Time.now
     @used_auth_by_token = true
+
+    # initialize instance variables
+    @client_id = nil
+    @resource = nil
+    @token = nil
+    @is_batch_request = nil
   end
 
   # user auth
@@ -24,7 +30,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # no default user defined
     return unless rc
 
-    #gets the headers names, which was set in the initialize file
+    # gets the headers names, which was set in the initialize file
     uid_name = DeviseTokenAuth.headers_names[:'uid']
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
@@ -78,7 +84,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless @resource && @resource.valid? && @client_id
+    return unless defined?(@resource) && @resource && @resource.valid? && @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
