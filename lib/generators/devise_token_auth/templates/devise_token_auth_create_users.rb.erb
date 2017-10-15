@@ -1,4 +1,4 @@
-class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration<%= '[' << Rails::VERSION::STRING[0..2] << ']'%>
+class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration<%= "[#{Rails::VERSION::STRING[0..2]}]" if Rails::VERSION::MAJOR > 4 %>
   def change
     create_table(:<%= user_class.pluralize.underscore %>) do |t|
       ## Required
@@ -11,6 +11,7 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
+      t.boolean  :allow_password_change, :default => false
 
       ## Rememberable
       t.datetime :remember_created_at

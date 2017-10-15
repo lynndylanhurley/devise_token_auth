@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 # Declare your gem's dependencies in devise_token_auth.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
@@ -24,25 +24,26 @@ group :development, :test do
   gem 'attr_encrypted'
 
   # testing
-  #gem 'spring'
-  gem "pry"
-  gem "pry-remote"
-  gem 'minitest'
-  gem 'minitest-rails'
-  gem 'minitest-focus'
-  gem 'minitest-reporters'
-  gem 'guard'
-  gem 'guard-minitest'
+  # gem 'spring'
   gem 'faker'
   gem 'fuzz_ball'
+  gem 'guard'
+  gem 'guard-minitest'
+  gem 'minitest'
+  gem 'minitest-focus'
+  gem 'minitest-rails'
+  gem 'minitest-reporters'
   gem 'mocha'
+  gem 'pry'
+  gem 'pry-remote'
 end
 
 # code coverage, metrics
 group :test do
-  gem "codeclimate-test-reporter", require: nil
+  gem 'codeclimate-test-reporter', require: nil
+  gem 'rails-controller-testing'
 end
 
 group :development do
-  gem "github_changelog_generator"
+  gem 'github_changelog_generator'
 end

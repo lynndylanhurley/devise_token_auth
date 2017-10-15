@@ -1,5 +1,5 @@
 class AuthOriginController < ApplicationController
   def redirected
-    render :nothing => true
+    head :ok
   end
 end

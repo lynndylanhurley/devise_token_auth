@@ -31,7 +31,7 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
       Devise.unlock_strategy = @original_unlock_strategy
     end
 
-    describe "Unlocking user" do
+    describe 'Unlocking user' do
       before do
         @resource = lockable_users(:unlocked_user)
       end
@@ -41,7 +41,7 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
           @auth_headers = @resource.create_new_auth_token
           @new_password = Faker::Internet.password
 
-          xhr :post, :create, {}
+          post :create
           @data = JSON.parse(response.body)
         end
 
@@ -49,17 +49,15 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
           assert_equal 401, response.status
         end
         test 'error message should be returned' do
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_email")]
+          assert @data['errors']
+          assert_equal @data['errors'], [I18n.t('devise_token_auth.passwords.missing_email')]
         end
       end
 
       describe 'request unlock' do
         describe 'unknown user should return 404' do
           before do
-            xhr :post, :create, {
-              email:        'chester@cheet.ah'
-            }
+            post :create, params: { email: 'chester@cheet.ah' }
             @data = JSON.parse(response.body)
           end
           test 'unknown user should return 404' do
@@ -67,30 +65,28 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
           end
 
           test 'errors should be returned' do
-            assert @data["errors"]
-            assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')]
+            assert @data['errors']
+            assert_equal @data['errors'],
+                         [I18n.t('devise_token_auth.passwords.user_not_found',
+                                 email: 'chester@cheet.ah')]
           end
         end
 
         describe 'successfully requested unlock' do
           before do
-            xhr :post, :create, {
-              email:        @resource.email
-            }
+            post :create, params: { email: @resource.email }
 
             @data = JSON.parse(response.body)
           end
 
           test 'response should not contain extra data' do
-            assert_nil @data["data"]
+            assert_nil @data['data']
           end
         end
 
         describe 'case-sensitive email' do
           before do
-            xhr :post, :create, {
-              email:        @resource.email
-            }
+            post :create, params: { email: @resource.email }
 
             @mail = ActionMailer::Base.deliveries.last
             @resource.reload
@@ -105,7 +101,7 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
           end
 
           test 'response should contains message' do
-            assert_equal @data["message"], I18n.t("devise_token_auth.unlocks.sended", email: @resource.email)
+            assert_equal @data['message'], I18n.t('devise_token_auth.unlocks.sended', email: @resource.email)
           end
 
           test 'action should send an email' do
@@ -127,30 +123,26 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
 
           describe 'unlock link failure' do
             test 'response should return 404' do
-              assert_raises(ActionController::RoutingError) {
-                xhr :get, :show, {
-                  unlock_token: "bogus"
-                }
-              }
+              assert_raises(ActionController::RoutingError) do
+                get :show, params: { unlock_token: 'bogus' }
+              end
             end
           end
 
           describe 'password reset link success' do
             before do
-              xhr :get, :show, {
-                unlock_token: @mail_reset_token
-              }
+              get :show, params: { unlock_token: @mail_reset_token }
 
               @resource.reload
 
               raw_qs = response.location.split('?')[1]
               @qs = Rack::Utils.parse_nested_query(raw_qs)
 
-              @client_id      = @qs["client_id"]
-              @expiry         = @qs["expiry"]
-              @unlock         = @qs["unlock"]
-              @token          = @qs["token"]
-              @uid            = @qs["uid"]
+              @client_id      = @qs['client_id']
+              @expiry         = @qs['expiry']
+              @unlock         = @qs['unlock']
+              @token          = @qs['token']
+              @uid            = @qs['uid']
             end
 
             test 'respones should have success redirect status' do
@@ -181,13 +173,13 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
 
           test 'response should return success status if configured' do
             @resource_class.case_insensitive_keys = [:email]
-            xhr :post, :create, @request_params
+            post :create, params: @request_params
             assert_equal 200, response.status
           end
 
           test 'response should return failure status if not configured' do
             @resource_class.case_insensitive_keys = []
-            xhr :post, :create, @request_params
+            post :create, params: @request_params
             assert_equal 404, response.status
           end
         end
