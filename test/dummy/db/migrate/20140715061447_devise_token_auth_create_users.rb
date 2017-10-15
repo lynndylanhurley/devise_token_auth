@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:users) do |t|
       ## Database authenticatable
@@ -11,6 +11,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
       t.string   :reset_password_redirect_url
+      t.boolean  :allow_password_change, :default => false
 
       ## Rememberable
       t.datetime :remember_created_at

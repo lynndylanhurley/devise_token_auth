@@ -8,7 +8,7 @@ require 'test_helper'
 
 class DemoMangControllerTest < ActionDispatch::IntegrationTest
   describe DemoMangController do
-    describe "Token access" do
+    describe 'Token access' do
       before do
         @resource = mangs(:confirmed_email_user)
         @resource.skip_confirmation!
@@ -26,7 +26,9 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           # ensure that request is not treated as batch request
           age_token(@resource, @client_id)
 
-          get '/demo/members_only_mang', {}, @auth_headers
+          get '/demo/members_only_mang',
+              params: {},
+              headers: @auth_headers
 
           @resp_token       = response.headers['access-token']
           @resp_client_id   = response.headers['client']
@@ -78,14 +80,16 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
             # ensure that request is not treated as batch request
             age_token(@resource, @client_id)
 
-            get '/demo/members_only_mang', {}, @auth_headers.merge({'access-token' => @resp_token})
+            get '/demo/members_only_mang',
+                params: {},
+                headers: @auth_headers.merge('access-token' => @resp_token)
           end
 
           it 'should not treat this request as a batch request' do
             refute assigns(:is_batch_request)
           end
 
-          it "should allow a new request to be made using new token" do
+          it 'should allow a new request to be made using new token' do
             assert_equal 200, response.status
           end
         end
@@ -93,7 +97,9 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
 
       describe 'failed request' do
         before do
-          get '/demo/members_only_mang', {}, @auth_headers.merge({'access-token' => "bogus"})
+          get '/demo/members_only_mang',
+              params: {},
+              headers: @auth_headers.merge('access-token' => 'bogus')
         end
 
         it 'should not return any auth headers' do
@@ -111,7 +117,9 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           @resource.reload
           age_token(@resource, @client_id)
 
-          get '/demo/members_only_mang', {}, @auth_headers
+          get '/demo/members_only_mang',
+              params: {},
+              headers: @auth_headers
 
           @first_is_batch_request = assigns(:is_batch_request)
           @first_user = assigns(:resource).dup
@@ -122,7 +130,9 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           age_token(@resource, @client_id)
 
           # use expired auth header
-          get '/demo/members_only_mang', {}, @auth_headers
+          get '/demo/members_only_mang',
+              params: {},
+              headers: @auth_headers
 
           @second_is_batch_request = assigns(:is_batch_request)
           @second_user = assigns(:resource).dup
@@ -168,15 +178,19 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
         describe 'success' do
           before do
             age_token(@resource, @client_id)
-            #request.headers.merge!(@auth_headers)
+            # request.headers.merge!(@auth_headers)
 
-            get '/demo/members_only_mang', {}, @auth_headers
+            get '/demo/members_only_mang',
+                params: {},
+                headers: @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:resource)
             @first_access_token = response.headers['access-token']
 
-            get '/demo/members_only_mang', {}, @auth_headers
+            get '/demo/members_only_mang',
+                params: {},
+                headers: @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:resource)
@@ -209,7 +223,9 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
             @resource.reload
             age_token(@resource, @client_id)
 
-            get '/demo/members_only_mang', {}, @auth_headers
+            get '/demo/members_only_mang',
+                params: {},
+                headers: @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:resource).dup
@@ -220,7 +236,9 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
             age_token(@resource, @client_id)
 
             # use expired auth header
-            get '/demo/members_only_mang', {}, @auth_headers
+            get '/demo/members_only_mang',
+                params: {},
+                headers: @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:resource)
@@ -237,7 +255,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not treat first request as batch request' do
-            refute @secord_is_batch_request
+            refute @second_is_batch_request
           end
 
           it 'should return auth headers from the first request' do
@@ -245,7 +263,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not treat second request as batch request' do
-            refute @secord_is_batch_request
+            refute @second_is_batch_request
           end
 
           it 'should not return auth headers from the second request' do
