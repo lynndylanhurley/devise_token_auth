@@ -81,6 +81,7 @@ module DeviseTokenAuth
         @resource.allow_password_change = true;
 
         @resource.save!
+
         yield @resource if block_given?
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
@@ -112,6 +113,7 @@ module DeviseTokenAuth
 
       if @resource.send(resource_update_method, password_resource_params)
         @resource.allow_password_change = false
+        @resource.save!
 
         yield @resource if block_given?
         return render_update_success

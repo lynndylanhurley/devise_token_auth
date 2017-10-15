@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateUnconfirmableUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateUnconfirmableUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:unconfirmable_users) do |t|
       ## Required
@@ -13,6 +13,7 @@ class DeviseTokenAuthCreateUnconfirmableUsers < ActiveRecord::Migration
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
+      t.boolean  :allow_password_change, :default => false
 
       ## Rememberable
       t.datetime :remember_created_at

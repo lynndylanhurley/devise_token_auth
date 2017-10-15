@@ -12,18 +12,17 @@ class Overrides::RegistrationsControllerTest < ActionDispatch::IntegrationTest
       @existing_user  = evil_users(:confirmed_email_user)
       @auth_headers   = @existing_user.create_new_auth_token
       @client_id      = @auth_headers['client']
-      @favorite_color = "pink"
-
+      @favorite_color = 'pink'
 
       # ensure request is not treated as batch request
       age_token(@existing_user, @client_id)
 
       # test valid update param
-      @new_operating_thetan = 1000000
+      @new_operating_thetan = 1_000_000
 
-      put '/evil_user_auth', {
-        favorite_color: @favorite_color
-      }, @auth_headers
+      put '/evil_user_auth',
+          params: { favorite_color: @favorite_color },
+          headers: @auth_headers
 
       @data = JSON.parse(response.body)
       @existing_user.reload
@@ -34,7 +33,8 @@ class Overrides::RegistrationsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test 'controller was overridden' do
-      assert_equal Overrides::RegistrationsController::OVERRIDE_PROOF, @data["override_proof"]
+      assert_equal Overrides::RegistrationsController::OVERRIDE_PROOF,
+                   @data['override_proof']
     end
   end
 end
