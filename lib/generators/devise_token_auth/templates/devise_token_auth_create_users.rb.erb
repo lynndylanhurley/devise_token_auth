@@ -43,6 +43,16 @@ class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration
       ## Tokens
       <%= json_supported_database? ? 't.json :tokens' : 't.text :tokens' %>
 
+      reversible do |direction|
+        direction.up do
+          <%= user_class %>.find_each do |auth|
+            auth.uid = auth.email
+            auth.tokens = nil
+            auth.save!
+          end
+        end
+      end
+
       t.timestamps
     end
 
