@@ -59,11 +59,12 @@ module DeviseTokenAuth
 
     # this is where users arrive after visiting the password reset confirmation link
     def edit
-      @resource = resource_class.reset_password_by_token({
-        reset_password_token: resource_params[:reset_password_token]
-      })
+      # if a user is not found, return nil
+      @resource = resource_class.with_reset_password_token(
+        resource_params[:reset_password_token]
+      )
 
-      if @resource && @resource.id
+      if @resource
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
