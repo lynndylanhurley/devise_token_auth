@@ -166,7 +166,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               @uid            = @qs['uid']
             end
 
-            test 'respones should have success redirect status' do
+            test 'response should have success redirect status' do
               assert_equal 302, response.status
             end
 

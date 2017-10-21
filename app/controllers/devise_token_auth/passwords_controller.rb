@@ -30,9 +30,6 @@ module DeviseTokenAuth
       @email = get_case_insensitive_field_from_resource_params(:email)
       @resource = find_resource(:uid, @email)
 
-      @errors = nil
-      @error_status = 400
-
       if @resource
         yield @resource if block_given?
         @resource.send_reset_password_instructions({
@@ -45,15 +42,10 @@ module DeviseTokenAuth
         if @resource.errors.empty?
           return render_create_success
         else
-          @errors = @resource.errors
+          render_create_error @resource.errors
         end
       else
-        @errors = [I18n.t("devise_token_auth.passwords.user_not_found", email: @email)]
-        @error_status = 404
-      end
-
-      if @errors
-        return render_create_error
+        render_not_found_error
       end
     end
 
@@ -133,25 +125,20 @@ module DeviseTokenAuth
     end
 
     def render_create_error_missing_email
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_email")]
-      }, status: 401
+      render_error(401, I18n.t("devise_token_auth.passwords.missing_email"))
     end
 
     def render_create_error_missing_redirect_url
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
-      }, status: 401
+      render_error(401, I18n.t("devise_token_auth.passwords.missing_redirect_url"))
     end
 
     def render_create_error_not_allowed_redirect_url
-      render json: {
+      response = {
         status: 'error',
-        data:   resource_data,
-        errors: [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)]
-      }, status: 422
+        data:   resource_data
+      }
+      message = I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @redirect_url)
+      render_error(422, message, response)
     end
 
     def render_create_success
@@ -161,11 +148,11 @@ module DeviseTokenAuth
       }
     end
 
-    def render_create_error
+    def render_create_error(errors)
       render json: {
         success: false,
-        errors: @errors,
-      }, status: @error_status
+        errors: errors,
+      }, status: 400
     end
 
     def render_edit_error
@@ -173,24 +160,15 @@ module DeviseTokenAuth
     end
 
     def render_update_error_unauthorized
-      render json: {
-        success: false,
-        errors: ['Unauthorized']
-      }, status: 401
+      render_error(401, 'Unauthorized')
     end
 
     def render_update_error_password_not_required
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize)]
-      }, status: 422
+      render_error(422, I18n.t("devise_token_auth.passwords.password_not_required", provider: @resource.provider.humanize))
     end
 
     def render_update_error_missing_password
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.passwords.missing_passwords")]
-      }, status: 422
+      render_error(422, I18n.t("devise_token_auth.passwords.missing_passwords"))
     end
 
     def render_update_success
@@ -218,11 +196,16 @@ module DeviseTokenAuth
       params.permit(*params_for_resource(:account_update))
     end
 
+
     def with_reset_password_token token
       recoverable = resource_class.with_reset_password_token(token)
 
       recoverable.reset_password_token = token if recoverable && recoverable.reset_password_token.present?
       recoverable
+    end
+
+    def render_not_found_error
+      render_error(404, I18n.t("devise_token_auth.passwords.user_not_found", email: @email))
     end
   end
 end

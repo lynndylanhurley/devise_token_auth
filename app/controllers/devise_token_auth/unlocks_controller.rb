@@ -12,9 +12,6 @@ module DeviseTokenAuth
       @email = get_case_insensitive_field_from_resource_params(:email)
       @resource = find_resource(:email, @email)
 
-      @errors = nil
-      @error_status = 400
-
       if @resource
         yield @resource if block_given?
 
@@ -27,15 +24,10 @@ module DeviseTokenAuth
         if @resource.errors.empty?
           return render_create_success
         else
-          @errors = @resource.errors
+          render_create_error @resource.errors
         end
       else
-        @errors = [I18n.t("devise_token_auth.unlocks.user_not_found", email: @email)]
-        @error_status = 404
-      end
-
-      if @errors
-        return render_create_error
+        render_not_found_error
       end
     end
 
@@ -74,10 +66,7 @@ module DeviseTokenAuth
     end
 
     def render_create_error_missing_email
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.unlocks.missing_email")]
-      }, status: 401
+      render_error(401, I18n.t("devise_token_auth.unlocks.missing_email"))
     end
 
     def render_create_success
@@ -87,15 +76,19 @@ module DeviseTokenAuth
       }
     end
 
-    def render_create_error
+    def render_create_error(errors)
       render json: {
         success: false,
-        errors: @errors,
-      }, status: @error_status
+        errors: errors,
+      }, status: 400
     end
 
     def render_show_error
       raise ActionController::RoutingError.new('Not Found')
+    end
+
+    def render_not_found_error
+      render_error(404, I18n.t("devise_token_auth.unlocks.user_not_found", email: @email))
     end
 
     def resource_params

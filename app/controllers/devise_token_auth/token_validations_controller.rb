@@ -23,10 +23,7 @@ module DeviseTokenAuth
     end
 
     def render_validate_token_error
-      render json: {
-        success: false,
-        errors: [I18n.t("devise_token_auth.token_validations.invalid")]
-      }, status: 401
+      render_error(401, I18n.t("devise_token_auth.token_validations.invalid"))
     end
   end
 end
