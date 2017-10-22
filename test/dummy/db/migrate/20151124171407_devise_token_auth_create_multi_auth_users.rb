@@ -47,6 +47,7 @@ class DeviseTokenAuthCreateMultiAuthUsers < ActiveRecord::Migration[4.2]
 
       # Omniauthable
       t.string :provider
+      t.string :uid
 
       ## Tokens
       if json_supported_database?

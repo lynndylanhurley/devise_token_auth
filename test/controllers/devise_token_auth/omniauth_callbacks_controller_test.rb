@@ -155,6 +155,16 @@ class OmniauthTest < ActionDispatch::IntegrationTest
           User.any_instance.expects(:new_record?).returns(true).at_least_once
         end
         test 'registers the new user' do
+          # setup do
+            OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new(
+              provider: 'facebook',
+              uid: '123545',
+              info: {
+                name: 'chong',
+                email: 'chongbong2@aol.com'
+              }
+            )
+          # end
           user_count = User.count
 
           get '/auth/facebook', params: {
@@ -222,9 +232,9 @@ class OmniauthTest < ActionDispatch::IntegrationTest
           follow_all_redirects!
 
           data = get_parsed_data_json
-          refute_match(/"oauth_registration":true/, data['oauth_registration'])
-          assert_match(/"email":"#{@user.email}"/, data['email'])
-          assert_match(/"id":#{@user.id}/, data['id'])
+          assert_equal(false, data['oauth_registration'])
+          assert_equal(@user.email, data['email'])
+          assert_equal(@user.id, data['id'])
         end
       end
     end
