@@ -1,4 +1,4 @@
-class DeviseTokenAuthCreateCreateFacebookUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateCreateFacebookUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :facebook_users do |t|
       t.integer :facebook_id

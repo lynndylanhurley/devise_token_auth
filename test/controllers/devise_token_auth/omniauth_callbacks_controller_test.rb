@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'mocha/test_unit'
+require 'uri'
 
 #  was the web request successful?
 #  was the user redirected to the right page?
@@ -156,19 +157,23 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         test 'registers the new user' do
           user_count = User.count
 
-          get_via_redirect '/auth/facebook', {
+          get '/auth/facebook', params: {
             auth_origin_url: @redirect_url,
             omniauth_window_type: 'newWindow'
           }
+
+          follow_redirect!
 
           assert_equal(user_count + 1, User.count)
         end
 
         test 'response contains correct attributes' do
-          get_via_redirect '/auth/facebook', {
+          get '/auth/facebook', params: {
             auth_origin_url: @redirect_url,
             omniauth_window_type: 'newWindow'
           }
+
+          follow_redirect!
 
           assert_match(/"oauth_registration":true/, response.body)
           assert_match(/"email":"chongbong@aol.com"/, response.body)
@@ -197,20 +202,29 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         test 'does not register a new user' do
           user_count = User.count
 
+          get '/auth/facebook', params: {
+            auth_origin_url: @redirect_url,
+            omniauth_window_type: 'newWindow'
+          }
+
           follow_all_redirects!
 
           assert_equal(user_count, User.count)
         end
 
         test 'response contains correct attributes' do
-          get_via_redirect '/auth/facebook', {
+
+          get '/auth/facebook', params: {
             auth_origin_url: @redirect_url,
             omniauth_window_type: 'newWindow'
           }
 
-          refute_match(/"oauth_registration":true/, response.body)
-          assert_match(/"email":"#{@user.email}"/, response.body)
-          assert_match(/"id":#{@user.id}/, response.body)
+          follow_all_redirects!
+
+          data = get_parsed_data_json
+          refute_match(/"oauth_registration":true/, data['oauth_registration'])
+          assert_match(/"email":"#{@user.email}"/, data['email'])
+          assert_match(/"id":#{@user.id}/, data['id'])
         end
       end
     end

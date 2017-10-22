@@ -29,7 +29,7 @@ module DeviseTokenAuth
 
       @email = get_case_insensitive_field_from_resource_params(:email)
 
-      field = resource_class.authentication_field_for(resource_params.keys.map(&:to_sym))f
+      field = resource_class.authentication_field_for(resource_params.keys.map(&:to_sym))
 
       @resource = resource_class.find_resource(resource_params[field], field) if field
       @errors = nil

@@ -67,6 +67,10 @@ module DeviseTokenAuth
 
     protected
 
+    def valid_params?(key, val)
+      resource_params[:password] && key && val
+    end
+
     def get_auth_params
       auth_key = nil
       auth_val = nil

@@ -1,6 +1,6 @@
 include MigrationDatabaseHelper
 
-class DeviseTokenAuthCreateMultiAuthUsers < ActiveRecord::Migration
+class DeviseTokenAuthCreateMultiAuthUsers < ActiveRecord::Migration[4.2]
   # This was largely copied from DeviseTokenAuthCreateUsers
 
   def change
@@ -44,6 +44,9 @@ class DeviseTokenAuthCreateMultiAuthUsers < ActiveRecord::Migration
       ## Identifiers used for allowing users to authenticate multiple ways
       t.integer :twitter_id
       t.integer :facebook_user_id
+
+      # Omniauthable
+      t.string :provider
 
       ## Tokens
       if json_supported_database?

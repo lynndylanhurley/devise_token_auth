@@ -77,9 +77,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # multiple devise models such as Admin?
       # sign_in with bypass: true will be deprecated in the next version of Devise
       if self.respond_to? :bypass_sign_in
-        bypass_sign_in(user, scope: :user)
+        bypass_sign_in(resource, scope: rc.to_s.downcase.to_sym)
       else
-        sign_in(:user, user, store: false, bypass: true)
+        sign_in(rc.to_s.downcase.to_sym, resource, store: false, bypass: true)
       end
       return @resource = resource
     else
