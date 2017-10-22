@@ -124,6 +124,9 @@ ActiveRecord::Schema.define(version: 20160629184441) do
     t.text "tokens"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string "email"
+    t.string "provider"
+    t.string "uid"
     t.index ["confirmation_token"], name: "index_multi_auth_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_multi_auth_users_on_email"
     t.index ["facebook_user_id"], name: "index_multi_auth_users_on_facebook_user_id", unique: true

@@ -44,13 +44,15 @@ class MultiAuthUserTest < ActiveSupport::TestCase
         @resource = MultiAuthUser.create!(
           email:                 email,
           password:              'somepassword',
-          password_confirmation: 'somepassword'
+          password_confirmation: 'somepassword',
+          uid: email
         )
 
         @new_resource = MultiAuthUser.new(
           email:                 @resource.email,
           password:              'anotherpassword',
-          password_confirmation: 'anotherpassword'
+          password_confirmation: 'anotherpassword',
+          uid: email
         )
       end
 
