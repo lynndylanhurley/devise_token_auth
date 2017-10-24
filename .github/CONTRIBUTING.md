@@ -28,4 +28,4 @@ bundle exec guard
 
 Guard will re-run each test suite when changes are made to its corresponding files.
 
-To run **just one test**: Flavio Castelli blogged about [how to execute a single unit test (or even a single test method)](https://webcache.googleusercontent.com/search?q=cache:lVNaE5lsPq0J:http://flavio.castelli.name/2010/05/28/rails_execute_single_test%2Bflavio.castelli.name/2010/05/28/rails_execute_single_test+!g&num=1&hl=en&strip=1&vwsrc=0) instead of running the complete unit test suite.
+To run **just one test**: Flavio Castelli blogged about [how to execute a single unit test (or even a single test method)](https://flavio.castelli.me/2010/05/28/rails_execute_single_test/) instead of running the complete unit test suite.
