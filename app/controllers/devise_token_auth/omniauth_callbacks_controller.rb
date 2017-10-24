@@ -31,7 +31,7 @@ module DeviseTokenAuth
       set_token_on_resource
       create_auth_params
 
-      if resource_class.devise_modules.include?(:confirmable)
+      if confirmable_enabled?
         # don't send confirmation email!!!
         @resource.skip_confirmation!
       end

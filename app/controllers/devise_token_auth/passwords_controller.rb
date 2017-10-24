@@ -76,10 +76,10 @@ module DeviseTokenAuth
         }
 
         # ensure that user is confirmed
-        @resource.skip_confirmation! if @resource.devise_modules.include?(:confirmable) && !@resource.confirmed_at
+        @resource.skip_confirmation! if confirmable_enabled? && !@resource.confirmed_at
 
         # allow user to change password once without current_password
-        @resource.allow_password_change = true;
+        @resource.allow_password_change = true if recoverable_enabled?
 
         @resource.save!
 
@@ -113,7 +113,7 @@ module DeviseTokenAuth
       end
 
       if @resource.send(resource_update_method, password_resource_params)
-        @resource.allow_password_change = false
+        @resource.allow_password_change = false if recoverable_enabled?
         @resource.save!
 
         yield @resource if block_given?
@@ -126,7 +126,8 @@ module DeviseTokenAuth
     protected
 
     def resource_update_method
-      if DeviseTokenAuth.check_current_password_before_update == false or @resource.allow_password_change == true
+      allow_password_change = recoverable_enabled? && @resource.allow_password_change == true
+      if DeviseTokenAuth.check_current_password_before_update == false || allow_password_change
         "update_attributes"
       else
         "update_with_password"
