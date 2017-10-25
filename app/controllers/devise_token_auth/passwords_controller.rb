@@ -86,12 +86,17 @@ module DeviseTokenAuth
         yield @resource if block_given?
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
-          "access-token": token,
-          client:         client_id,
-          client_id:      client_id,
-          config:         params[:config],
-          reset_password: true,
-          token:          token
+          DeviseTokenAuth.headers_names["access-token"] => token,
+          DeviseTokenAuth.headers_names["client_id"] => client,
+
+          :config => params[:config],
+          :reset_password => true,
+
+          # Legacy parameters which may be removed in a future release.
+          # Consider using "client" and "access-token" in client code.
+          # See: github.com/lynndylanhurley/devise_token_auth/issues/993
+          :client_id => client_id,
+          :token => token
         }))
       else
         render_edit_error

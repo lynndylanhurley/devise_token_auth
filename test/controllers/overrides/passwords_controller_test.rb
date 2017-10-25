@@ -35,8 +35,8 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
       @qs = Rack::Utils.parse_nested_query(raw_qs)
 
       @access_token   = @qs['access-token']
-      @client_id      = @qs['client_id']
       @client         = @qs['client']
+      @client_id      = @qs['client_id']
       @expiry         = @qs['expiry']
       @override_proof = @qs['override_proof']
       @reset_password = @qs['reset_password']
