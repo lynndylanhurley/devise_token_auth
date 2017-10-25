@@ -87,7 +87,7 @@ module DeviseTokenAuth
 
         redirect_to(@resource.build_auth_url(params[:redirect_url], {
           DeviseTokenAuth.headers_names["access-token"] => token,
-          DeviseTokenAuth.headers_names["client_id"] => client,
+          DeviseTokenAuth.headers_names["client_id"] => client_id,
 
           :config => params[:config],
           :reset_password => true,
