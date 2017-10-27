@@ -28,7 +28,7 @@ module DeviseTokenAuth
       end
 
       @email = get_case_insensitive_field_from_resource_params(:email)
-      @resource = find_resource(:uid, @email, provider)
+      @resource = find_resource(:uid, @email)
 
       @errors = nil
       @error_status = 400
