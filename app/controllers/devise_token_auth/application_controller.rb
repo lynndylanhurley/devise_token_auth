@@ -15,10 +15,6 @@ module DeviseTokenAuth
       return @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
     end
 
-    def provider
-      'email'
-    end
-
     protected
 
     def params_for_resource(resource)

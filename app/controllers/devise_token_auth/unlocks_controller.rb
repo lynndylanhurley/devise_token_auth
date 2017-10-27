@@ -10,7 +10,7 @@ module DeviseTokenAuth
       end
 
       @email = get_case_insensitive_field_from_resource_params(:email)
-      @resource = find_resource(:email, @email, 'email')
+      @resource = find_resource(:email, @email)
 
       @errors = nil
       @error_status = 400

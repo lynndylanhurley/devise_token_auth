@@ -16,7 +16,7 @@ module DeviseTokenAuth
       if field
         q_value = get_case_insensitive_field_from_resource_params(field)
 
-        @resource = find_resource(field, q_value, provider)
+        @resource = find_resource(field, q_value)
       end
 
       if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
