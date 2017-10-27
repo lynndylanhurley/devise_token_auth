@@ -157,7 +157,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               raw_qs = response.location.split('?')[1]
               @qs = Rack::Utils.parse_nested_query(raw_qs)
 
+              @access_token   = @qs['access-token']
               @client_id      = @qs['client_id']
+              @client         = @qs['client']
               @expiry         = @qs['expiry']
               @reset_password = @qs['reset_password']
               @token          = @qs['token']
@@ -169,6 +171,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             end
 
             test 'response should contain auth params' do
+              assert @access_token
+              assert @client
               assert @client_id
               assert @expiry
               assert @reset_password
@@ -178,6 +182,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
             test 'response auth params should be valid' do
               assert @resource.valid_token?(@token, @client_id)
+              assert @resource.valid_token?(@access_token, @client)
             end
           end
         end

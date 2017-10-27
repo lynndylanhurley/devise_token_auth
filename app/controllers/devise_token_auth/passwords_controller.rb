@@ -85,12 +85,12 @@ module DeviseTokenAuth
 
         yield @resource if block_given?
 
-        redirect_to(@resource.build_auth_url(params[:redirect_url], {
-          token:          token,
-          client_id:      client_id,
-          reset_password: true,
-          config:         params[:config]
-        }))
+        redirect_header_options = {reset_password: true}
+        redirect_headers = build_redirect_headers(token,
+                                                  client_id,
+                                                  redirect_header_options)
+        redirect_to(@resource.build_auth_url(params[:redirect_url],
+                                             redirect_headers))
       else
         render_edit_error
       end
