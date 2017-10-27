@@ -34,12 +34,14 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
       raw_qs = response.location.split('?')[1]
       @qs = Rack::Utils.parse_nested_query(raw_qs)
 
+      @access_token   = @qs['access-token']
+      @client         = @qs['client']
       @client_id      = @qs['client_id']
       @expiry         = @qs['expiry']
+      @override_proof = @qs['override_proof']
       @reset_password = @qs['reset_password']
       @token          = @qs['token']
       @uid            = @qs['uid']
-      @override_proof = @qs['override_proof']
     end
 
     test 'response should have success redirect status' do
@@ -47,12 +49,14 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test 'response should contain auth params + override proof' do
+      assert @access_token
+      assert @client
       assert @client_id
       assert @expiry
+      assert @override_proof
       assert @reset_password
       assert @token
       assert @uid
-      assert @override_proof
     end
 
     test 'override proof is correct' do

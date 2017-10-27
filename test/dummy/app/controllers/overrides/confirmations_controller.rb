@@ -17,13 +17,17 @@ module Overrides
 
         @resource.save!
 
-        redirect_to(@resource.build_auth_url(params[:redirect_url], {
-          token:                        token,
-          client_id:                    client_id,
+        redirect_header_options = {
           account_confirmation_success: true,
-          config:                       params[:config],
-          override_proof:               "(^^,)"
-        }))
+          config: params[:config],
+          override_proof: "(^^,)"
+        }
+        redirect_headers = build_redirect_headers(token,
+                                                  client_id,
+                                                  redirect_header_options)
+
+        redirect_to(@resource.build_auth_url(params[:redirect_url],
+                                             redirect_headers))
       else
         raise ActionController::RoutingError.new('Not Found')
       end
