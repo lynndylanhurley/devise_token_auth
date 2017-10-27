@@ -12,10 +12,9 @@ module DeviseTokenAuth::Concerns::ResourceFinder
     q_value
   end
 
-  def find_resource(field, value)
+  def find_resource(field, value, provider)
     # fix for mysql default case insensitivity
     q = "#{field.to_s} = ? AND provider='#{provider.to_s}'"
-
     if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
       q = "BINARY " + q
     end
@@ -31,9 +30,5 @@ module DeviseTokenAuth::Concerns::ResourceFinder
     end
 
     mapping.to
-  end
-
-  def provider
-    'email'
   end
 end
