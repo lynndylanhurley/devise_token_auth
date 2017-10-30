@@ -10,6 +10,10 @@ module DeviseTokenAuth
         token_hash = BCrypt::Password.create(token)
         expiry     = (Time.now + @resource.token_lifespan).to_i
 
+        if @resource.sign_in_count > 0
+          expiry = (Time.now + 1.second).to_i
+        end
+
         @resource.tokens[client_id] = {
           token:  token_hash,
           expiry: expiry
