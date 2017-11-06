@@ -14,19 +14,9 @@ module DeviseTokenAuth
 
       @resource = nil
       if field
-        q_value = resource_params[field]
+        q_value = get_case_insensitive_field_from_resource_params(field)
 
-        if resource_class.case_insensitive_keys.include?(field)
-          q_value.downcase!
-        end
-
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.where(q, q_value).first
+        @resource = find_resource(field, q_value)
       end
 
       if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
@@ -41,7 +31,7 @@ module DeviseTokenAuth
 
         @resource.tokens[@client_id] = {
           token: BCrypt::Password.create(@token),
-          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+          expiry: (Time.now + @resource.token_lifespan).to_i
         }
         @resource.save
 
@@ -141,7 +131,6 @@ module DeviseTokenAuth
         errors: [I18n.t("devise_token_auth.sessions.user_not_found")]
       }, status: 404
     end
-
 
     private
 

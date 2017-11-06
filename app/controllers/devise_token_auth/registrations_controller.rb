@@ -7,7 +7,7 @@ module DeviseTokenAuth
 
     def create
       @resource            = resource_class.new(sign_up_params)
-      @resource.provider   = "email"
+      @resource.provider   = provider
 
       # honor devise configuration for case_insensitive_keys
       if resource_class.case_insensitive_keys.include?(:email)
@@ -38,6 +38,10 @@ module DeviseTokenAuth
         # override email confirmation, must be sent manually from ctrl
         resource_class.set_callback("create", :after, :send_on_create_confirmation_instructions)
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        if @resource.respond_to? :skip_confirmation_notification!
+          # Fix duplicate e-mails by disabling Devise confirmation e-mail
+          @resource.skip_confirmation_notification!
+        end
         if @resource.save
           yield @resource if block_given?
 
@@ -55,7 +59,7 @@ module DeviseTokenAuth
 
             @resource.tokens[@client_id] = {
               token: BCrypt::Password.create(@token),
-              expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+              expiry: (Time.now + @resource.token_lifespan).to_i
             }
 
             @resource.save!

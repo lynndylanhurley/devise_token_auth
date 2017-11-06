@@ -8,7 +8,7 @@ require 'test_helper'
 
 class DemoGroupControllerTest < ActionDispatch::IntegrationTest
   describe DemoGroupController do
-    describe "Token access" do
+    describe 'Token access' do
       before do
         # user
         @resource = users(:confirmed_email_user)
@@ -38,7 +38,9 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
           # ensure that request is not treated as batch request
           age_token(@resource, @resource_client_id)
 
-          get '/demo/members_only_group', {}, @resource_auth_headers
+          get '/demo/members_only_group',
+              params: {},
+              headers: @resource_auth_headers
 
           @resp_token       = response.headers['access-token']
           @resp_client_id   = response.headers['client']
@@ -74,6 +76,10 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
           it 'should define member_signed_in?' do
             assert @controller.current_members.include? @resource
           end
+
+          it 'should define render_authenticate_error' do
+            assert @controller.methods.include?(:render_authenticate_error)
+          end
         end
       end
 
@@ -82,7 +88,9 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
           # ensure that request is not treated as batch request
           age_token(@mang, @mang_client_id)
 
-          get '/demo/members_only_group', {}, @mang_auth_headers
+          get '/demo/members_only_group',
+              params: {},
+              headers: @mang_auth_headers
 
           @resp_token       = response.headers['access-token']
           @resp_client_id   = response.headers['client']
@@ -118,12 +126,18 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
           it 'should define member_signed_in?' do
             assert @controller.current_members.include? @mang
           end
+
+          it 'should define render_authenticate_error' do
+            assert @controller.methods.include?(:render_authenticate_error)
+          end
         end
       end
 
       describe 'failed access' do
         before do
-          get '/demo/members_only_group', {}, @mang_auth_headers.merge({'access-token' => "bogus"})
+          get '/demo/members_only_group',
+              params: {},
+              headers: @mang_auth_headers.merge('access-token' => 'bogus')
         end
 
         it 'should not return any auth headers' do
@@ -132,7 +146,7 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
 
         it 'should return error: unauthorized status' do
           assert_equal 401, response.status
-        end      
+        end
       end
     end
   end

@@ -1,5 +1,6 @@
 module DeviseTokenAuth::Concerns::SetUserByToken
   extend ActiveSupport::Concern
+  include DeviseTokenAuth::Concerns::ResourceFinder
   include DeviseTokenAuth::Controllers::Helpers
 
   included do
@@ -13,6 +14,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   def set_request_start
     @request_started_at = Time.now
     @used_auth_by_token = true
+
+    # initialize instance variables
+    @client_id = nil
+    @resource = nil
+    @token = nil
+    @is_batch_request = nil
   end
 
   # user auth
@@ -23,7 +30,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # no default user defined
     return unless rc
 
-    #gets the headers names, which was set in the initialize file
+    # gets the headers names, which was set in the initialize file
     uid_name = DeviseTokenAuth.headers_names[:'uid']
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
@@ -47,7 +54,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     # user has already been found and authenticated
-    return @resource if @resource && @resource.class == rc
+    return @resource if @resource && @resource.is_a?(rc)
 
     # ensure we clear the client_id
     if !@token
@@ -75,10 +82,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
   end
 
-
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless @resource && @resource.valid? && @client_id
+    return unless defined?(@resource) && @resource && @resource.valid? && @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
@@ -113,30 +119,27 @@ module DeviseTokenAuth::Concerns::SetUserByToken
         if @is_batch_request
           auth_header = @resource.extend_batch_buffer(@token, @client_id)
 
+          # Do not return token for batch requests to avoid invalidated
+          # tokens returned to the client in case of race conditions.
+          # Use a blank string for the header to still be present and
+          # being passed in a XHR response in case of
+          # 304 Not Modified responses.
+          auth_header[DeviseTokenAuth.headers_names[:"access-token"]] = ' '
+          auth_header[DeviseTokenAuth.headers_names[:"expiry"]] = ' '
+
         # update Authorization response header with new token
         else
           auth_header = @resource.create_new_auth_token(@client_id)
-
-          # update the response header
-          response.headers.merge!(auth_header)
         end
+
+        # update the response header
+        response.headers.merge!(auth_header)
 
       end # end lock
 
     end
 
   end
-
-  def resource_class(m=nil)
-    if m
-      mapping = Devise.mappings[m]
-    else
-      mapping = Devise.mappings[resource_name] || Devise.mappings.values.first
-    end
-
-    mapping.to
-  end
-
 
   private
 

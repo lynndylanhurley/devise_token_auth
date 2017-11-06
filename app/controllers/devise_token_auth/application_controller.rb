@@ -1,6 +1,7 @@
 module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
+    include DeviseTokenAuth::Concerns::ResourceFinder
 
     def resource_data(opts={})
       response_data = opts[:resource_json] || @resource.as_json
@@ -15,6 +16,20 @@ module DeviseTokenAuth
     end
 
     protected
+
+    def build_redirect_headers(access_token, client, redirect_header_options = {})
+      {
+        DeviseTokenAuth.headers_names[:"access-token"] => access_token,
+        DeviseTokenAuth.headers_names[:"client"] => client,
+        :config => params[:config],
+
+        # Legacy parameters which may be removed in a future release.
+        # Consider using "client" and "access-token" in client code.
+        # See: github.com/lynndylanhurley/devise_token_auth/issues/993
+        :client_id => client,
+        :token => access_token
+      }.merge(redirect_header_options)
+    end
 
     def params_for_resource(resource)
       devise_parameter_sanitizer.instance_values['permitted'][resource].each do |type|

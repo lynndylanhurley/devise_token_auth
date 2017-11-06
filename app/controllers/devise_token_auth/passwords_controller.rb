@@ -27,21 +27,8 @@ module DeviseTokenAuth
         end
       end
 
-      # honor devise configuration for case_insensitive_keys
-      if resource_class.case_insensitive_keys.include?(:email)
-        @email = resource_params[:email].downcase
-      else
-        @email = resource_params[:email]
-      end
-
-      q = "uid = ? AND provider='email'"
-
-      # fix for mysql default case insensitivity
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-        q = "BINARY uid = ? AND provider='email'"
-      end
-
-      @resource = resource_class.where(q, @email).first
+      @email = get_case_insensitive_field_from_resource_params(:email)
+      @resource = find_resource(:uid, @email)
 
       @errors = nil
       @error_status = 400
@@ -72,15 +59,16 @@ module DeviseTokenAuth
 
     # this is where users arrive after visiting the password reset confirmation link
     def edit
-      @resource = resource_class.reset_password_by_token({
-        reset_password_token: resource_params[:reset_password_token]
-      })
+      # if a user is not found, return nil
+      @resource = resource_class.with_reset_password_token(
+        resource_params[:reset_password_token]
+      )
 
-      if @resource && @resource.id
+      if @resource
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)
-        expiry     = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+        expiry     = (Time.now + @resource.token_lifespan).to_i
 
         @resource.tokens[client_id] = {
           token:  token_hash,
@@ -94,14 +82,15 @@ module DeviseTokenAuth
         @resource.allow_password_change = true;
 
         @resource.save!
+
         yield @resource if block_given?
 
-        redirect_to(@resource.build_auth_url(params[:redirect_url], {
-          token:          token,
-          client_id:      client_id,
-          reset_password: true,
-          config:         params[:config]
-        }))
+        redirect_header_options = {reset_password: true}
+        redirect_headers = build_redirect_headers(token,
+                                                  client_id,
+                                                  redirect_header_options)
+        redirect_to(@resource.build_auth_url(params[:redirect_url],
+                                             redirect_headers))
       else
         render_edit_error
       end
@@ -125,6 +114,7 @@ module DeviseTokenAuth
 
       if @resource.send(resource_update_method, password_resource_params)
         @resource.allow_password_change = false
+        @resource.save!
 
         yield @resource if block_given?
         return render_update_success
