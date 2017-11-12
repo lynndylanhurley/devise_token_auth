@@ -1,7 +1,6 @@
 module DeviseTokenAuth::Concerns::SetUserByToken
   extend ActiveSupport::Concern
   include DeviseTokenAuth::Concerns::ResourceFinder
-  include DeviseTokenAuth::Controllers::Helpers
 
   included do
     before_action :set_request_start
