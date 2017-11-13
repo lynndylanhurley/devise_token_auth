@@ -1,7 +1,9 @@
 class DeviseTokenAuthCreate<%= user_class.pluralize %> < ActiveRecord::Migration<%= "[#{Rails::VERSION::STRING[0..2]}]" if Rails::VERSION::MAJOR > 4 %>
   def change
     create_table(:<%= user_class.pluralize.underscore %>) do |t|
-      ## Required
+      ## Required if using single method authentication per resource. See
+      #  "Single vs Multiple authentication methods per resource" in the README
+      #  for more information.
       t.string :provider, :null => false, :default => "email"
       t.string :uid, :null => false, :default => ""
 

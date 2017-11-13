@@ -5,6 +5,8 @@ module DeviseTokenAuth
 
       if @resource && @resource.id
         # create client id
+        #
+        # REVIEW: Why isn't this using resource_class.create_new_auth_token?
         client_id  = SecureRandom.urlsafe_base64(nil, false)
         token      = SecureRandom.urlsafe_base64(nil, false)
         token_hash = BCrypt::Password.create(token)

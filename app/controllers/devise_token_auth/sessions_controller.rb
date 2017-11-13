@@ -9,14 +9,12 @@ module DeviseTokenAuth
     end
 
     def create
-      # Check
-      field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
+      field = resource_class.authentication_field_for(resource_params.keys.map(&:to_sym))
 
-      @resource = nil
       if field
         q_value = get_case_insensitive_field_from_resource_params(field)
 
-        @resource = find_resource(field, q_value)
+        @resource = resource_class.find_resource(resource_params[field], field)
       end
 
       if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
@@ -26,15 +24,17 @@ module DeviseTokenAuth
           return
         end
         # create client id
-        @client_id = SecureRandom.urlsafe_base64(nil, false)
-        @token     = SecureRandom.urlsafe_base64(nil, false)
+        auth_values = @resource.create_new_auth_token(nil, resource_params[field], field)
 
-        @resource.tokens[@client_id] = {
-          token: BCrypt::Password.create(@token),
-          expiry: (Time.now + @resource.token_lifespan).to_i
-        }
-        @resource.save
+        # These instance variables are required when updating the auth headers
+        # at the end of the request, see:
+        #   DeviseTokenAuth::Concerns::SetUserByToken#update_auth_header
+        @token       = auth_values["access-token"]
+        @client_id   = auth_values["client"]
+        @provider    = "email"
+        @provider_id = @resource.email
 
+        # REVIEW: Shouldn't this be a "mapping" option, rather than a :user?
         sign_in(:user, @resource, store: false, bypass: false)
 
         yield @resource if block_given?

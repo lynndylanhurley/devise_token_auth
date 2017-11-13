@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'mocha/test_unit'
+require 'uri'
 
 #  was the web request successful?
 #  was the user redirected to the right page?
@@ -54,7 +55,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
       client_id = controller.auth_params[:client_id]
       token = controller.auth_params[:auth_token]
-      expiry = controller.auth_params[:expiry]
+      expiry = controller.auth_params[:expiry].to_i
 
       # the expiry should have been set
       assert_equal expiry, @resource.tokens[client_id]['expiry']
@@ -144,7 +145,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
     end
 
-    describe 'oauth registration attr' do
+    describe "oauth registration attr" do
       after do
         User.any_instance.unstub(:new_record?)
       end
@@ -153,21 +154,43 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         before do
           User.any_instance.expects(:new_record?).returns(true).at_least_once
         end
+        test 'registers the new user' do
+          user_count = User.count
 
-        test 'response contains oauth_registration attr' do
-          get '/auth/facebook',
-              params: { auth_origin_url: @redirect_url,
-                        omniauth_window_type: 'newWindow' }
+          get '/auth/facebook', params: {
+            auth_origin_url: @redirect_url,
+            omniauth_window_type: 'newWindow'
+          }
 
           follow_all_redirects!
 
-          assert_equal true, controller.auth_params[:oauth_registration]
+          assert_equal(user_count + 1, User.count)
+        end
+
+        test 'response contains correct attributes' do
+          get '/auth/facebook', params: {
+            auth_origin_url: @redirect_url,
+            omniauth_window_type: 'newWindow'
+          }
+
+          follow_all_redirects!
+
+
+          assert_equal(true, data['oauth_registration'])
+          assert_equal('chongbong2@aol.com', data['email'])
+          assert_equal(@user.last.id, data['id'])
         end
       end
 
       describe 'with existing user' do
         before do
-          User.any_instance.expects(:new_record?).returns(false).at_least_once
+          @user = User.create!(
+            provider: 'facebook',
+            uid:      '123545',
+            name:     'chong',
+            email:    'chongbong@aol.com',
+            password: 'somepassword',
+          )
         end
 
         test 'response does not contain oauth_registration attr' do
@@ -175,9 +198,34 @@ class OmniauthTest < ActionDispatch::IntegrationTest
               params: { auth_origin_url: @redirect_url,
                         omniauth_window_type: 'newWindow' }
 
+        end
+
+        test 'does not register a new user' do
+          user_count = User.count
+
+          get '/auth/facebook', params: {
+            auth_origin_url: @redirect_url,
+            omniauth_window_type: 'newWindow'
+          }
+
           follow_all_redirects!
 
-          assert_equal false, controller.auth_params.key?(:oauth_registration)
+          assert_equal(user_count, User.count)
+        end
+
+        test 'response contains correct attributes' do
+
+          get '/auth/facebook', params: {
+            auth_origin_url: @redirect_url,
+            omniauth_window_type: 'newWindow'
+          }
+
+          follow_all_redirects!
+
+          data = get_parsed_data_json
+          assert_equal(nil, data['oauth_registration'])
+          assert_equal(@user.email, data['email'])
+          assert_equal(@user.id, data['id'])
         end
       end
     end

@@ -48,6 +48,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
         @used_auth_by_token = false
         @resource = devise_warden_user
+        # REVIEW: Why are we bothering to create an auth token here? It won't
+        # get used anywhere by the looks of it...?
         @resource.create_new_auth_token
       end
     end
@@ -63,17 +65,22 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     return false unless @token
 
-    # mitigate timing attacks by finding by uid instead of auth token
-    user = uid && rc.find_by(uid: uid)
+    # NOTE: By searching for the user by an identifier instead of by token, we
+    # mitigate timing attacks
+    #
+    @provider_id, @provider = uid.split # e.g. ["12345", "facebook"] or ["bob@home.com", "email"]
+    resource = rc.find_resource(@provider_id, @provider)
 
-    if user && user.valid_token?(@token, @client_id)
+    if resource && resource.valid_token?(@token, @client_id)
+      # REVIEW: why is this looking at :user? Shouldn't it be mapping to handle
+      # multiple devise models such as Admin?
       # sign_in with bypass: true will be deprecated in the next version of Devise
       if self.respond_to? :bypass_sign_in
-        bypass_sign_in(user, scope: :user)
+        bypass_sign_in(resource, scope: rc.to_s.downcase.to_sym)
       else
-        sign_in(:user, user, store: false, bypass: true)
+        sign_in(rc.to_s.downcase.to_sym, resource, store: false, bypass: true)
       end
-      return @resource = user
+      return @resource = resource
     else
       # zero all values previously set values
       @client_id = nil
@@ -93,8 +100,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # cleared by sign out in the meantime
       return if @resource.reload.tokens[@client_id].nil?
 
-      auth_header = @resource.build_auth_header(@token, @client_id)
-
+      auth_header = @resource.build_auth_header(@token, @client_id, @provider_id, @provider)
       # update the response header
       response.headers.merge!(auth_header)
 
@@ -116,7 +122,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
         # extend expiration of batch buffer to account for the duration of
         # this request
         if @is_batch_request
-          auth_header = @resource.extend_batch_buffer(@token, @client_id)
+          auth_header = @resource.extend_batch_buffer(@token, @client_id, @provider_id, @provider)
 
           # Do not return token for batch requests to avoid invalidated
           # tokens returned to the client in case of race conditions.
@@ -128,7 +134,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
         # update Authorization response header with new token
         else
-          auth_header = @resource.create_new_auth_token(@client_id)
+          auth_header = @resource.create_new_auth_token(@client_id, @provider_id, @provider)
+
+          # update the response header
+          response.headers.merge!(auth_header)
         end
 
         # update the response header
