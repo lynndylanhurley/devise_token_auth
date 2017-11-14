@@ -56,5 +56,13 @@ module DeviseTokenAuth
       return ActiveModelSerializers.config.adapter == :json_api
     end
 
+    def recoverable_enabled?
+      resource_class.devise_modules.include?(:recoverable)
+    end
+
+    def confirmable_enabled?
+      resource_class.devise_modules.include?(:confirmable)
+    end
+
   end
 end
