@@ -199,24 +199,14 @@ module DeviseTokenAuth::Concerns::User
       updated_at: Time.now
     }
 
-    return build_auth_header(token, client_id)
+    return update_auth_header(token, client_id)
   end
 
 
   def build_auth_header(token, client_id='default')
-    client_id ||= 'default'
-
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
     expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
-
-    max_clients = DeviseTokenAuth.max_number_of_devices
-    while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
-      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
-      self.tokens.delete(oldest_token.first)
-    end
-
-    self.save!
 
     return {
       DeviseTokenAuth.headers_names[:"access-token"] => token,
@@ -225,6 +215,20 @@ module DeviseTokenAuth::Concerns::User
       DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
       DeviseTokenAuth.headers_names[:"uid"]          => self.uid
     }
+  end
+
+  def update_auth_header(token, client_id='default')
+    headers = build_auth_header(token, client_id)
+    expiry = headers[DeviseTokenAuth.headers_names[:"expiry"]]
+    max_clients = DeviseTokenAuth.max_number_of_devices
+    while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
+      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
+      self.tokens.delete(oldest_token.first)
+    end
+
+    self.save!
+
+    headers
   end
 
 
@@ -239,7 +243,7 @@ module DeviseTokenAuth::Concerns::User
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
 
-    return build_auth_header(token, client_id)
+    return update_auth_header(token, client_id)
   end
 
   def confirmed?
