@@ -6,7 +6,7 @@ module DeviseTokenAuth
     skip_after_action :update_auth_header, :only => [:create, :destroy]
 
     def create
-      @resource            = resource_class.new(sign_up_params)
+      @resource            = resource_class.new(sign_up_params.except(:confirm_success_url))
       @resource.provider   = provider
 
       # honor devise configuration for case_insensitive_keys
@@ -17,7 +17,7 @@ module DeviseTokenAuth
       end
 
       # give redirect value from params priority
-      @redirect_url = params[:confirm_success_url]
+      @redirect_url = sign_up_params[:confirm_success_url]
 
       # fall back to default value if provided
       @redirect_url ||= DeviseTokenAuth.default_confirm_success_url
@@ -102,7 +102,7 @@ module DeviseTokenAuth
     end
 
     def sign_up_params
-      params.permit(*params_for_resource(:sign_up))
+      params.permit([*params_for_resource(:sign_up), :confirm_success_url])
     end
 
     def account_update_params
