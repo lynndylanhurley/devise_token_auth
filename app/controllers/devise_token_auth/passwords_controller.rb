@@ -196,7 +196,6 @@ module DeviseTokenAuth
       params.permit(*params_for_resource(:account_update))
     end
 
-
     def with_reset_password_token token
       recoverable = resource_class.with_reset_password_token(token)
 

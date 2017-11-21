@@ -298,7 +298,6 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           describe 'reset_password_token is not valid' do
             test 'response should return error status' do
               @resource.update reset_password_token: 'koskoskoskos'
-              @resource.reload
 
               assert_not_equal Devise.token_generator.digest(self, :reset_password_token, @mail_reset_token), @resource.reset_password_token
 
