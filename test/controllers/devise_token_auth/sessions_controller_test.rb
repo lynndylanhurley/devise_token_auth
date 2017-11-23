@@ -239,6 +239,29 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           assert_equal 401, response.status
         end
       end
+
+      describe 'stripping whitespace on email' do
+        before do
+          @resource_class = User
+          @request_params = {
+            # adding whitespace before and after email
+            email: " #{@existing_user.email}  ".upcase,
+            password: 'secret123'
+          }
+        end
+
+        test 'request should succeed if configured' do
+          @resource_class.strip_whitespace_keys = [:email]
+          post :create, params: @request_params
+          assert_equal 200, response.status
+        end
+
+        test 'request should fail if not configured' do
+          @resource_class.strip_whitespace_keys = []
+          post :create, params: @request_params
+          assert_equal 401, response.status
+        end
+      end
     end
 
     describe 'Unconfirmed user' do
