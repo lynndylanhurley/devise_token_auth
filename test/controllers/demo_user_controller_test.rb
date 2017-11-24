@@ -424,7 +424,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         before do
           age_token(@resource, @client_id)
 
-          get '/demo/members_only', {}, @auth_headers
+          get '/demo/members_only', params: {}, headers: @auth_headers
 
           @access_token = response.headers['access-token']
           @response_status = response.status
@@ -447,7 +447,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           DeviseTokenAuth.bypass_sign_in = false
           age_token(@resource, @client_id)
 
-          get '/demo/members_only', {}, @auth_headers
+          get '/demo/members_only', params: {}, headers: @auth_headers
 
           @access_token = response.headers['access-token']
           @response_status = response.status
