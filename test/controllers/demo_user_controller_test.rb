@@ -409,6 +409,62 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
+    describe 'bypass_sign_in' do
+      before do
+        @resource = users(:unconfirmed_email_user)
+        @resource.save!
+
+        @auth_headers = @resource.create_new_auth_token
+
+        @token     = @auth_headers['access-token']
+        @client_id = @auth_headers['client']
+        @expiry    = @auth_headers['expiry']
+      end
+      describe 'is default value (true)' do
+        before do
+          age_token(@resource, @client_id)
+
+          get '/demo/members_only', {}, @auth_headers
+
+          @access_token = response.headers['access-token']
+          @response_status = response.status
+        end
+
+        it 'should allow the request through' do
+          assert_equal 200, @response_status
+        end
+
+        it 'should return auth headers' do
+          assert @access_token
+        end
+
+        it 'should set current user' do
+          assert_equal @controller.current_user, @resource
+        end
+      end
+      describe 'is false' do
+        before do
+          DeviseTokenAuth.bypass_sign_in = false
+          age_token(@resource, @client_id)
+
+          get '/demo/members_only', {}, @auth_headers
+
+          @access_token = response.headers['access-token']
+          @response_status = response.status
+
+          DeviseTokenAuth.bypass_sign_in = true
+        end
+
+        it 'should not allow the request through' do
+          refute_equal 200, @response_status
+        end
+
+        it 'should not return auth headers from the first request' do
+          assert_nil @access_token
+        end
+      end
+    end
+
     describe 'enable_standard_devise_support' do
       before do
         @resource = users(:confirmed_email_user)
