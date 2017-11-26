@@ -36,6 +36,9 @@ module ActionDispatch::Routing
         # get full url path as if it were namespaced
         full_path = "#{@scope[:path]}/#{opts[:at]}"
 
+        # get default parameters for a route
+        defaults = @scope[:defaults] || {}
+
         # get namespace name
         namespace_name = @scope[:as]
 
@@ -54,7 +57,7 @@ module ActionDispatch::Routing
 
         devise_scope mapping_name.to_sym do
           # path to verify token validity
-          get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: "validate_token"
+          get "#{full_path}/validate_token", controller: token_validations_ctrl, action: "validate_token", defaults: defaults
 
           # omniauth routes. only define if omniauth is installed and not skipped.
           if defined?(::OmniAuth) && !opts[:skip].include?(:omniauth_callbacks)
