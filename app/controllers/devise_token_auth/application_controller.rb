@@ -39,7 +39,9 @@ module DeviseTokenAuth
 
     def params_for_resource(resource)
       devise_parameter_sanitizer.instance_values['permitted'][resource].each do |type|
-        params[type.to_s] ||= request.headers[type.to_s] unless request.headers[type.to_s].nil?
+        key = 'HTTP_' + type.to_s.upcase
+        value_from_header = request.headers[type.to_s] || request.headers[key]
+        params[type.to_s] ||= value_from_header unless value_from_header.nil?
       end
       devise_parameter_sanitizer.instance_values['permitted'][resource]
     end
