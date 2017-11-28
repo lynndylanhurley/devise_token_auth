@@ -21,6 +21,7 @@ This gem provides the following features:
 * Seamless integration with:
   * [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for [AngularJS](https://github.com/angular/angular.js)
   * [Angular2-Token](https://github.com/neroniaky/angular2-token) for [Angular2](https://github.com/angular/angular)
+  * [redux-token-auth](https://github.com/kylecorbelli/redux-token-auth) for [React with Redux](https://github.com/reactjs/react-redux)
   * [jToker](https://github.com/lynndylanhurley/j-toker) for [jQuery](https://jquery.com/)
 * Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
 * Email authentication using [Devise](https://github.com/plataformatec/devise), including:
