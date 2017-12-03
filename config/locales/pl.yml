@@ -30,19 +30,19 @@ pl:
   devise:
     mailer:
       confirmation_instructions:
-        subject: "Instrukcji potwierdzania"
-        confirm_link_msg: "Możesz potwierdzić swój e-mail konta poprzez link poniżej :"
+        subject: "Instrukcja potwierdzania"
+        confirm_link_msg: "Możesz potwierdzić swój e-mail poprzez link poniżej:"
         confirm_account_link: "Potwierdź swoje konto"
       reset_password_instructions:
         subject: "Instrukcje resetowania hasła"
-        request_reset_link_msg: "Ktoś o link do zmiany hasła. Można to zrobić za pośrednictwem linku poniżej."
+        request_reset_link_msg: "Otrzymaliśmy prośbę o zmianę Twojego hasła. Możesz tego dokonać poprzez link poniżej:"
         password_change_link: "Zmień hasło"
-        ignore_mail_msg: "Jeśli jej nie potrzebuję, zignoruj ​​tę wiadomość."
-        no_changes_msg: "Twoje hasło nie zmieni, dopóki dostęp powyższy link i utwórz nowy."
+        ignore_mail_msg: "Jeśli to nie Ty próbowałeś zmienić swoje hasło to zignoruj ten email."
+        no_changes_msg: "Twoje hasło nie zmieni się do momentu ustawienia nowego."
       unlock_instructions:
         subject: "Instrukcje do odblokowania"
-        account_lock_msg: "Twoje konto zostało zablokowane z powodu zbyt dużej liczby nieudanych znak w próbach."
-        unlock_link_msg: "Kliknij poniższy link, aby odblokować konto :"
-        unlock_link: "Odblokować konto"
-  hello: "halo"
-  welcome: "witam"
+        account_lock_msg: "Twoje konto zostało zablokowane z powodu zbyt dużej liczby nieudanych prób logowania."
+        unlock_link_msg: "Kliknij poniższy link, aby odblokować konto:"
+        unlock_link: "Odblokuj konto"
+  hello: "Witaj"
+  welcome: "Witaj"
