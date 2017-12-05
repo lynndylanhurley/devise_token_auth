@@ -245,7 +245,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @resource_class = User
           @request_params = {
             # adding whitespace before and after email
-            email: " #{@existing_user.email}  ".upcase,
+            email: " #{@existing_user.email}  ",
             password: 'secret123'
           }
         end
