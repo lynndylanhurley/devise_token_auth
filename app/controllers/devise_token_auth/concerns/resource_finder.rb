@@ -9,6 +9,11 @@ module DeviseTokenAuth::Concerns::ResourceFinder
     if resource_class.case_insensitive_keys.include?(field.to_sym)
       q_value.downcase!
     end
+
+    if resource_class.strip_whitespace_keys.include?(field.to_sym)
+      q_value.strip!
+    end
+
     q_value
   end
 
