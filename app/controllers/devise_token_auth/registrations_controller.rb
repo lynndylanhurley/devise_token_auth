@@ -1,9 +1,9 @@
 module DeviseTokenAuth
   class RegistrationsController < DeviseTokenAuth::ApplicationController
-    before_action :set_user_by_token, :only => [:destroy, :update]
-    before_action :validate_sign_up_params, :only => :create
-    before_action :validate_account_update_params, :only => :update
-    skip_after_action :update_auth_header, :only => [:create, :destroy]
+    before_action :set_user_by_token, only: [:destroy, :update]
+    before_action :validate_sign_up_params, only: :create
+    before_action :validate_account_update_params, only: :update
+    skip_after_action :update_auth_header, only: [:create, :destroy]
 
     def create
       @resource            = resource_class.new(sign_up_params.except(:confirm_success_url))
@@ -116,7 +116,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   resource_data
       }
-      message = I18n.t("devise_token_auth.registrations.missing_confirm_success_url")
+      message = I18n.t('devise_token_auth.registrations.missing_confirm_success_url')
       render_error(422, message, response)
     end
 
@@ -125,7 +125,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   resource_data
       }
-      message = I18n.t("devise_token_auth.registrations.redirect_url_not_allowed", redirect_url: @redirect_url)
+      message = I18n.t('devise_token_auth.registrations.redirect_url_not_allowed', redirect_url: @redirect_url)
       render_error(422, message, response)
     end
 
@@ -149,7 +149,7 @@ module DeviseTokenAuth
         status: 'error',
         data:   resource_data
       }
-      message = I18n.t("devise_token_auth.registrations.email_already_exists", email: @resource.email)
+      message = I18n.t('devise_token_auth.registrations.email_already_exists', email: @resource.email)
       render_error(422, message, response)
     end
 
@@ -168,40 +168,40 @@ module DeviseTokenAuth
     end
 
     def render_update_error_user_not_found
-      render_error(404, I18n.t("devise_token_auth.registrations.user_not_found"), { status: 'error' })
+      render_error(404, I18n.t('devise_token_auth.registrations.user_not_found'), { status: 'error' })
     end
 
     def render_destroy_success
       render json: {
         status: 'success',
-        message: I18n.t("devise_token_auth.registrations.account_with_uid_destroyed", uid: @resource.uid)
+        message: I18n.t('devise_token_auth.registrations.account_with_uid_destroyed', uid: @resource.uid)
       }
     end
 
     def render_destroy_error
-      render_error(404, I18n.t("devise_token_auth.registrations.account_to_destroy_not_found"), { status: 'error' })
+      render_error(404, I18n.t('devise_token_auth.registrations.account_to_destroy_not_found'), { status: 'error' })
     end
 
     private
 
     def resource_update_method
       if DeviseTokenAuth.check_current_password_before_update == :attributes
-        "update_with_password"
+        'update_with_password'
       elsif DeviseTokenAuth.check_current_password_before_update == :password && account_update_params.has_key?(:password)
-        "update_with_password"
+        'update_with_password'
       elsif account_update_params.has_key?(:current_password)
-        "update_with_password"
+        'update_with_password'
       else
-        "update_attributes"
+        'update_attributes'
       end
     end
 
     def validate_sign_up_params
-      validate_post_data sign_up_params, I18n.t("errors.messages.validate_sign_up_params")
+      validate_post_data sign_up_params, I18n.t('errors.messages.validate_sign_up_params')
     end
 
     def validate_account_update_params
-      validate_post_data account_update_params, I18n.t("errors.messages.validate_account_update_params")
+      validate_post_data account_update_params, I18n.t('errors.messages.validate_account_update_params')
     end
 
     def validate_post_data which, message
