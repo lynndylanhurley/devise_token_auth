@@ -100,6 +100,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     else
 
+      if @resource.changed?
+        # Stash pending changes in the resource before reloading.
+        changes = @resource.changes
+        @resource.reload
+      end
+
       # Lock the user record during any auth_header updates to ensure
       # we don't have write contention from multiple threads
       @resource.with_lock do
@@ -135,6 +141,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
         response.headers.merge!(auth_header)
 
       end # end lock
+      # Reapply pending changes if any
+      @resource.assign_attributes(changes) if changes
 
     end
 
