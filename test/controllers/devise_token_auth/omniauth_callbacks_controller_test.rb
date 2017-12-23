@@ -276,11 +276,13 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     test 'renders expected data' do
-      get '/auth/facebook',
-          params: { auth_origin_url: @redirect_url,
-                    omniauth_window_type: 'newWindow' }
+      silence_omniauth do
+        get '/auth/facebook',
+            params: { auth_origin_url: @redirect_url,
+                      omniauth_window_type: 'newWindow' }
 
-      follow_all_redirects!
+        follow_all_redirects!
+      end
 
       assert_equal 200, response.status
 
@@ -290,8 +292,10 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     test 'renders something with no auth_origin_url' do
-      get '/auth/facebook'
-      follow_all_redirects!
+      silence_omniauth do
+        get '/auth/facebook'
+        follow_all_redirects!
+      end
       assert_equal 200, response.status
       assert_select 'body', 'invalid_credentials'
     end
