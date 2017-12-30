@@ -31,7 +31,17 @@ class UserTest < ActiveSupport::TestCase
         @resource.password_confirmation = @password
 
         refute @resource.save
-        assert @resource.errors.messages[:email]
+        assert @resource.errors.messages[:email] == [I18n.t("errors.messages.blank")]
+      end
+
+      test 'model should not save if email is not an email' do
+        @resource.provider              = 'email'
+        @resource.email                 = '@example.com'
+        @resource.password              = @password
+        @resource.password_confirmation = @password
+
+        refute @resource.save
+        assert @resource.errors.messages[:email] == [I18n.t("errors.messages.not_email")]
       end
     end
 
