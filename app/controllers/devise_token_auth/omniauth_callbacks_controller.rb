@@ -31,7 +31,7 @@ module DeviseTokenAuth
       set_token_on_resource
       create_auth_params
 
-      if resource_class.devise_modules.include?(:confirmable)
+      if confirmable_enabled?
         # don't send confirmation email!!!
         @resource.skip_confirmation!
       end
@@ -79,12 +79,8 @@ module DeviseTokenAuth
 
     # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user, auth_hash)
-      user.assign_attributes({
-        nickname: auth_hash['info']['nickname'],
-        name:     auth_hash['info']['name'],
-        image:    auth_hash['info']['image'],
-        email:    auth_hash['info']['email']
-      })
+      attrs = auth_hash['info'].slice(*user.attributes.keys)
+      user.assign_attributes(attrs)
     end
 
     # derive allowed params from the standard devise parameter sanitizer
@@ -164,7 +160,7 @@ module DeviseTokenAuth
       # create token info
       @client_id = SecureRandom.urlsafe_base64(nil, false)
       @token     = SecureRandom.urlsafe_base64(nil, false)
-      @expiry    = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+      @expiry    = (Time.now + @resource.token_lifespan).to_i
       @config    = omniauth_params['config_name']
     end
 

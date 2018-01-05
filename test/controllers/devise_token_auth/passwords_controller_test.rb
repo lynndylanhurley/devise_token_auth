@@ -8,7 +8,7 @@ require 'test_helper'
 
 class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::PasswordsController do
-    describe "Password reset" do
+    describe 'Password reset' do
       before do
         @resource = users(:confirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
@@ -19,18 +19,19 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           @auth_headers = @resource.create_new_auth_token
           @new_password = Faker::Internet.password
 
-          xhr :post, :create, {
-            redirect_url: @redirect_url
-          }
+          post :create,
+               params: { redirect_url: @redirect_url }
           @data = JSON.parse(response.body)
         end
 
         test 'response should fail' do
           assert_equal 401, response.status
         end
+
         test 'error message should be returned' do
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_email")]
+          assert @data['errors']
+          assert_equal @data['errors'],
+                       [I18n.t('devise_token_auth.passwords.missing_email')]
         end
       end
 
@@ -39,37 +40,40 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           @auth_headers = @resource.create_new_auth_token
           @new_password = Faker::Internet.password
 
-          xhr :post, :create, {
-            email:        'chester@cheet.ah',
-          }
+          post :create,
+               params: { email: 'chester@cheet.ah' }
           @data = JSON.parse(response.body)
         end
 
         test 'response should fail' do
           assert_equal 401, response.status
         end
+
         test 'error message should be returned' do
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.missing_redirect_url")]
+          assert @data['errors']
+          assert_equal @data['errors'],
+                       [I18n.t('devise_token_auth.passwords.missing_redirect_url')]
         end
       end
 
       describe 'request password reset' do
         describe 'unknown user should return 404' do
           before do
-            xhr :post, :create, {
-              email:        'chester@cheet.ah',
-              redirect_url: @redirect_url
-            }
+            post :create,
+                 params: { email: 'chester@cheet.ah',
+                           redirect_url: @redirect_url }
             @data = JSON.parse(response.body)
           end
+
           test 'unknown user should return 404' do
             assert_equal 404, response.status
           end
 
           test 'errors should be returned' do
-            assert @data["errors"]
-            assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.user_not_found", email: 'chester@cheet.ah')]
+            assert @data['errors']
+            assert_equal @data['errors'],
+                         [I18n.t('devise_token_auth.passwords.user_not_found',
+                                 email: 'chester@cheet.ah')]
           end
         end
 
@@ -98,26 +102,23 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'successfully requested password reset' do
           before do
-            xhr :post, :create, {
-              email:        @resource.email,
-              redirect_url: @redirect_url
-            }
+            post :create,
+                 params: { email: @resource.email,
+                           redirect_url: @redirect_url }
 
             @data = JSON.parse(response.body)
           end
 
           test 'response should not contain extra data' do
-            assert_nil @data["data"]
+            assert_nil @data['data']
           end
         end
 
-
         describe 'case-sensitive email' do
           before do
-            xhr :post, :create, {
-              email:        @resource.email,
-              redirect_url: @redirect_url
-            }
+            post :create,
+                 params: { email: @resource.email,
+                           redirect_url: @redirect_url }
 
             @mail = ActionMailer::Base.deliveries.last
             @resource.reload
@@ -133,7 +134,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           test 'response should contains message' do
-            assert_equal @data["message"], I18n.t("devise_token_auth.passwords.sended", email: @resource.email)
+            assert_equal @data['message'], I18n.t('devise_token_auth.passwords.sended', email: @resource.email)
           end
 
           test 'action should send an email' do
@@ -153,48 +154,48 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           test 'the email body should contain a link with reset token as a query param' do
-            user = User.reset_password_by_token({
-              reset_password_token: @mail_reset_token
-            })
+            user = User.reset_password_by_token(reset_password_token: @mail_reset_token)
 
             assert_equal user.id, @resource.id
           end
 
           describe 'password reset link failure' do
             test 'response should return 404' do
-              assert_raises(ActionController::RoutingError) {
-                xhr :get, :edit, {
-                  reset_password_token: "bogus",
-                  redirect_url: @mail_redirect_url
-                }
-              }
+              assert_raises(ActionController::RoutingError) do
+                get :edit,
+                    params: { reset_password_token: 'bogus',
+                              redirect_url: @mail_redirect_url }
+              end
             end
           end
 
           describe 'password reset link success' do
             before do
-              xhr :get, :edit, {
-                reset_password_token: @mail_reset_token,
-                redirect_url: @mail_redirect_url
-              }
+              get :edit,
+                  params: { reset_password_token: @mail_reset_token,
+                            redirect_url: @mail_redirect_url }
 
               @resource.reload
 
               raw_qs = response.location.split('?')[1]
               @qs = Rack::Utils.parse_nested_query(raw_qs)
 
-              @client_id      = @qs["client_id"]
-              @expiry         = @qs["expiry"]
-              @reset_password = @qs["reset_password"]
-              @token          = @qs["token"]
-              @uid            = @qs["uid"]
+              @access_token   = @qs['access-token']
+              @client_id      = @qs['client_id']
+              @client         = @qs['client']
+              @expiry         = @qs['expiry']
+              @reset_password = @qs['reset_password']
+              @token          = @qs['token']
+              @uid            = @qs['uid']
             end
 
-            test 'respones should have success redirect status' do
+            test 'response should have success redirect status' do
               assert_equal 302, response.status
             end
 
             test 'response should contain auth params' do
+              assert @access_token
+              assert @client
               assert @client_id
               assert @expiry
               assert @reset_password
@@ -204,9 +205,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
             test 'response auth params should be valid' do
               assert @resource.valid_token?(@token, @client_id)
+              assert @resource.valid_token?(@access_token, @client)
             end
           end
-
         end
 
         describe 'case-insensitive email' do
@@ -220,14 +221,116 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
           test 'response should return success status if configured' do
             @resource_class.case_insensitive_keys = [:email]
-            xhr :post, :create, @request_params
+            post :create, params: @request_params
             assert_equal 200, response.status
           end
 
           test 'response should return failure status if not configured' do
             @resource_class.case_insensitive_keys = []
-            xhr :post, :create, @request_params
+            post :create, params: @request_params
             assert_equal 404, response.status
+          end
+        end
+
+        describe 'Cheking reset_password_token' do
+          before do
+            post :create, params: {
+              email:        @resource.email,
+              redirect_url: @redirect_url
+            }
+
+            @mail = ActionMailer::Base.deliveries.last
+            @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
+            @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+
+            @resource.reload
+          end
+
+          describe 'reset_password_token is valid' do
+
+            test 'mail_reset_token should be the same as reset_password_token' do
+              assert_equal Devise.token_generator.digest(self, :reset_password_token, @mail_reset_token), @resource.reset_password_token
+            end
+
+            test 'reset_password_token should be rewritten by origin mail_reset_token' do
+              get :edit, params: {
+                reset_password_token: @mail_reset_token,
+                redirect_url: @mail_redirect_url
+              }
+              @resource.reload
+
+              assert_equal @mail_reset_token, @resource.reset_password_token
+            end
+
+            test 'response should return success status' do
+              get :edit, params: {
+                reset_password_token: @mail_reset_token,
+                redirect_url: @mail_redirect_url
+              }
+
+              assert_equal 302, response.status
+            end
+
+            test 'reset_password_token should be valid only one first time' do
+              get :edit, params: {
+                reset_password_token: @mail_reset_token,
+                redirect_url: @mail_redirect_url
+              }
+
+              @resource.reload
+              assert_equal @mail_reset_token, @resource.reset_password_token
+
+              assert_raises(ActionController::RoutingError) {
+                get :edit, params: {
+                  reset_password_token: @mail_reset_token,
+                  redirect_url: @mail_redirect_url
+                }
+              }
+
+              @resource.reload
+              assert_equal @mail_reset_token, @resource.reset_password_token
+            end
+
+            test 'reset_password_sent_at should be valid' do
+              assert_equal @resource.reset_password_period_valid?, true
+
+              get :edit, params: {
+                reset_password_token: @mail_reset_token,
+                redirect_url: @mail_redirect_url
+              }
+
+              @resource.reload
+              assert_equal @mail_reset_token, @resource.reset_password_token
+            end
+
+            test 'reset_password_sent_at should be expired' do
+              assert_equal @resource.reset_password_period_valid?, true
+
+              @resource.update reset_password_sent_at: @resource.reset_password_sent_at - Devise.reset_password_within - 1.seconds
+              assert_equal @resource.reset_password_period_valid?, false
+
+              assert_raises(ActionController::RoutingError) {
+                get :edit, params: {
+                  reset_password_token: @mail_reset_token,
+                  redirect_url: @mail_redirect_url
+                }
+              }
+            end
+          end
+
+          describe 'reset_password_token is not valid' do
+            test 'response should return error status' do
+              @resource.update reset_password_token: 'koskoskoskos'
+
+              assert_not_equal Devise.token_generator.digest(self, :reset_password_token, @mail_reset_token), @resource.reset_password_token
+
+              assert_raises(ActionController::RoutingError) {
+                get :edit, params: {
+                  reset_password_token: @mail_reset_token,
+                  redirect_url: @mail_redirect_url
+                }
+              }
+            end
           end
         end
       end
@@ -239,10 +342,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
           DeviseTokenAuth.default_password_reset_url = @redirect_url
 
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @redirect_url
-          }
+          post :create,
+               params: { email: @resource.email,
+                         redirect_url: @redirect_url }
 
           @mail = ActionMailer::Base.deliveries.last
           @resource.reload
@@ -279,36 +381,35 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           DeviseTokenAuth.redirect_whitelist = nil
         end
 
-        test "request to whitelisted redirect should be successful" do
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @good_redirect_url
-          }
+        test 'request to whitelisted redirect should be successful' do
+          post :create,
+               params: { email: @resource.email,
+                         redirect_url: @good_redirect_url }
 
           assert_equal 200, response.status
         end
 
-        test "request to non-whitelisted redirect should fail" do
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @bad_redirect_url
-          }
+        test 'request to non-whitelisted redirect should fail' do
+          post :create,
+               params: { email: @resource.email,
+                         redirect_url: @bad_redirect_url }
 
           assert_equal 422, response.status
         end
-        test "request to non-whitelisted redirect should return error message" do
-          xhr :post, :create, {
-            email:        @resource.email,
-            redirect_url: @bad_redirect_url
-          }
+        test 'request to non-whitelisted redirect should return error message' do
+          post :create,
+               params: { email: @resource.email,
+                         redirect_url: @bad_redirect_url }
 
           @data = JSON.parse(response.body)
-          assert @data["errors"]
-          assert_equal @data["errors"], [I18n.t("devise_token_auth.passwords.not_allowed_redirect_url", redirect_url: @bad_redirect_url)]
+          assert @data['errors']
+          assert_equal @data['errors'],
+                       [I18n.t('devise_token_auth.passwords.not_allowed_redirect_url',
+                               redirect_url: @bad_redirect_url)]
         end
       end
 
-      describe "change password with current password required" do
+      describe 'change password with current password required' do
         before do
           DeviseTokenAuth.check_current_password_before_update = :password
         end
@@ -324,56 +425,59 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             @new_password = Faker::Internet.password
             @resource.update password: 'secret123', password_confirmation: 'secret123'
 
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password,
-              current_password: 'secret123'
-            }
+            put :update,
+                params: { password: @new_password,
+                          password_confirmation: @new_password,
+                          current_password: 'secret123' }
 
             @data = JSON.parse(response.body)
             @resource.reload
           end
 
-          test "request should be successful" do
+          test 'request should be successful' do
             assert_equal 200, response.status
           end
         end
 
         describe 'success with after password reset' do
           before do
-            xhr :post, :create, {
-              email:        @resource.email,
-              redirect_url: @redirect_url
-            }
+            # create a new password reset request
+            post :create, params: { email: @resource.email,
+                                    redirect_url: @redirect_url }
 
             @mail = ActionMailer::Base.deliveries.last
             @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
             @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
 
-            xhr :get, :edit, {
-              reset_password_token: @mail_reset_token,
-              redirect_url: @mail_redirect_url
-            }
+            # confirm via password reset email link
+            get :edit, params: { reset_password_token: @mail_reset_token,
+                                 redirect_url: @mail_redirect_url }
+
+            @resource.reload
+            @allow_password_change_after_reset = @resource.allow_password_change
 
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password
-            }
+            put :update, params: { password: @new_password,
+                                   password_confirmation: @new_password }
 
             @data = JSON.parse(response.body)
+            @resource.reload
             @allow_password_change = @resource.allow_password_change
             @resource.reload
           end
 
-          test "request should be successful" do
+          test 'request should be successful' do
             assert_equal 200, response.status
           end
 
-          test "sets allow_password_change false" do
+          test 'changes allow_password_change to true on reset' do
+            assert_equal true, @allow_password_change_after_reset
+          end
+
+          test 'sets allow_password_change false' do
             assert_equal false, @allow_password_change
           end
         end
@@ -384,11 +488,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password,
-              current_password: 'not_very_secret321'
-            }
+            put :update, params: { password: @new_password,
+                                   password_confirmation: @new_password,
+                                   current_password: 'not_very_secret321' }
           end
 
           test 'response should fail unauthorized' do
@@ -397,32 +499,31 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         end
       end
 
-      describe "change password" do
+      describe 'change password' do
         describe 'success' do
           before do
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password
-            }
+            put :update, params: { password: @new_password,
+                                   password_confirmation: @new_password }
 
             @data = JSON.parse(response.body)
             @resource.reload
           end
 
-          test "request should be successful" do
+          test 'request should be successful' do
             assert_equal 200, response.status
           end
 
-          test "request should return success message" do
-            assert @data["message"]
-            assert_equal @data["message"], I18n.t("devise_token_auth.passwords.successfully_updated")
+          test 'request should return success message' do
+            assert @data['message']
+            assert_equal @data['message'],
+                         I18n.t('devise_token_auth.passwords.successfully_updated')
           end
 
-          test "new password should authenticate user" do
+          test 'new password should authenticate user' do
             assert @resource.valid_password?(@new_password)
           end
         end
@@ -433,10 +534,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
 
-            xhr :put, :update, {
-              password: 'chong',
-              password_confirmation: 'bong'
-            }
+            put :update, params: { password: 'chong',
+                                   password_confirmation: 'bong' }
           end
 
           test 'response should fail' do
@@ -449,10 +548,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             @auth_headers = @resource.create_new_auth_token
             @new_password = Faker::Internet.password
 
-            xhr :put, :update, {
-              password: @new_password,
-              password_confirmation: @new_password
-            }
+            put :update, params: { password: @new_password,
+                                   password_confirmation: @new_password }
           end
 
           test 'response should fail' do
@@ -462,7 +559,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
     end
 
-    describe "Alternate user class" do
+    describe 'Alternate user class' do
       setup do
         @request.env['devise.mapping'] = Devise.mappings[:mang]
       end
@@ -475,10 +572,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @resource = mangs(:confirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
 
-        xhr :post, :create, {
-          email:        @resource.email,
-          redirect_url: @redirect_url
-        }
+        post :create, params: { email: @resource.email,
+                                redirect_url: @redirect_url }
 
         @mail = ActionMailer::Base.deliveries.last
         @resource.reload
@@ -493,9 +588,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       test 'the email body should contain a link with reset token as a query param' do
-        user = Mang.reset_password_by_token({
-          reset_password_token: @mail_reset_token
-        })
+        user = Mang.reset_password_by_token(reset_password_token: @mail_reset_token)
 
         assert_equal user.id, @resource.id
       end
@@ -506,10 +599,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @resource = users(:unconfirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
 
-        xhr :post, :create, {
-          email:        @resource.email,
-          redirect_url: @redirect_url
-        }
+        post :create, params: { email: @resource.email,
+                                redirect_url: @redirect_url }
 
         @mail = ActionMailer::Base.deliveries.last
         @resource.reload
@@ -518,14 +609,13 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
         @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
 
-        xhr :get, :edit, {
-          reset_password_token: @mail_reset_token,
-          redirect_url: @mail_redirect_url
-        }
+        get :edit, params: { reset_password_token: @mail_reset_token,
+                             redirect_url: @mail_redirect_url }
 
         @resource.reload
       end
     end
+
     describe 'unconfirmable user' do
       setup do
         @request.env['devise.mapping'] = Devise.mappings[:unconfirmable_user]
@@ -539,10 +629,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @resource = unconfirmable_users(:user)
         @redirect_url = 'http://ng-token-auth.dev'
 
-        xhr :post, :create, {
-          email:        @resource.email,
-          redirect_url: @redirect_url
-        }
+        post :create, params: { email: @resource.email,
+                                redirect_url: @redirect_url }
 
         @mail = ActionMailer::Base.deliveries.last
         @resource.reload
@@ -551,10 +639,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
         @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
 
-        xhr :get, :edit, {
-          reset_password_token: @mail_reset_token,
-          redirect_url: @mail_redirect_url
-        }
+        get :edit, params: { reset_password_token: @mail_reset_token,
+                             redirect_url: @mail_redirect_url }
 
         @resource.reload
       end
@@ -562,15 +648,13 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
     describe 'alternate user type' do
       before do
-        @resource         = users(:confirmed_email_user)
+        @resource = users(:confirmed_email_user)
         @redirect_url = 'http://ng-token-auth.dev'
-        @config_name  = "altUser"
+        @config_name  = 'altUser'
 
-        xhr :post, :create, {
-          email:        @resource.email,
-          redirect_url: @redirect_url,
-          config_name:  @config_name
-        }
+        post :create, params: { email: @resource.email,
+                                redirect_url: @redirect_url,
+                                config_name: @config_name }
 
         @mail = ActionMailer::Base.deliveries.last
         @resource.reload

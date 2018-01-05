@@ -12,10 +12,11 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
       @resource = evil_users(:confirmed_email_user)
       @redirect_url = Faker::Internet.url
 
-      post "/evil_user_auth/password", {
-        email:        @resource.email,
-        redirect_url: @redirect_url
-      }
+      post '/evil_user_auth/password',
+           params: {
+             email: @resource.email,
+             redirect_url: @redirect_url
+           }
 
       @mail = ActionMailer::Base.deliveries.last
       @resource.reload
@@ -24,22 +25,23 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
       @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
       @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
 
-      get '/evil_user_auth/password/edit', {
-        reset_password_token: @mail_reset_token,
-        redirect_url: @mail_redirect_url
-      }
+      get '/evil_user_auth/password/edit',
+          params: { reset_password_token: @mail_reset_token,
+                    redirect_url: @mail_redirect_url }
 
       @resource.reload
 
       raw_qs = response.location.split('?')[1]
       @qs = Rack::Utils.parse_nested_query(raw_qs)
 
-      @client_id      = @qs["client_id"]
-      @expiry         = @qs["expiry"]
-      @reset_password = @qs["reset_password"]
-      @token          = @qs["token"]
-      @uid            = @qs["uid"]
-      @override_proof = @qs["override_proof"]
+      @access_token   = @qs['access-token']
+      @client         = @qs['client']
+      @client_id      = @qs['client_id']
+      @expiry         = @qs['expiry']
+      @override_proof = @qs['override_proof']
+      @reset_password = @qs['reset_password']
+      @token          = @qs['token']
+      @uid            = @qs['uid']
     end
 
     test 'response should have success redirect status' do
@@ -47,12 +49,14 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test 'response should contain auth params + override proof' do
+      assert @access_token
+      assert @client
       assert @client_id
       assert @expiry
+      assert @override_proof
       assert @reset_password
       assert @token
       assert @uid
-      assert @override_proof
     end
 
     test 'override proof is correct' do

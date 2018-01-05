@@ -14,13 +14,11 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       [token, client_config]
     end
 
-    describe "Confirmation" do
+    describe 'Confirmation' do
       before do
         @redirect_url = Faker::Internet.url
         @new_user = users(:unconfirmed_email_user)
-        @new_user.send_confirmation_instructions({
-          redirect_url: @redirect_url
-        })
+        @new_user.send_confirmation_instructions(redirect_url: @redirect_url)
         mail = ActionMailer::Base.deliveries.last
         @token, @client_config = token_and_client_config_from(mail.body)
       end
@@ -30,33 +28,52 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       end
 
       test "should include config name as 'default' in confirmation link" do
-        assert_equal "default", @client_config
+        assert_equal 'default', @client_config
       end
 
-      test "should store token hash in user" do
+      test 'should store token hash in user' do
         assert @new_user.confirmation_token
       end
 
-      describe "success" do
+      describe 'success' do
         before do
-          xhr :get, :show, {confirmation_token: @token, redirect_url: @redirect_url}
+          get :show,
+              params: { confirmation_token: @token,
+                        redirect_url: @redirect_url },
+              xhr: true
           @resource = assigns(:resource)
         end
 
-        test "user should now be confirmed" do
+        test 'user should now be confirmed' do
           assert @resource.confirmed?
         end
 
-        test "should redirect to success url" do
+        test 'should redirect to success url' do
           assert_redirected_to(/^#{@redirect_url}/)
+        end
+
+        test 'the sign_in_count should be 1' do
+          assert @resource.sign_in_count == 1
+        end
+        test 'User shoud have the signed in info filled' do
+          assert @resource.current_sign_in_at?
+        end
+        test 'User shoud have the Last checkin filled' do
+          assert @resource.last_sign_in_at?
+        end
+        
+        test 'user already confirmed' do
+          assert @resource.sign_in_count > 0 do
+            assert expiry == (Time.now + Time.now + 1.second).to_i
+          end
         end
       end
 
-      describe "failure" do
-        test "user should not be confirmed" do
-          assert_raises(ActionController::RoutingError) {
-            xhr :get, :show, {confirmation_token: "bogus"}
-          }
+      describe 'failure' do
+        test 'user should not be confirmed' do
+          assert_raises(ActionController::RoutingError) do
+            get :show, params: { confirmation_token: 'bogus' }
+          end
           @resource = assigns(:resource)
           refute @resource.confirmed?
         end
@@ -64,7 +81,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
     end
 
     # test with non-standard user class
-    describe "Alternate user model" do
+    describe 'Alternate user model' do
       setup do
         @request.env['devise.mapping'] = Devise.mappings[:mang]
       end
@@ -74,7 +91,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       end
 
       before do
-        @config_name = "altUser"
+        @config_name = 'altUser'
         @new_user    = mangs(:unconfirmed_email_user)
 
         @new_user.send_confirmation_instructions(client_config: @config_name)
@@ -87,22 +104,23 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         assert @token
       end
 
-      test "should include config name in confirmation link" do
+      test 'should include config name in confirmation link' do
         assert_equal @config_name, @client_config
       end
 
-      test "should store token hash in user" do
+      test 'should store token hash in user' do
         assert @new_user.confirmation_token
       end
 
-      describe "success" do
+      describe 'success' do
         before do
           @redirect_url = Faker::Internet.url
-          xhr :get, :show, {confirmation_token: @token, redirect_url: @redirect_url}
+          get :show, params: { confirmation_token: @token,
+                               redirect_url: @redirect_url }
           @resource = assigns(:resource)
         end
 
-        test "user should now be confirmed" do
+        test 'user should now be confirmed' do
           assert @resource.confirmed?
         end
       end

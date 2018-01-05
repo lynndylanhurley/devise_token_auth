@@ -31,7 +31,17 @@ class UserTest < ActiveSupport::TestCase
         @resource.password_confirmation = @password
 
         refute @resource.save
-        assert @resource.errors.messages[:email]
+        assert @resource.errors.messages[:email] == [I18n.t("errors.messages.blank")]
+      end
+
+      test 'model should not save if email is not an email' do
+        @resource.provider              = 'email'
+        @resource.email                 = '@example.com'
+        @resource.password              = @password
+        @resource.password_confirmation = @password
+
+        refute @resource.save
+        assert @resource.errors.messages[:email] == [I18n.t("errors.messages.not_email")]
       end
     end
 
@@ -65,7 +75,7 @@ class UserTest < ActiveSupport::TestCase
         @resource.password_confirmation = @password
 
         assert @resource.save
-        refute @resource.errors.messages[:email]
+        assert @resource.errors.messages[:email].blank?
       end
     end
 
@@ -86,6 +96,40 @@ class UserTest < ActiveSupport::TestCase
         # we want to update the expiry without forcing a cleanup (see below)
         @resource.tokens[@client_id]['expiry'] = Time.now.to_i - 10.seconds
         refute @resource.token_is_current?(@token, @client_id)
+      end
+    end
+
+    describe 'user specific token lifespan' do
+      before do
+        @resource = users(:confirmed_email_user)
+        @resource.skip_confirmation!
+        @resource.save!
+
+        auth_headers = @resource.create_new_auth_token
+        @token_global     = auth_headers['access-token']
+        @client_id_global = auth_headers['client']
+
+        def @resource.token_lifespan
+          1.minute
+        end
+
+        auth_headers = @resource.create_new_auth_token
+        @token_specific     = auth_headers['access-token']
+        @client_id_specific = auth_headers['client']
+      end
+
+      test 'works per user' do
+        assert @resource.token_is_current?(@token_global, @client_id_global)
+
+        time = Time.now.to_i
+        expiry_global = @resource.tokens[@client_id_global]['expiry']
+
+        assert expiry_global > time + DeviseTokenAuth.token_lifespan - 5.seconds
+        assert expiry_global < time + DeviseTokenAuth.token_lifespan + 5.seconds
+
+        expiry_specific = @resource.tokens[@client_id_specific]['expiry']
+        assert expiry_specific > time + 55.seconds
+        assert expiry_specific < time + 65.seconds
       end
     end
 

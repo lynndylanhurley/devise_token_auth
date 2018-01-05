@@ -15,10 +15,11 @@ module DeviseTokenAuth
         #     devise_group :blogger, contains: [:user, :admin]
         #
         #   Generated methods:
-        #     authenticate_blogger!  # Redirects unless user or admin are signed in
-        #     blogger_signed_in?     # Checks whether there is either a user or an admin signed in
-        #     current_blogger        # Currently signed in user or admin
-        #     current_bloggers       # Currently signed in user and admin
+        #     authenticate_blogger!             # Redirects unless user or admin are signed in
+        #     blogger_signed_in?                # Checks whether there is either a user or an admin signed in
+        #     current_blogger                   # Currently signed in user or admin
+        #     current_bloggers                  # Currently signed in user and admin
+        #     render_authenticate_error         # Render error unless user or admin are signed in
         #
         #   Use:
         #     before_action :authenticate_blogger!              # Redirects unless either a user or an admin are authenticated
@@ -38,9 +39,7 @@ module DeviseTokenAuth
                 end
 
                 unless current_#{group_name}
-                  return render json: {
-                    errors: [I18n.t('devise.failure.unauthenticated')]
-                  }, status: 401
+                  render_authenticate_error
                 end
               end
             end
@@ -67,8 +66,14 @@ module DeviseTokenAuth
               end.compact
             end
 
+            def render_authenticate_error
+              return render json: {
+                errors: [I18n.t('devise.failure.unauthenticated')]
+              }, status: 401
+            end
+
             if respond_to?(:helper_method)
-              helper_method "current_#{group_name}", "current_#{group_name.to_s.pluralize}", "#{group_name}_signed_in?"
+              helper_method "current_#{group_name}", "current_#{group_name.to_s.pluralize}", "#{group_name}_signed_in?", "render_authenticate_error"
             end
           METHODS
         end
@@ -90,14 +95,15 @@ module DeviseTokenAuth
       #     Admin
       #
       #   Generated methods:
-      #     authenticate_user!  # Signs user in or 401
-      #     authenticate_admin! # Signs admin in or 401
-      #     user_signed_in?     # Checks whether there is a user signed in or not
-      #     admin_signed_in?    # Checks whether there is an admin signed in or not
-      #     current_user        # Current signed in user
-      #     current_admin       # Current signed in admin
-      #     user_session        # Session data available only to the user scope
-      #     admin_session       # Session data available only to the admin scope
+      #     authenticate_user!                   # Signs user in or 401
+      #     authenticate_admin!                  # Signs admin in or 401
+      #     user_signed_in?                      # Checks whether there is a user signed in or not
+      #     admin_signed_in?                     # Checks whether there is an admin signed in or not
+      #     current_user                         # Current signed in user
+      #     current_admin                        # Current signed in admin
+      #     user_session                         # Session data available only to the user scope
+      #     admin_session                        # Session data available only to the admin scope
+      #     render_authenticate_error            # Render error unless user or admin is signed in
       #
       #   Use:
       #     before_action :authenticate_user!  # Tell devise to use :user map
@@ -107,11 +113,9 @@ module DeviseTokenAuth
         mapping = mapping.name
 
         class_eval <<-METHODS, __FILE__, __LINE__ + 1
-          def authenticate_#{mapping}!
+          def authenticate_#{mapping}!(opts={})
             unless current_#{mapping}
-              return render json: {
-                errors: [I18n.t('devise.failure.unauthenticated')]
-              }, status: 401
+              render_authenticate_error
             end
           end
 
@@ -126,11 +130,17 @@ module DeviseTokenAuth
           def #{mapping}_session
             current_#{mapping} && warden.session(:#{mapping})
           end
+
+          def render_authenticate_error
+            return render json: {
+              errors: [I18n.t('devise.failure.unauthenticated')]
+            }, status: 401
+          end
         METHODS
 
         ActiveSupport.on_load(:action_controller) do
           if respond_to?(:helper_method)
-            helper_method "current_#{mapping}", "#{mapping}_signed_in?", "#{mapping}_session"
+            helper_method "current_#{mapping}", "#{mapping}_signed_in?", "#{mapping}_session", "render_authenticate_error"
           end
         end
       end

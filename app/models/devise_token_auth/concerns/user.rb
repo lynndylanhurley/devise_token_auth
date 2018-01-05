@@ -41,12 +41,6 @@ module DeviseTokenAuth::Concerns::User
     # remove old tokens if password has changed
     before_save :remove_tokens_after_password_reset
 
-    # allows user to change password without current_password
-    attr_writer :allow_password_change
-    def allow_password_change
-      @allow_password_change || false
-    end
-
     # don't use default devise email validation
     def email_required?
       false
@@ -54,6 +48,15 @@ module DeviseTokenAuth::Concerns::User
 
     def email_changed?
       false
+    end
+
+    def will_save_change_to_email?
+      false
+    end
+
+    def password_required?
+      return false unless provider == 'email'
+      super
     end
 
     # override devise method to include additional info as opts hash
@@ -87,6 +90,21 @@ module DeviseTokenAuth::Concerns::User
       send_devise_notification(:reset_password_instructions, token, opts)
 
       token
+    end
+
+    # override devise method to include additional info as opts hash
+    def send_unlock_instructions(opts=nil)
+      raw, enc = Devise.token_generator.generate(self.class, :unlock_token)
+      self.unlock_token = enc
+      save(validate: false)
+
+      opts ||= {}
+
+      # fall back to "default" config name
+      opts[:client_config] ||= "default"
+
+      send_devise_notification(:unlock_instructions, raw, opts)
+      raw
     end
   end
 
@@ -168,7 +186,7 @@ module DeviseTokenAuth::Concerns::User
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = ::BCrypt::Password.create(token)
-    expiry       = (Time.now + DeviseTokenAuth.token_lifespan).to_i
+    expiry       = (Time.now + token_lifespan).to_i
 
     if self.tokens[client_id] && self.tokens[client_id]['token']
       last_token = self.tokens[client_id]['token']
@@ -181,24 +199,14 @@ module DeviseTokenAuth::Concerns::User
       updated_at: Time.now
     }
 
-    return build_auth_header(token, client_id)
+    return update_auth_header(token, client_id)
   end
 
 
   def build_auth_header(token, client_id='default')
-    client_id ||= 'default'
-
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
     expiry = self.tokens[client_id]['expiry'] || self.tokens[client_id][:expiry]
-
-    max_clients = DeviseTokenAuth.max_number_of_devices
-    while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
-      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
-      self.tokens.delete(oldest_token.first)
-    end
-
-    self.save!
 
     return {
       DeviseTokenAuth.headers_names[:"access-token"] => token,
@@ -207,6 +215,20 @@ module DeviseTokenAuth::Concerns::User
       DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
       DeviseTokenAuth.headers_names[:"uid"]          => self.uid
     }
+  end
+
+  def update_auth_header(token, client_id='default')
+    headers = build_auth_header(token, client_id)
+    expiry = headers[DeviseTokenAuth.headers_names[:"expiry"]]
+    max_clients = DeviseTokenAuth.max_number_of_devices
+    while self.tokens.keys.length > 0 && max_clients < self.tokens.keys.length
+      oldest_token = self.tokens.min_by { |cid, v| v[:expiry] || v["expiry"] }
+      self.tokens.delete(oldest_token.first)
+    end
+
+    self.save!
+
+    headers
   end
 
 
@@ -221,7 +243,7 @@ module DeviseTokenAuth::Concerns::User
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
 
-    return build_auth_header(token, client_id)
+    return update_auth_header(token, client_id)
   end
 
   def confirmed?
@@ -234,6 +256,9 @@ module DeviseTokenAuth::Concerns::User
     ])
   end
 
+  def token_lifespan
+    DeviseTokenAuth.token_lifespan
+  end
 
   protected
 

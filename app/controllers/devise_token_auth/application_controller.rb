@@ -1,10 +1,11 @@
 module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
+    include DeviseTokenAuth::Concerns::ResourceFinder
 
     def resource_data(opts={})
       response_data = opts[:resource_json] || @resource.as_json
-      if is_json_api
+      if json_api?
         response_data['type'] = @resource.class.name.parameterize
       end
       response_data
@@ -15,6 +16,20 @@ module DeviseTokenAuth
     end
 
     protected
+
+    def build_redirect_headers(access_token, client, redirect_header_options = {})
+      {
+        DeviseTokenAuth.headers_names[:"access-token"] => access_token,
+        DeviseTokenAuth.headers_names[:"client"] => client,
+        :config => params[:config],
+
+        # Legacy parameters which may be removed in a future release.
+        # Consider using "client" and "access-token" in client code.
+        # See: github.com/lynndylanhurley/devise_token_auth/issues/993
+        :client_id => client,
+        :token => access_token
+      }.merge(redirect_header_options)
+    end
 
     def params_for_resource(resource)
       devise_parameter_sanitizer.instance_values['permitted'][resource].each do |type|
@@ -33,7 +48,7 @@ module DeviseTokenAuth
       mapping.to
     end
 
-    def is_json_api
+    def json_api?
       return false unless defined?(ActiveModel::Serializer)
       return ActiveModel::Serializer.setup do |config|
         config.adapter == :json_api
@@ -41,5 +56,21 @@ module DeviseTokenAuth
       return ActiveModelSerializers.config.adapter == :json_api
     end
 
+    def recoverable_enabled?
+      resource_class.devise_modules.include?(:recoverable)
+    end
+
+    def confirmable_enabled?
+      resource_class.devise_modules.include?(:confirmable)
+    end
+
+    def render_error(status, message, data = nil)
+      response = {
+        success: false,
+        errors: [message]
+      }
+      response = response.merge(data) if data
+      render json: response, status: status
+    end
   end
 end

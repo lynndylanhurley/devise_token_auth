@@ -9,7 +9,7 @@ require 'test_helper'
 class DemoUserControllerTest < ActionDispatch::IntegrationTest
   include Warden::Test::Helpers
   describe DemoUserController do
-    describe "Token access" do
+    describe 'Token access' do
       before do
         @resource = users(:confirmed_email_user)
         @resource.skip_confirmation!
@@ -27,7 +27,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           # ensure that request is not treated as batch request
           age_token(@resource, @client_id)
 
-          get '/demo/members_only', {}, @auth_headers
+          get '/demo/members_only',
+              params: {},
+              headers: @auth_headers
 
           @resp_token       = response.headers['access-token']
           @resp_client_id   = response.headers['client']
@@ -46,6 +48,10 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
           it 'should not define current_mang' do
             refute_equal @resource, @controller.current_mang
+          end
+
+          it 'should define render_authenticate_error' do
+            assert @controller.methods.include?(:render_authenticate_error)
           end
         end
 
@@ -75,14 +81,16 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             # ensure that request is not treated as batch request
             age_token(@resource, @client_id)
 
-            get '/demo/members_only', {}, @auth_headers.merge({'access-token' => @resp_token})
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers.merge('access-token' => @resp_token)
           end
 
           it 'should not treat this request as a batch request' do
             refute assigns(:is_batch_request)
           end
 
-          it "should allow a new request to be made using new token" do
+          it 'should allow a new request to be made using new token' do
             assert_equal 200, response.status
           end
         end
@@ -90,7 +98,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
       describe 'failed request' do
         before do
-          get '/demo/members_only', {}, @auth_headers.merge({'access-token' => "bogus"})
+          get '/demo/members_only',
+              params: {},
+              headers: @auth_headers.merge('access-token' => 'bogus')
         end
 
         it 'should not return any auth headers' do
@@ -108,7 +118,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           @resource.reload
           age_token(@resource, @client_id)
 
-          get '/demo/members_only', {}, @auth_headers
+          get '/demo/members_only',
+              params: {},
+              headers: @auth_headers
 
           @first_is_batch_request = assigns(:is_batch_request)
           @first_user = assigns(:resource).dup
@@ -119,7 +131,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           age_token(@resource, @client_id)
 
           # use expired auth header
-          get '/demo/members_only', {}, @auth_headers
+          get '/demo/members_only',
+              params: {},
+              headers: @auth_headers
 
           @second_is_batch_request = assigns(:is_batch_request)
           @second_user = assigns(:resource).dup
@@ -165,15 +179,19 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         describe 'success' do
           before do
             age_token(@resource, @client_id)
-            #request.headers.merge!(@auth_headers)
+            # request.headers.merge!(@auth_headers)
 
-            get '/demo/members_only', {}, @auth_headers
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:resource)
             @first_access_token = response.headers['access-token']
 
-            get '/demo/members_only', {}, @auth_headers
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:resource)
@@ -197,7 +215,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not return auth headers for second (batched) requests' do
-            refute @second_access_token
+            assert_equal ' ', @second_access_token
           end
         end
 
@@ -206,14 +224,18 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             @resource.reload
             age_token(@resource, @client_id)
 
-            get '/demo/members_only', {}, @auth_headers
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:resource).dup
             @first_access_token = response.headers['access-token']
             @first_response_status = response.status
 
-            get '/demo/members_only?unbatch=true', {}, @auth_headers
+            get '/demo/members_only?unbatch=true',
+                params: {},
+                headers: @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:resource)
@@ -231,7 +253,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             @resource.reload
             age_token(@resource, @client_id)
 
-            get '/demo/members_only', {}, @auth_headers
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers
 
             @first_is_batch_request = assigns(:is_batch_request)
             @first_user = assigns(:resource).dup
@@ -242,7 +266,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             age_token(@resource, @client_id)
 
             # use expired auth header
-            get '/demo/members_only', {}, @auth_headers
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers
 
             @second_is_batch_request = assigns(:is_batch_request)
             @second_user = assigns(:resource)
@@ -259,7 +285,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not treat first request as batch request' do
-            refute @secord_is_batch_request
+            refute @second_is_batch_request
           end
 
           it 'should return auth headers from the first request' do
@@ -267,7 +293,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           end
 
           it 'should not treat second request as batch request' do
-            refute @secord_is_batch_request
+            refute @second_is_batch_request
           end
 
           it 'should not return auth headers from the second request' do
@@ -295,12 +321,12 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           assert @resource.tokens.count > 1
 
           # password changed from new device
-          @resource.update_attributes({
-            password: 'newsecret123',
-            password_confirmation: 'newsecret123'
-          })
+          @resource.update_attributes(password: 'newsecret123',
+                                      password_confirmation: 'newsecret123')
 
-          get '/demo/members_only', {}, @auth_headers
+          get '/demo/members_only',
+              params: {},
+              headers: @auth_headers
         end
 
         after do
@@ -316,14 +342,13 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         end
 
         describe 'another device should not be able to login' do
-
           it 'should return forbidden status' do
-            get '/demo/members_only', {}, @old_auth_headers
+            get '/demo/members_only',
+                params: {},
+                headers: @old_auth_headers
             assert 401, response.status
           end
-
         end
-
       end
 
       describe 'request including destroy of token' do
@@ -332,7 +357,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             DeviseTokenAuth.change_headers_on_each_request = false
             age_token(@resource, @client_id)
 
-            get '/demo/members_only_remove_token', {}, @auth_headers
+            get '/demo/members_only_remove_token',
+                params: {},
+                headers: @auth_headers
           end
 
           after do
@@ -347,7 +374,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
         describe 'when change_headers_on_each_request is set to true' do
           before do
             age_token(@resource, @client_id)
-            get '/demo/members_only_remove_token', {}, @auth_headers
+            get '/demo/members_only_remove_token',
+                params: {},
+                headers: @auth_headers
           end
 
           it 'should not return auth-headers' do
@@ -364,7 +393,9 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           client_id = auth_headers_modified['client']
           age_token(@resource, client_id)
 
-          get '/demo/members_only', {}, auth_headers_modified
+          get '/demo/members_only',
+              params: {},
+              headers: auth_headers_modified
           @resp_token = response.headers['new-access-token']
         end
 
@@ -378,8 +409,63 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    describe 'enable_standard_devise_support' do
+    describe 'bypass_sign_in' do
+      before do
+        @resource = users(:unconfirmed_email_user)
+        @resource.save!
 
+        @auth_headers = @resource.create_new_auth_token
+
+        @token     = @auth_headers['access-token']
+        @client_id = @auth_headers['client']
+        @expiry    = @auth_headers['expiry']
+      end
+      describe 'is default value (true)' do
+        before do
+          age_token(@resource, @client_id)
+
+          get '/demo/members_only', params: {}, headers: @auth_headers
+
+          @access_token = response.headers['access-token']
+          @response_status = response.status
+        end
+
+        it 'should allow the request through' do
+          assert_equal 200, @response_status
+        end
+
+        it 'should return auth headers' do
+          assert @access_token
+        end
+
+        it 'should set current user' do
+          assert_equal @controller.current_user, @resource
+        end
+      end
+      describe 'is false' do
+        before do
+          DeviseTokenAuth.bypass_sign_in = false
+          age_token(@resource, @client_id)
+
+          get '/demo/members_only', params: {}, headers: @auth_headers
+
+          @access_token = response.headers['access-token']
+          @response_status = response.status
+
+          DeviseTokenAuth.bypass_sign_in = true
+        end
+
+        it 'should not allow the request through' do
+          refute_equal 200, @response_status
+        end
+
+        it 'should not return auth headers from the first request' do
+          assert_nil @access_token
+        end
+      end
+    end
+
+    describe 'enable_standard_devise_support' do
       before do
         @resource = users(:confirmed_email_user)
         @auth_headers = @resource.create_new_auth_token
@@ -391,10 +477,12 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           @resource = users(:second_confirmed_email_user)
           @resource.skip_confirmation!
           @resource.save!
-          login_as( @resource, :scope => :user)
+          login_as(@resource, scope: :user)
 
           # no auth headers sent, testing that warden authenticates correctly.
-          get '/demo/members_only', {}, nil
+          get '/demo/members_only',
+              params: {},
+              headers: nil
 
           @resp_token       = response.headers['access-token']
           @resp_client_id   = response.headers['client']
@@ -415,14 +503,13 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             refute_equal @resource, @controller.current_mang
           end
 
-
           it 'should increase the number of tokens by a factor of 2 up to 11' do
             @first_token = @resource.tokens.keys.first
 
             DeviseTokenAuth.max_number_of_devices = 11
             (1..10).each do |n|
-              assert_equal [11, 2*n].min, @resource.reload.tokens.keys.length
-              get '/demo/members_only', {}, nil
+              assert_equal [11, 2 * n].min, @resource.reload.tokens.keys.length
+              get '/demo/members_only', params: {}, headers: nil
             end
 
             assert_not_includes @resource.reload.tokens.keys, @first_token
@@ -455,9 +542,11 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           @resource = users(:second_confirmed_email_user)
           @resource.skip_confirmation!
           @resource.save!
-          login_as( @resource, :scope => :user)
+          login_as(@resource, scope: :user)
 
-          get '/demo/members_only', {}, @auth_headers
+          get '/demo/members_only',
+              params: {},
+              headers: @auth_headers
 
           @resp_token       = response.headers['access-token']
           @resp_client_id   = response.headers['client']
@@ -507,7 +596,6 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           refute_equal @resp_uid, @auth_headers['uid']
         end
       end
-
     end
   end
 end
