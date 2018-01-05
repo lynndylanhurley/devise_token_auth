@@ -77,6 +77,29 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
         end
 
+        describe 'unknown user should return 200 if Devise.paranoid is true' do
+          before do
+            Devise.paranoid = true
+            xhr :post, :create, {
+              email:        'chester@cheet.ah',
+              redirect_url: @redirect_url
+            }
+            @data = JSON.parse(response.body)
+          end
+
+          after do
+            Devise.paranoid = false
+          end
+
+          test 'response should return success status' do
+            assert_equal 200, response.status
+          end
+
+          test 'response should contains message' do
+            assert_equal @data["message"], I18n.t("devise_token_auth.passwords.sended", email: 'chester@cheet.ah')
+          end
+        end
+
         describe 'successfully requested password reset' do
           before do
             post :create,
