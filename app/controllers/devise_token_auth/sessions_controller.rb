@@ -25,14 +25,7 @@ module DeviseTokenAuth
           render_create_error_bad_credentials
           return
         end
-        # create client id
-        @client_id = SecureRandom.urlsafe_base64(nil, false)
-        @token     = SecureRandom.urlsafe_base64(nil, false)
-
-        @resource.tokens[@client_id] = {
-          token: BCrypt::Password.create(@token),
-          expiry: (Time.now + @resource.token_lifespan).to_i
-        }
+        @client_id, @token = @resource.create_token
         @resource.save
 
         sign_in(:user, @resource, store: false, bypass: false)

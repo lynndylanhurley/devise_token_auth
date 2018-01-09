@@ -9,15 +9,7 @@ module Overrides
       })
 
       if @resource and @resource.id
-        client_id  = SecureRandom.urlsafe_base64(nil, false)
-        token      = SecureRandom.urlsafe_base64(nil, false)
-        token_hash = BCrypt::Password.create(token)
-        expiry     = (Time.now + @resource.token_lifespan).to_i
-
-        @resource.tokens[client_id] = {
-          token:  token_hash,
-          expiry: expiry
-        }
+        client_id, token = @resource.create_token
 
         # ensure that user is confirmed
         @resource.skip_confirmation! unless @resource.confirmed_at

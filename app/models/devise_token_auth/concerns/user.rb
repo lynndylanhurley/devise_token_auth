@@ -106,6 +106,17 @@ module DeviseTokenAuth::Concerns::User
       send_devise_notification(:unlock_instructions, raw, opts)
       raw
     end
+
+    def create_token(client_id: nil, token: nil, expiry: nil)
+      client_id ||= SecureRandom.urlsafe_base64(nil, false)
+      token ||= SecureRandom.urlsafe_base64(nil, false)
+      expiry ||= (Time.now + token_lifespan).to_i
+      tokens[client_id] = {
+        token: BCrypt::Password.create(token),
+        expiry: expiry
+      }
+      [client_id, token, expiry]
+    end
   end
 
   module ClassMethods
