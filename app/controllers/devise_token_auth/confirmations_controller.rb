@@ -4,20 +4,12 @@ module DeviseTokenAuth
       @resource = resource_class.confirm_by_token(params[:confirmation_token])
 
       if @resource && @resource.id
-        # create client id
-        client_id  = SecureRandom.urlsafe_base64(nil, false)
-        token      = SecureRandom.urlsafe_base64(nil, false)
-        token_hash = BCrypt::Password.create(token)
-        expiry     = (Time.now + @resource.token_lifespan).to_i
-
-        if defined? @resource.sign_in_count && @resource.sign_in_count > 0
+        expiry = nil
+        if defined?(@resource.sign_in_count) && @resource.sign_in_count > 0
           expiry = (Time.now + 1.second).to_i
         end
 
-        @resource.tokens[client_id] = {
-          token:  token_hash,
-          expiry: expiry
-        }
+        client_id, token = @resource.create_token expiry: expiry
 
         sign_in(@resource)
         @resource.save!

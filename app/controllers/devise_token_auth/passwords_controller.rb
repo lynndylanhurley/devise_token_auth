@@ -55,15 +55,7 @@ module DeviseTokenAuth
       @resource = with_reset_password_token(resource_params[:reset_password_token])
 
       if @resource && @resource.reset_password_period_valid?
-        client_id  = SecureRandom.urlsafe_base64(nil, false)
-        token      = SecureRandom.urlsafe_base64(nil, false)
-        token_hash = BCrypt::Password.create(token)
-        expiry     = (Time.now + @resource.token_lifespan).to_i
-
-        @resource.tokens[client_id] = {
-          token:  token_hash,
-          expiry: expiry
-        }
+        client_id, token = @resource.create_token
 
         # ensure that user is confirmed
         @resource.skip_confirmation! if confirmable_enabled? && !@resource.confirmed_at
