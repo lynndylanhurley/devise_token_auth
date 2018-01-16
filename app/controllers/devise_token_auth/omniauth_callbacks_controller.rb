@@ -27,7 +27,6 @@ module DeviseTokenAuth
 
     def omniauth_success
       get_resource_from_auth_hash
-      create_token_info
       set_token_on_resource
       create_auth_params
 
@@ -156,14 +155,6 @@ module DeviseTokenAuth
         @resource.password_confirmation = p
     end
 
-    def create_token_info
-      # create token info
-      @client_id = SecureRandom.urlsafe_base64(nil, false)
-      @token     = SecureRandom.urlsafe_base64(nil, false)
-      @expiry    = (Time.now + @resource.token_lifespan).to_i
-      @config    = omniauth_params['config_name']
-    end
-
     def create_auth_params
       @auth_params = {
         auth_token:     @token,
@@ -177,10 +168,8 @@ module DeviseTokenAuth
     end
 
     def set_token_on_resource
-      @resource.tokens[@client_id] = {
-        token: BCrypt::Password.create(@token),
-        expiry: @expiry
-      }
+      @config = omniauth_params['config_name']
+      @client_id, @token, @expiry = @resource.create_token
     end
 
     def render_data(message, data)
