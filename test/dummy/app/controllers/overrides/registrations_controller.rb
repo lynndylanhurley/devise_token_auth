@@ -19,7 +19,9 @@ module Overrides
       else
         render json: {
           status: 'error',
-          errors: ["User not found."]
+          errors: {
+            full_messages: [I18n.t('devise_token_auth.registrations.user_not_found')]
+          }
         }, status: 404
       end
     end

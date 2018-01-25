@@ -15,7 +15,9 @@ module Overrides
       else
         render json: {
           success: false,
-          errors: ["Invalid login credentials"]
+          errors: {
+            full_messages: [I18n.t('devise_token_auth.token_validations.invalid')]
+          }
         }, status: 401
       end
     end

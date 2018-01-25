@@ -19,16 +19,16 @@ module Overrides
       elsif @resource and not @resource.confirmed?
         render json: {
           success: false,
-          errors: [
-            "A confirmation email was sent to your account at #{@resource.email}. "+
-            "You must follow the instructions in the email before your account "+
-            "can be activated"
-          ]
+          errors: {
+            full_messages: [I18n.t('devise_token_auth.sessions.not_confirmed', @resource.email)]
+          } 
         }, status: 401
 
       else
         render json: {
-          errors: ["Invalid login credentials. Please try again."]
+          errors: {
+            full_messages: [I18n.t('devise_token_auth.sessions.bad_credentials')]
+          }
         }, status: 401
       end
     end

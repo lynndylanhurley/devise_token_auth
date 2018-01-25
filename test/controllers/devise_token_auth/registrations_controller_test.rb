@@ -130,7 +130,8 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         assert_equal 422, response.status
         assert @data['errors']
-        assert_equal @data['errors'],
+        assert @data['errors']['full_messages']
+        assert_equal @data['errors']['full_messages'],
                      [I18n.t('devise_token_auth.registrations.redirect_url_not_allowed',
                              redirect_url: @bad_redirect_url)]
       end
@@ -156,7 +157,9 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @data = JSON.parse(response.body)
 
         assert @data['errors']
-        assert_equal @data['errors'], [I18n.t('devise_token_auth.registrations.missing_confirm_success_url')]
+        assert @data['errors']['full_messages']
+        assert_equal @data['errors']['full_messages'], 
+          [I18n.t('devise_token_auth.registrations.missing_confirm_success_url')]
       end
     end
 
@@ -440,8 +443,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         end
 
         test 'error should be returned' do
-          assert @data['errors'].length
-          assert_equal @data['errors'], [I18n.t('devise_token_auth.registrations.account_to_destroy_not_found')]
+          assert @data['errors']
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'], 
+            [I18n.t('devise_token_auth.registrations.account_to_destroy_not_found')]
         end
       end
     end
@@ -691,8 +696,10 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         end
 
         test 'error should be returned' do
-          assert @data['errors'].length
-          assert_equal @data['errors'], [I18n.t('devise_token_auth.registrations.user_not_found')]
+          assert @data['errors']
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'],
+            [I18n.t('devise_token_auth.registrations.user_not_found')]
         end
 
         test 'User should not be updated' do

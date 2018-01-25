@@ -87,7 +87,9 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         end
         test 'response should contain errors' do
           assert @data['errors']
-          assert_equal @data['errors'], [I18n.t('devise_token_auth.sessions.not_supported')]
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'], 
+            [I18n.t('devise_token_auth.sessions.not_supported')]
         end
       end
 
@@ -162,7 +164,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test 'response should contain errors' do
           assert @data['errors']
-          assert_equal @data['errors'],
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'], 
                        [I18n.t('devise_token_auth.sessions.user_not_found')]
         end
       end
@@ -183,7 +186,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test 'response should contain errors' do
           assert @data['errors']
-          assert_equal @data['errors'],
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'], 
                        [I18n.t('devise_token_auth.sessions.bad_credentials')]
         end
       end
@@ -210,7 +214,9 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test 'response should contain errors' do
           assert @data['errors']
-          assert_equal @data['errors'], [I18n.t('devise_token_auth.sessions.bad_credentials')]
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'], 
+            [I18n.t('devise_token_auth.sessions.bad_credentials')]
         end
 
         after do
@@ -279,7 +285,8 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       test 'response should contain errors' do
         assert @data['errors']
-        assert_equal @data['errors'],
+        assert @data['errors']['full_messages']
+        assert_equal @data['errors']['full_messages'], 
                      [I18n.t('devise_token_auth.sessions.not_confirmed',
                              email: @unconfirmed_user.email)]
       end
@@ -450,7 +457,9 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test 'response should contain errors' do
           assert @data['errors']
-          assert_equal @data['errors'], [I18n.t('devise_token_auth.sessions.not_confirmed', email: @locked_user.email)]
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'], 
+            [I18n.t('devise_token_auth.sessions.not_confirmed', email: @locked_user.email)]
         end
       end
 
@@ -473,7 +482,9 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test 'response should contain errors' do
           assert @data['errors']
-          assert_equal @data['errors'], [I18n.t('devise_token_auth.sessions.bad_credentials')]
+          assert @data['errors']['full_messages']
+          assert_equal @data['errors']['full_messages'], 
+            [I18n.t('devise_token_auth.sessions.bad_credentials')]
         end
 
         describe 'after maximum_attempts should block the user' do

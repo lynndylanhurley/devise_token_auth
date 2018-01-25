@@ -59,7 +59,8 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
       test 'response should contain errors' do
         assert @resp['errors']
-        assert_equal @resp['errors'], [I18n.t('devise_token_auth.token_validations.invalid')]
+        assert @resp['errors']['full_messages']
+        assert_equal @resp['errors']['full_messages'], [I18n.t('devise_token_auth.token_validations.invalid')]
       end
     end
   end
