@@ -24,7 +24,8 @@ module DeviseTokenAuth
                  :remove_tokens_after_password_reset,
                  :default_callbacks,
                  :headers_names,
-                 :bypass_sign_in
+                 :bypass_sign_in,
+                 :require_client_password_reset_token
 
   self.change_headers_on_each_request       = true
   self.max_number_of_devices                = 10
@@ -44,6 +45,7 @@ module DeviseTokenAuth
                                                 'uid': 'uid',
                                                 'token-type': 'token-type' }
   self.bypass_sign_in                       = true
+  self.require_client_password_reset_token  = false
 
   def self.setup(&block)
     yield self
