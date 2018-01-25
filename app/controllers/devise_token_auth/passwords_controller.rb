@@ -2,12 +2,10 @@
 
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
-    before_action :set_user_by_token, only: [:update]
     before_action :validate_redirect_url_param, only: [:create, :edit]
     skip_after_action :update_auth_header, only: [:create, :edit]
 
-    # this action is responsible for generating password reset tokens and
-    # sending emails
+    # this action is responsible for generating password reset tokens and sending emails
     def create
       return render_create_error_missing_email unless resource_params[:email]
 
@@ -19,7 +17,7 @@ module DeviseTokenAuth
         @resource.send_reset_password_instructions(
           email: @email,
           provider: 'email',
-          redirect_url: @redirect_url,
+          redirect_url: redirect_url,
           client_config: params[:config_name]
         )
 
@@ -34,29 +32,31 @@ module DeviseTokenAuth
     end
 
     # this is where users arrive after visiting the password reset confirmation link
-    def edit
+    def edit(&block)
       # if a user is not found, return nil
       @resource = resource_class.with_reset_password_token(resource_params[:reset_password_token])
 
       if @resource && @resource.reset_password_period_valid?
-        token = @resource.create_token
+        if require_client_password_reset_token?
+          update_allow_password_change(&block)
+          callback = Addressable::URI.parse(redirect_url)
 
-        # ensure that user is confirmed
-        @resource.skip_confirmation! if confirmable_enabled? && !@resource.confirmed_at
+          # add password_reset_token while preserving existing query params
+          callback.query_values = (callback.query_values || {}).merge(
+            reset_password_token: resource_params[:reset_password_token]
+          )
+          redirect_to callback.to_s
+        else
+          token = @resource.create_token
+          update_allow_password_change(&block)
 
-        # allow user to change password once without current_password
-        @resource.allow_password_change = true if recoverable_enabled?
-
-        @resource.save!
-
-        yield @resource if block_given?
-
-        redirect_header_options = { reset_password: true }
-        redirect_headers = build_redirect_headers(token.token,
-                                                  token.client,
-                                                  redirect_header_options)
-        redirect_to(@resource.build_auth_url(@redirect_url,
-                                             redirect_headers))
+          redirect_header_options = { reset_password: true }
+          redirect_headers = build_redirect_headers(token.token,
+                                                    token.client,
+                                                    redirect_header_options)
+          redirect_to(@resource.build_auth_url(@redirect_url,
+                                               redirect_headers))
+        end
       else
         render_edit_error
       end
@@ -64,6 +64,13 @@ module DeviseTokenAuth
 
     def update
       # make sure user is authorized
+      if require_client_password_reset_token? && resource_params[:reset_password_token]
+        @resource = resource_class.with_reset_password_token(resource_params[:reset_password_token])
+        @client_id, @token = @resource.create_token
+      else
+        set_user_by_token
+      end
+
       return render_update_error_unauthorized unless @resource
 
       # make sure account doesn't use oauth2 provider
@@ -90,7 +97,7 @@ module DeviseTokenAuth
     protected
 
     def resource_update_method
-      allow_password_change = recoverable_enabled? && @resource.allow_password_change == true
+      allow_password_change = recoverable_enabled? && ( @resource.allow_password_change || require_client_password_reset_token? )
       if DeviseTokenAuth.check_current_password_before_update == false || allow_password_change
         'update'
       else
@@ -183,6 +190,34 @@ module DeviseTokenAuth
 
       return render_create_error_missing_redirect_url unless @redirect_url
       return render_error_not_allowed_redirect_url if blacklisted_redirect_url?
+    end
+
+    def redirect_url
+      # give redirect value from params priority, otherwise fall back to default value if provided
+      @redirect_url ||= params.fetch(
+        :redirect_url,
+        DeviseTokenAuth.default_password_reset_url
+      )
+    end
+
+    def update_allow_password_change
+      # ensure that user is confirmed
+      @resource.skip_confirmation! if confirmable_enabled? && !@resource.confirmed_at
+
+      # allow user to change password once without current_password
+      @resource.allow_password_change = true if recoverable_enabled?
+
+      @resource.save!
+
+      yield @resource if block_given?
+    end
+
+    def reset_password_token_as_raw?(recoverable)
+      recoverable && recoverable.reset_password_token.present? && !require_client_password_reset_token?
+    end
+
+    def require_client_password_reset_token?
+      DeviseTokenAuth.require_client_password_reset_token
     end
   end
 end
