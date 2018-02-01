@@ -4,7 +4,7 @@ module DeviseTokenAuth
     before_action :set_user_by_token, :only => [:validate_token]
 
     def validate_token
-      # @resource will have been set by set_user_token concern
+      # @resource will have been set by set_user_by_token concern
       if @resource
         yield @resource if block_given?
         render_validate_token_success
