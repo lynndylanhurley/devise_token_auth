@@ -12,10 +12,10 @@ module DeviseTokenAuth
         redirect_header_options = { account_confirmation_success: true }
 
         if signed_in?(resource_name)
-          client_id, token = signed_in_resource.create_token
+          token = signed_in_resource.create_token
 
-          redirect_headers = build_redirect_headers(token,
-                                                    client_id,
+          redirect_headers = build_redirect_headers(token.token,
+                                                    token.client,
                                                     redirect_header_options)
 
           redirect_to_link = signed_in_resource.build_auth_url(redirect_url, redirect_headers)
