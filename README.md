@@ -71,6 +71,7 @@ Please read the [issue reporting guidelines](#issue-reporting) before posting is
   * [Testing](#testing)
 * [Issue Reporting Guidelines](#issue-reporting)
 * [FAQ](#faq)
+  * [Can I use this gem alongside standard Devise?](#can-i-use-this-gem-alongside-standard-devise)
 * [Conceptual Diagrams](#conceptual)
   * [Token Management](#about-token-management)
   * [Batch Requests](#about-batch-requests)
