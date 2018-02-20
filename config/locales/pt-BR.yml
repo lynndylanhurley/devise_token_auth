@@ -1,8 +1,8 @@
 pt-BR:
   devise_token_auth:
     sessions:
-      not_confirmed: "Uma mensagem com um link de confirmação foi enviado para seu endereço de e-mail. Você precisa confirmar sua conta antes de continuar."
-      bad_credentials: "E-mail ou senha inválidos."
+      unconfirmed: "Uma mensagem com um link de confirmação foi enviado para seu endereço de e-mail. Você precisa confirmar sua conta antes de continuar."
+      invalid: "E-mail ou senha inválidos."
       not_supported: "Use POST /sign_in para efetuar o login. GET não é suportado."
       user_not_found: "Usuário não existe ou não está logado."
     token_validations:

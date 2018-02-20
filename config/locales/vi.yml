@@ -1,8 +1,8 @@
 vi:
   devise_token_auth:
     sessions:
-      not_confirmed: "Mail xác nhận tài khoản đã được gửi tới tài khoản của bạn tại '%{email}'. Bận cần phải làm theo những hướng dẫn trong email để tài khoản có thể xác nhận"
-      bad_credentials: "Thông tin đăng nhập không hợp lệ. Xin thử lại."
+      unconfirmed: "Mail xác nhận tài khoản đã được gửi tới tài khoản của bạn tại '%{email}'. Bận cần phải làm theo những hướng dẫn trong email để tài khoản có thể xác nhận"
+      invalid: "Thông tin đăng nhập không hợp lệ. Xin thử lại."
       not_supported: "Sử dụng POST /sign_in để đăng nhập. Phương thức GET không được hỗ trợ."
       user_not_found: "Người dùng đã không được tìm thấy hoặc không đăng nhập."
     token_validations:

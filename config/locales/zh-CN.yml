@@ -1,8 +1,8 @@
 zh-CN:
   devise_token_auth:
     sessions:
-      not_confirmed: "您将在几分钟后收到一封电子邮件'%{email}',内有验证账号的步骤说明"
-      bad_credentials: "不正确的登录信息，请重试"
+      unconfirmed: "您将在几分钟后收到一封电子邮件'%{email}',内有验证账号的步骤说明"
+      invalid: "不正确的登录信息，请重试"
       not_supported: "请使用 POST /sign_in 进行登录. GET 是不支持的."
       user_not_found: "没有找到账号或没有成功登录"
     token_validations:

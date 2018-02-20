@@ -1,8 +1,8 @@
 sq:
   devise_token_auth:
     sessions:
-      not_confirmed: "Një email konfirmues është dërguar tek llogaria juaj '%{email}'. Ju duhet të ndiqni udhëzimet në email përpara se të bëhet aktivizimi i llogarisë tuaj."
-      bad_credentials: "Kredencialet e qasjes nuk janë në rregull. Ju lutemi, provoni përsëri."
+      unconfirmed: "Një email konfirmues është dërguar tek llogaria juaj '%{email}'. Ju duhet të ndiqni udhëzimet në email përpara se të bëhet aktivizimi i llogarisë tuaj."
+      invalid: "Kredencialet e qasjes nuk janë në rregull. Ju lutemi, provoni përsëri."
       not_supported: "Përdorni POST/sign_in për t'u kyçur. GET nuk lejohet në këtë rast."
       user_not_found: "Përdoruesi nuk u gjet ose nuk është i kyçur."
     token_validations:

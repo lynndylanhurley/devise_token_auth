@@ -1,8 +1,8 @@
 da-DK:
   devise_token_auth:
     sessions:
-      not_confirmed: "Der er sendt en bekræftelsesemail til din konto på '%{email}'. Følg venligst instruktionerne i emailen for at aktivere din konto."
-      bad_credentials: "Ugyldigt kombination af brugernavn og kodeord. Prøv venligst igen."
+      unconfirmed: "Der er sendt en bekræftelsesemail til din konto på '%{email}'. Følg venligst instruktionerne i emailen for at aktivere din konto."
+      invalid: "Ugyldigt kombination af brugernavn og kodeord. Prøv venligst igen."
       not_supported: "Brug POST /sign_in for at logge ind. GET er ikke supporteret."
       user_not_found: "Brugeren er ikke fundet eller er ikke logget ind."
     token_validations:

@@ -1,8 +1,8 @@
 pl:
   devise_token_auth:
     sessions:
-      not_confirmed: "Wiadomość z potwierdzeniem Twojego konta została wysłana na '%{email}'. Proszę postępować zgodnie z wskazówkami znajdującymi się w wiadomości celem aktywacji konta."
-      bad_credentials: "Nieprawidłowe dane logowania. Proszę spróbować ponownie."
+      unconfirmed: "Wiadomość z potwierdzeniem Twojego konta została wysłana na '%{email}'. Proszę postępować zgodnie z wskazówkami znajdującymi się w wiadomości celem aktywacji konta."
+      invalid: "Nieprawidłowe dane logowania. Proszę spróbować ponownie."
       not_supported: "Proszę użyć POST /sign_in do zalogowania. GET nie jest obsługiwany."
       user_not_found: "Użytkownik nie został odnaleziony lub nie jest zalogowany."
     token_validations:
