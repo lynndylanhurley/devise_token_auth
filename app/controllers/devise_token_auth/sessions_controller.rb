@@ -107,7 +107,7 @@ module DeviseTokenAuth
 
     def render_create_error_bad_credentials
       render json: {
-          errors: [I18n.t("devise_token_auth.sessions.#{@resource.unauthenticated_message}")]
+          errors: [I18n.t("devise_token_auth.sessions.invalid")]
       }, status: 401
     end
 
