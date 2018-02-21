@@ -88,15 +88,15 @@ module DeviseTokenAuth::Concerns::User
     end
   end
 
-  def create_token(client_id: nil, token: nil, expiry: nil)
+  def create_token(client_id: nil, token: nil, expiry: nil, **token_extras)
     client_id ||= SecureRandom.urlsafe_base64(nil, false)
-    token ||= SecureRandom.urlsafe_base64(nil, false)
-    expiry ||= (Time.now + token_lifespan).to_i
+    token     ||= SecureRandom.urlsafe_base64(nil, false)
+    expiry    ||= (Time.now + token_lifespan).to_i
 
-    tokens[client_id] = {
+    self.tokens[client_id] = {
       token: BCrypt::Password.create(token),
       expiry: expiry
-    }
+    }.merge!(token_extras)
 
     [client_id, token, expiry]
   end
@@ -168,20 +168,14 @@ module DeviseTokenAuth::Concerns::User
 
   # update user's auth token (should happen on each request)
   def create_new_auth_token(client_id=nil)
-    client_id  ||= SecureRandom.urlsafe_base64(nil, false)
-    last_token ||= nil
-    token        = SecureRandom.urlsafe_base64(nil, false)
-    token_hash   = ::BCrypt::Password.create(token)
-    expiry       = (Time.now + token_lifespan).to_i
+    now = Time.now
 
-    last_token = tokens.fetch(client_id, {})['token']
-
-    self.tokens[client_id] = {
-      token:      token_hash,
-      expiry:     expiry,
-      last_token: last_token,
-      updated_at: Time.now
-    }
+    client_id, token = create_token(
+      client_id: client_id,
+      expiry: (now + token_lifespan).to_i,
+      last_token: tokens.fetch(client_id, {})['token'],
+      updated_at: now
+    )
 
     update_auth_header(token, client_id)
   end
