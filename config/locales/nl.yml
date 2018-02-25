@@ -1,8 +1,8 @@
 nl:
   devise_token_auth:
     sessions:
-      not_confirmed: "Een bevestingsmail is verzonden naar het adres '%{email}'. Volg de instructies in de mail om uw account te activeren."
-      bad_credentials: 'Ongeldige logingegevens.'
+      unconfirmed: "Een bevestingsmail is verzonden naar het adres '%{email}'. Volg de instructies in de mail om uw account te activeren."
+      invalid: 'Ongeldige logingegevens.'
       not_supported: "Gebruik POST /sign_in om in te loggen. GET wordt niet ondersteund."
       user_not_found: "Gebruiker is niet gevonden of niet ingelogd."
     token_validations:

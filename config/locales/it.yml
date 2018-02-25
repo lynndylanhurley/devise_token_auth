@@ -1,8 +1,8 @@
 it:
   devise_token_auth:
     sessions:
-      not_confirmed: "Un'email di conferma è stata mandata al tuo account '%{email}'. Segui le istruzioni nell'email per attivare il tuo account."
-      bad_credentials: "Credenziali di login non valide. Riprova."
+      unconfirmed: "Un'email di conferma è stata mandata al tuo account '%{email}'. Segui le istruzioni nell'email per attivare il tuo account."
+      invalid: "Credenziali di login non valide. Riprova."
       not_supported: "Usa POST /sign_in per eseguire il login. GET non è supportato."
       user_not_found: "Utente non trovato o non autenticato."
     token_validations:

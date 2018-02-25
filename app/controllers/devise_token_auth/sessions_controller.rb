@@ -34,7 +34,7 @@ module DeviseTokenAuth
 
         render_create_success
       elsif @resource && !(!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
-        render_create_error_not_confirmed
+        render_create_error_inactive
       else
         render_create_error_bad_credentials
       end
@@ -98,12 +98,17 @@ module DeviseTokenAuth
       }
     end
 
-    def render_create_error_not_confirmed
-      render_error(401, I18n.t("devise_token_auth.sessions.not_confirmed", email: @resource.email))
+    def render_create_error_inactive
+      render json: {
+          success: false,
+          errors: [ I18n.t("devise_token_auth.sessions.#{@resource.inactive_message}", email: @resource.email) ]
+      }, status: 401
     end
 
     def render_create_error_bad_credentials
-      render_error(401, I18n.t("devise_token_auth.sessions.bad_credentials"))
+      render json: {
+          errors: [I18n.t("devise_token_auth.sessions.invalid")]
+      }, status: 401
     end
 
     def render_destroy_success

@@ -1,8 +1,8 @@
 fr:
   devise_token_auth:
     sessions:
-      not_confirmed: "Un e-mail de confirmation de votre compte a été envoyé à '%{email}'. Merci de suivre les instructions afin de valider votre compte"
-      bad_credentials: "Mot de passe ou identifiant invalide."
+      unconfirmed: "Un e-mail de confirmation de votre compte a été envoyé à '%{email}'. Merci de suivre les instructions afin de valider votre compte"
+      invalid: "Mot de passe ou identifiant invalide."
       not_supported: "Utilisez POST /sign_in pour la connexion. GET n'est pas supporté."
       user_not_found: "L'utilisateur est inconnu ou n'est pas connecté."
     token_validations:

@@ -3,8 +3,8 @@
 zh-TW:
   devise_token_auth:
     sessions:
-      not_confirmed: "您將在幾分鐘後收到一封電子郵件'%{email}'，內有驗證帳號的步驟說明。"
-      bad_credentials: "不正確的登入資料。請重試。"
+      unconfirmed: "您將在幾分鐘後收到一封電子郵件'%{email}'，內有驗證帳號的步驟說明。"
+      invalid: "不正確的登入資料。請重試。"
       not_supported: "請使用 POST /sign_in 進行登入. GET 是不支援的."
       user_not_found: "未能找到帳號或未能成功登入。"
     token_validations:

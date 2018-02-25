@@ -1,8 +1,8 @@
 ro:
   devise_token_auth:
     sessions:
-      not_confirmed: "Un email de confirmare a fost trimis către contul tău la '%{email}'. Pentru a-ți activa contul este necesar să urmezi instrucțiunile din acesta."
-      bad_credentials: "Datele introduse sunt incorecte. Te rugăm să incerci din nou."
+      unconfirmed: "Un email de confirmare a fost trimis către contul tău la '%{email}'. Pentru a-ți activa contul este necesar să urmezi instrucțiunile din acesta."
+      invalid: "Datele introduse sunt incorecte. Te rugăm să incerci din nou."
       not_supported: "Folosește functionalitatea POST /sign_in pentru a te autentifica. GET nu este suportat."
       user_not_found: "Utilizatorul nu a fost găsit sau nu este logat în cont."
     token_validations:
