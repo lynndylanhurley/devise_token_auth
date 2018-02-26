@@ -450,7 +450,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test 'response should contain errors' do
           assert @data['errors']
-          assert_equal @data['errors'], [I18n.t('devise_token_auth.sessions.not_confirmed', email: @locked_user.email)]
+          assert_equal @data['errors'], [I18n.t('devise.mailer.unlock_instructions.account_lock_msg')]
         end
       end
 
