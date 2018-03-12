@@ -98,6 +98,8 @@ module DeviseTokenAuth::Concerns::User
       expiry: expiry
     }.merge!(token_extras)
 
+    clean_old_tokens
+
     [client_id, token, expiry]
   end
 
@@ -196,16 +198,11 @@ module DeviseTokenAuth::Concerns::User
 
   def update_auth_header(token, client_id='default')
     headers = build_auth_header(token, client_id)
-    while tokens.length > 0 && DeviseTokenAuth.max_number_of_devices < tokens.length
-      oldest_client_id, _tk = tokens.min_by { |_cid, v| v[:expiry] || v["expiry"] }
-      tokens.delete(oldest_client_id)
-    end
-
+    clean_old_tokens
     save!
 
     headers
   end
-
 
   def build_auth_url(base_url, args)
     args[:uid]    = uid
@@ -213,7 +210,6 @@ module DeviseTokenAuth::Concerns::User
 
     DeviseTokenAuth::Url.generate(base_url, args)
   end
-
 
   def extend_batch_buffer(token, client_id)
     self.tokens[client_id]['updated_at'] = Time.now
@@ -257,4 +253,10 @@ module DeviseTokenAuth::Concerns::User
     end
   end
 
+  def clean_old_tokens
+    while tokens.length > 0 && DeviseTokenAuth.max_number_of_devices < tokens.length
+      oldest_client_id, _tk = tokens.min_by { |_cid, v| v[:expiry] || v["expiry"] }
+      tokens.delete(oldest_client_id)
+    end
+  end
 end
