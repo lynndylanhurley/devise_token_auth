@@ -101,7 +101,7 @@ module DeviseTokenAuth
     private
 
     def self.next_migration_number(path)
-      Time.now.utc.strftime("%Y%m%d%H%M%S")
+      Time.zone.now.utc.strftime("%Y%m%d%H%M%S")
     end
 
     def insert_after_line(filename, line, str)

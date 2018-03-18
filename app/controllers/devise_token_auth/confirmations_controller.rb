@@ -6,7 +6,7 @@ module DeviseTokenAuth
       if @resource && @resource.id
         expiry = nil
         if defined?(@resource.sign_in_count) && @resource.sign_in_count > 0
-          expiry = (Time.now + 1.second).to_i
+          expiry = (Time.zone.now + 1.second).to_i
         end
 
         client_id, token = @resource.create_token expiry: expiry
