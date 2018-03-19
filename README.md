@@ -11,7 +11,9 @@ See our [Contribution Guidelines](https://github.com/lynndylanhurley/devise_toke
 [![Code Climate](http://img.shields.io/codeclimate/github/lynndylanhurley/devise_token_auth.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Test Coverage](http://img.shields.io/codeclimate/coverage/github/lynndylanhurley/devise_token_auth.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Dependency Status](https://gemnasium.com/lynndylanhurley/devise_token_auth.svg)](https://gemnasium.com/lynndylanhurley/devise_token_auth)
-[![Downloads](https://img.shields.io/gem/dt/devise_token_auth.svg)](https://rubygems.org/gems/devise_token_auth)
+[![Downloads](https://img.shields.io/gem/dt/devise_token_auth.svg)](https://rubygems.org/gems/devise_token_auth) 
+[![Backers on Open Collective](https://opencollective.com/devise_token_auth/backers/badge.svg)](#backers) 
+[![Sponsors on Open Collective](https://opencollective.com/devise_token_auth/sponsors/badge.svg)](#sponsors) 
 
 ## Simple, secure token based authentication for Rails.
 
@@ -947,6 +949,36 @@ Thanks to the following contributors:
 See the [CONTRIBUTING.md] document.
 
 [CONTRIBUTING.md]: https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/CONTRIBUTING.md
+
+## Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/CONTRIBUTING.md)].
+<a href="graphs/contributors"><img src="https://opencollective.com/devise_token_auth/contributors.svg?width=890&button=false" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/devise_token_auth#backer)]
+
+<a href="https://opencollective.com/devise_token_auth#backers" target="_blank"><img src="https://opencollective.com/devise_token_auth/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/devise_token_auth#sponsor)]
+
+<a href="https://opencollective.com/devise_token_auth/sponsor/0/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/1/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/2/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/3/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/4/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/5/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/6/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/7/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/8/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/devise_token_auth/sponsor/9/website" target="_blank"><img src="https://opencollective.com/devise_token_auth/sponsor/9/avatar.svg"></a>
+
+
 
 # License
 This project uses the WTFPL
