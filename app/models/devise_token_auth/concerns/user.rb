@@ -91,7 +91,7 @@ module DeviseTokenAuth::Concerns::User
   def create_token(client_id: nil, token: nil, expiry: nil, **token_extras)
     client_id ||= SecureRandom.urlsafe_base64(nil, false)
     token     ||= SecureRandom.urlsafe_base64(nil, false)
-    expiry    ||= (Time.now + token_lifespan).to_i
+    expiry    ||= (Time.zone.now + token_lifespan).to_i
 
     self.tokens[client_id] = {
       token: BCrypt::Password.create(token),
@@ -139,7 +139,7 @@ module DeviseTokenAuth::Concerns::User
       expiry && token &&
 
       # ensure that the token has not yet expired
-      DateTime.strptime(expiry.to_s, '%s') > Time.now &&
+      DateTime.strptime(expiry.to_s, '%s') > Time.zone.now &&
 
       # ensure that the token is valid
       DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
@@ -158,7 +158,7 @@ module DeviseTokenAuth::Concerns::User
       updated_at && last_token &&
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle &&
+      Time.parse(updated_at) > Time.zone.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
@@ -168,7 +168,7 @@ module DeviseTokenAuth::Concerns::User
 
   # update user's auth token (should happen on each request)
   def create_new_auth_token(client_id=nil)
-    now = Time.now
+    now = Time.zone.now
 
     client_id, token = create_token(
       client_id: client_id,
@@ -216,7 +216,7 @@ module DeviseTokenAuth::Concerns::User
 
 
   def extend_batch_buffer(token, client_id)
-    self.tokens[client_id]['updated_at'] = Time.now
+    self.tokens[client_id]['updated_at'] = Time.zone.now
     update_auth_header(token, client_id)
   end
 
@@ -242,7 +242,7 @@ module DeviseTokenAuth::Concerns::User
     if tokens
       tokens.delete_if do |cid, v|
         expiry = v[:expiry] || v["expiry"]
-        DateTime.strptime(expiry.to_s, '%s') < Time.now
+        DateTime.strptime(expiry.to_s, '%s') < Time.zone.now
       end
     end
   end

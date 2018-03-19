@@ -45,14 +45,14 @@ class ActiveSupport::TestCase
 
   def age_token(user, client_id)
     if user.tokens[client_id]
-      user.tokens[client_id]['updated_at'] = Time.now - (DeviseTokenAuth.batch_request_buffer_throttle + 10.seconds)
+      user.tokens[client_id]['updated_at'] = Time.zone.now - (DeviseTokenAuth.batch_request_buffer_throttle + 10.seconds)
       user.save!
     end
   end
 
   def expire_token(user, client_id)
     if user.tokens[client_id]
-      user.tokens[client_id]['expiry'] = (Time.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)).to_i
+      user.tokens[client_id]['expiry'] = (Time.zone.now - (DeviseTokenAuth.token_lifespan.to_f + 10.seconds)).to_i
       user.save!
     end
   end
