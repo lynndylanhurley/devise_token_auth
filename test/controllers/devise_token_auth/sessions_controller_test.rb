@@ -72,6 +72,33 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             assert_equal '0.0.0.0', @new_last_sign_in_ip
           end
         end
+
+        describe "with multiple clients and headers don't change in each request" do
+          before do
+            DeviseTokenAuth.max_number_of_devices = 1
+            DeviseTokenAuth.change_headers_on_each_request = false
+            @tokens = []
+            (1..3).each do |n|
+              post :create,
+                   params: {
+                     email: @existing_user.email,
+                     password: 'secret123'
+                   }
+              @tokens << @existing_user.reload.tokens
+            end
+          end
+
+          test 'should delete old tokens' do
+            current_tokens = @existing_user.reload.tokens
+            assert_equal 1, current_tokens.count
+            assert_equal @tokens.pop.keys.first, current_tokens.keys.first
+          end
+
+          after do
+            DeviseTokenAuth.max_number_of_devices = 10
+            DeviseTokenAuth.change_headers_on_each_request = true
+          end
+        end
       end
 
       describe 'get sign_in is not supported' do
