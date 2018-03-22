@@ -29,8 +29,8 @@ sv:
       user_not_found: "Kunde inte hitta användaren med emailadressen '%{email}'."
   errors:
     messages:
-      validate_sign_up_params: "Vänligen skicka giltig kontoskapar-data i request-bodyn."
-      validate_account_update_params: "Vänligen skicka giltig kontouppdaterings-data i request-bodyn."
+      validate_sign_up_params: "Vänligen skicka giltig data för att skapa konto i request-bodyn."
+      validate_account_update_params: "Vänligen skicka giltig data för att uppdatera konto i request-bodyn."
       not_email: "är inte en emailadress"
   devise:
     mailer:
