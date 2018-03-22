@@ -12,12 +12,12 @@ module DeviseTokenAuth
     end
 
     def copy_migrations
-      if self.class.migration_exists?("db/migrate", "devise_token_auth_create_#{ user_class.underscore }")
-        say_status("skipped", "Migration 'devise_token_auth_create_#{ user_class.underscore }' already exists")
+      if self.class.migration_exists?("db/migrate", "devise_token_auth_create_#{ user_class.pluralize.gsub("::","").underscore }")
+        say_status("skipped", "Migration 'devise_token_auth_create_#{ user_class.pluralize.gsub("::","").underscore }' already exists")
       else
         migration_template(
           "devise_token_auth_create_users.rb.erb",
-          "db/migrate/devise_token_auth_create_#{ user_class.pluralize.underscore }.rb"
+          "db/migrate/devise_token_auth_create_#{ user_class.pluralize.gsub("::","").underscore }.rb"
         )
       end
     end
@@ -29,7 +29,7 @@ module DeviseTokenAuth
       else
         inclusion = "include DeviseTokenAuth::Concerns::User"
         unless parse_file_for_line(fname, inclusion)
-          
+
           active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
           inject_into_file fname, after: "class #{user_class} < #{active_record_needle}\n" do <<-'RUBY'
   # Include default devise modules.
