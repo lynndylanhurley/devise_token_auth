@@ -413,14 +413,11 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           # Set the max_number_of_devices to a lower number
           #  to expedite tests! (Default is 10)
           DeviseTokenAuth.max_number_of_devices = 5
-
-          # @max_devices = DeviseTokenAuth.max_number_of_devices
         end
 
         it 'should limit the maximum number of concurrent devices' do
           # increment the number of devices until the maximum is exceeded
           1.upto(DeviseTokenAuth.max_number_of_devices + 1).each do |n|
-            # initial_tokens = @resource.reload.tokens
 
             assert_equal(
               [n, DeviseTokenAuth.max_number_of_devices].min,
@@ -430,7 +427,6 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             # Add a new device (and token) ahead of the next iteration
             @resource.create_new_auth_token
 
-            # refute_equal initial_tokens, @resource.reload.tokens
           end
         end
 
@@ -440,14 +436,15 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             @resource.create_new_auth_token
           end
 
-          # get the oldest token
-          oldest_token, _ = @resource.reload.tokens \
-                              .min_by { |cid, v| v[:expiry] || v["expiry"] }
+          # get the oldest token client_id
+          oldest_client_id, = @resource.reload.tokens.min_by do |cid, v|
+                                v[:expiry] || v["expiry"]
+                              end # => [ 'CLIENT_ID', {token: ...} ]
 
           # create another token, thereby dropping the oldest token
           @resource.create_new_auth_token
 
-          assert_not_includes @resource.reload.tokens.keys, oldest_token
+          assert_not_includes @resource.reload.tokens.keys, oldest_client_id
         end
 
         after do
