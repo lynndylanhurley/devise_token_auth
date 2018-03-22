@@ -26,7 +26,7 @@ da-DK:
     unlocks:
       missing_email: "Du skal udfylde en email."
       sended: "En email er blevet sendt til '%{email}', som indeholder instruktioner for at låse kontoen op."
-      user_not_found: "Kan ikke finde en burger med email '%{email}'."
+      user_not_found: "Kan ikke finde en bruger med email '%{email}'."
   errors:
     messages:
       validate_sign_up_params: "Angiv venligst passende registeringsdata i request body."
