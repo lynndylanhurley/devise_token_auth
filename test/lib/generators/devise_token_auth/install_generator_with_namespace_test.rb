@@ -12,14 +12,14 @@ module DeviseTokenAuth
     let(:namespace_path) { user_class.underscore }
     let(:table_name) { user_class.pluralize.underscore.gsub("/","_") }
 
-    describe 'default values, clean install' do
+    describe 'user model with namespace, clean install' do
       setup :prepare_destination
 
       before do
         run_generator %W(#{user_class} auth)
       end
 
-      test 'user model is created, concern is included' do
+      test 'user model (with namespace) is created, concern is included' do
         assert_file "app/models/#{namespace_path}.rb" do |model|
           assert_match(/include DeviseTokenAuth::Concerns::User/, model)
         end
@@ -29,11 +29,11 @@ module DeviseTokenAuth
         assert_file 'config/initializers/devise_token_auth.rb'
       end
 
-      test 'migration is created' do
+      test 'migration is created for user model with namespace' do
         assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb"
       end
 
-      test 'migration file contains rails version' do
+      test 'migration file for user model with namespace contains rails version' do
         if Rails::VERSION::MAJOR >= 5
           assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}/
         else
@@ -112,7 +112,7 @@ module DeviseTokenAuth
         run_generator %W(#{user_class} auth)
       end
 
-      test 'route method is appended to routes file' do
+      test 'route method for user model with namespace is appended to routes file' do
         assert_file 'config/routes.rb' do |routes|
           assert_match(/mount_devise_token_auth_for '#{user_class}', at: 'auth'/, routes)
         end
