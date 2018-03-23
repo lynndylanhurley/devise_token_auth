@@ -27,7 +27,7 @@ module DeviseTokenAuth
     def create_user_model
       fname = "app/models/#{ user_class.underscore }.rb"
       unless File.exist?(File.join(destination_root, fname))
-        template("user.rb", fname)
+        template("user.rb.erb", fname)
       else
         inclusion = "include DeviseTokenAuth::Concerns::User"
         unless parse_file_for_line(fname, inclusion)
