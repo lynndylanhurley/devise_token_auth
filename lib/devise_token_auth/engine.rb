@@ -50,7 +50,6 @@ module DeviseTokenAuth
       if defined?(::OmniAuth)
         ::OmniAuth::config.path_prefix = Devise.omniauth_path_prefix = self.omniauth_prefix
 
-
         # Omniauth currently does not pass along omniauth.params upon failure redirect
         # see also: https://github.com/intridea/omniauth/issues/626
         OmniAuth::FailureEndpoint.class_eval do
@@ -63,7 +62,6 @@ module DeviseTokenAuth
             Rack::Response.new(["302 Moved"], 302, 'Location' => new_path).finish
           end
         end
-
 
         # Omniauth currently removes omniauth.params during mocked requests
         # see also: https://github.com/intridea/omniauth/pull/812

@@ -46,11 +46,6 @@ Layout/EmptyLineBetweenDefs:
 # Cop supports --auto-correct.
 Layout/EmptyLines:
   Exclude:
-    - 'Rakefile'
-    - 'app/controllers/devise_token_auth/concerns/set_user_by_token.rb'
-    - 'app/models/devise_token_auth/concerns/user.rb'
-    - 'lib/devise_token_auth/engine.rb'
-    - 'lib/devise_token_auth/url.rb'
     - 'test/dummy/app/controllers/custom/passwords_controller.rb'
     - 'test/dummy/app/helpers/application_helper.rb'
     - 'test/dummy/config/routes.rb'
