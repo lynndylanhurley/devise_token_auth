@@ -244,19 +244,31 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def remove_tokens_after_password_reset
-    should_remove_old_tokens = DeviseTokenAuth.remove_tokens_after_password_reset &&
-                               encrypted_password_changed? && tokens && tokens.many?
+    return unless encrypted_password_changed? &&
+                DeviseTokenAuth.remove_tokens_after_password_reset
 
-    if should_remove_old_tokens
+    if tokens.present? && tokens.many?
       client_id, token_data = tokens.max_by { |cid, v| v[:expiry] || v["expiry"] }
       self.tokens = {client_id => token_data}
     end
   end
 
+  def max_client_tokens_exceeded?
+    tokens.length > DeviseTokenAuth.max_number_of_devices
+  end
+
   def clean_old_tokens
-    while tokens.length > 0 && DeviseTokenAuth.max_number_of_devices < tokens.length
-      oldest_client_id, _tk = tokens.min_by { |_cid, v| v[:expiry] || v["expiry"] }
-      tokens.delete(oldest_client_id)
+    if tokens.present? && max_client_tokens_exceeded?
+      # Using Enumerable#sort_by on a Hash will typecast it into an associative
+      #   Array (i.e. an Array of key-value Array pairs). However, since Hashes
+      #   have an internal order in Ruby 1.9+, the resulting sorted associative
+      #   Array can be converted back into a Hash, while maintaining the sorted
+      #   order.
+      self.tokens = tokens.sort_by { |_cid, v| v[:expiry] || v['expiry'] }.to_h
+
+      # Since the tokens are sorted by expiry, shift the oldest client token
+      #   off the Hash until it no longer exceeds the maximum number of clients
+      tokens.shift while max_client_tokens_exceeded?
     end
   end
 end

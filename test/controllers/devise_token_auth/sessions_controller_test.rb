@@ -75,23 +75,46 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         describe "with multiple clients and headers don't change in each request" do
           before do
-            DeviseTokenAuth.max_number_of_devices = 1
+            # Set the max_number_of_devices to a lower number
+            #  to expedite tests! (Default is 10)
+            DeviseTokenAuth.max_number_of_devices = 2
             DeviseTokenAuth.change_headers_on_each_request = false
-            @tokens = []
-            (1..3).each do |n|
-              post :create,
-                   params: {
-                     email: @existing_user.email,
-                     password: 'secret123'
-                   }
-              @tokens << @existing_user.reload.tokens
+
+            @user_session_params = {
+              email: @existing_user.email,
+              password: 'secret123'
+            }
+          end
+
+          test 'should limit the maximum number of concurrent devices' do
+            # increment the number of devices until the maximum is exceeded
+            1.upto(DeviseTokenAuth.max_number_of_devices + 1).each do |n|
+              initial_tokens = @existing_user.reload.tokens
+
+              assert_equal(
+                [n, DeviseTokenAuth.max_number_of_devices].min,
+                @existing_user.reload.tokens.length
+              )
+
+              # Already have the max number of devices
+              post :create, params: @user_session_params
+
+              # A session for a new device maintains the max number of concurrent devices
+              refute_equal initial_tokens, @existing_user.reload.tokens
             end
           end
 
-          test 'should delete old tokens' do
-            current_tokens = @existing_user.reload.tokens
-            assert_equal 1, current_tokens.count
-            assert_equal @tokens.pop.keys.first, current_tokens.keys.first
+          test 'should drop old tokens when max number of devices is exceeded' do
+            1.upto(DeviseTokenAuth.max_number_of_devices).each do |n|
+              post :create, params: @user_session_params
+            end
+
+            oldest_token, _ = @existing_user.reload.tokens \
+                                .min_by { |cid, v| v[:expiry] || v["expiry"] }
+
+            post :create, params: @user_session_params
+
+            assert_not_includes @existing_user.reload.tokens.keys, oldest_token
           end
 
           after do
