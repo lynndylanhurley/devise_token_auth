@@ -35,6 +35,8 @@ group :development, :test do
   gem 'mocha'
   gem 'pry'
   gem 'pry-remote'
+
+  gem 'rubocop', require: false
 end
 
 # code coverage, metrics
