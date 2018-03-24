@@ -216,7 +216,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def token_validation_response
-    as_json(except: [:tokens, :created_at, :updated_at])
+    as_json(except: %i[tokens created_at updated_at])
   end
 
   def token_lifespan
