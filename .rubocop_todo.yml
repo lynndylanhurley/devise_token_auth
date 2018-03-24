@@ -543,13 +543,6 @@ Style/ExpandPathArguments:
     - 'test/dummy/config/environment.rb'
     - 'test/test_helper.rb'
 
-# Offense count: 130
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: when_needed, always, never
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 # Offense count: 12
 # Configuration parameters: MinBodyLength.
 Style/GuardClause:
