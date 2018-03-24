@@ -60,7 +60,6 @@ Rails.application.routes.draw do
   get 'demo/members_only', to: 'demo_user#members_only'
   get 'demo/members_only_remove_token', to: 'demo_user#members_only_remove_token'
 
-
   # routes within this block will authorize visitors using the Mang class
   get 'demo/members_only_mang', to: 'demo_mang#members_only'
 
