@@ -101,7 +101,7 @@ module DeviseTokenAuth
       elsif params['resource_class']
         params['resource_class'].constantize
       else
-        raise "No resource_class found"
+        raise 'No resource_class found'
       end
     end
 
@@ -176,7 +176,7 @@ module DeviseTokenAuth
       @data = data.merge({
         message: message
       })
-      render :layout => nil, :template => "devise_token_auth/omniauth_external_window"
+      render :layout => nil, :template => 'devise_token_auth/omniauth_external_window'
     end
 
     def render_data_or_redirect(message, data, user_data = {})

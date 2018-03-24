@@ -57,13 +57,13 @@ module DeviseTokenAuth
     end
 
     def render_create_error_missing_email
-      render_error(401, I18n.t("devise_token_auth.unlocks.missing_email"))
+      render_error(401, I18n.t('devise_token_auth.unlocks.missing_email'))
     end
 
     def render_create_success
       render json: {
         success: true,
-        message: I18n.t("devise_token_auth.unlocks.sended", email: @email)
+        message: I18n.t('devise_token_auth.unlocks.sended', email: @email)
       }
     end
 
@@ -79,7 +79,7 @@ module DeviseTokenAuth
     end
 
     def render_not_found_error
-      render_error(404, I18n.t("devise_token_auth.unlocks.user_not_found", email: @email))
+      render_error(404, I18n.t('devise_token_auth.unlocks.user_not_found', email: @email))
     end
 
     def resource_params

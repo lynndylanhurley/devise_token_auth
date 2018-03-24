@@ -438,7 +438,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
           # get the oldest token client_id
           oldest_client_id, = @resource.reload.tokens.min_by do |cid, v|
-                                v[:expiry] || v["expiry"]
+                                v[:expiry] || v['expiry']
                               end # => [ 'CLIENT_ID', {token: ...} ]
 
           # create another token, thereby dropping the oldest token

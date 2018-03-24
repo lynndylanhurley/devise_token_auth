@@ -14,7 +14,7 @@ module DeviseTokenAuth
         run_generator
       end
 
-      test "files are copied" do
+      test 'files are copied' do
         assert_file 'app/views/devise/mailer/reset_password_instructions.html.erb'
         assert_file 'app/views/devise/mailer/confirmation_instructions.html.erb'
       end
