@@ -468,13 +468,6 @@ Style/BracesAroundHashParameters:
     - 'test/dummy/app/controllers/overrides/omniauth_callbacks_controller.rb'
     - 'test/dummy/app/controllers/overrides/passwords_controller.rb'
 
-# Offense count: 34
-# Cop supports --auto-correct.
-# Configuration parameters: AutoCorrect, EnforcedStyle.
-# SupportedStyles: nested, compact
-Style/ClassAndModuleChildren:
-  Enabled: false
-
 # Offense count: 2
 # Cop supports --auto-correct.
 Style/ColonMethodCall:

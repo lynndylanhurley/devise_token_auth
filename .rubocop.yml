@@ -19,3 +19,13 @@ AllCops:
 # https://rubocop.readthedocs.io/en/latest/cops_style/#stylefrozenstringliteralcomment
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+# Offense count: 34
+# Cop supports --auto-correct.
+# Configuration parameters: AutoCorrect, EnforcedStyle.
+# SupportedStyles: nested, compact
+#
+# Description from Rubocop Manual:
+# https://rubocop.readthedocs.io/en/latest/cops_style/#styleclassandmodulechildren
+Style/ClassAndModuleChildren:
+  Enabled: false
