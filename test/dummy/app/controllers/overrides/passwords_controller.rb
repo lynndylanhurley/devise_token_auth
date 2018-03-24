@@ -1,6 +1,6 @@
 module Overrides
   class PasswordsController < DeviseTokenAuth::PasswordsController
-    OVERRIDE_PROOF = "(^^,)"
+    OVERRIDE_PROOF = '(^^,)'
 
     # this is where users arrive after visiting the email confirmation link
     def edit

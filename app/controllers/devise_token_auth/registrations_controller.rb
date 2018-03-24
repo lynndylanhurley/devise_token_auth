@@ -36,8 +36,8 @@ module DeviseTokenAuth
 
       begin
         # override email confirmation, must be sent manually from ctrl
-        resource_class.set_callback("create", :after, :send_on_create_confirmation_instructions)
-        resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        resource_class.set_callback('create', :after, :send_on_create_confirmation_instructions)
+        resource_class.skip_callback('create', :after, :send_on_create_confirmation_instructions)
         if @resource.respond_to? :skip_confirmation_notification!
           # Fix duplicate e-mails by disabling Devise confirmation e-mail
           @resource.skip_confirmation_notification!
