@@ -497,7 +497,30 @@ Style/DateTime:
 
 # Offense count: 24
 Style/Documentation:
-  Enabled: false
+  Exclude:
+    - 'spec/**/*'
+    - 'test/**/*'
+    - 'app/controllers/devise_token_auth/application_controller.rb'
+    - 'app/controllers/devise_token_auth/concerns/resource_finder.rb'
+    - 'app/controllers/devise_token_auth/concerns/set_user_by_token.rb'
+    - 'app/controllers/devise_token_auth/confirmations_controller.rb'
+    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
+    - 'app/controllers/devise_token_auth/passwords_controller.rb'
+    - 'app/controllers/devise_token_auth/registrations_controller.rb'
+    - 'app/controllers/devise_token_auth/sessions_controller.rb'
+    - 'app/controllers/devise_token_auth/token_validations_controller.rb'
+    - 'app/controllers/devise_token_auth/unlocks_controller.rb'
+    - 'app/models/devise_token_auth/concerns/user.rb'
+    - 'app/models/devise_token_auth/concerns/user_omniauth_callbacks.rb'
+    - 'app/validators/email_validator.rb'
+    - 'lib/devise_token_auth.rb'
+    - 'lib/devise_token_auth/controllers/helpers.rb'
+    - 'lib/devise_token_auth/controllers/url_helpers.rb'
+    - 'lib/devise_token_auth/engine.rb'
+    - 'lib/devise_token_auth/rails/routes.rb'
+    - 'lib/devise_token_auth/url.rb'
+    - 'lib/generators/devise_token_auth/install_generator.rb'
+    - 'lib/generators/devise_token_auth/install_views_generator.rb'
 
 # Offense count: 3
 Style/DoubleNegation:
