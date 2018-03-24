@@ -51,7 +51,7 @@ class ActiveSupport::TestCase
   # Suppress OmniAuth logger output
   def silence_omniauth
     previous_logger = OmniAuth.config.logger
-    OmniAuth.config.logger = Logger.new("/dev/null")
+    OmniAuth.config.logger = Logger.new('/dev/null')
     yield
   ensure
     OmniAuth.config.logger = previous_logger

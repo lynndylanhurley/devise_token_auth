@@ -773,13 +773,6 @@ Style/SpecialGlobalVars:
   Exclude:
     - 'devise_token_auth.gemspec'
 
-# Offense count: 1487
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ConsistentQuotesInMultiline.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiterals:
-  Enabled: false
-
 # Offense count: 24
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, MinSize.

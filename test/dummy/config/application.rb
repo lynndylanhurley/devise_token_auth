@@ -6,7 +6,7 @@ require 'rack/cors'
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
-require "devise_token_auth"
+require 'devise_token_auth'
 
 module Dummy
   class Application < Rails::Application

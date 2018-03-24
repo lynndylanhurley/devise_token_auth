@@ -17,7 +17,7 @@ module Overrides
       else
         render json: {
           success: false,
-          errors: ["Invalid login credentials"]
+          errors: ['Invalid login credentials']
         }, status: 401
       end
     end

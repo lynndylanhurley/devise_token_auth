@@ -6,12 +6,12 @@ module DeviseTokenAuth
 
     def copy_mailer_templates
       copy_file(
-        "confirmation_instructions.html.erb",
-        "app/views/devise/mailer/confirmation_instructions.html.erb"
+        'confirmation_instructions.html.erb',
+        'app/views/devise/mailer/confirmation_instructions.html.erb'
       )
       copy_file(
-        "reset_password_instructions.html.erb",
-        "app/views/devise/mailer/reset_password_instructions.html.erb"
+        'reset_password_instructions.html.erb',
+        'app/views/devise/mailer/reset_password_instructions.html.erb'
       )
     end
   end

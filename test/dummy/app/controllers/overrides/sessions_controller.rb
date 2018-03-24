@@ -2,7 +2,7 @@
 
 module Overrides
   class SessionsController < DeviseTokenAuth::SessionsController
-    OVERRIDE_PROOF = "(^^,)"
+    OVERRIDE_PROOF = '(^^,)'
 
     def create
       @resource = resource_class.find_by(email: resource_params[:email])
@@ -23,14 +23,14 @@ module Overrides
           success: false,
           errors: [
             "A confirmation email was sent to your account at #{@resource.email}. "+
-            "You must follow the instructions in the email before your account "+
-            "can be activated"
+            'You must follow the instructions in the email before your account '+
+            'can be activated'
           ]
         }, status: 401
 
       else
         render json: {
-          errors: ["Invalid login credentials. Please try again."]
+          errors: ['Invalid login credentials. Please try again.']
         }, status: 401
       end
     end

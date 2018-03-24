@@ -47,9 +47,9 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "models")
+        @dir = File.join(destination_root, 'app', 'models')
 
-        @fname = File.join(@dir, "user.rb")
+        @fname = File.join(@dir, 'user.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
@@ -90,9 +90,9 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "config")
+        @dir = File.join(destination_root, 'config')
 
-        @fname = File.join(@dir, "routes.rb")
+        @fname = File.join(@dir, 'routes.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
@@ -150,9 +150,9 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "controllers")
+        @dir = File.join(destination_root, 'app', 'controllers')
 
-        @fname = File.join(@dir, "application_controller.rb")
+        @fname = File.join(@dir, 'application_controller.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)

@@ -58,7 +58,7 @@ module DeviseTokenAuth::Concerns::User
       generate_confirmation_token! unless @raw_confirmation_token
 
       # fall back to "default" config name
-      opts[:client_config] ||= "default"
+      opts[:client_config] ||= 'default'
       opts[:to] = unconfirmed_email if pending_reconfirmation?
       opts[:redirect_url] ||= DeviseTokenAuth.default_confirm_success_url
 
@@ -70,7 +70,7 @@ module DeviseTokenAuth::Concerns::User
       token = set_reset_password_token
 
       # fall back to "default" config name
-      opts[:client_config] ||= "default"
+      opts[:client_config] ||= 'default'
 
       send_devise_notification(:reset_password_instructions, token, opts)
       token
@@ -83,7 +83,7 @@ module DeviseTokenAuth::Concerns::User
       save(validate: false)
 
       # fall back to "default" config name
-      opts[:client_config] ||= "default"
+      opts[:client_config] ||= 'default'
 
       send_devise_notification(:unlock_instructions, raw, opts)
       raw
@@ -186,7 +186,7 @@ module DeviseTokenAuth::Concerns::User
 
     {
       DeviseTokenAuth.headers_names[:"access-token"] => token,
-      DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
+      DeviseTokenAuth.headers_names[:"token-type"]   => 'Bearer',
       DeviseTokenAuth.headers_names[:"client"]       => client_id,
       DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
       DeviseTokenAuth.headers_names[:"uid"]          => uid
@@ -234,7 +234,7 @@ module DeviseTokenAuth::Concerns::User
   def destroy_expired_tokens
     if tokens
       tokens.delete_if do |cid, v|
-        expiry = v[:expiry] || v["expiry"]
+        expiry = v[:expiry] || v['expiry']
         DateTime.strptime(expiry.to_s, '%s') < Time.zone.now
       end
     end
@@ -254,7 +254,7 @@ module DeviseTokenAuth::Concerns::User
     return unless should_remove_tokens_after_password_reset?
 
     if tokens.present? && tokens.many?
-      client_id, token_data = tokens.max_by { |cid, v| v[:expiry] || v["expiry"] }
+      client_id, token_data = tokens.max_by { |cid, v| v[:expiry] || v['expiry'] }
       self.tokens = {client_id => token_data}
     end
   end

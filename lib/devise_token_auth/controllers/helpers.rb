@@ -142,7 +142,7 @@ module DeviseTokenAuth
 
         ActiveSupport.on_load(:action_controller) do
           if respond_to?(:helper_method)
-            helper_method "current_#{mapping}", "#{mapping}_signed_in?", "#{mapping}_session", "render_authenticate_error"
+            helper_method "current_#{mapping}", "#{mapping}_signed_in?", "#{mapping}_session", 'render_authenticate_error'
           end
         end
       end

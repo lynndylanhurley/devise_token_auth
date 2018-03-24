@@ -23,7 +23,7 @@ module DeviseTokenAuth::Concerns::ResourceFinder
     # fix for mysql default case insensitivity
     q = "#{field.to_s} = ? AND provider='#{provider.to_s}'"
     if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-      q = "BINARY " + q
+      q = 'BINARY ' + q
     end
 
     @resource = resource_class.where(q, value).first

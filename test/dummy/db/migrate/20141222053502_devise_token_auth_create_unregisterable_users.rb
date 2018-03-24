@@ -7,10 +7,10 @@ class DeviseTokenAuthCreateUnregisterableUsers < ActiveRecord::Migration[4.2]
     create_table(:unregisterable_users) do |t|
       ## Required
       t.string :provider, :null => false
-      t.string :uid, :null => false, :default => ""
+      t.string :uid, :null => false, :default => ''
 
       ## Database authenticatable
-      t.string :encrypted_password, :null => false, :default => ""
+      t.string :encrypted_password, :null => false, :default => ''
 
       ## Recoverable
       t.string   :reset_password_token

@@ -2,7 +2,7 @@
 
 module Overrides
   class RegistrationsController < DeviseTokenAuth::RegistrationsController
-    OVERRIDE_PROOF = "(^^,)"
+    OVERRIDE_PROOF = '(^^,)'
 
     def update
       if @resource
@@ -21,7 +21,7 @@ module Overrides
       else
         render json: {
           status: 'error',
-          errors: ["User not found."]
+          errors: ['User not found.']
         }, status: 404
       end
     end

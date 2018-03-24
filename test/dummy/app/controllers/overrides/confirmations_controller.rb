@@ -12,7 +12,7 @@ module Overrides
         redirect_header_options = {
           account_confirmation_success: true,
           config: params[:config],
-          override_proof: "(^^,)"
+          override_proof: '(^^,)'
         }
         redirect_headers = build_redirect_headers(token,
                                                   client_id,

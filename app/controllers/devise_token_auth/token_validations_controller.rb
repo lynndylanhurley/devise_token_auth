@@ -25,7 +25,7 @@ module DeviseTokenAuth
     end
 
     def render_validate_token_error
-      render_error(401, I18n.t("devise_token_auth.token_validations.invalid"))
+      render_error(401, I18n.t('devise_token_auth.token_validations.invalid'))
     end
   end
 end
