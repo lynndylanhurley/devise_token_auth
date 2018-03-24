@@ -10,9 +10,7 @@ module Overrides
         @resource.save
 
         render json: {
-          data: @resource.as_json(except: [
-            :tokens, :created_at, :updated_at
-          ]),
+          data: @resource.as_json(except: %i[tokens created_at updated_at]),
           override_proof: OVERRIDE_PROOF
         }
 
