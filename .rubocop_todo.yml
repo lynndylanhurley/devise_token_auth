@@ -778,7 +778,9 @@ Style/SpecialGlobalVars:
 # Configuration parameters: EnforcedStyle, ConsistentQuotesInMultiline.
 # SupportedStyles: single_quotes, double_quotes
 Style/StringLiterals:
-  Enabled: false
+  Enabled: true
+  Exclude:
+    - 'test/dummy/**/*'
 
 # Offense count: 24
 # Cop supports --auto-correct.
