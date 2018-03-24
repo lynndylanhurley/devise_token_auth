@@ -349,7 +349,6 @@ module ApplicationHelper
     "Eton blue",
     "Eucalyptus",
 
-
     "Fallow",
     "Falu red",
     "Fandango",
@@ -442,7 +441,6 @@ module ApplicationHelper
     "Hot pink",
     "Hunter green",
 
-
     "Iceberg",
     "Icterine",
     "Illuminating Emerald",
@@ -486,7 +484,6 @@ module ApplicationHelper
     "Kobi",
     "Kombu green",
     "KU Crimson",
-
 
     "La Salle Green",
     "Languid lavender",
@@ -560,7 +557,6 @@ module ApplicationHelper
     "Livid",
     "Lumber",
     "Lust",
-
 
     "Magenta",
     "Magenta",
@@ -676,7 +672,6 @@ module ApplicationHelper
     "Oxford Blue",
     "OU Crimson Red",
 
-
     "Pakistan green",
     "Palatinate blue",
     "Palatinate purple",
@@ -778,7 +773,6 @@ module ApplicationHelper
     "Purple taupe",
     "Purpureus",
 
-
     "Quartz",
     "Queen blue",
     "Queen pink",
@@ -850,7 +844,6 @@ module ApplicationHelper
     "Russian violet",
     "Rust",
     "Rusty red",
-
 
     "Sacramento State green",
     "Saddle brown",
@@ -941,7 +934,6 @@ module ApplicationHelper
     "Sunset orange",
     "Super pink",
 
-
     "Tan",
     "Tangelo",
     "Tangerine",
@@ -987,7 +979,6 @@ module ApplicationHelper
     "Tuscany",
     "Twilight lavender",
     "Tyrian purple",
-
 
     "UA blue",
     "UA red",

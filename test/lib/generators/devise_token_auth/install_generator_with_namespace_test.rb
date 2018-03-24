@@ -91,7 +91,6 @@ module DeviseTokenAuth
       end
     end
 
-
     describe 'routes' do
       setup :prepare_destination
 

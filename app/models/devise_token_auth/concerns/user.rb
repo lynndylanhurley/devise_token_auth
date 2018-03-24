@@ -117,7 +117,6 @@ module DeviseTokenAuth::Concerns::User
     end
   end
 
-
   def valid_token?(token, client_id='default')
     return false unless tokens[client_id]
     return true if token_is_current?(token, client_id)
@@ -127,11 +126,9 @@ module DeviseTokenAuth::Concerns::User
     return false
   end
 
-
   # this must be done from the controller so that additional params
   # can be passed on from the client
   def send_confirmation_notification?; false; end
-
 
   def token_is_current?(token, client_id)
     # ghetto HashWithIndifferentAccess
@@ -150,7 +147,6 @@ module DeviseTokenAuth::Concerns::User
     )
   end
 
-
   # allow batch requests to use the previous token
   def token_can_be_reused?(token, client_id)
     # ghetto HashWithIndifferentAccess
@@ -168,7 +164,6 @@ module DeviseTokenAuth::Concerns::User
       ::BCrypt::Password.new(last_token) == token
     )
   end
-
 
   # update user's auth token (should happen on each request)
   def create_new_auth_token(client_id=nil)

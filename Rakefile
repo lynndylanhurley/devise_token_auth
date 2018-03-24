@@ -19,8 +19,6 @@ end
 APP_RAKEFILE = File.expand_path("../test/dummy/Rakefile", __FILE__)
 load 'rails/tasks/engine.rake'
 
-
-
 Bundler::GemHelper.install_tasks
 
 require 'rake/testtask'
@@ -32,7 +30,6 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = false
   t.warning = false
 end
-
 
 task default: :test
 

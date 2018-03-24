@@ -19,7 +19,6 @@ module DeviseTokenAuth::Url
     url.nil? || !!DeviseTokenAuth.redirect_whitelist.find { |pattern| !!Wildcat.new(pattern).match(url) }
   end
 
-
   # wildcard convenience class
   class Wildcat
     def self.parse_to_regex(str)

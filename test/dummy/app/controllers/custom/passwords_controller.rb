@@ -38,5 +38,4 @@ class Custom::PasswordsController < DeviseTokenAuth::PasswordsController
     render json: {custom: "foo"}
   end
 
-
 end

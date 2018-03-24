@@ -549,8 +549,6 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             refute_equal @resource, @controller.current_mang
           end
 
-
-
         end
 
         it 'should return success status' do
