@@ -5,7 +5,7 @@ class DeviseTokenAuthCreateEvilUsers < ActiveRecord::Migration[4.2]
     create_table(:evil_users) do |t|
       ## Database authenticatable
       t.string :email
-      t.string :encrypted_password, :null => false, :default => ""
+      t.string :encrypted_password, :null => false, :default => ''
 
       ## Recoverable
       t.string   :reset_password_token
@@ -40,7 +40,7 @@ class DeviseTokenAuthCreateEvilUsers < ActiveRecord::Migration[4.2]
 
       ## unique oauth id
       t.string :provider
-      t.string :uid, :null => false, :default => ""
+      t.string :uid, :null => false, :default => ''
 
       ## Tokens
       if json_supported_database?

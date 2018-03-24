@@ -779,8 +779,6 @@ Style/SpecialGlobalVars:
 # SupportedStyles: single_quotes, double_quotes
 Style/StringLiterals:
   Enabled: true
-  Exclude:
-    - 'test/dummy/**/*'
 
 # Offense count: 24
 # Cop supports --auto-correct.
