@@ -42,15 +42,6 @@ Layout/EmptyLineBetweenDefs:
   Exclude:
     - 'app/models/devise_token_auth/concerns/user.rb'
 
-# Offense count: 24
-# Cop supports --auto-correct.
-Layout/EmptyLines:
-  Exclude:
-    # - 'test/dummy/app/controllers/custom/passwords_controller.rb'
-    # - 'test/dummy/app/helpers/application_helper.rb'
-    # - 'test/dummy/config/routes.rb'
-    # - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Layout/EmptyLinesAroundAccessModifier:
