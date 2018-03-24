@@ -17,10 +17,10 @@ module ActionDispatch::Routing
       unlocks_ctrl           = opts[:controllers][:unlocks] || 'devise_token_auth/unlocks'
 
       # define devise controller mappings
-      controllers = {:sessions           => sessions_ctrl,
-                     :registrations      => registrations_ctrl,
-                     :passwords          => passwords_ctrl,
-                     :confirmations      => confirmations_ctrl}
+      controllers = {sessions: sessions_ctrl,
+                     registrations: registrations_ctrl,
+                     passwords: passwords_ctrl,
+                     confirmations: confirmations_ctrl}
 
       controllers[:unlocks] = unlocks_ctrl if unlocks_ctrl
 
@@ -28,11 +28,11 @@ module ActionDispatch::Routing
       opts[:skip].each{|item| controllers.delete(item)}
 
       devise_for resource.pluralize.underscore.gsub('/', '_').to_sym,
-        :class_name  => resource,
-        :module      => :devise,
-        :path        => "#{opts[:at]}",
-        :controllers => controllers,
-        :skip        => opts[:skip] + [:omniauth_callbacks]
+        class_name: resource,
+        module: :devise,
+        path: "#{opts[:at]}",
+        controllers: controllers,
+        skip: opts[:skip] + [:omniauth_callbacks]
 
       unnest_namespace do
         # get full url path as if it were namespaced

@@ -29,3 +29,16 @@ Style/FrozenStringLiteralComment:
 # https://rubocop.readthedocs.io/en/latest/cops_style/#styleclassandmodulechildren
 Style/ClassAndModuleChildren:
   Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, UseHashRocketsWithSymbolValues,
+#   PreferHashRocketsForNonAlnumEndingSymbols.
+# SupportedStyles: ruby19, hash_rockets, no_mixed_keys, ruby19_no_mixed_keys
+#
+# Description from Rubocop Manual:
+#   This cop checks hash literal syntax
+#
+# https://rubocop.readthedocs.io/en/latest/cops_style/#stylehashsyntax
+Style/HashSyntax:
+  Enabled: true
+  EnforcedStyle: ruby19
