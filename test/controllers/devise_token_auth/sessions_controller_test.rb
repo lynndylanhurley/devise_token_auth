@@ -110,7 +110,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             end
 
             oldest_token, _ = @existing_user.reload.tokens \
-                                .min_by { |cid, v| v[:expiry] || v["expiry"] }
+                                .min_by { |cid, v| v[:expiry] || v['expiry'] }
 
             post :create, params: @user_session_params
 
