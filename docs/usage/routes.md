@@ -15,6 +15,6 @@ The authentication routes must be mounted to your project. This gem includes a r
 mount_devise_token_auth_for 'User', at: 'auth'
 ~~~
 
-Any model class can be used, but the class will need to include [`DeviseTokenAuth::Concerns::User`](#model-concerns) for authentication to work properly.
+Any model class can be used, but the class will need to include [`DeviseTokenAuth::Concerns::User`](model_concerns.md) for authentication to work properly.
 
 You can mount this engine to any route that you like. `/auth` is used by default to conform with the defaults of the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module and the [jToker](https://github.com/lynndylanhurley/j-toker) plugin.

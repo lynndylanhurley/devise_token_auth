@@ -121,6 +121,6 @@ This will create two new files:
 * `app/views/devise/mailer/reset_password_instructions.html.erb`
 * `app/views/devise/mailer/confirmation_instructions.html.erb`
 
-These files may be edited to suit your taste. You can customize the e-mail subjects like [this](#customizing-devise-verbiage).
+These files may be edited to suit your taste. You can customize the e-mail subjects like [this](/docs/config/devise.md).
 
 **Note:** if you choose to modify these templates, do not modify the `link_to` blocks unless you absolutely know what you are doing.

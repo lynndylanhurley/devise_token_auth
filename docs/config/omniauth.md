@@ -35,7 +35,7 @@ The above example assumes that your provider keys and secrets are stored in envi
 
 #### OmniAuth callback settings
 
-The "Callback URL" setting that you set with your provider must correspond to the [omniauth prefix](#initializer-settings) setting defined by this app. **This will be different than the omniauth route that is used by your client application**.
+The "Callback URL" setting that you set with your provider must correspond to the [omniauth prefix](initialization.md) setting defined by this app. **This will be different than the omniauth route that is used by your client application**.
 
 For example, the demo app uses the default `omniauth_prefix` setting `/omniauth`, so the "Authorization callback URL" for github must be set to "http://devise-token-auth-demo.herokuapp.com**/omniauth**/github/callback".
 

@@ -23,7 +23,7 @@ Simple, secure token-based authentication for Rails. This gem provides the follo
   * Login and logout
   * Password reset, account confirmation
 * Support for [multiple user models](./docs/usage/multiple_models.md).
-* It is [secure](./docs/security.md).
+* It is [secure](docs/security.md).
 
 This project leverages the following gems:
 
@@ -44,7 +44,7 @@ Then install the gem using bundle:
 bundle install
 ~~~
 
-## [Docs](./docs)
+## [Docs](https://maicolben.gitbooks.io/devise-token-auth/content/docs/config/)
 
 ## Need help?
 
@@ -54,7 +54,7 @@ Please open GitHub issues for bugs and enhancements only, not general help reque
 
 Please read the [issue reporting guidelines](#issue-reporting) before posting issues.
 
-## [FAQ](./docs/faq)
+## [FAQ](docs/faq.md)
 
 ## Contributors wanted!
 

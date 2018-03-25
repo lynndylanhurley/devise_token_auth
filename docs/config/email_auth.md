@@ -7,10 +7,10 @@ I recommend using [mailcatcher](http://mailcatcher.me/) for development.
 ~~~ruby
 # config/environments/development.rb
 Rails.application.configure do
-  config.action_mailer.default_url_options = { :host => 'your-dev-host.dev' }
+  config.action_mailer.default_url_options = { host: 'your-dev-host.dev' }
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = { :address => 'your-dev-host.dev', :port => 1025 }
+  config.action_mailer.smtp_settings = { address: 'your-dev-host.dev', port: 1025 }
 end
 ~~~
 
-If you wish to send custom e-mails instead of using the default devise templates, you can [do that too](#email-template-overrides).
+If you wish to send custom e-mails instead of using the default devise templates, you can [do that too](/docs/usage/overrides.md#email-template-overrides).

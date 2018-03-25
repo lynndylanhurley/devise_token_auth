@@ -1,6 +1,6 @@
 ## Configuration TL;DR
 
-You will need to create a [user model](#model-concerns), [define routes](#mounting-routes), [include concerns](#controller-methods), and you may want to alter some of the [default settings](#initializer-settings) for this gem. Run the following command for an easy one-step installation:
+You will need to create a [user model](/docs/usage/model_concerns.md), [define routes](/docs/usage/routes.md), [include concerns](/docs/usage/controller_methods.md), and you may want to alter some of the [default settings](initialization.md) for this gem. Run the following command for an easy one-step installation:
 
 ~~~bash
 rails g devise_token_auth:install [USER_CLASS] [MOUNT_PATH]
@@ -21,13 +21,13 @@ This generator accepts the following optional arguments:
 
 The following events will take place when using the install generator:
 
-* An initializer will be created at `config/initializers/devise_token_auth.rb`. [Read more](#initializer-settings).
+* An initializer will be created at `config/initializers/devise_token_auth.rb`. [Read more](initialization.md).
 
-* A model will be created in the `app/models` directory. If the model already exists, a concern will be included at the top of the file. [Read more](#model-concerns).
+* A model will be created in the `app/models` directory. If the model already exists, a concern will be included at the top of the file. [Read more](/docs/usage/model_concerns.md).
 
-* Routes will be appended to file at `config/routes.rb`. [Read more](#mounting-routes).
+* Routes will be appended to file at `config/routes.rb`. [Read more](/docs/usage/routes.md).
 
-* A concern will be included by your application controller at `app/controllers/application_controller.rb`. [Read more](#controller-methods).
+* A concern will be included by your application controller at `app/controllers/application_controller.rb`. [Read more](/docs/usage/controller_methods.md).
 
 * A migration file will be created in the `db/migrate` directory. Inspect the migrations file, add additional columns if necessary, and then run the migration:
 
@@ -37,9 +37,7 @@ The following events will take place when using the install generator:
 
 You may also need to configure the following items:
 
-* **OmniAuth providers** when using 3rd party oauth2 authentication. [Read more](#omniauth-authentication).
-* **Cross Origin Request Settings** when using cross-domain clients. [Read more](#cors).
-* **Email** when using email registration. [Read more](#email-authentication).
-* **Multiple model support** may require additional steps. [Read more](#using-multiple-models).
-
-[Jump here](#configuration-cont) for more configuration information.
+* **OmniAuth providers** when using 3rd party oauth2 authentication. [Read more](omniauth.md).
+* **Cross Origin Request Settings** when using cross-domain clients. [Read more](cors.md).
+* **Email** when using email registration. [Read more](email-auth.md).
+* **Multiple model support** may require additional steps. [Read more](/docs/usage/multiple_models.md).

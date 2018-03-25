@@ -2,7 +2,7 @@
 
 ##### DeviseTokenAuth::Concerns::User
 
-Typical use of this gem will not require the use of any of the following model methods. All authentication should be handled invisibly by the [controller concerns](#controller-methods) described above.
+Typical use of this gem will not require the use of any of the following model methods. All authentication should be handled invisibly by the [controller concerns](controller_methods.md).
 
 Models that include the `DeviseTokenAuth::Concerns::User` concern will have access to the following public methods (read the above section for context on `token` and `client`):
 

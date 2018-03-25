@@ -2,7 +2,7 @@
 
 ### Concerns
 
-This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. Include this concern to provide access to [controller methods](#controller-methods) such as [`authenticate_user!`](#authenticate-user), [`user_signed_in?`](#user-signed-in), etc.
+This gem includes a [Rails concern](http://api.rubyonrails.org/classes/ActiveSupport/Concern.html) called `DeviseTokenAuth::Concerns::SetUserByToken`. Include this concern to provide access to controller methods such as `authenticate_user!`, `user_signed_in?`, etc.
 
 The concern also runs an [after_action](http://guides.rubyonrails.org/action_controller_overview.html#filters) that changes the auth token after each request.
 
