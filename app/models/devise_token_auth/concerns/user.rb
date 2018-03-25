@@ -249,7 +249,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def clean_old_tokens
-    while tokens.length > 0 && DeviseTokenAuth.max_number_of_devices < tokens.length
+    while !tokens.empty? && DeviseTokenAuth.max_number_of_devices < tokens.length
       oldest_client_id, _tk = tokens.min_by { |_cid, v| v[:expiry] || v['expiry'] }
       tokens.delete(oldest_client_id)
     end
