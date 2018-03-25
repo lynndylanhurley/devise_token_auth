@@ -29,11 +29,6 @@ Layout/AlignParameters:
     - 'test/dummy/config/initializers/omniauth.rb'
     - 'test/dummy/config/routes.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Layout/CommentIndentation:
-  Exclude:
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
