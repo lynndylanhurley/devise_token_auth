@@ -697,13 +697,6 @@ Style/PercentLiteralDelimiters:
     - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
     - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: short, verbose
-Style/PreferredHashMethods:
-  Exclude:
-    - 'app/controllers/devise_token_auth/registrations_controller.rb'
 
 # Offense count: 5
 # Cop supports --auto-correct.
