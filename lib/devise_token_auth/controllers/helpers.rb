@@ -27,7 +27,7 @@ module DeviseTokenAuth
         #     current_blogger :user                             # Preferably returns a User if one is signed in
         #
         def devise_token_auth_group(group_name, opts={})
-          mappings = "[#{ opts[:contains].map { |m| ":#{m}" }.join(',') }]"
+          mappings = "[#{opts[:contains].map { |m| ":#{m}" }.join(',')}]"
 
           class_eval <<-METHODS, __FILE__, __LINE__ + 1
             def authenticate_#{group_name}!(favourite=nil, opts={})
