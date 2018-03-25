@@ -223,15 +223,6 @@ Layout/SpaceInsideBlockBraces:
     - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
 
 
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: space, no_space
-Layout/SpaceInsideStringInterpolation:
-  Exclude:
-    - 'lib/devise_token_auth/controllers/helpers.rb'
-    - 'lib/generators/devise_token_auth/install_generator.rb'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
