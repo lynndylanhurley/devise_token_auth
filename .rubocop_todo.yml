@@ -641,14 +641,6 @@ Style/MutableConstant:
     - 'test/dummy/app/controllers/overrides/token_validations_controller.rb'
     - 'test/dummy/app/helpers/application_helper.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: both, prefix, postfix
-Style/NegatedIf:
-  Exclude:
-    - 'app/controllers/devise_token_auth/concerns/set_user_by_token.rb'
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
