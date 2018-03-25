@@ -23,7 +23,7 @@ class Custom::SessionsController < DeviseTokenAuth::SessionsController
   protected
 
   def render_create_success
-    render json: {custom: 'foo'}
+    render json: { custom: 'foo' }
   end
 
 end
