@@ -222,25 +222,6 @@ Layout/SpaceInsideBlockBraces:
     - 'lib/devise_token_auth/rails/routes.rb'
     - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
 
-# Offense count: 25
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces.
-# SupportedStyles: space, no_space, compact
-# SupportedStylesForEmptyBraces: space, no_space
-Layout/SpaceInsideHashLiteralBraces:
-  Exclude:
-    - 'app/controllers/devise_token_auth/confirmations_controller.rb'
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'app/controllers/devise_token_auth/passwords_controller.rb'
-    - 'app/controllers/devise_token_auth/unlocks_controller.rb'
-    - 'app/models/devise_token_auth/concerns/user.rb'
-    - 'lib/devise_token_auth/engine.rb'
-    - 'lib/devise_token_auth/rails/routes.rb'
-    - 'test/dummy/app/controllers/custom/passwords_controller.rb'
-    - 'test/dummy/app/controllers/custom/registrations_controller.rb'
-    - 'test/dummy/app/controllers/custom/sessions_controller.rb'
-    - 'test/dummy/app/controllers/custom/token_validations_controller.rb'
-    - 'test/lib/devise_token_auth/url_test.rb'
 
 # Offense count: 5
 # Cop supports --auto-correct.

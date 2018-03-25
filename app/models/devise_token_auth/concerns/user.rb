@@ -253,7 +253,7 @@ module DeviseTokenAuth::Concerns::User
 
     if tokens.present? && tokens.many?
       client_id, token_data = tokens.max_by { |cid, v| v[:expiry] || v['expiry'] }
-      self.tokens = {client_id => token_data}
+      self.tokens = { client_id => token_data }
     end
   end
 
