@@ -41,7 +41,7 @@ module DeviseTokenAuth
         @resource.save!
         yield @resource if block_given?
 
-        redirect_header_options = {unlock: true}
+        redirect_header_options = { unlock: true }
         redirect_headers = build_redirect_headers(token,
                                                   client_id,
                                                   redirect_header_options)

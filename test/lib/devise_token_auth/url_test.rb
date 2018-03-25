@@ -5,7 +5,7 @@ require 'test_helper'
 class DeviseTokenAuth::UrlTest < ActiveSupport::TestCase
   describe 'DeviseTokenAuth::Url#generate' do
     test 'URI fragment should appear at the end of URL' do
-      params = {client_id: 123}
+      params = { client_id: 123 }
       url = 'http://example.com#fragment'
       assert_equal DeviseTokenAuth::Url.send(:generate, url, params), 'http://example.com?client_id=123#fragment'
     end
@@ -17,7 +17,7 @@ class DeviseTokenAuth::UrlTest < ActiveSupport::TestCase
       end
 
       test 'should marge existing query params with new ones' do
-        params = {client_id: 123}
+        params = { client_id: 123 }
         url = 'http://example.com?a=1'
         assert_equal DeviseTokenAuth::Url.send(:generate, url, params), 'http://example.com?a=1&client_id=123'
       end
