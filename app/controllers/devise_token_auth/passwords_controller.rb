@@ -143,7 +143,7 @@ module DeviseTokenAuth
     def render_create_error(errors)
       render json: {
         success: false,
-        errors: errors,
+        errors: errors
       }, status: 400
     end
 
