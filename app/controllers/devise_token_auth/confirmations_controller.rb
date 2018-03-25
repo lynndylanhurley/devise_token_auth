@@ -16,7 +16,7 @@ module DeviseTokenAuth
 
         yield @resource if block_given?
 
-        redirect_header_options = {account_confirmation_success: true}
+        redirect_header_options = { account_confirmation_success: true }
         redirect_headers = build_redirect_headers(token,
                                                   client_id,
                                                   redirect_header_options)
