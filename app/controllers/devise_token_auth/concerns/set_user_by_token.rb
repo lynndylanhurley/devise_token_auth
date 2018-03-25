@@ -68,7 +68,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     return @resource if @resource && @resource.is_a?(rc)
 
     # ensure we clear the client_id
-    if !@token
+    unless @token
       @client_id = nil
       return
     end
