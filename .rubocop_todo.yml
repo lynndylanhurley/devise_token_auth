@@ -793,14 +793,6 @@ Style/TernaryParentheses:
     - 'lib/generators/devise_token_auth/install_generator.rb'
     - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleForMultiline.
-# SupportedStylesForMultiline: comma, consistent_comma, no_comma
-Style/TrailingCommaInHashLiteral:
-  Exclude:
-    - 'app/controllers/devise_token_auth/passwords_controller.rb'
-    - 'app/controllers/devise_token_auth/unlocks_controller.rb'
 
 # Offense count: 4
 # Cop supports --auto-correct.
