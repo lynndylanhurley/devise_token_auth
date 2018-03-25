@@ -12,18 +12,18 @@ module DeviseTokenAuth
     end
 
     def copy_migrations
-      if self.class.migration_exists?('db/migrate', "devise_token_auth_create_#{ user_class.pluralize.gsub('::','').underscore }")
-        say_status('skipped', "Migration 'devise_token_auth_create_#{ user_class.pluralize.gsub('::','').underscore }' already exists")
+      if self.class.migration_exists?('db/migrate', "devise_token_auth_create_#{user_class.pluralize.gsub('::','').underscore}")
+        say_status('skipped', "Migration 'devise_token_auth_create_#{user_class.pluralize.gsub('::','').underscore}' already exists")
       else
         migration_template(
           'devise_token_auth_create_users.rb.erb',
-          "db/migrate/devise_token_auth_create_#{ user_class.pluralize.gsub('::','').underscore }.rb"
+          "db/migrate/devise_token_auth_create_#{user_class.pluralize.gsub('::','').underscore}.rb"
         )
       end
     end
 
     def create_user_model
-      fname = "app/models/#{ user_class.underscore }.rb"
+      fname = "app/models/#{user_class.underscore}.rb"
       unless File.exist?(File.join(destination_root, fname))
         template('user.rb.erb', fname)
       else
