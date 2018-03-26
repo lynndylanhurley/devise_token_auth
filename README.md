@@ -853,7 +853,7 @@ end
 
 You may be interested in [GrapeTokenAuth](https://github.com/mcordell/grape_token_auth) or [GrapeDeviseTokenAuth](https://github.com/mcordell/grape_devise_token_auth).
 
-### I already have an user, how can I add the new fields?
+### I already have a user, how can I add the new fields?
 
 Check [Setup migrations for an existing User table](https://github.com/lynndylanhurley/devise_token_auth/wiki/Setup-migrations-for-an-existing-User-table)
 
