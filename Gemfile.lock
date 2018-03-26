@@ -191,7 +191,7 @@ GEM
       omniauth (~> 1.2)
     orm_adapter (0.5.0)
     parallel (1.12.1)
-    parser (2.5.0.4)
+    parser (2.5.0.5)
       ast (~> 2.4.0)
     pg (0.20.0)
     powerpack (0.1.1)
