@@ -3,6 +3,8 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   Exclude:
     - 'coverage/**/*'
+    - 'test/dummy/tmp/**/*'
+    - 'test/dummy/log/**/*'
 
 # Offense count: 130
 # Cop supports --auto-correct.
