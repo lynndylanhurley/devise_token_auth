@@ -67,7 +67,7 @@ module DeviseTokenAuth
 
         yield @resource if block_given?
 
-        redirect_header_options = {reset_password: true}
+        redirect_header_options = { reset_password: true }
         redirect_headers = build_redirect_headers(token,
                                                   client_id,
                                                   redirect_header_options)
@@ -143,7 +143,7 @@ module DeviseTokenAuth
     def render_create_error(errors)
       render json: {
         success: false,
-        errors: errors,
+        errors: errors
       }, status: 400
     end
 

@@ -46,7 +46,7 @@ module DeviseTokenAuth
 
     def omniauth_failure
       @error = params[:message]
-      render_data_or_redirect('authFailure', {error: @error})
+      render_data_or_redirect('authFailure', { error: @error })
     end
 
     protected
@@ -60,7 +60,7 @@ module DeviseTokenAuth
     # after use.  In the failure case, finally, the omniauth params
     # are added as query params in our monkey patch to OmniAuth in engine.rb
     def omniauth_params
-      if !defined?(@_omniauth_params)
+      unless defined?(@_omniauth_params)
         if request.env['omniauth.params'] && request.env['omniauth.params'].any?
           @_omniauth_params = request.env['omniauth.params']
         elsif session['dta.omniauth.params'] && session['dta.omniauth.params'].any?
@@ -149,10 +149,10 @@ module DeviseTokenAuth
 
     def set_random_password
       # set crazy password for new oauth users. this is only used to prevent
-        # access via email sign-in.
-        p = SecureRandom.urlsafe_base64(nil, false)
-        @resource.password = p
-        @resource.password_confirmation = p
+      # access via email sign-in.
+      p = SecureRandom.urlsafe_base64(nil, false)
+      @resource.password = p
+      @resource.password_confirmation = p
     end
 
     def create_auth_params
