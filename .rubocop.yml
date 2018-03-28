@@ -58,3 +58,17 @@ Style/SymbolArray:
   Enabled: true
   EnforcedStyle: percent
   MinSize: 3
+
+# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
+# URISchemes: http, https
+Metrics/LineLength:
+  inherit_mode:
+    merge:
+      - Exclude
+  Exclude:
+    - 'test/**/*'
+    - 'Guardfile'
+    - 'devise_token_auth.gemspec'
+  IgnoredPatterns:
+    - '(\A|\s)#'
+  Max: 80

@@ -302,7 +302,26 @@ Metrics/ClassLength:
 Metrics/CyclomaticComplexity:
   Max: 17
 
-# Offense count: 33
+# Offense count: 92
+# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
+# URISchemes: http, https
+Metrics/LineLength:
+  Exclude:
+    - 'app/controllers/devise_token_auth/application_controller.rb'
+    - 'app/controllers/devise_token_auth/concerns/set_user_by_token.rb'
+    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
+    - 'app/controllers/devise_token_auth/passwords_controller.rb'
+    - 'app/controllers/devise_token_auth/registrations_controller.rb'
+    - 'app/controllers/devise_token_auth/sessions_controller.rb'
+    - 'app/controllers/devise_token_auth/unlocks_controller.rb'
+    - 'app/models/devise_token_auth/concerns/user.rb'
+    - 'app/models/devise_token_auth/concerns/user_omniauth_callbacks.rb'
+    - 'app/validators/email_validator.rb'
+    - 'lib/devise_token_auth/engine.rb'
+    - 'lib/devise_token_auth/rails/routes.rb'
+    - 'lib/generators/devise_token_auth/install_generator.rb'
+
+# Offense count: 35
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 63
@@ -714,9 +733,3 @@ Style/WordArray:
     - 'Rakefile'
     - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
     - 'test/dummy/db/schema.rb'
-
-# Offense count: 324
-# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
-# URISchemes: http, https
-Metrics/LineLength:
-  Max: 189
