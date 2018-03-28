@@ -73,7 +73,12 @@ module DeviseTokenAuth
             end
 
             if respond_to?(:helper_method)
-              helper_method "current_#{group_name}", "current_#{group_name.to_s.pluralize}", "#{group_name}_signed_in?", "render_authenticate_error"
+              helper_method(
+                "current_#{group_name}",
+                "current_#{group_name.to_s.pluralize}",
+                "#{group_name}_signed_in?",
+                "render_authenticate_error"
+              )
             end
           METHODS
         end
@@ -140,7 +145,12 @@ module DeviseTokenAuth
 
         ActiveSupport.on_load(:action_controller) do
           if respond_to?(:helper_method)
-            helper_method "current_#{mapping}", "#{mapping}_signed_in?", "#{mapping}_session", 'render_authenticate_error'
+            helper_method(
+              "current_#{mapping}",
+              "#{mapping}_signed_in?",
+              "#{mapping}_session",
+              'render_authenticate_error'
+            )
           end
         end
       end
