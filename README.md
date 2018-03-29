@@ -10,7 +10,13 @@
 [![Sponsors on Open Collective](https://opencollective.com/devise_token_auth/sponsors/badge.svg)](#sponsors)
 [![Join the chat at https://gitter.im/lynndylanhurley/devise_token_auth](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lynndylanhurley/devise_token_auth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Simple, secure token-based authentication for Rails. This gem provides the following features:
+Simple, multi-client and secure token-based authentication for Rails.
+
+If you're building SPA or a mobile app, and you want authentication, you need tokens, not cookies.
+This gem refreshes the tokens on each request, and expires them in a short time, so the app is secure.
+Also, it maintains a session for each client/device, so you can have as many sessions as you want.
+
+## Main features
 
 * Seamless integration with:
   * [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for [AngularJS](https://github.com/angular/angular.js)
@@ -52,7 +58,7 @@ Please use [StackOverflow](https://stackoverflow.com/questions/tagged/devise-tok
 
 Please open GitHub issues for bugs and enhancements only, not general help requests. Please search previous issues (and Google and StackOverflow) before creating a new issue.
 
-Please read the [issue reporting guidelines](#issue-reporting) before posting issues.
+Please read the [ISSUE_TEMPLATE.md] before posting issues.
 
 ## [FAQ](docs/faq.md)
 
@@ -71,22 +77,7 @@ See our [Contribution Guidelines](https://github.com/lynndylanhurley/devise_toke
 The fully configured api used in these demos can be found [here](https://github.com/lynndylanhurley/devise_token_auth_demo).
 
 
-## Callouts
-
-Thanks to the following contributors:
-
-* [@booleanbetrayal](https://github.com/booleanbetrayal)
-* [@zachfeldman](https://github.com/zachfeldman)
-* [@MaicolBen](https://github.com/MaicolBen)
-* [@guilhermesimoes](https://github.com/guilhermesimoes)
-* [@jasonswett](https://github.com/jasonswett)
-* [@m2omou](https://github.com/m2omou)
-* [@smarquez1](https://github.com/smarquez1)
-* [@jartek](https://github.com/jartek)
-* [@nicolas-besnard](https://github.com/nicolas-besnard)
-* [@tbloncar](https://github.com/tbloncar)
-* [@nickL](https://github.com/nickL)
-* [@mchavarriagam](https://github.com/mchavarriagam)
+## Contributors
 
 <a href="graphs/contributors"><img src="https://opencollective.com/devise_token_auth/contributors.svg?width=890&button=false" /></a>
 
