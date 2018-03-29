@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Custom::PasswordsController < DeviseTokenAuth::PasswordsController
-
   def create
     super do |resource|
       @create_block_called = true unless resource.nil?
@@ -37,5 +36,4 @@ class Custom::PasswordsController < DeviseTokenAuth::PasswordsController
   def render_update_success
     render json: { custom: 'foo' }
   end
-
 end

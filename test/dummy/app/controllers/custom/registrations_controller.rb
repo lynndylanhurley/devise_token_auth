@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
-
   def create
     super do |resource|
       @create_block_called = true
