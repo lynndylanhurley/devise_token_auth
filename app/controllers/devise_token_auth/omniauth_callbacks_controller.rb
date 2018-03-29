@@ -47,7 +47,7 @@ module DeviseTokenAuth
 
     def omniauth_failure
       @error = params[:message]
-      render_data_or_redirect('authFailure', { error: @error })
+      render_data_or_redirect('authFailure', error: @error)
     end
 
     protected
