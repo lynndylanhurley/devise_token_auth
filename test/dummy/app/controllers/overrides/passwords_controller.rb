@@ -4,9 +4,9 @@ module Overrides
 
     # this is where users arrive after visiting the email confirmation link
     def edit
-      @resource = resource_class.reset_password_by_token({
+      @resource = resource_class.reset_password_by_token(
         reset_password_token: resource_params[:reset_password_token]
-      })
+      )
 
       if @resource and @resource.id
         client_id, token = @resource.create_token

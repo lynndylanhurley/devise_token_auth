@@ -173,9 +173,7 @@ module DeviseTokenAuth
     end
 
     def render_data(message, data)
-      @data = data.merge({
-        message: message
-      })
+      @data = data.merge(message: message)
       render layout: nil, template: 'devise_token_auth/omniauth_external_window'
     end
 
@@ -219,10 +217,10 @@ module DeviseTokenAuth
 
     def get_resource_from_auth_hash
       # find or create user by provider and provider uid
-      @resource = resource_class.where({
-        uid:      auth_hash['uid'],
+      @resource = resource_class.where(
+        uid: auth_hash['uid'],
         provider: auth_hash['provider']
-      }).first_or_initialize
+      ).first_or_initialize
 
       if @resource.new_record?
         @oauth_registration = true
