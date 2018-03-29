@@ -59,6 +59,24 @@ Style/SymbolArray:
   EnforcedStyle: percent
   MinSize: 3
 
+# Configuration parameters: CountComments, ExcludedMethods.
+Metrics/BlockLength:
+  inherit_mode:
+    merge:
+      - Exclude
+      - ExcludedMethod
+  Exclude:
+    - 'lib/devise_token_auth/engine.rb'
+    - 'test/dummy/config/**/*'
+    - 'test/dummy/db/**/*'
+  ExcludedMethods:
+    - describe
+    - draw
+    - namespace
+    - devise_scope
+    - unnest_namespace
+  Max: 25
+
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
 Metrics/LineLength:
