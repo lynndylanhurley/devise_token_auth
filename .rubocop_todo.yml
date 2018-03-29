@@ -288,10 +288,11 @@ Lint/UriEscapeUnescape:
 Metrics/AbcSize:
   Max: 76
 
-# Offense count: 97
+# Offense count: 1
 # Configuration parameters: CountComments, ExcludedMethods.
 Metrics/BlockLength:
-  Max: 696
+  Exclude:
+    - 'app/models/devise_token_auth/concerns/user.rb'
 
 # Offense count: 15
 # Configuration parameters: CountComments.
