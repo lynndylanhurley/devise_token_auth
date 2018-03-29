@@ -23,7 +23,7 @@ module ActionDispatch::Routing
       controllers[:unlocks] = unlocks_ctrl if unlocks_ctrl
 
       # remove any unwanted devise modules
-      opts[:skip].each{|item| controllers.delete(item)}
+      opts[:skip].each{ |item| controllers.delete(item) }
 
       devise_for resource.pluralize.underscore.gsub('/', '_').to_sym,
         class_name: resource,
@@ -66,7 +66,7 @@ module ActionDispatch::Routing
 
             # preserve the resource class thru oauth authentication by setting name of
             # resource as "resource_class" param
-            match "#{full_path}/:provider", to: redirect{|params, request|
+            match "#{full_path}/:provider", to: redirect{ |params, request|
               # get the current querystring
               qs = CGI::parse(request.env['QUERY_STRING'])
 
@@ -76,7 +76,7 @@ module ActionDispatch::Routing
 
               set_omniauth_path_prefix!(DeviseTokenAuth.omniauth_prefix)
 
-              redirect_params = {}.tap {|hash| qs.each{|k, v| hash[k] = v.first}}
+              redirect_params = {}.tap { |hash| qs.each{ |k, v| hash[k] = v.first } }
 
               if DeviseTokenAuth.redirect_whitelist
                 redirect_url = request.params['auth_origin_url']

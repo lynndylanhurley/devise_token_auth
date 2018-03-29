@@ -194,18 +194,6 @@ Layout/SpaceInsideArrayLiteralBrackets:
   Exclude:
     - 'config/initializers/devise.rb'
 
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-# SupportedStyles: space, no_space
-# SupportedStylesForEmptyBraces: space, no_space
-Layout/SpaceInsideBlockBraces:
-  Exclude:
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'lib/devise_token_auth/rails/routes.rb'
-    - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
-    - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
