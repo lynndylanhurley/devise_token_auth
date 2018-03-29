@@ -1,5 +1,4 @@
 class Custom::SessionsController < DeviseTokenAuth::SessionsController
-
   def create
     super do |resource|
       @create_block_called = true unless resource.nil?
@@ -25,5 +24,4 @@ class Custom::SessionsController < DeviseTokenAuth::SessionsController
   def render_create_success
     render json: { custom: 'foo' }
   end
-
 end

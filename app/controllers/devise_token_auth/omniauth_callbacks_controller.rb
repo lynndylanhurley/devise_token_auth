@@ -1,6 +1,5 @@
 module DeviseTokenAuth
   class OmniauthCallbacksController < DeviseTokenAuth::ApplicationController
-
     attr_reader :auth_params
     skip_before_action :set_user_by_token, raise: false
     skip_after_action :update_auth_header
@@ -236,6 +235,5 @@ module DeviseTokenAuth
 
       @resource
     end
-
   end
 end

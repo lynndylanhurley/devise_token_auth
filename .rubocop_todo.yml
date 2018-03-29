@@ -53,20 +53,6 @@ Layout/EmptyLinesAroundBlockBody:
     - 'test/controllers/devise_token_auth/passwords_controller_test.rb'
     - 'test/dummy/db/schema.rb'
 
-# Offense count: 13
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines, beginning_only, ending_only
-Layout/EmptyLinesAroundClassBody:
-  Exclude:
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'app/controllers/devise_token_auth/sessions_controller.rb'
-    - 'test/dummy/app/controllers/custom/confirmations_controller.rb'
-    - 'test/dummy/app/controllers/custom/passwords_controller.rb'
-    - 'test/dummy/app/controllers/custom/registrations_controller.rb'
-    - 'test/dummy/app/controllers/custom/sessions_controller.rb'
-    - 'test/dummy/app/controllers/custom/token_validations_controller.rb'
-
 # Offense count: 5
 # Cop supports --auto-correct.
 Layout/EmptyLinesAroundMethodBody:
