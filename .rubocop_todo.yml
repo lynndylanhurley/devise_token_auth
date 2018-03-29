@@ -95,13 +95,6 @@ Layout/ExtraSpacing:
     - 'test/dummy/config/initializers/omniauth.rb'
     - 'test/dummy/db/migrate/20141222035835_devise_token_auth_create_only_email_users.rb'
 
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: IndentationWidth.
-# SupportedStyles: special_inside_parentheses, consistent, align_braces
-Layout/IndentHash:
-  EnforcedStyle: consistent
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: Width, IgnoredPatterns.
@@ -413,18 +406,14 @@ Style/BlockDelimiters:
     - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
     - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
 
-# Offense count: 11
+# Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: braces, no_braces, context_dependent
 Style/BracesAroundHashParameters:
   Exclude:
     - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'app/controllers/devise_token_auth/passwords_controller.rb'
     - 'app/controllers/devise_token_auth/registrations_controller.rb'
-    - 'app/controllers/devise_token_auth/unlocks_controller.rb'
-    - 'test/dummy/app/controllers/overrides/omniauth_callbacks_controller.rb'
-    - 'test/dummy/app/controllers/overrides/passwords_controller.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

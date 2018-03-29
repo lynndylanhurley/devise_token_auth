@@ -50,10 +50,10 @@ module DeviseTokenAuth
             update_auth_header
           else
             # user will require email authentication
-            @resource.send_confirmation_instructions({
+            @resource.send_confirmation_instructions(
               client_config: params[:config_name],
               redirect_url: @redirect_url
-            })
+            )
           end
 
           render_create_success

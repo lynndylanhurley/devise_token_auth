@@ -17,11 +17,11 @@ module DeviseTokenAuth
       if @resource
         yield @resource if block_given?
 
-        @resource.send_unlock_instructions({
+        @resource.send_unlock_instructions(
           email: @email,
           provider: 'email',
           client_config: params[:config_name]
-        })
+        )
 
         if @resource.errors.empty?
           return render_create_success

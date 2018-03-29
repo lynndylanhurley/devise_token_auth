@@ -26,12 +26,12 @@ module DeviseTokenAuth
 
       if @resource
         yield @resource if block_given?
-        @resource.send_reset_password_instructions({
+        @resource.send_reset_password_instructions(
           email: @email,
           provider: 'email',
           redirect_url: @redirect_url,
           client_config: params[:config_name]
-        })
+        )
 
         if @resource.errors.empty?
           return render_create_success
