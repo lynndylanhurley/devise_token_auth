@@ -2,7 +2,7 @@
 
 module DeviseTokenAuth
   class InstallViewsGenerator < Rails::Generators::Base
-    source_root File.expand_path('../../../../app/views/devise/mailer', __FILE__)
+    source_root File.expand_path('../../../app/views/devise/mailer', __dir__)
 
     def copy_mailer_templates
       copy_file(

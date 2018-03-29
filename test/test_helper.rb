@@ -6,13 +6,13 @@ SimpleCov.start 'rails'
 
 ENV['RAILS_ENV'] = 'test'
 
-require File.expand_path('../dummy/config/environment', __FILE__)
+require File.expand_path('dummy/config/environment', __dir__)
 require 'rails/test_help'
 require 'minitest/rails'
 require 'mocha/minitest'
 
-ActiveSupport::TestCase.fixture_path = File.expand_path('../fixtures', __FILE__)
-ActionDispatch::IntegrationTest.fixture_path = File.expand_path('../fixtures', __FILE__)
+ActiveSupport::TestCase.fixture_path = File.expand_path('fixtures', __dir__)
+ActionDispatch::IntegrationTest.fixture_path = File.expand_path('fixtures', __dir__)
 
 # I hate the default reporter. Use ProgressReporter instead.
 Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new

@@ -4,7 +4,7 @@ module DeviseTokenAuth
   class InstallGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
-    source_root File.expand_path('../templates', __FILE__)
+    source_root File.expand_path('templates', __dir__)
 
     argument :user_class, type: :string, default: 'User'
     argument :mount_path, type: :string, default: 'auth'

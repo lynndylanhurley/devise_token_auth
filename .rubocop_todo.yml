@@ -498,24 +498,6 @@ Style/EmptyMethod:
   Exclude:
     - 'lib/devise_token_auth/controllers/url_helpers.rb'
 
-# Offense count: 19
-# Cop supports --auto-correct.
-Style/ExpandPathArguments:
-  Exclude:
-    - 'Rakefile'
-    - 'bin/rails'
-    - 'devise_token_auth.gemspec'
-    - 'lib/generators/devise_token_auth/install_generator.rb'
-    - 'lib/generators/devise_token_auth/install_views_generator.rb'
-    - 'test/dummy/Rakefile'
-    - 'test/dummy/bin/bundle'
-    - 'test/dummy/bin/rails'
-    - 'test/dummy/bin/rake'
-    - 'test/dummy/config/application.rb'
-    - 'test/dummy/config/boot.rb'
-    - 'test/dummy/config/environment.rb'
-    - 'test/test_helper.rb'
-
 # Offense count: 13
 # Configuration parameters: MinBodyLength.
 Style/GuardClause:
