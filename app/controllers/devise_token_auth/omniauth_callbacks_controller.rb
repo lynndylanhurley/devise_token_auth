@@ -88,7 +88,7 @@ module DeviseTokenAuth
     def whitelisted_params
       whitelist = params_for_resource(:sign_up)
 
-      whitelist.inject({}){|coll, key|
+      whitelist.inject({}){ |coll, key|
         param = omniauth_params[key.to_s]
         if param
           coll[key] = param
