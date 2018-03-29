@@ -5,7 +5,7 @@ module DeviseTokenAuth
     include DeviseTokenAuth::Concerns::SetUserByToken
     include DeviseTokenAuth::Concerns::ResourceFinder
 
-    def resource_data(opts={})
+    def resource_data(opts = {})
       response_data = opts[:resource_json] || @resource.as_json
       if json_api?
         response_data['type'] = @resource.class.name.parameterize
@@ -44,7 +44,7 @@ module DeviseTokenAuth
       devise_parameter_sanitizer.instance_values['permitted'][resource]
     end
 
-    def resource_class(m=nil)
+    def resource_class(m = nil)
       if m
         mapping = Devise.mappings[m]
       else

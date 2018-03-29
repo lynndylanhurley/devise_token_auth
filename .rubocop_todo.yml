@@ -137,18 +137,6 @@ Layout/SpaceAfterComma:
     - 'lib/generators/devise_token_auth/install_generator.rb'
     - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
 
-# Offense count: 12
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: space, no_space
-Layout/SpaceAroundEqualsInParameterDefault:
-  Exclude:
-    - 'app/controllers/devise_token_auth/application_controller.rb'
-    - 'app/controllers/devise_token_auth/concerns/resource_finder.rb'
-    - 'app/controllers/devise_token_auth/concerns/set_user_by_token.rb'
-    - 'app/models/devise_token_auth/concerns/user.rb'
-    - 'lib/devise_token_auth/controllers/helpers.rb'
-
 # Offense count: 8
 # Cop supports --auto-correct.
 # Configuration parameters: AllowForAlignment.

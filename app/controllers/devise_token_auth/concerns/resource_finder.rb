@@ -29,7 +29,7 @@ module DeviseTokenAuth::Concerns::ResourceFinder
     @resource = resource_class.where(q, value).first
   end
 
-  def resource_class(m=nil)
+  def resource_class(m = nil)
     if m
       mapping = Devise.mappings[m]
     else

@@ -54,7 +54,7 @@ module DeviseTokenAuth::Concerns::User
     end
 
     # override devise method to include additional info as opts hash
-    def send_confirmation_instructions(opts={})
+    def send_confirmation_instructions(opts = {})
       generate_confirmation_token! unless @raw_confirmation_token
 
       # fall back to "default" config name
@@ -66,7 +66,7 @@ module DeviseTokenAuth::Concerns::User
     end
 
     # override devise method to include additional info as opts hash
-    def send_reset_password_instructions(opts={})
+    def send_reset_password_instructions(opts = {})
       token = set_reset_password_token
 
       # fall back to "default" config name
@@ -77,7 +77,7 @@ module DeviseTokenAuth::Concerns::User
     end
 
     # override devise method to include additional info as opts hash
-    def send_unlock_instructions(opts={})
+    def send_unlock_instructions(opts = {})
       raw, enc = Devise.token_generator.generate(self.class, :unlock_token)
       self.unlock_token = enc
       save(validate: false)
@@ -117,7 +117,7 @@ module DeviseTokenAuth::Concerns::User
     end
   end
 
-  def valid_token?(token, client_id='default')
+  def valid_token?(token, client_id = 'default')
     return false unless tokens[client_id]
     return true if token_is_current?(token, client_id)
     return true if token_can_be_reused?(token, client_id)
@@ -166,7 +166,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   # update user's auth token (should happen on each request)
-  def create_new_auth_token(client_id=nil)
+  def create_new_auth_token(client_id = nil)
     now = Time.zone.now
 
     client_id, token = create_token(
@@ -179,7 +179,7 @@ module DeviseTokenAuth::Concerns::User
     update_auth_header(token, client_id)
   end
 
-  def build_auth_header(token, client_id='default')
+  def build_auth_header(token, client_id = 'default')
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
     expiry = tokens[client_id]['expiry'] || tokens[client_id][:expiry]
@@ -193,7 +193,7 @@ module DeviseTokenAuth::Concerns::User
     }
   end
 
-  def update_auth_header(token, client_id='default')
+  def update_auth_header(token, client_id = 'default')
     headers = build_auth_header(token, client_id)
     clean_old_tokens
     save!
