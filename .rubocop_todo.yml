@@ -368,15 +368,6 @@ Style/BlockDelimiters:
     - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
     - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: braces, no_braces, context_dependent
-Style/BracesAroundHashParameters:
-  Exclude:
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'app/controllers/devise_token_auth/registrations_controller.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/ColonMethodCall:

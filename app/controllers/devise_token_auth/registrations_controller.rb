@@ -161,7 +161,7 @@ module DeviseTokenAuth
     end
 
     def render_update_error_user_not_found
-      render_error(404, I18n.t('devise_token_auth.registrations.user_not_found'), { status: 'error' })
+      render_error(404, I18n.t('devise_token_auth.registrations.user_not_found'), status: 'error')
     end
 
     def render_destroy_success
@@ -172,7 +172,7 @@ module DeviseTokenAuth
     end
 
     def render_destroy_error
-      render_error(404, I18n.t('devise_token_auth.registrations.account_to_destroy_not_found'), { status: 'error' })
+      render_error(404, I18n.t('devise_token_auth.registrations.account_to_destroy_not_found'), status: 'error')
     end
 
     private
@@ -198,7 +198,7 @@ module DeviseTokenAuth
     end
 
     def validate_post_data which, message
-      render_error(:unprocessable_entity, message, { status: 'error' }) if which.empty?
+      render_error(:unprocessable_entity, message, status: 'error') if which.empty?
     end
   end
 end
