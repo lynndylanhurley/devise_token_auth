@@ -2,7 +2,7 @@
 
 module Overrides
   class SessionsController < DeviseTokenAuth::SessionsController
-    OVERRIDE_PROOF = '(^^,)'
+    OVERRIDE_PROOF = '(^^,)'.freeze
 
     def create
       @resource = resource_class.find_by(email: resource_params[:email])

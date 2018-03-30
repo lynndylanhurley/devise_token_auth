@@ -1052,7 +1052,7 @@ module ApplicationHelper
     'Zaffre',
     'Zinnwaldite brown',
     'Zomp'
-  ]
+  ].freeze
 
   COLOR_SEARCH = FuzzBall::Searcher.new(COLOR_NAMES)
 end
