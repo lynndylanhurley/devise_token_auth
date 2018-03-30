@@ -1,3 +1,3 @@
 module DeviseTokenAuth
-  VERSION = '0.1.43'
+  VERSION = '0.1.43'.freeze
 end

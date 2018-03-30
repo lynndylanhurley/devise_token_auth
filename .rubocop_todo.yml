@@ -471,18 +471,6 @@ Style/MultilineTernaryOperator:
   Exclude:
     - 'test/dummy/config/environments/test.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-Style/MutableConstant:
-  Exclude:
-    - 'lib/devise_token_auth/version.rb'
-    - 'test/dummy/app/controllers/overrides/omniauth_callbacks_controller.rb'
-    - 'test/dummy/app/controllers/overrides/passwords_controller.rb'
-    - 'test/dummy/app/controllers/overrides/registrations_controller.rb'
-    - 'test/dummy/app/controllers/overrides/sessions_controller.rb'
-    - 'test/dummy/app/controllers/overrides/token_validations_controller.rb'
-    - 'test/dummy/app/helpers/application_helper.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, MinBodyLength.

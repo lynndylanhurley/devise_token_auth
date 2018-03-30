@@ -1,6 +1,6 @@
 module Overrides
   class RegistrationsController < DeviseTokenAuth::RegistrationsController
-    OVERRIDE_PROOF = '(^^,)'
+    OVERRIDE_PROOF = '(^^,)'.freeze
 
     def update
       if @resource

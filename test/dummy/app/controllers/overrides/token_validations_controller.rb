@@ -1,6 +1,6 @@
 module Overrides
   class TokenValidationsController < DeviseTokenAuth::TokenValidationsController
-    OVERRIDE_PROOF = '(^^,)'
+    OVERRIDE_PROOF = '(^^,)'.freeze
 
     def validate_token
       # @resource will have been set by set_user_by_token concern
