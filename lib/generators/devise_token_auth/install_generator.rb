@@ -86,9 +86,9 @@ module DeviseTokenAuth
           insert_after_line(f, line, str)
 
           if existing_user_class
-            scoped_routes = ''+
-              "as :#{user_class.underscore} do\n"+
-              "    # Define routes for #{user_class} within this block.\n"+
+            scoped_routes = ''\
+              "as :#{user_class.underscore} do\n"\
+              "    # Define routes for #{user_class} within this block.\n"\
               "  end\n"
             insert_after_line(f, str, scoped_routes)
           end

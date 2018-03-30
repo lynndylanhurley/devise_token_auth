@@ -18,8 +18,8 @@ module Overrides
         render json: {
           success: false,
           errors: [
-            "A confirmation email was sent to your account at #{@resource.email}. "+
-            'You must follow the instructions in the email before your account '+
+            "A confirmation email was sent to your account at #{@resource.email}. "\
+            'You must follow the instructions in the email before your account '\
             'can be activated'
           ]
         }, status: 401
