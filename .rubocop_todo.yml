@@ -339,20 +339,6 @@ Style/BarePercentLiterals:
   Exclude:
     - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
 
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ProceduralMethods, FunctionalMethods, IgnoredMethods.
-# SupportedStyles: line_count_based, semantic, braces_for_chaining
-# ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
-# FunctionalMethods: let, let!, subject, watch
-# IgnoredMethods: lambda, proc, it
-Style/BlockDelimiters:
-  Exclude:
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'test/controllers/devise_token_auth/passwords_controller_test.rb'
-    - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
-    - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/ColonMethodCall:

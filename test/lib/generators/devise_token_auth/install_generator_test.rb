@@ -55,7 +55,7 @@ module DeviseTokenAuth
         # account for rails version 5
         active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
 
-        @f = File.open(@fname, 'w') { |f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             class User < #{active_record_needle}
 
@@ -64,7 +64,7 @@ module DeviseTokenAuth
               end
             end
           RUBY
-        }
+        end
 
         run_generator
       end
@@ -95,13 +95,13 @@ module DeviseTokenAuth
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') { |f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             Rails.application.routes.draw do
               patch '/chong', to: 'bong#index'
             end
           RUBY
-        }
+        end
 
         run_generator
       end
@@ -155,7 +155,7 @@ module DeviseTokenAuth
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') { |f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             class ApplicationController < ActionController::Base
               def whatever
@@ -163,7 +163,7 @@ module DeviseTokenAuth
               end
             end
           RUBY
-        }
+        end
 
         run_generator
       end
