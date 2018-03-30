@@ -59,6 +59,14 @@ Style/SymbolArray:
   EnforcedStyle: percent
   MinSize: 3
 
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, MinSize, WordRegex.
+# SupportedStyles: percent, brackets
+Style/WordArray:
+  Enabled: true
+  EnforcedStyle: percent
+  MinSize: 3
+
 # Configuration parameters: CountComments, ExcludedMethods.
 Metrics/BlockLength:
   inherit_mode:
