@@ -14,8 +14,8 @@ module DeviseTokenAuth::Concerns::User
 
   included do
     # Hack to check if devise is already enabled
-    if self.method_defined?(:devise_modules)
-      self.devise_modules.delete(:omniauthable)
+    if method_defined?(:devise_modules)
+      devise_modules.delete(:omniauthable)
     else
       devise :database_authenticatable, :registerable,
              :recoverable, :trackable, :validatable, :confirmable
@@ -89,7 +89,7 @@ module DeviseTokenAuth::Concerns::User
     token     ||= SecureRandom.urlsafe_base64(nil, false)
     expiry    ||= (Time.zone.now + token_lifespan).to_i
 
-    self.tokens[client_id] = {
+    tokens[client_id] = {
       token: BCrypt::Password.create(token),
       expiry: expiry
     }.merge!(token_extras)
@@ -103,7 +103,7 @@ module DeviseTokenAuth::Concerns::User
     protected
 
     def tokens_has_json_column_type?
-      database_exists? && table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+      database_exists? && table_exists? && columns_hash['tokens'] && columns_hash['tokens'].type.in?([:json, :jsonb])
     end
 
     def database_exists?
@@ -203,7 +203,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def extend_batch_buffer(token, client_id)
-    self.tokens[client_id]['updated_at'] = Time.zone.now
+    tokens[client_id]['updated_at'] = Time.zone.now
     update_auth_header(token, client_id)
   end
 
