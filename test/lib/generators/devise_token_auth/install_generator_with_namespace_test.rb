@@ -16,7 +16,7 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
 
       test 'user model (with namespace) is created, concern is included' do
@@ -42,7 +42,7 @@ module DeviseTokenAuth
       end
 
       test 'subsequent runs raise no errors' do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
     end
 
@@ -108,7 +108,7 @@ module DeviseTokenAuth
           RUBY
         end
 
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
 
       test 'route method for user model with namespace is appended to routes file' do
@@ -118,7 +118,7 @@ module DeviseTokenAuth
       end
 
       test 'subsequent runs do not modify file' do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
         assert_file 'config/routes.rb' do |routes|
           matches = routes.scan(/mount_devise_token_auth_for '#{user_class}', at: 'auth'/m).size
           assert_equal 1, matches
@@ -127,7 +127,7 @@ module DeviseTokenAuth
 
       describe 'subsequent models' do
         before do
-          run_generator %w(Mang mangs)
+          run_generator %w[Mang mangs]
         end
 
         test 'migration is created' do
@@ -170,7 +170,7 @@ module DeviseTokenAuth
           RUBY
         end
 
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
 
       test 'controller concern is appended to application controller' do
@@ -180,7 +180,7 @@ module DeviseTokenAuth
       end
 
       test 'subsequent runs do not modify file' do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
         assert_file 'app/controllers/application_controller.rb' do |controller|
           matches = controller.scan(/include DeviseTokenAuth::Concerns::SetUserByToken/m).size
           assert_equal 1, matches

@@ -122,7 +122,7 @@ module DeviseTokenAuth
 
       describe 'subsequent models' do
         before do
-          run_generator %w(Mang mangs)
+          run_generator %w[Mang mangs]
         end
 
         test 'migration is created' do
