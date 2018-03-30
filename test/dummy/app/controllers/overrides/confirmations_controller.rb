@@ -3,7 +3,7 @@ module Overrides
     def show
       @resource = resource_class.confirm_by_token(params[:confirmation_token])
 
-      if @resource and @resource.id
+      if @resource && @resource.id
         client_id, token = @resource.create_token
         @resource.save!
 

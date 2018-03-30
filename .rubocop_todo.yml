@@ -320,17 +320,6 @@ Performance/StringReplacement:
     - 'lib/devise_token_auth/rails/routes.rb'
     - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, conditionals
-Style/AndOr:
-  Exclude:
-    - 'test/dummy/app/controllers/overrides/confirmations_controller.rb'
-    - 'test/dummy/app/controllers/overrides/passwords_controller.rb'
-    - 'test/dummy/app/controllers/overrides/sessions_controller.rb'
-    - 'test/dummy/app/models/user.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
