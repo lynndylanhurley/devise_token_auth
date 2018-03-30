@@ -497,13 +497,6 @@ Style/ParenthesesAroundCondition:
     - 'app/models/devise_token_auth/concerns/user.rb'
     - 'lib/devise_token_auth/url.rb'
 
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: .
-# SupportedStyles: compact, exploded
-Style/RaiseArgs:
-  EnforcedStyle: compact
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/RescueModifier:

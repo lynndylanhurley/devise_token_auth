@@ -25,7 +25,7 @@ module DeviseTokenAuth
         redirect_to(@resource.build_auth_url(params[:redirect_url],
                                              redirect_headers))
       else
-        raise ActionController::RoutingError.new('Not Found')
+        raise ActionController::RoutingError, 'Not Found'
       end
     end
   end
