@@ -414,13 +414,6 @@ Style/GuardClause:
     - 'test/dummy/app/models/user.rb'
     - 'test/test_helper.rb'
 
-# Offense count: 5
-# Cop supports --auto-correct.
-Style/LineEndConcatenation:
-  Exclude:
-    - 'lib/generators/devise_token_auth/install_generator.rb'
-    - 'test/dummy/app/controllers/overrides/sessions_controller.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/MethodCallWithoutArgsParentheses:
