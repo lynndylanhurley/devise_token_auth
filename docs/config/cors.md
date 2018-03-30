@@ -1,6 +1,6 @@
 ## CORS
 
-If your API and client live on different domains, you will need to configure your Rails API to allow [cross origin requests](http://en.wikipedia.org/wiki/Cross-origin_resource_sharing). The [rack-cors](https://github.com/cyu/rack-cors) gem can be used to accomplish this.
+If your API and client live on different domains, you will need to configure your Rails API to allow [cross origin requests](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing). The [rack-cors](https://github.com/cyu/rack-cors) gem can be used to accomplish this.
 
 The following **dangerous** example will allow cross domain requests from **any** domain. Make sure to whitelist only the needed domains.
 
