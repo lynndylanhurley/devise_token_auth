@@ -8,9 +8,7 @@ module DeviseTokenAuth
     # this action is responsible for generating password reset tokens and
     # sending emails
     def create
-      unless resource_params[:email]
-        return render_create_error_missing_email
-      end
+      return render_create_error_missing_email unless resource_params[:email]
 
       # give redirect value from params priority
       @redirect_url = params.fetch(
@@ -74,9 +72,7 @@ module DeviseTokenAuth
 
     def update
       # make sure user is authorized
-      unless @resource
-        return render_update_error_unauthorized
-      end
+      return render_update_error_unauthorized unless @resource
 
       # make sure account doesn't use oauth2 provider
       unless @resource.provider == 'email'

@@ -117,9 +117,7 @@ module DeviseTokenAuth
 
       File.open(File.join(destination_root, filename)) do |f|
         f.each_line do |line|
-          if line =~ /(#{Regexp.escape(str)})/mi
-            match = line
-          end
+          match = line if line =~ /(#{Regexp.escape(str)})/mi
         end
       end
       match

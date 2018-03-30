@@ -89,9 +89,7 @@ module DeviseTokenAuth
 
       whitelist.inject({}) do |coll, key|
         param = omniauth_params[key.to_s]
-        if param
-          coll[key] = param
-        end
+        coll[key] = param if param
         coll
       end
     end

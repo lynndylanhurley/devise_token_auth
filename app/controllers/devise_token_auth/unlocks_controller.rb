@@ -7,9 +7,7 @@ module DeviseTokenAuth
     # this action is responsible for generating unlock tokens and
     # sending emails
     def create
-      unless resource_params[:email]
-        return render_create_error_missing_email
-      end
+      return render_create_error_missing_email unless resource_params[:email]
 
       @email = get_case_insensitive_field_from_resource_params(:email)
       @resource = find_resource(:email, @email)
