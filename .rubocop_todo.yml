@@ -633,13 +633,3 @@ Style/TrailingUnderscoreVariable:
 Style/UnneededPercentQ:
   Exclude:
     - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-
-# Offense count: 11
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, MinSize, WordRegex.
-# SupportedStyles: percent, brackets
-Style/WordArray:
-  Exclude:
-    - 'Rakefile'
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'test/dummy/db/schema.rb'
