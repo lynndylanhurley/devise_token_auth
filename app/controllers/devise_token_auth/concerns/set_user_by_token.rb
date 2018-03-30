@@ -84,7 +84,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     if user && user.valid_token?(@token, @client_id)
       # sign_in with bypass: true will be deprecated in the next version of Devise
-      if self.respond_to?(:bypass_sign_in) && DeviseTokenAuth.bypass_sign_in
+      if respond_to?(:bypass_sign_in) && DeviseTokenAuth.bypass_sign_in
         bypass_sign_in(user, scope: :user)
       else
         sign_in(:user, user, store: false, event: :fetch, bypass: DeviseTokenAuth.bypass_sign_in)

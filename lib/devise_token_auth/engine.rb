@@ -50,7 +50,7 @@ module DeviseTokenAuth
 
     Rails.application.config.after_initialize do
       if defined?(::OmniAuth)
-        ::OmniAuth::config.path_prefix = Devise.omniauth_path_prefix = self.omniauth_prefix
+        ::OmniAuth::config.path_prefix = Devise.omniauth_path_prefix = omniauth_prefix
 
         # Omniauth currently does not pass along omniauth.params upon failure redirect
         # see also: https://github.com/intridea/omniauth/issues/626

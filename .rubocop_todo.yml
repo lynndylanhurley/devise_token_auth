@@ -504,13 +504,6 @@ Style/ParenthesesAroundCondition:
 Style/RaiseArgs:
   EnforcedStyle: compact
 
-# Offense count: 7
-# Cop supports --auto-correct.
-Style/RedundantSelf:
-  Exclude:
-    - 'app/controllers/devise_token_auth/concerns/set_user_by_token.rb'
-    - 'app/models/devise_token_auth/concerns/user.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/RescueModifier:
