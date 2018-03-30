@@ -8,9 +8,7 @@ module DeviseTokenAuth::Concerns::User
 
     key = "#{token_hash}/#{token}"
     result = @token_equality_cache[key] ||= (::BCrypt::Password.new(token_hash) == token)
-    if @token_equality_cache.size > 10000
-      @token_equality_cache = {}
-    end
+    @token_equality_cache = {} if @token_equality_cache.size > 10000
     result
   end
 
@@ -23,9 +21,7 @@ module DeviseTokenAuth::Concerns::User
              :recoverable, :trackable, :validatable, :confirmable
     end
 
-    unless tokens_has_json_column_type?
-      serialize :tokens, JSON
-    end
+    serialize :tokens, JSON unless tokens_has_json_column_type?
 
     if DeviseTokenAuth.default_callbacks
       include DeviseTokenAuth::Concerns::UserOmniauthCallbacks
