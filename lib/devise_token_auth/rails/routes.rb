@@ -26,11 +26,11 @@ module ActionDispatch::Routing
       opts[:skip].each{ |item| controllers.delete(item) }
 
       devise_for resource.pluralize.underscore.gsub('/', '_').to_sym,
-        class_name: resource,
-        module: :devise,
-        path: opts[:at].to_s,
-        controllers: controllers,
-        skip: opts[:skip] + [:omniauth_callbacks]
+                 class_name: resource,
+                 module: :devise,
+                 path: opts[:at].to_s,
+                 controllers: controllers,
+                 skip: opts[:skip] + [:omniauth_callbacks]
 
       unnest_namespace do
         # get full url path as if it were namespaced

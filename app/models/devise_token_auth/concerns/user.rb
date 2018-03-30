@@ -20,7 +20,7 @@ module DeviseTokenAuth::Concerns::User
       self.devise_modules.delete(:omniauthable)
     else
       devise :database_authenticatable, :registerable,
-          :recoverable, :trackable, :validatable, :confirmable
+             :recoverable, :trackable, :validatable, :confirmable
     end
 
     unless tokens_has_json_column_type?

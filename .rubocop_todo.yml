@@ -14,21 +14,6 @@ Gemspec/OrderedDependencies:
   Exclude:
     - 'devise_token_auth.gemspec'
 
-# Offense count: 11
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: with_first_parameter, with_fixed_indentation
-Layout/AlignParameters:
-  Exclude:
-    - 'app/models/devise_token_auth/concerns/user.rb'
-    - 'lib/devise_token_auth/rails/routes.rb'
-    - 'test/dummy/app/models/nice_user.rb'
-    - 'test/dummy/app/models/scoped_user.rb'
-    - 'test/dummy/app/models/unregisterable_user.rb'
-    - 'test/dummy/config.ru'
-    - 'test/dummy/config/initializers/omniauth.rb'
-    - 'test/dummy/config/routes.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: AllowAdjacentOneLineDefs, NumberOfEmptyLines.
