@@ -520,15 +520,6 @@ Style/ParenthesesAroundCondition:
     - 'app/models/devise_token_auth/concerns/user.rb'
     - 'lib/devise_token_auth/url.rb'
 
-# Offense count: 9
-# Cop supports --auto-correct.
-# Configuration parameters: PreferredDelimiters.
-Style/PercentLiteralDelimiters:
-  Exclude:
-    - 'app/controllers/devise_token_auth/omniauth_callbacks_controller.rb'
-    - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
-    - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
-
 # Offense count: 5
 # Cop supports --auto-correct.
 # Configuration parameters: .

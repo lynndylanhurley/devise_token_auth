@@ -204,14 +204,14 @@ module DeviseTokenAuth
     end
 
     def fallback_render(text)
-        render inline: %Q|
+        render inline: %Q(
 
             <html>
                     <head></head>
                     <body>
                             #{text}
                     </body>
-            </html>|
+            </html>)
     end
 
     def get_resource_from_auth_hash
