@@ -10,7 +10,7 @@ module Overrides
         reset_password_token: resource_params[:reset_password_token]
       )
 
-      if @resource and @resource.id
+      if @resource && @resource.id
         client_id, token = @resource.create_token
 
         # ensure that user is confirmed
