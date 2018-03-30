@@ -73,7 +73,7 @@ module DeviseTokenAuth
     end
 
     def render_show_error
-      raise ActionController::RoutingError.new('Not Found')
+      raise ActionController::RoutingError, 'Not Found'
     end
 
     def render_not_found_error
