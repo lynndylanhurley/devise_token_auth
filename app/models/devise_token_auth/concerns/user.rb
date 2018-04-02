@@ -16,11 +16,11 @@ module DeviseTokenAuth::Concerns::User
 
   included do
     # Hack to check if devise is already enabled
-    unless self.method_defined?(:devise_modules)
+    if self.method_defined?(:devise_modules)
+      self.devise_modules.delete(:omniauthable)
+    else
       devise :database_authenticatable, :registerable,
           :recoverable, :trackable, :validatable, :confirmable
-    else
-      self.devise_modules.delete(:omniauthable)
     end
 
     unless tokens_has_json_column_type?
