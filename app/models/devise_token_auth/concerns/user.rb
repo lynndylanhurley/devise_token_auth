@@ -121,7 +121,7 @@ module DeviseTokenAuth::Concerns::User
     return true if token_can_be_reused?(token, client_id)
 
     # return false if none of the above conditions are met
-    return false
+    false
   end
 
   # this must be done from the controller so that additional params
