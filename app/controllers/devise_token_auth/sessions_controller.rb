@@ -87,10 +87,7 @@ module DeviseTokenAuth
         auth_val.downcase!
       end
 
-      return {
-        key: auth_key,
-        val: auth_val
-      }
+      { key: auth_key, val: auth_val }
     end
 
     def render_new_error

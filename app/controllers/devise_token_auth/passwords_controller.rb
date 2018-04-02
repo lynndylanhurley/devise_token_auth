@@ -166,7 +166,7 @@ module DeviseTokenAuth
     end
 
     def render_update_error
-      return render json: {
+      render json: {
         success: false,
         errors: resource_errors
       }, status: 422
