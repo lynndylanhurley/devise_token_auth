@@ -26,22 +26,22 @@ module DeviseTokenAuth
 
     def create_user_model
       fname = "app/models/#{user_class.underscore}.rb"
-      unless File.exist?(File.join(destination_root, fname))
-        template('user.rb.erb', fname)
-      else
+      if File.exist?(File.join(destination_root, fname))
         inclusion = 'include DeviseTokenAuth::Concerns::User'
         unless parse_file_for_line(fname, inclusion)
 
           active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
           inject_into_file fname, after: "class #{user_class} < #{active_record_needle}\n" do <<-'RUBY'
-  # Include default devise modules.
-  devise :database_authenticatable, :registerable,
-          :recoverable, :rememberable, :trackable, :validatable,
-          :confirmable, :omniauthable
-  include DeviseTokenAuth::Concerns::User
-          RUBY
+            # Include default devise modules.
+            devise :database_authenticatable, :registerable,
+                    :recoverable, :rememberable, :trackable, :validatable,
+                    :confirmable, :omniauthable
+            include DeviseTokenAuth::Concerns::User
+            RUBY
           end
         end
+      else
+        template('user.rb.erb', fname)
       end
     end
 
@@ -75,11 +75,11 @@ module DeviseTokenAuth
       if File.exist?(File.join(destination_root, f))
         line = parse_file_for_line(f, 'mount_devise_token_auth_for')
 
-        unless line
+        if line
+          existing_user_class = true
+        else
           line = 'Rails.application.routes.draw do'
           existing_user_class = false
-        else
-          existing_user_class = true
         end
 
         if parse_file_for_line(f, str)
