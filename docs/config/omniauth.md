@@ -37,7 +37,7 @@ The above example assumes that your provider keys and secrets are stored in envi
 
 The "Callback URL" setting that you set with your provider must correspond to the [omniauth prefix](initialization.md) setting defined by this app. **This will be different than the omniauth route that is used by your client application**.
 
-For example, the demo app uses the default `omniauth_prefix` setting `/omniauth`, so the "Authorization callback URL" for github must be set to "http://devise-token-auth-demo.herokuapp.com**/omniauth**/github/callback".
+For example, the demo app uses the default `omniauth_prefix` setting `/omniauth`, so the "Authorization callback URL" for github must be set to "https://devise-token-auth-demo.herokuapp.com**/omniauth**/github/callback".
 
 **Github example for the demo site**:
 ![password reset flow](https://github.com/lynndylanhurley/devise_token_auth/raw/master/test/dummy/app/assets/images/omniauth-provider-settings.png)
@@ -58,7 +58,7 @@ The client configuration for github should look like this:
 angular.module('myApp', ['ng-token-auth'])
   .config(function($authProvider) {
     $authProvider.configure({
-      apiUrl: 'http://api.example.com'
+      apiUrl: 'https://api.example.com'
       authProviderPaths: {
         github: '/auth/github' // <-- note that this is different than what was set with github
       }
@@ -70,7 +70,7 @@ angular.module('myApp', ['ng-token-auth'])
 
 ~~~javascript
 $.auth.configure({
-  apiUrl: 'http://api.example.com',
+  apiUrl: 'https://api.example.com',
   authProviderPaths: {
     github: '/auth/github' // <-- note that this is different than what was set with github
   }

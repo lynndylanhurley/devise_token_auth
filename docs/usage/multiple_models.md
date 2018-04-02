@@ -2,9 +2,9 @@
 
 ### View Live Multi-User Demos
 
-* [AngularJS](http://ng-token-auth-demo.herokuapp.com/multi-user)
+* [AngularJS](https://ng-token-auth-demo.herokuapp.com/multi-user)
 * [Angular2](https://angular2-token.herokuapp.com)
-* [React + jToker](http://j-toker-demo.herokuapp.com/#/alt-user)
+* [React + jToker](https://j-toker-demo.herokuapp.com/#/alt-user)
 
 This gem supports the use of multiple user models. One possible use case is to authenticate visitors using a model called `User`, and to authenticate administrators with a model called `Admin`. Take the following steps to add another authentication model to your app:
 
