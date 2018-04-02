@@ -12,7 +12,7 @@ module DeviseTokenAuth
     end
 
     def resource_errors
-      return @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+      @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
     end
 
     protected
@@ -53,7 +53,7 @@ module DeviseTokenAuth
       return ActiveModel::Serializer.setup do |config|
         config.adapter == :json_api
       end if ActiveModel::Serializer.respond_to?(:setup)
-      return ActiveModelSerializers.config.adapter == :json_api
+      ActiveModelSerializers.config.adapter == :json_api
     end
 
     def recoverable_enabled?

@@ -10,7 +10,7 @@ module DeviseTokenAuth::Url
     res += "?#{query}"
     res += "##{uri.fragment}" if uri.fragment
 
-    return res
+    res
   end
 
   def self.whitelisted?(url)
