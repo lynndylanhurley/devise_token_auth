@@ -30,7 +30,7 @@ module ActionDispatch::Routing
       devise_for resource.pluralize.underscore.gsub('/', '_').to_sym,
         class_name: resource,
         module: :devise,
-        path: "#{opts[:at]}",
+        path: opts[:at].to_s,
         controllers: controllers,
         skip: opts[:skip] + [:omniauth_callbacks]
 
@@ -56,7 +56,7 @@ module ActionDispatch::Routing
 
         devise_scope mapping_name.to_sym do
           # path to verify token validity
-          get "#{full_path}/validate_token", controller: "#{token_validations_ctrl}", action: 'validate_token'
+          get "#{full_path}/validate_token", controller: token_validations_ctrl.to_s, action: 'validate_token'
 
           # omniauth routes. only define if omniauth is installed and not skipped.
           if defined?(::OmniAuth) && !opts[:skip].include?(:omniauth_callbacks)

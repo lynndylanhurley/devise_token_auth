@@ -7,7 +7,7 @@ module DeviseTokenAuth::Url
 
     res = "#{uri.scheme}://#{uri.host}"
     res += ":#{uri.port}" if (uri.port && uri.port != 80 && uri.port != 443)
-    res += "#{uri.path}" if uri.path
+    res += uri.path.to_s if uri.path
     query = [uri.query, params.to_query].reject(&:blank?).join('&')
     res += "?#{query}"
     res += "##{uri.fragment}" if uri.fragment
