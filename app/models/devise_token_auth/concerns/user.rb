@@ -243,9 +243,18 @@ module DeviseTokenAuth::Concerns::User
     end
   end
 
+  def should_remove_tokens_after_password_reset?
+    if Rails::VERSION::MAJOR <= 5
+      encrypted_password_changed? &&
+      DeviseTokenAuth.remove_tokens_after_password_reset
+    else
+      saved_change_to_encrypted_password? &&
+      DeviseTokenAuth.remove_tokens_after_password_reset
+    end
+  end
+
   def remove_tokens_after_password_reset
-    return unless encrypted_password_changed? &&
-                DeviseTokenAuth.remove_tokens_after_password_reset
+    return unless should_remove_tokens_after_password_reset?
 
     if tokens.present? && tokens.many?
       client_id, token_data = tokens.max_by { |cid, v| v[:expiry] || v["expiry"] }
