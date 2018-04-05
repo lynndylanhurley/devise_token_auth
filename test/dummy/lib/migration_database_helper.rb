@@ -1,3 +1,15 @@
+# polyfill Rails >= 5 versioned migrations
+
+unless ActiveRecord::Migration.respond_to?(:[])
+  module ActiveRecord
+    class Migration
+      def self.[](_version)
+        self
+      end
+    end
+  end
+end
+
 module MigrationDatabaseHelper
   def json_supported_database?
     (postgres? && postgres_correct_version?) || (mysql? && mysql_correct_version?)
