@@ -8,6 +8,10 @@ rvm:
   - 2.4.2
   - 2.5.0
 
+gemfile:
+  - gemfiles/rails_5_0.gemfile
+  - gemfiles/rails_5_1.gemfile
+
 env:
   global:
     - RAILS_ENV=test
