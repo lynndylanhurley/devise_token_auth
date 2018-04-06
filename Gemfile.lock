@@ -80,6 +80,10 @@ GEM
     addressable (2.5.1)
       public_suffix (~> 2.0, >= 2.0.2)
     ansi (1.5.0)
+    appraisal (2.2.0)
+      bundler
+      rake
+      thor (>= 0.14.0)
     arel (8.0.0)
     attr_encrypted (3.0.3)
       encryptor (~> 3.0.0)
@@ -273,6 +277,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  appraisal
   attr_encrypted
   codeclimate-test-reporter
   devise_token_auth!
