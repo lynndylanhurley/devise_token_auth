@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'mocha/test_unit'
+require 'mocha/minitest'
 
 #  was the web request successful?
 #  was the user redirected to the right page?
@@ -70,7 +70,10 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     test 'sign_in was called' do
-      User.any_instance.expects(:sign_in)
+      DeviseTokenAuth::OmniauthCallbacksController.any_instance\
+        .expects(:sign_in).with(
+          :user, instance_of(User), has_entries(store: false, bypass: false)
+        )
       get_success
     end
 
