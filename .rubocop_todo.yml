@@ -97,15 +97,6 @@ Layout/MultilineMethodCallIndentation:
   Exclude:
     - 'test/controllers/devise_token_auth/sessions_controller_test.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: aligned, indented
-Layout/MultilineOperationIndentation:
-  Exclude:
-    - 'app/controllers/devise_token_auth/concerns/set_user_by_token.rb'
-    - 'app/models/devise_token_auth/concerns/user.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Layout/SpaceAfterColon:
