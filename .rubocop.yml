@@ -7,6 +7,19 @@ AllCops:
     - 'test/dummy/log/**/*'
 
 # Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, IndentationWidth.
+# SupportedStyles: aligned, indented, indented_relative_to_receiver
+#
+# Description from Rubocop Manual:
+#   This cop checks the indentation of the method name part in method calls
+#   that span more than one line.
+#
+# https://rubocop.readthedocs.io/en/latest/cops_layout/#layoutmultilinemethodcallindentation
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented_relative_to_receiver
+
+# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, ProceduralMethods, FunctionalMethods, IgnoredMethods.
 # SupportedStyles: line_count_based, semantic, braces_for_chaining
 # ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
