@@ -75,3 +75,28 @@ class ActionController::TestCase
     @request.env['devise.mapping'] = Devise.mappings[:user]
   end
 end
+
+# TODO: remove it when support for Rails < 5 has been dropped
+module Rails
+  module Controller
+    module Testing
+      module Integration
+        %w[get post patch put head delete get_via_redirect post_via_redirect].each do |method|
+          define_method(method) do |path_or_action, **args|
+            if Rails::VERSION::MAJOR >= 5
+              super path_or_action, args
+            else
+              super path_or_action, args[:params], args[:headers]
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+module ActionController
+  class TestCase
+    include Rails::Controller::Testing::Integration
+  end
+end
