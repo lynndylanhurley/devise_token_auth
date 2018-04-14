@@ -39,5 +39,5 @@ You may also need to configure the following items:
 
 * **OmniAuth providers** when using 3rd party oauth2 authentication. [Read more](omniauth.md).
 * **Cross Origin Request Settings** when using cross-domain clients. [Read more](cors.md).
-* **Email** when using email registration. [Read more](email-auth.md).
+* **Email** when using email registration. [Read more](email_auth.md).
 * **Multiple model support** may require additional steps. [Read more](/docs/usage/multiple_models.md).
