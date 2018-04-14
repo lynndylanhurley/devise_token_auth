@@ -50,7 +50,7 @@ Then install the gem using bundle:
 bundle install
 ~~~
 
-## [Docs](https://maicolben.gitbooks.io/devise-token-auth/content/docs/config/)
+## [Docs](https://devise-token-auth.gitbook.io/devise-token-auth)
 
 ## Need help?
 
