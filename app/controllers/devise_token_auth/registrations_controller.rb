@@ -3,11 +3,11 @@ module DeviseTokenAuth
     before_action :set_user_by_token, only: [:destroy, :update]
     before_action :validate_sign_up_params, only: :create
     before_action :validate_account_update_params, only: :update
-    before_action :build_resource_for_registration, only: [:create]
     skip_after_action :update_auth_header, only: [:create, :destroy]
 
-
     def create
+      build_resource
+      
       # give redirect value from params priority
       @redirect_url = sign_up_params[:confirm_success_url]
 
@@ -30,10 +30,12 @@ module DeviseTokenAuth
         # override email confirmation, must be sent manually from ctrl
         resource_class.set_callback("create", :after, :send_on_create_confirmation_instructions)
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        
         if @resource.respond_to? :skip_confirmation_notification!
           # Fix duplicate e-mails by disabling Devise confirmation e-mail
           @resource.skip_confirmation_notification!
         end
+        
         if @resource.save
           yield @resource if block_given?
 
@@ -43,13 +45,10 @@ module DeviseTokenAuth
               client_config: params[:config_name],
               redirect_url: @redirect_url
             })
-
           else
             # email auth has been bypassed, authenticate user
             @client_id, @token = @resource.create_token
-
             @resource.save!
-
             update_auth_header
           end
           render_create_success
@@ -80,7 +79,6 @@ module DeviseTokenAuth
       if @resource
         @resource.destroy
         yield @resource if block_given?
-
         render_destroy_success
       else
         render_destroy_error
@@ -97,7 +95,7 @@ module DeviseTokenAuth
 
     protected
 
-    def build_resource_for_registration
+    def build_resource
       @resource            = resource_class.new(sign_up_params.except(:confirm_success_url))
       @resource.provider   = provider
 
