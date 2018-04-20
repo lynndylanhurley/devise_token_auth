@@ -94,7 +94,7 @@ module DeviseTokenAuth
       params.permit(*params_for_resource(:account_update))
     end
 
-  protected
+    protected
 
     def build_resource
       @resource            = resource_class.new(sign_up_params)
