@@ -7,12 +7,17 @@ module DeviseTokenAuth
 
     def create
       build_resource
-      
-      # give redirect value from params priority
-      @redirect_url = sign_up_params[:confirm_success_url]
 
-      # fall back to default value if provided
-      @redirect_url ||= DeviseTokenAuth.default_confirm_success_url
+      unless @resource.present?
+        raise DeviseTokenAuth::Errors::NoResourceDefinedError,
+          "#{self.class.name} #build_resource does not define @resource, execution stopped"
+      end
+
+      # give redirect value from params priority
+      @redirect_url = params.fetch(
+        :confirm_success_url,
+        DeviseTokenAuth.default_confirm_success_url
+      )
 
       # success redirect url is required
       if confirmable_enabled? && !@redirect_url
@@ -20,22 +25,18 @@ module DeviseTokenAuth
       end
 
       # if whitelist is set, validate redirect_url against whitelist
-      if DeviseTokenAuth.redirect_whitelist
-        unless DeviseTokenAuth::Url.whitelisted?(@redirect_url)
-          return render_create_error_redirect_url_not_allowed
-        end
-      end
+      return render_create_error_redirect_url_not_allowed if blacklisted_url?
 
       begin
         # override email confirmation, must be sent manually from ctrl
         resource_class.set_callback("create", :after, :send_on_create_confirmation_instructions)
         resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
-        
+
         if @resource.respond_to? :skip_confirmation_notification!
           # Fix duplicate e-mails by disabling Devise confirmation e-mail
           @resource.skip_confirmation_notification!
         end
-        
+
         if @resource.save
           yield @resource if block_given?
 
@@ -86,25 +87,29 @@ module DeviseTokenAuth
     end
 
     def sign_up_params
-      params.permit([*params_for_resource(:sign_up), :confirm_success_url])
+      params.permit(*params_for_resource(:sign_up))
     end
 
     def account_update_params
       params.permit(*params_for_resource(:account_update))
     end
 
-    protected
+  protected
 
     def build_resource
-      @resource            = resource_class.new(sign_up_params.except(:confirm_success_url))
+      @resource            = resource_class.new(sign_up_params)
       @resource.provider   = provider
 
       # honor devise configuration for case_insensitive_keys
       if resource_class.case_insensitive_keys.include?(:email)
-        @resource.email = sign_up_params[:email].try :downcase
+        @resource.email = sign_up_params[:email].try(:downcase)
       else
         @resource.email = sign_up_params[:email]
       end
+    end
+
+    def blacklisted_url?
+      DeviseTokenAuth.redirect_whitelist && !DeviseTokenAuth::Url.whitelisted?(@redirect_url)
     end
 
     def render_create_error_missing_confirm_success_url

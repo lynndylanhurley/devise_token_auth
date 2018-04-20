@@ -50,5 +50,38 @@ class Custom::RegistrationsControllerTest < ActionDispatch::IntegrationTest
       assert @controller.destroy_block_called?,
              'destroy failed to yield resource to provided block'
     end
+
+    describe 'when overriding #build_resource' do
+      setup do
+        class Custom::RegistrationsController
+          def build_resource
+            # do not deffine resource as expected
+          end
+        end
+      end
+
+      test 'it fails' do
+        assert_raises DeviseTokenAuth::Errors::NoResourceDefinedError do
+          post '/nice_user_auth', params: @create_params
+        end
+      end
+
+      teardown do
+        # This stubbing could be better
+        class Custom::RegistrationsController
+          def build_resource
+            @resource            = resource_class.new(sign_up_params)
+            @resource.provider   = provider
+
+            # honor devise configuration for case_insensitive_keys
+            if resource_class.case_insensitive_keys.include?(:email)
+              @resource.email = sign_up_params[:email].try(:downcase)
+            else
+              @resource.email = sign_up_params[:email]
+            end
+          end
+        end
+      end
+    end
   end
 end
