@@ -177,7 +177,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
-        @sent_redirect_url = URI.decode(@mail.body.match(/redirect_url=([^&]*)(&|\")/)[1])
+        @sent_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)(&|\")/)[1])
       end
 
       teardown do
