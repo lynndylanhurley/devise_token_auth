@@ -38,33 +38,5 @@ class Overrides::RegistrationsControllerTest < ActionDispatch::IntegrationTest
                      @data['override_proof']
       end
     end
-
-    describe 'Successful registration' do
-      before do
-        post '/auth',
-             params: {
-               email: Faker::Internet.email,
-               password: 'secret123',
-               password_confirmation: 'secret123',
-               confirm_success_url: Faker::Internet.url,
-               unpermitted_param: '(x_x)'
-             }
-
-        @resource = assigns(:resource)
-        @data = JSON.parse(response.body)
-      end
-
-      test 'request should be successful' do
-        assert_equal 200, response.status
-      end
-
-      test 'user should have been created' do
-        assert @resource.id
-      end
-
-      test 'user should not be confirmed' do
-        assert_nil @resource.confirmed_at
-      end
-    end
   end
 end
