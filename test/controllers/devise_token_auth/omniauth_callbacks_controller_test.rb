@@ -1,6 +1,4 @@
 require 'test_helper'
-require 'mocha/minitest'
-
 #  was the web request successful?
 #  was the user redirected to the right page?
 #  was the user successfully authenticated?
