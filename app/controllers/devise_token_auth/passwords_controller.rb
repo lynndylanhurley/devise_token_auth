@@ -11,21 +11,13 @@ module DeviseTokenAuth
       end
 
       # give redirect value from params priority
-      @redirect_url = params[:redirect_url]
+      @redirect_url = params.fetch(
+          :redirect_url,
+          DeviseTokenAuth.default_password_reset_url
+        )
 
-      # fall back to default value if provided
-      @redirect_url ||= DeviseTokenAuth.default_password_reset_url
-
-      unless @redirect_url
-        return render_create_error_missing_redirect_url
-      end
-
-      # if whitelist is set, validate redirect_url against whitelist
-      if DeviseTokenAuth.redirect_whitelist
-        unless DeviseTokenAuth::Url.whitelisted?(@redirect_url)
-          return render_create_error_not_allowed_redirect_url
-        end
-      end
+      return render_create_error_missing_redirect_url unless @redirect_url
+      return render_create_error_not_allowed_redirect_url if blacklisted_redirect_url?
 
       @email = get_case_insensitive_field_from_resource_params(:email)
       @resource = find_resource(:uid, @email)
