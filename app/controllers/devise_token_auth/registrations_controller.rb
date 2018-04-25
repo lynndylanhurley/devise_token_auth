@@ -46,7 +46,9 @@ module DeviseTokenAuth
               client_config: params[:config_name],
               redirect_url: @redirect_url
             })
-          else
+          end
+
+          if !@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?
             # email auth has been bypassed, authenticate user
             @client_id, @token = @resource.create_token
             @resource.save!
