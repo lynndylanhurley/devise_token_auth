@@ -48,7 +48,7 @@ module DeviseTokenAuth
             })
           end
 
-          if !@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?
+          if active_for_authentication?
             # email auth has been bypassed, authenticate user
             @client_id, @token = @resource.create_token
             @resource.save!
@@ -205,6 +205,10 @@ module DeviseTokenAuth
 
     def validate_post_data which, message
       render_error(:unprocessable_entity, message, { status: 'error' }) if which.empty?
+    end
+
+    def active_for_authentication?
+      !@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?
     end
   end
 end
