@@ -81,6 +81,33 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
     end
 
+    describe 'using allow_unconfirmed_access_for' do
+      before do
+        @original_duration = Devise.allow_unconfirmed_access_for
+        Devise.allow_unconfirmed_access_for = nil
+        post '/auth',
+             params: {
+               email: Faker::Internet.email,
+               password: 'secret123',
+               password_confirmation: 'secret123',
+               confirm_success_url: Faker::Internet.url,
+               unpermitted_param: '(x_x)'
+             }
+      end
+
+      test 'auth headers were returned in response' do
+        assert response.headers['access-token']
+        assert response.headers['token-type']
+        assert response.headers['client']
+        assert response.headers['expiry']
+        assert response.headers['uid']
+      end
+
+      after do
+        Devise.allow_unconfirmed_access_for = @original_duration
+      end
+    end
+
     describe 'using "+" in email' do
       test 'can use + sign in email addresses' do
         @plus_email = 'ak+testing@gmail.com'
