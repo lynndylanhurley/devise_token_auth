@@ -122,12 +122,12 @@ class UserTest < ActiveSupport::TestCase
         assert @resource.token_is_current?(@token_global, @client_id_global)
 
         time = Time.zone.now.to_i
-        expiry_global = @resource.tokens[@client_id_global]['expiry']
+        expiry_global = @resource.tokens[@client_id_global]['expiry'] || @resource.tokens[@client_id_global][:expiry]
 
         assert expiry_global > time + DeviseTokenAuth.token_lifespan - 5.seconds
         assert expiry_global < time + DeviseTokenAuth.token_lifespan + 5.seconds
 
-        expiry_specific = @resource.tokens[@client_id_specific]['expiry']
+        expiry_specific = @resource.tokens[@client_id_specific]['expiry'] || @resource.tokens[@client_id_specific][:expiry]
         assert expiry_specific > time + 55.seconds
         assert expiry_specific < time + 65.seconds
       end

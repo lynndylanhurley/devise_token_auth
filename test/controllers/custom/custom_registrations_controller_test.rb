@@ -50,5 +50,14 @@ class Custom::RegistrationsControllerTest < ActionDispatch::IntegrationTest
       assert @controller.destroy_block_called?,
              'destroy failed to yield resource to provided block'
     end
+
+    describe 'when overriding #build_resource' do
+      test 'it fails' do
+        Custom::RegistrationsController.any_instance.stubs(:build_resource).returns(nil)
+        assert_raises DeviseTokenAuth::Errors::NoResourceDefinedError do
+          post '/nice_user_auth', params: @create_params
+        end
+      end
+    end
   end
 end

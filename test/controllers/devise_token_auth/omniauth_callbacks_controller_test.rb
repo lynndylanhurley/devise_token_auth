@@ -1,6 +1,4 @@
 require 'test_helper'
-require 'mocha/minitest'
-
 #  was the web request successful?
 #  was the user redirected to the right page?
 #  was the user successfully authenticated?
@@ -57,7 +55,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       expiry = controller.auth_params[:expiry]
 
       # the expiry should have been set
-      assert_equal expiry, @resource.tokens[client_id]['expiry']
+      assert_equal expiry, @resource.tokens[client_id]['expiry'] || @resource.tokens[client_id][:expiry]
 
       # the token sent down to the client should now be valid
       assert @resource.valid_token?(token, client_id)
