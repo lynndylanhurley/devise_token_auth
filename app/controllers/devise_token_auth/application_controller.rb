@@ -15,6 +15,10 @@ module DeviseTokenAuth
 
     protected
 
+    def blacklisted_redirect_url?
+      DeviseTokenAuth.redirect_whitelist && !DeviseTokenAuth::Url.whitelisted?(@redirect_url)
+    end
+
     def build_redirect_headers(access_token, client, redirect_header_options = {})
       {
         DeviseTokenAuth.headers_names[:"access-token"] => access_token,
