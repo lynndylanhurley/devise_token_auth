@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActionDispatch::Routing
   class Mapper
     def mount_devise_token_auth_for(resource, opts)

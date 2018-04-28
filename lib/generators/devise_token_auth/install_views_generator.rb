@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class InstallViewsGenerator < Rails::Generators::Base
     source_root File.expand_path('../../../../app/views/devise/mailer', __FILE__)

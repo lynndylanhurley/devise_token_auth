@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class UnlocksController < DeviseTokenAuth::ApplicationController
     skip_after_action :update_auth_header, :only => [:create, :show]

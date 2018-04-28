@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DemoMangController < ApplicationController
   before_action :authenticate_mang!
 
