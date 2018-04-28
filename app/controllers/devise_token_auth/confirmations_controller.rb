@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class ConfirmationsController < DeviseTokenAuth::ApplicationController
     def show

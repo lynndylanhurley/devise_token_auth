@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
   extend ActiveSupport::Concern
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'fileutils'
 require 'generators/devise_token_auth/install_generator'
