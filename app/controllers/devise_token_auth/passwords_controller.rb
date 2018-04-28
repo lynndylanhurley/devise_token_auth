@@ -12,9 +12,9 @@ module DeviseTokenAuth
 
       # give redirect value from params priority
       @redirect_url = params.fetch(
-          :redirect_url,
-          DeviseTokenAuth.default_password_reset_url
-        )
+        :redirect_url,
+        DeviseTokenAuth.default_password_reset_url
+      )
 
       return render_create_error_missing_redirect_url unless @redirect_url
       return render_create_error_not_allowed_redirect_url if blacklisted_redirect_url?
