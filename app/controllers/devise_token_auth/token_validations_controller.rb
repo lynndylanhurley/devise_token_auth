@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class TokenValidationsController < DeviseTokenAuth::ApplicationController
     skip_before_action :assert_is_devise_resource!, :only => [:validate_token]

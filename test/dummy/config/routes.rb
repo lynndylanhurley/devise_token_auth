@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   # when using multiple models, controllers will default to the first available
   # devise mapping. routes for subsequent devise mappings will need to defined

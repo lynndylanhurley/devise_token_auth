@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth::Url
 
   def self.generate(url, params = {})

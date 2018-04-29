@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Overrides
   class PasswordsController < DeviseTokenAuth::PasswordsController
     OVERRIDE_PROOF = "(^^,)"

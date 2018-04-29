@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth::Concerns::SetUserByToken
   extend ActiveSupport::Concern
   include DeviseTokenAuth::Concerns::ResourceFinder

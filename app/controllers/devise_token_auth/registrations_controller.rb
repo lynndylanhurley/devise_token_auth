@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class RegistrationsController < DeviseTokenAuth::ApplicationController
     before_action :set_user_by_token, only: [:destroy, :update]

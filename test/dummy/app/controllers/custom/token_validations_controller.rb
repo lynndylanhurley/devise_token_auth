@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Custom::TokenValidationsController < DeviseTokenAuth::TokenValidationsController
 
   def validate_token

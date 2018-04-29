@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Custom::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCallbacksController
   def omniauth_success
     super do |resource|

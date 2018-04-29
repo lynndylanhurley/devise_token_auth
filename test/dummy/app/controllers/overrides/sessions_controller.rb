@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Overrides
   class SessionsController < DeviseTokenAuth::SessionsController
     OVERRIDE_PROOF = "(^^,)"

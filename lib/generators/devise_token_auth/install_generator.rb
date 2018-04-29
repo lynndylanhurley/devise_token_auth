@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class InstallGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
