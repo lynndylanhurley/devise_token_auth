@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 include MigrationDatabaseHelper
 
 class DeviseTokenAuthCreateEvilUsers < ActiveRecord::Migration[4.2]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.config.middleware.use OmniAuth::Builder do |b|
   provider :github,        ENV['GITHUB_KEY'],   ENV['GITHUB_SECRET'],   scope: 'email,profile'
   provider :facebook,      ENV['FACEBOOK_KEY'], ENV['FACEBOOK_SECRET']

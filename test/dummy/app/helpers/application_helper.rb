@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   COLOR_NAMES = [
     "Acid green",

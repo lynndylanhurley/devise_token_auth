@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
     before_action :set_user_by_token, :only => [:update]

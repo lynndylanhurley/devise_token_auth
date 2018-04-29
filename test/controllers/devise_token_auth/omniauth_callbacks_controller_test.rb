@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 #  was the web request successful?
 #  was the user redirected to the right page?
