@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 [
   { name: '4-2', version: '4.2.10' }
 ].each do |rails|
