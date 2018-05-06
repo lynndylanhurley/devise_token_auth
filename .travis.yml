@@ -3,10 +3,10 @@ cache: bundler
 sudo: false
 
 rvm:
-  - 2.2.8
-  - 2.3.1
-  - 2.4.2
-  - 2.5.0
+  - 2.2.10
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
 
 gemfile:
   - gemfiles/rails_4_2.gemfile
