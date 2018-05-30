@@ -33,7 +33,7 @@ end
 
 Some users have been experiencing issues with using this gem alongside standard Devise, with the `config.enable_standard_devise_support = true` method.
 
-Another method suggested by [jotolo](https://github.com/jotolois) is to have separate child `application_controller.rb` files that use either DeviseTokenAuth or standard Devise, which all inherit from a base `application_controller.rb` file. For example, you could have an `api/v1/application_controller.rb` file for the API of your app (which would use Devise Token Auth), and a `admin/application_controller.rb` file for the full stack part of your app (using standard Devise). The idea is to redirect each flow in your application to the appropriate child `application_controller.rb` file. Example code below:
+Another method suggested by [jotolo](https://github.com/jotolo) is to have separate child `application_controller.rb` files that use either DeviseTokenAuth or standard Devise, which all inherit from a base `application_controller.rb` file. For example, you could have an `api/v1/application_controller.rb` file for the API of your app (which would use Devise Token Auth), and a `admin/application_controller.rb` file for the full stack part of your app (using standard Devise). The idea is to redirect each flow in your application to the appropriate child `application_controller.rb` file. Example code below:
 
 #### controllers/api/v1/application_controller.rb
 Child application controller for your API, using DeviseTokenAuth.
