@@ -29,6 +29,44 @@ Rails.application.routes.draw do
 end
 ~~~
 
+### Another method for using this gem alongside standard Devise (updated May 2018)
+
+Some users have been experiencing issues with using this gem alongside standard Devise, with the `config.enable_standard_devise_support = true` method.
+
+Another method suggested by [jotolo](https://github.com/jotolois) is to have separate child `application_controller.rb` files that use either DeviseTokenAuth or standard Devise, which all inherit from a base `application_controller.rb` file. For example, you could have an `api/v1/application_controller.rb` file for the API of your app (which would use Devise Token Auth), and a `admin/application_controller.rb` file for the full stack part of your app (using standard Devise). The idea is to redirect each flow in your application to the appropriate child `application_controller.rb` file. Example code below:
+
+#### controllers/api/v1/application_controller.rb
+Child application controller for your API, using DeviseTokenAuth.
+~~~ruby
+module Api
+  module V1
+    class ApplicationController < ::ApplicationController
+      skip_before_action :verify_authenticity_token
+      include DeviseTokenAuth::Concerns::SetUserByToken
+    end
+  end
+end
+~~~
+
+#### controllers/admin/application_controller.rb
+Child application controller for full stack section, using standard Devise.
+~~~ruby
+module Admin
+  class ApplicationController < ::ApplicationController
+    before_action :authenticate_admin!
+  end
+end
+~~~
+
+#### controllers/application_controller.rb
+The base application controller file. If you're using CSRF token protection, you can skip it in the API specific application controller (`api/v1/application_controller.rb`).
+~~~ruby
+class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
+end
+~~~
+
+
 ### Why are the `new` routes included if this gem doesn't use them?
 
 Removing the `new` routes will require significant modifications to devise. If the inclusion of the `new` routes is causing your app any problems, post an issue in the issue tracker and it will be addressed ASAP.
