@@ -66,6 +66,11 @@ class ApplicationController < ActionController::Base
 end
 ~~~
 
+#### config/initializers/devise_token_auth.rb
+Keep the `enable_standard_devise_support` configuration commented out or set to `false`.
+~~~ruby
+# config.enable_standard_devise_support = false
+~~~
 
 ### Why are the `new` routes included if this gem doesn't use them?
 
