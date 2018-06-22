@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require 'simplecov'
-
-SimpleCov.start 'rails'
+SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
+SimpleCov.start 'rails' do
+  add_filter ['.bundle', 'test', 'config']
+end
 
 ENV['RAILS_ENV'] = 'test'
 
