@@ -19,14 +19,26 @@ module DeviseTokenAuth::Concerns::ResourceFinder
     q_value
   end
 
-  def find_resource(field, value)
-    # fix for mysql default case insensitivity
-    q = "#{field.to_s} = ? AND provider='#{provider.to_s}'"
-    if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-      q = "BINARY " + q
+  def find_resource
+
+    fields = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys)
+
+    conditions = []
+    values = {}
+    fields.each do |field|
+      condition = " #{field.to_s} = :#{field.to_s} "
+      # fix for mysql default case insensitivity
+      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+        condition = "BINARY " + condition
+      end
+      conditions.push(condition)
+      values[field.to_sym] = get_case_insensitive_field_from_resource_params(field)
     end
 
-    @resource = resource_class.where(q, value).first
+    conditions.push(' provider = :provider')
+    values[:provider] = provider.to_s
+
+    @resource = resource_class.where([conditions.join(' AND '), values]).first
   end
 
   def resource_class(m=nil)

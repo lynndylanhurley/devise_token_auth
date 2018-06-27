@@ -22,7 +22,7 @@ module DeviseTokenAuth
       return render_create_error_not_allowed_redirect_url if blacklisted_redirect_url?
 
       @email = get_case_insensitive_field_from_resource_params(:email)
-      @resource = find_resource(:uid, @email)
+      @resource = find_resource
 
       if @resource
         yield @resource if block_given?

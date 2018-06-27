@@ -12,7 +12,7 @@ module DeviseTokenAuth
       end
 
       @email = get_case_insensitive_field_from_resource_params(:email)
-      @resource = find_resource(:email, @email)
+      @resource = find_resource
 
       if @resource
         yield @resource if block_given?
