@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160629184441) do
+ActiveRecord::Schema.define(version: 20180627090309) do
 
   create_table "evil_users", force: :cascade do |t|
     t.string "email"
@@ -165,6 +165,22 @@ ActiveRecord::Schema.define(version: 20160629184441) do
     t.index ["email"], name: "index_scoped_users_on_email"
     t.index ["reset_password_token"], name: "index_scoped_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_scoped_users_on_uid_and_provider", unique: true
+  end
+
+  create_table "tenant_users", force: :cascade do |t|
+    t.string "provider", null: false
+    t.string "uid", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "name"
+    t.string "nickname"
+    t.string "image"
+    t.string "email"
+    t.string "tenant"
+    t.text "tokens"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_tenant_users_on_email"
+    t.index ["tenant", "uid", "provider"], name: "index_tenant_users_on_tenant_and_uid_and_provider", unique: true
   end
 
   create_table "unconfirmable_users", force: :cascade do |t|
