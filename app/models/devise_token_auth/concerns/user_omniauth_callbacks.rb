@@ -9,7 +9,7 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
     validates_presence_of :uid, unless: :email_provider?
 
     # only validate unique emails among email registration users
-    validates :email, uniqueness: { scope: :provider }, on: :create, if: :email_provider?
+    validates :email, uniqueness: { scope: :provider }, on: :create, if: :validate_email_uniqueness?
 
     # keep uid in sync with email
     before_save :sync_uid
@@ -20,6 +20,10 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
 
   def email_provider?
     provider == 'email'
+  end
+
+  def validate_email_uniqueness?
+    email_provider?
   end
 
   def sync_uid
