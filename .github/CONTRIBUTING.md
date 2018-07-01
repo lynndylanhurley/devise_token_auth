@@ -3,7 +3,7 @@
 ## Suggest changes
 
 1. Create a feature branch with your changes.
-2. Write some test cases.
+2. Please add a test for your change. Only refactoring and documentation changes require no new tests. If you are adding functionality or fixing a bug, we need a test!
 3. Make all the tests pass.
 4. Issue a Pull Request.
 

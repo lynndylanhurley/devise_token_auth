@@ -166,7 +166,7 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    mocha (1.2.1)
+    mocha (1.5.0)
       metaclass (~> 0.0.1)
     multi_json (1.12.1)
     multi_xml (0.6.0)
@@ -303,7 +303,7 @@ DEPENDENCIES
   minitest-focus
   minitest-rails
   minitest-reporters
-  mocha
+  mocha (>= 1.5)
   mysql2
   omniauth-facebook!
   omniauth-github!

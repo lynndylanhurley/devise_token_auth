@@ -22,7 +22,7 @@ group :development, :test do
   gem 'minitest-focus'
   gem 'minitest-rails'
   gem 'minitest-reporters'
-  gem 'mocha'
+  gem 'mocha', '>= 1.5'
   gem 'pry'
   gem 'pry-remote'
 
