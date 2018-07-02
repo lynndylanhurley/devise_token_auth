@@ -1,18 +1,13 @@
 # Summary
 
-* Introduction
-  * [Installation](README.md#installation)  
-  * [Need help?](README.md#need-help)
-  * [Live demos](README.md#live-demos)
-* Configuration
-  * [Introduction](docs/config/README.md)
+* [Installation](docs/installation.md)
+* [Configuration](docs/config/README.md)
   * [Initializer Settings](docs/config/initialization.md)
   * [OmniAuth](docs/config/omniauth.md)
   * [Email Authentication](docs/config/email_auth.md)
   * [Customizing Devise Verbiage](docs/config/devise.md)
   * [Cross Origin Requests (CORS)](docs/config/cors.md)
-* Usage
-  * [Introduction](docs/usage/README.md)
+* [Usage](docs/usage/README.md)
   * [Mounting Routes](docs/usage/routes.md)
   * [Controller Integration](docs/usage/controller_methods.md)
   * [Model Integration](docs/usage/model_concerns.md)
