@@ -1,0 +1,5 @@
+---
+root: ./
+structure:
+  readme: ./docs/installation.md
+  summary: SUMMARY.md
