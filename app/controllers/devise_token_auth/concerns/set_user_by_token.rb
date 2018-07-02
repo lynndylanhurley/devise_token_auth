@@ -36,7 +36,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   end
 
   # user auth
-  def set_user_by_token(mapping=nil)
+  def set_user_by_token(mapping = nil)
     # determine target authentication class
     rc = resource_class(mapping)
 
@@ -72,7 +72,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     return @resource if @resource && @resource.is_a?(rc)
 
     # ensure we clear the client_id
-    if !@token
+    unless @token
       @client_id = nil
       return
     end
@@ -84,7 +84,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     if user && user.valid_token?(@token, @client_id)
       # sign_in with bypass: true will be deprecated in the next version of Devise
-      if self.respond_to?(:bypass_sign_in) && DeviseTokenAuth.bypass_sign_in
+      if respond_to?(:bypass_sign_in) && DeviseTokenAuth.bypass_sign_in
         bypass_sign_in(user, scope: :user)
       else
         sign_in(:user, user, store: false, event: :fetch, bypass: DeviseTokenAuth.bypass_sign_in)
@@ -159,11 +159,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   private
 
-
   def is_batch_request?(user, client_id)
     !params[:unbatch] &&
-    user.tokens[client_id] &&
-    user.tokens[client_id]['updated_at'] &&
-    Time.parse(user.tokens[client_id]['updated_at']) > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle
+      user.tokens[client_id] &&
+      user.tokens[client_id]['updated_at'] &&
+      Time.parse(user.tokens[client_id]['updated_at']) > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle
   end
 end

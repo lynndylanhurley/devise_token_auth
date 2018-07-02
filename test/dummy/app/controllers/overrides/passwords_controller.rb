@@ -2,15 +2,15 @@
 
 module Overrides
   class PasswordsController < DeviseTokenAuth::PasswordsController
-    OVERRIDE_PROOF = "(^^,)"
+    OVERRIDE_PROOF = '(^^,)'.freeze
 
     # this is where users arrive after visiting the email confirmation link
     def edit
-      @resource = resource_class.reset_password_by_token({
+      @resource = resource_class.reset_password_by_token(
         reset_password_token: resource_params[:reset_password_token]
-      })
+      )
 
-      if @resource and @resource.id
+      if @resource && @resource.id
         client_id, token = @resource.create_token
 
         # ensure that user is confirmed
@@ -28,7 +28,7 @@ module Overrides
         redirect_to(@resource.build_auth_url(params[:redirect_url],
                                              redirect_headers))
       else
-        raise ActionController::RoutingError.new('Not Found')
+        raise ActionController::RoutingError, 'Not Found'
       end
     end
   end

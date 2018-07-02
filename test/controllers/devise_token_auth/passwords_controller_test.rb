@@ -53,8 +53,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         test 'error message should be returned' do
           assert @data['errors']
-          assert_equal @data['errors'],
-                       [I18n.t('devise_token_auth.passwords.missing_redirect_url')]
+          assert_equal(
+            @data['errors'],
+            [I18n.t('devise_token_auth.passwords.missing_redirect_url')]
+          )
         end
       end
 
@@ -113,7 +115,9 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           test 'response should contains message' do
-            assert_equal @data['message'], I18n.t('devise_token_auth.passwords.sended', email: @resource.email)
+            assert_equal \
+              @data['message'],
+              I18n.t('devise_token_auth.passwords.sended', email: @resource.email)
           end
 
           test 'action should send an email' do

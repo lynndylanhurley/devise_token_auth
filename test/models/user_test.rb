@@ -33,7 +33,7 @@ class UserTest < ActiveSupport::TestCase
         @resource.password_confirmation = @password
 
         refute @resource.save
-        assert @resource.errors.messages[:email] == [I18n.t("errors.messages.blank")]
+        assert @resource.errors.messages[:email] == [I18n.t('errors.messages.blank')]
       end
 
       test 'model should not save if email is not an email' do
@@ -43,7 +43,7 @@ class UserTest < ActiveSupport::TestCase
         @resource.password_confirmation = @password
 
         refute @resource.save
-        assert @resource.errors.messages[:email] == [I18n.t("errors.messages.not_email")]
+        assert @resource.errors.messages[:email] == [I18n.t('errors.messages.not_email')]
       end
     end
 
@@ -151,7 +151,7 @@ class UserTest < ActiveSupport::TestCase
       end
 
       test 'current token was not removed' do
-        assert @resource.tokens[@new_auth_headers["client"]]
+        assert @resource.tokens[@new_auth_headers['client']]
       end
     end
 

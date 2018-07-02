@@ -10,15 +10,15 @@ module DeviseTokenAuth
     destination Rails.root.join('tmp/generators')
 
     # The namespaced user model for testing
-    let(:user_class) { "Azpire::V1::HumanResource::User" }
+    let(:user_class) { 'Azpire::V1::HumanResource::User' }
     let(:namespace_path) { user_class.underscore }
-    let(:table_name) { user_class.pluralize.underscore.gsub("/","_") }
+    let(:table_name) { user_class.pluralize.underscore.gsub('/','_') }
 
     describe 'user model with namespace, clean install' do
       setup :prepare_destination
 
       before do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
 
       test 'user model (with namespace) is created, concern is included' do
@@ -44,7 +44,7 @@ module DeviseTokenAuth
       end
 
       test 'subsequent runs raise no errors' do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
     end
 
@@ -52,9 +52,9 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "models")
+        @dir = File.join(destination_root, 'app', 'models')
 
-        @fname = File.join(@dir, "user.rb")
+        @fname = File.join(@dir, 'user.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
@@ -62,7 +62,7 @@ module DeviseTokenAuth
         # account for rails version 5
         active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             class User < #{active_record_needle}
 
@@ -71,7 +71,7 @@ module DeviseTokenAuth
               end
             end
           RUBY
-        }
+        end
 
         run_generator
       end
@@ -91,27 +91,26 @@ module DeviseTokenAuth
       end
     end
 
-
     describe 'routes' do
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "config")
+        @dir = File.join(destination_root, 'config')
 
-        @fname = File.join(@dir, "routes.rb")
+        @fname = File.join(@dir, 'routes.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             Rails.application.routes.draw do
               patch '/chong', to: 'bong#index'
             end
           RUBY
-        }
+        end
 
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
 
       test 'route method for user model with namespace is appended to routes file' do
@@ -121,7 +120,7 @@ module DeviseTokenAuth
       end
 
       test 'subsequent runs do not modify file' do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
         assert_file 'config/routes.rb' do |routes|
           matches = routes.scan(/mount_devise_token_auth_for '#{user_class}', at: 'auth'/m).size
           assert_equal 1, matches
@@ -130,7 +129,7 @@ module DeviseTokenAuth
 
       describe 'subsequent models' do
         before do
-          run_generator %w(Mang mangs)
+          run_generator %w[Mang mangs]
         end
 
         test 'migration is created' do
@@ -156,14 +155,14 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "controllers")
+        @dir = File.join(destination_root, 'app', 'controllers')
 
-        @fname = File.join(@dir, "application_controller.rb")
+        @fname = File.join(@dir, 'application_controller.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             class ApplicationController < ActionController::Base
               def whatever
@@ -171,9 +170,9 @@ module DeviseTokenAuth
               end
             end
           RUBY
-        }
+        end
 
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
       end
 
       test 'controller concern is appended to application controller' do
@@ -183,7 +182,7 @@ module DeviseTokenAuth
       end
 
       test 'subsequent runs do not modify file' do
-        run_generator %W(#{user_class} auth)
+        run_generator %W[#{user_class} auth]
         assert_file 'app/controllers/application_controller.rb' do |controller|
           matches = controller.scan(/include DeviseTokenAuth::Concerns::SetUserByToken/m).size
           assert_equal 1, matches

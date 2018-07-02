@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 # Declare your gem's dependencies in devise_token_auth.gemspec.
@@ -35,6 +37,8 @@ group :development, :test do
   gem 'mocha', '>= 1.5'
   gem 'pry'
   gem 'pry-remote'
+
+  gem 'rubocop', require: false
 end
 
 # code coverage, metrics

@@ -12,7 +12,8 @@ module DeviseTokenAuth
 
       unless @resource.present?
         raise DeviseTokenAuth::Errors::NoResourceDefinedError,
-          "#{self.class.name} #build_resource does not define @resource, execution stopped"
+              "#{self.class.name} #build_resource does not define @resource,"\
+              ' execution stopped.'
       end
 
       # give redirect value from params priority
@@ -31,8 +32,8 @@ module DeviseTokenAuth
 
       begin
         # override email confirmation, must be sent manually from ctrl
-        resource_class.set_callback("create", :after, :send_on_create_confirmation_instructions)
-        resource_class.skip_callback("create", :after, :send_on_create_confirmation_instructions)
+        resource_class.set_callback('create', :after, :send_on_create_confirmation_instructions)
+        resource_class.skip_callback('create', :after, :send_on_create_confirmation_instructions)
 
         if @resource.respond_to? :skip_confirmation_notification!
           # Fix duplicate e-mails by disabling Devise confirmation e-mail
@@ -42,18 +43,19 @@ module DeviseTokenAuth
         if @resource.save
           yield @resource if block_given?
 
-          unless @resource.confirmed?
-            # user will require email authentication
-            @resource.send_confirmation_instructions({
-              client_config: params[:config_name],
-              redirect_url: @redirect_url
-            })
-          else
+          if @resource.confirmed?
             # email auth has been bypassed, authenticate user
             @client_id, @token = @resource.create_token
             @resource.save!
             update_auth_header
+          else
+            # user will require email authentication
+            @resource.send_confirmation_instructions(
+              client_config: params[:config_name],
+              redirect_url: @redirect_url
+            )
           end
+
           render_create_success
         else
           clean_up_passwords @resource
@@ -167,7 +169,7 @@ module DeviseTokenAuth
     end
 
     def render_update_error_user_not_found
-      render_error(404, I18n.t('devise_token_auth.registrations.user_not_found'), { status: 'error' })
+      render_error(404, I18n.t('devise_token_auth.registrations.user_not_found'), status: 'error')
     end
 
     def render_destroy_success
@@ -178,7 +180,7 @@ module DeviseTokenAuth
     end
 
     def render_destroy_error
-      render_error(404, I18n.t('devise_token_auth.registrations.account_to_destroy_not_found'), { status: 'error' })
+      render_error(404, I18n.t('devise_token_auth.registrations.account_to_destroy_not_found'), status: 'error')
     end
 
     private
@@ -186,9 +188,9 @@ module DeviseTokenAuth
     def resource_update_method
       if DeviseTokenAuth.check_current_password_before_update == :attributes
         'update_with_password'
-      elsif DeviseTokenAuth.check_current_password_before_update == :password && account_update_params.has_key?(:password)
+      elsif DeviseTokenAuth.check_current_password_before_update == :password && account_update_params.key?(:password)
         'update_with_password'
-      elsif account_update_params.has_key?(:current_password)
+      elsif account_update_params.key?(:current_password)
         'update_with_password'
       else
         'update_attributes'
@@ -204,7 +206,7 @@ module DeviseTokenAuth
     end
 
     def validate_post_data which, message
-      render_error(:unprocessable_entity, message, { status: 'error' }) if which.empty?
+      render_error(:unprocessable_entity, message, status: 'error') if which.empty?
     end
   end
 end

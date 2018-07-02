@@ -2,14 +2,12 @@
 
 module DeviseTokenAuth
   class UnlocksController < DeviseTokenAuth::ApplicationController
-    skip_after_action :update_auth_header, :only => [:create, :show]
+    skip_after_action :update_auth_header, only: [:create, :show]
 
     # this action is responsible for generating unlock tokens and
     # sending emails
     def create
-      unless resource_params[:email]
-        return render_create_error_missing_email
-      end
+      return render_create_error_missing_email unless resource_params[:email]
 
       @email = get_case_insensitive_field_from_resource_params(:email)
       @resource = find_resource(:email, @email)
@@ -17,11 +15,11 @@ module DeviseTokenAuth
       if @resource
         yield @resource if block_given?
 
-        @resource.send_unlock_instructions({
+        @resource.send_unlock_instructions(
           email: @email,
           provider: 'email',
           client_config: params[:config_name]
-        })
+        )
 
         if @resource.errors.empty?
           return render_create_success
@@ -41,7 +39,7 @@ module DeviseTokenAuth
         @resource.save!
         yield @resource if block_given?
 
-        redirect_header_options = {unlock: true}
+        redirect_header_options = { unlock: true }
         redirect_headers = build_redirect_headers(token,
                                                   client_id,
                                                   redirect_header_options)
@@ -59,29 +57,29 @@ module DeviseTokenAuth
     end
 
     def render_create_error_missing_email
-      render_error(401, I18n.t("devise_token_auth.unlocks.missing_email"))
+      render_error(401, I18n.t('devise_token_auth.unlocks.missing_email'))
     end
 
     def render_create_success
       render json: {
         success: true,
-        message: I18n.t("devise_token_auth.unlocks.sended", email: @email)
+        message: I18n.t('devise_token_auth.unlocks.sended', email: @email)
       }
     end
 
     def render_create_error(errors)
       render json: {
         success: false,
-        errors: errors,
+        errors: errors
       }, status: 400
     end
 
     def render_show_error
-      raise ActionController::RoutingError.new('Not Found')
+      raise ActionController::RoutingError, 'Not Found'
     end
 
     def render_not_found_error
-      render_error(404, I18n.t("devise_token_auth.unlocks.user_not_found", email: @email))
+      render_error(404, I18n.t('devise_token_auth.unlocks.user_not_found', email: @email))
     end
 
     def resource_params
