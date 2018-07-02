@@ -47,6 +47,19 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
       end
     end
 
+    describe 'with invalid user' do
+      before do
+        @resource.update_column :email, 'invalid'
+      end
+
+      test 'request should raise invalid model error' do
+        error = assert_raises DeviseTokenAuth::Errors::InvalidModel do
+          get '/auth/validate_token', params: {}, headers: @auth_headers
+        end
+        assert_equal(error.message, "Cannot set auth token in invalid model. Errors: [\"Email is not an email\"]")
+      end
+    end
+
     describe 'failure' do
       before do
         get '/api/v1/auth/validate_token',
