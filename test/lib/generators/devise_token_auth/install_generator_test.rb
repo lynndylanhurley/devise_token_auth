@@ -47,9 +47,9 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "models")
+        @dir = File.join(destination_root, 'app', 'models')
 
-        @fname = File.join(@dir, "user.rb")
+        @fname = File.join(@dir, 'user.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
@@ -57,7 +57,7 @@ module DeviseTokenAuth
         # account for rails version 5
         active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             class User < #{active_record_needle}
 
@@ -66,7 +66,7 @@ module DeviseTokenAuth
               end
             end
           RUBY
-        }
+        end
 
         run_generator
       end
@@ -86,25 +86,24 @@ module DeviseTokenAuth
       end
     end
 
-
     describe 'routes' do
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "config")
+        @dir = File.join(destination_root, 'config')
 
-        @fname = File.join(@dir, "routes.rb")
+        @fname = File.join(@dir, 'routes.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             Rails.application.routes.draw do
               patch '/chong', to: 'bong#index'
             end
           RUBY
-        }
+        end
 
         run_generator
       end
@@ -125,7 +124,7 @@ module DeviseTokenAuth
 
       describe 'subsequent models' do
         before do
-          run_generator %w(Mang mangs)
+          run_generator %w[Mang mangs]
         end
 
         test 'migration is created' do
@@ -151,14 +150,14 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "controllers")
+        @dir = File.join(destination_root, 'app', 'controllers')
 
-        @fname = File.join(@dir, "application_controller.rb")
+        @fname = File.join(@dir, 'application_controller.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             class ApplicationController < ActionController::Base
               def whatever
@@ -166,7 +165,7 @@ module DeviseTokenAuth
               end
             end
           RUBY
-        }
+        end
 
         run_generator
       end

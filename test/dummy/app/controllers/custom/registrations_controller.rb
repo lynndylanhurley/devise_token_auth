@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
-
   def create
     super do |resource|
       @create_block_called = true
@@ -35,6 +34,6 @@ class Custom::RegistrationsController < DeviseTokenAuth::RegistrationsController
   protected
 
   def render_create_success
-    render json: {custom: "foo"}
+    render json: { custom: 'foo' }
   end
 end
