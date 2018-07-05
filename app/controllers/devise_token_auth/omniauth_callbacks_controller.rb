@@ -13,7 +13,7 @@ module DeviseTokenAuth
       # derive target redirect route from 'resource_class' param, which was set
       # before authentication.
       devise_mapping = [request.env['omniauth.params']['namespace_name'],
-                        request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
+                        request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].reject(&:empty?).join('_')
       path = "#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
       klass = request.scheme == 'https' ? URI::HTTPS : URI::HTTP
       redirect_route = klass.build(host: request.host, port: request.port, path: path).to_s
@@ -140,7 +140,7 @@ module DeviseTokenAuth
     def devise_mapping
       if omniauth_params
         Devise.mappings[[omniauth_params['namespace_name'],
-                         omniauth_params['resource_class'].underscore].compact.join('_').to_sym]
+                         omniauth_params['resource_class'].underscore].empty(&:empty?).join('_').to_sym]
       else
         request.env['devise.mapping']
       end
