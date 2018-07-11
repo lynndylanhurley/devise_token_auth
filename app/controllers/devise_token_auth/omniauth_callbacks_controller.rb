@@ -23,10 +23,22 @@ module DeviseTokenAuth
       session['dta.omniauth.auth'] = request.env['omniauth.auth'].except('extra')
       session['dta.omniauth.params'] = request.env['omniauth.params']
 
+      return handle_omniauth_success if one_time_code_flow?
       redirect_to redirect_route
     end
 
     def omniauth_success
+     handle_omniauth_success
+    end
+
+    def omniauth_failure
+      @error = params[:message]
+      render_data_or_redirect('authFailure', error: @error)
+    end
+
+    protected
+
+    def handle_omniauth_success
       get_resource_from_auth_hash
       set_token_on_resource
       create_auth_params
@@ -45,12 +57,9 @@ module DeviseTokenAuth
       render_data_or_redirect('deliverCredentials', @auth_params.as_json, @resource.as_json)
     end
 
-    def omniauth_failure
-      @error = params[:message]
-      render_data_or_redirect('authFailure', error: @error)
+    def one_time_code_flow?
+      @one_time_code_flow ||= params[:flow_type] && params[:flow_type].downcase == 'otc'
     end
-
-    protected
 
     # this will be determined differently depending on the action that calls
     # it. redirect_callbacks is called upon returning from successful omniauth
