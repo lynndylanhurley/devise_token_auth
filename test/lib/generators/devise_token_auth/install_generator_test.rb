@@ -41,6 +41,15 @@ module DeviseTokenAuth
       test 'subsequent runs raise no errors' do
         run_generator
       end
+
+      test 'add primary key type with rails 5 when specified in rails generator' do
+        run_generator %w[--primary_key_type=uuid --force]
+        if Rails::VERSION::MAJOR >= 5
+          assert_migration 'db/migrate/devise_token_auth_create_users.rb', /create_table\(:users, id: :uuid\) do/
+        else
+          assert_migration 'db/migrate/devise_token_auth_create_users.rb', /create_table\(:users\) do/
+        end
+      end
     end
 
     describe 'existing user model' do
