@@ -5,14 +5,9 @@ sudo: false
 before_install: gem install bundler
 
 rvm:
-  - 2.2.10
-  - 2.3.7
-  - 2.4.4
   - 2.5.1
 
 gemfile:
-  - gemfiles/rails_4_2.gemfile
-  - gemfiles/rails_5_0.gemfile
   - gemfiles/rails_5_1.gemfile
 
 env:
@@ -33,8 +28,3 @@ before_script:
 
 addons:
   postgresql: "9.4"
-  code_climate:
-    - repo_token: 44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d
-
-after_success:
-  - bundle exec codeclimate-test-reporter
