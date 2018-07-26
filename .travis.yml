@@ -20,7 +20,7 @@ env:
 
 script:
   - bundle exec rake --trace db:migrate
-  - bundle exec rake
+  - bundle exec rake --trace
 
 before_script:
   - mysql -e 'create database devise_token_auth_test'
