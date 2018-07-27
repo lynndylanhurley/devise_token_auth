@@ -5,7 +5,7 @@ module DeviseTokenAuth
     before_action :set_user_by_token, only: [:destroy, :update]
     before_action :validate_sign_up_params, only: :create
     before_action :validate_account_update_params, only: :update
-    skip_after_action :update_auth_header, only: [:create, :destroy]
+    skip_after_action :update_auth_header, only: [:create, :destroy], raise: false
 
     def create
       build_resource
