@@ -3,7 +3,7 @@
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
     before_action :set_user_by_token, only: [:update]
-    skip_after_action :update_auth_header, only: [:create, :edit]
+    skip_after_action :update_auth_header, only: [:create, :edit], raise: false
 
     # this action is responsible for generating password reset tokens and
     # sending emails
