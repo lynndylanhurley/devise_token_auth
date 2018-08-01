@@ -9,9 +9,11 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
+  include OverridesControllersRoutes
+
   describe Overrides::PasswordsController do
     before do
-      @resource = evil_users(:confirmed_email_user)
+      @resource = create(:user, :confirmed)
 
       post '/evil_user_auth/password',
            params: {
