@@ -13,9 +13,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
   describe DemoUserController do
     describe 'Token access' do
       before do
-        @resource = users(:confirmed_email_user)
-        @resource.skip_confirmation!
-        @resource.save!
+        @resource = create(:user, :confirmed)
 
         @auth_headers = @resource.create_new_auth_token
 
@@ -457,8 +455,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
     describe 'bypass_sign_in' do
       before do
-        @resource = users(:unconfirmed_email_user)
-        @resource.save!
+        @resource = create(:user)
 
         @auth_headers = @resource.create_new_auth_token
 
@@ -513,16 +510,14 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
     describe 'enable_standard_devise_support' do
       before do
-        @resource = users(:confirmed_email_user)
+        @resource = create(:user, :confirmed)
         @auth_headers = @resource.create_new_auth_token
         DeviseTokenAuth.enable_standard_devise_support = true
       end
 
       describe 'Existing Warden authentication' do
         before do
-          @resource = users(:second_confirmed_email_user)
-          @resource.skip_confirmation!
-          @resource.save!
+          @resource = create(:user, :confirmed)
           login_as(@resource, scope: :user)
 
           # no auth headers sent, testing that warden authenticates correctly.
@@ -574,9 +569,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
       describe 'existing Warden authentication with ignored token data' do
         before do
-          @resource = users(:second_confirmed_email_user)
-          @resource.skip_confirmation!
-          @resource.save!
+          @resource = create(:user, :confirmed)
           login_as(@resource, scope: :user)
 
           get '/demo/members_only',
