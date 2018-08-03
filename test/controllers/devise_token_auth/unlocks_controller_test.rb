@@ -35,7 +35,7 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
 
     describe 'Unlocking user' do
       before do
-        @resource = lockable_users(:unlocked_user)
+        @resource = create(:lockable_user)
       end
 
       describe 'request unlock without email' do

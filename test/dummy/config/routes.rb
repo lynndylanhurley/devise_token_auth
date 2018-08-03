@@ -12,24 +12,6 @@ Rails.application.routes.draw do
   # need to be defined within a devise_scope as shown below
   mount_devise_token_auth_for 'Mang', at: 'mangs'
 
-  mount_devise_token_auth_for 'EvilUser', at: 'evil_user_auth', controllers: {
-    confirmations:      'overrides/confirmations',
-    passwords:          'overrides/passwords',
-    omniauth_callbacks: 'overrides/omniauth_callbacks',
-    registrations:      'overrides/registrations',
-    sessions:           'overrides/sessions',
-    token_validations:  'overrides/token_validations'
-  }
-
-  mount_devise_token_auth_for 'NiceUser', at: 'nice_user_auth', controllers: {
-    registrations: 'custom/registrations',
-    confirmations: 'custom/confirmations',
-    passwords: 'custom/passwords',
-    sessions: 'custom/sessions',
-    token_validations: 'custom/token_validations',
-    omniauth_callbacks: 'custom/omniauth_callbacks'
-  }
-
   mount_devise_token_auth_for 'OnlyEmailUser', at: 'only_email_auth', skip: [:omniauth_callbacks]
 
   mount_devise_token_auth_for 'UnregisterableUser', at: 'unregisterable_user_auth', skip: [:registrations]
