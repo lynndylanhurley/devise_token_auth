@@ -90,6 +90,7 @@ GEM
       encryptor (~> 3.0.0)
     bcrypt (3.1.11)
     builder (3.2.3)
+    byebug (10.0.2)
     codeclimate-test-reporter (1.0.8)
       simplecov (<= 0.13)
     coderay (1.1.1)
@@ -104,8 +105,13 @@ GEM
     docile (1.1.5)
     encryptor (3.0.0)
     erubi (1.7.0)
-    faker (1.7.3)
-      i18n (~> 0.5)
+    factory_bot (4.10.0)
+      activesupport (>= 3.0.0)
+    factory_bot_rails (4.10.0)
+      factory_bot (~> 4.10.0)
+      railties (>= 3.0.0)
+    faker (1.9.1)
+      i18n (>= 0.7)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.0.0)
@@ -137,7 +143,7 @@ GEM
       guard-compat (~> 1.2)
       minitest (>= 3.0)
     hashie (3.5.5)
-    i18n (0.9.1)
+    i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     json (2.1.0)
     jwt (1.5.6)
@@ -155,7 +161,7 @@ GEM
     method_source (0.8.2)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
-    minitest (5.11.1)
+    minitest (5.11.3)
     minitest-focus (1.1.2)
       minitest (>= 4, < 6)
     minitest-rails (3.0.0)
@@ -203,6 +209,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.6.0)
+      byebug (~> 10.0)
+      pry (~> 0.10)
     pry-remote (0.1.8)
       pry (~> 0.9)
       slop (~> 3.0)
@@ -293,6 +302,7 @@ DEPENDENCIES
   attr_encrypted
   codeclimate-test-reporter
   devise_token_auth!
+  factory_bot_rails
   faker
   figaro!
   fuzz_ball
@@ -302,7 +312,7 @@ DEPENDENCIES
   minitest
   minitest-focus
   minitest-rails
-  minitest-reporters
+  minitest-reporters (= 1.1.18)
   mocha (>= 1.5)
   mysql2
   omniauth-facebook!
@@ -310,6 +320,7 @@ DEPENDENCIES
   omniauth-google-oauth2!
   pg
   pry
+  pry-byebug
   pry-remote
   rack-cors
   rails-controller-testing

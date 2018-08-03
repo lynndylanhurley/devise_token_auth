@@ -26,6 +26,7 @@ group :development, :test do
 
   # testing
   # gem 'spring'
+  gem 'factory_bot_rails'
   gem 'faker'
   gem 'fuzz_ball'
   gem 'guard'
@@ -33,9 +34,10 @@ group :development, :test do
   gem 'minitest'
   gem 'minitest-focus'
   gem 'minitest-rails'
-  gem 'minitest-reporters'
+  gem 'minitest-reporters', '1.1.18'
   gem 'mocha', '>= 1.5'
   gem 'pry'
+  gem 'pry-byebug'
   gem 'pry-remote'
 
   gem 'rubocop', require: false

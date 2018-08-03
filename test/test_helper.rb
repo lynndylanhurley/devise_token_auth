@@ -13,8 +13,10 @@ require 'rails/test_help'
 require 'minitest/rails'
 require 'mocha/minitest'
 
-ActiveSupport::TestCase.fixture_path = File.expand_path('fixtures', __dir__)
-ActionDispatch::IntegrationTest.fixture_path = File.expand_path('fixtures', __dir__)
+FactoryBot.definition_file_paths = [File.expand_path('factories', __dir__)]
+FactoryBot.find_definitions
+
+Dir[File.join(__dir__, 'support/**', '*.rb')].each { |file| require file }
 
 # I hate the default reporter. Use ProgressReporter instead.
 Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
@@ -26,13 +28,9 @@ class ActionDispatch::IntegrationTest
 end
 
 class ActiveSupport::TestCase
-  ActiveRecord::Migration.check_pending!
+  include FactoryBot::Syntax::Methods
 
-  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
-  #
-  # Note: You'll currently still have to declare fixtures explicitly in integration tests
-  # -- they do not yet inherit this setting
-  fixtures :all
+  ActiveRecord::Migration.check_pending!
 
   # Add more helper methods to be used by all tests here...
 

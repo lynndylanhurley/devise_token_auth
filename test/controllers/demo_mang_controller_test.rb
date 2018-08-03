@@ -12,9 +12,7 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
   describe DemoMangController do
     describe 'Token access' do
       before do
-        @resource = mangs(:confirmed_email_user)
-        @resource.skip_confirmation!
-        @resource.save!
+        @resource = create(:mang_user, :confirmed)
 
         @auth_headers = @resource.create_new_auth_token
 

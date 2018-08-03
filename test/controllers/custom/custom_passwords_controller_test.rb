@@ -4,8 +4,10 @@ require 'test_helper'
 
 class Custom::PasswordsControllerTest < ActionController::TestCase
   describe Custom::PasswordsController do
+    include CustomControllersRoutes
+
     before do
-      @resource = users(:confirmed_email_user)
+      @resource = create(:user, :confirmed)
       @redirect_url = 'http://ng-token-auth.dev'
     end
 
@@ -26,7 +28,7 @@ class Custom::PasswordsControllerTest < ActionController::TestCase
     end
 
     test 'yield resource to block on edit success' do
-      @resource = users(:unconfirmed_email_user)
+      @resource = create(:user)
       @redirect_url = 'http://ng-token-auth.dev'
 
       post :create,
