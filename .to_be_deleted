@@ -1,8 +1,0 @@
-[byMarv] faking a change until Travis CI will make its dame job without failing !
-
-Since I can't restart a build without making a commit and because Travis CI is
-failing randomly ... please remove this file when everything is green. Thanks
-
-No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
-Check the details on how to adjust your build configuration on: https://docs.travis-ci.com/user/common-build-problems/#Build-times-out-because-no-output-was-received
-The build has been terminated
