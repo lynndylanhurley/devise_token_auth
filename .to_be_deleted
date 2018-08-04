@@ -3,21 +3,6 @@
 Since I can't restart a build without making a commit and because Travis CI is
 failing randomly ... please remove this file when everything is green. Thanks
 
-Last failures:
-Build #1291, Job #14 failed
-$ bundle install --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
-Fetching https://github.com/laserlemon/figaro
-error: packfile ./objects/pack/pack-4e05cbf49498b79efba9aa26b0f56ed9ef24b7f5.pack does not match index
-error: packfile ./objects/pack/pack-4e05cbf49498b79efba9aa26b0f56ed9ef24b7f5.pack does not match index
-error: packfile ./objects/pack/pack-4e05cbf49498b79efba9aa26b0f56ed9ef24b7f5.pack does not match index
-(...)
-
-Build #1291, Job #27 expired
-Worker information
-hostname: 3b05333e-f79e-42ef-85c8-7e91306b29d6@1.production-2-worker-org-04-packet
-version: v4.0.0 https://github.com/travis-ci/worker/tree/e5cb567e10c0eefe380e81c9a2229ac8fb6a16ce
-instance: 1066d87 travisci/ci-garnet:packer-1512502276-986baf0 (via amqp)
-startup: 1.838734431s
 No output has been received in the last 10m0s, this potentially indicates a stalled build or something wrong with the build itself.
 Check the details on how to adjust your build configuration on: https://docs.travis-ci.com/user/common-build-problems/#Build-times-out-because-no-output-was-received
 The build has been terminated
