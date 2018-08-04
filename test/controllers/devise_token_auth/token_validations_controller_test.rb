@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -9,9 +11,7 @@ require 'test_helper'
 class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::IntegrationTest
   describe DeviseTokenAuth::TokenValidationsController do
     before do
-      @resource = users(:confirmed_email_user)
-      @resource.skip_confirmation!
-      @resource.save!
+      @resource = create(:user, :confirmed)
 
       @auth_headers = @resource.create_new_auth_token
 
@@ -66,9 +66,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
   describe 'using namespaces with unused resource' do
     before do
-      @resource = scoped_users(:confirmed_email_user)
-      @resource.skip_confirmation!
-      @resource.save!
+      @resource = create(:scoped_user, :confirmed)
 
       @auth_headers = @resource.create_new_auth_token
 

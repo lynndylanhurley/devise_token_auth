@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 begin
-  load File.expand_path("../spring", __FILE__)
+  load File.expand_path('spring', __dir__)
 rescue LoadError
 end
-APP_PATH = File.expand_path('../../config/application',  __FILE__)
+APP_PATH = File.expand_path('../config/application',  __dir__)
 require_relative '../config/boot'
 require 'rails/commands'

@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class Custom::SessionsControllerTest < ActionController::TestCase
   describe Custom::SessionsController do
+    include CustomControllersRoutes
+
     before do
-      @existing_user = users(:confirmed_email_user)
-      @existing_user.skip_confirmation!
-      @existing_user.save!
+      @existing_user = create(:user, :confirmed)
     end
 
     test 'yield resource to block on create success' do
       post :create,
            params: {
              email: @existing_user.email,
-             password: 'secret123'
+             password: @existing_user.password
            }
       assert @controller.create_block_called?,
              'create failed to yield resource to provided block'
@@ -29,7 +31,7 @@ class Custom::SessionsControllerTest < ActionController::TestCase
     test 'render method override' do
       post :create,
            params: { email: @existing_user.email,
-                     password: 'secret123' }
+                     password: @existing_user.password }
       @data = JSON.parse(response.body)
       assert_equal @data['custom'], 'foo'
     end

@@ -1,10 +1,12 @@
-require File.expand_path('../boot', __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path('boot', __dir__)
 
 require 'rack/cors'
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
-require "devise_token_auth"
+require 'devise_token_auth'
 
 module Dummy
   class Application < Rails::Application

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
@@ -6,7 +8,7 @@ class User < ActiveRecord::Base
 
   def ensure_correct_favorite_color
 
-    if favorite_color and favorite_color != ""
+    if favorite_color && (favorite_color != '')
       unless ApplicationHelper::COLOR_NAMES.any?{ |s| s.casecmp(favorite_color)==0 }
         matches = ApplicationHelper::COLOR_SEARCH.search(favorite_color)
         closest_match = matches.last[:string]

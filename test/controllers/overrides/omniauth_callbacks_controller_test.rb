@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -7,8 +9,10 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class Overrides::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
+  include OverridesControllersRoutes
+
   describe Overrides::OmniauthCallbacksController do
-    setup do
+    before do
       OmniAuth.config.test_mode = true
       OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new(
         provider: 'facebook',

@@ -2,10 +2,13 @@ language: ruby
 cache: bundler
 sudo: false
 
+before_install: gem install bundler
+
 rvm:
-  - 2.2.8
-  - 2.3.1
-  - 2.4.2
+  - 2.5.1
+
+gemfile:
+  - gemfiles/rails_5_1.gemfile
 
 env:
   global:
@@ -17,7 +20,7 @@ env:
 
 script:
   - bundle exec rake --trace db:migrate
-  - bundle exec rake
+  - bundle exec rake --trace
 
 before_script:
   - mysql -e 'create database devise_token_auth_test'
@@ -25,8 +28,3 @@ before_script:
 
 addons:
   postgresql: "9.4"
-  code_climate:
-    - repo_token: 44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d
-
-after_success:
-  - bundle exec codeclimate-test-reporter

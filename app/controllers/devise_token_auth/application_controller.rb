@@ -1,21 +1,25 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
     include DeviseTokenAuth::Concerns::ResourceFinder
 
-    def resource_data(opts={})
+    def resource_data(opts = {})
       response_data = opts[:resource_json] || @resource.as_json
-      if json_api?
-        response_data['type'] = @resource.class.name.parameterize
-      end
+      response_data['type'] = @resource.class.name.parameterize if json_api?
       response_data
     end
 
     def resource_errors
-      return @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
+      @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
     end
 
     protected
+
+    def blacklisted_redirect_url?
+      DeviseTokenAuth.redirect_whitelist && !DeviseTokenAuth::Url.whitelisted?(@redirect_url)
+    end
 
     def build_redirect_headers(access_token, client, redirect_header_options = {})
       {
@@ -38,7 +42,7 @@ module DeviseTokenAuth
       devise_parameter_sanitizer.instance_values['permitted'][resource]
     end
 
-    def resource_class(m=nil)
+    def resource_class(m = nil)
       if m
         mapping = Devise.mappings[m]
       else
@@ -53,7 +57,7 @@ module DeviseTokenAuth
       return ActiveModel::Serializer.setup do |config|
         config.adapter == :json_api
       end if ActiveModel::Serializer.respond_to?(:setup)
-      return ActiveModelSerializers.config.adapter == :json_api
+      ActiveModelSerializers.config.adapter == :json_api
     end
 
     def recoverable_enabled?

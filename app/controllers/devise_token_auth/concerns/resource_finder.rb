@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth::Concerns::ResourceFinder
   extend ActiveSupport::Concern
   include DeviseTokenAuth::Controllers::Helpers
@@ -21,13 +23,13 @@ module DeviseTokenAuth::Concerns::ResourceFinder
     # fix for mysql default case insensitivity
     q = "#{field.to_s} = ? AND provider='#{provider.to_s}'"
     if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-      q = "BINARY " + q
+      q = 'BINARY ' + q
     end
 
     @resource = resource_class.where(q, value).first
   end
 
-  def resource_class(m=nil)
+  def resource_class(m = nil)
     if m
       mapping = Devise.mappings[m]
     else

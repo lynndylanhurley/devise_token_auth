@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -17,7 +19,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
     describe 'Confirmation' do
       before do
         @redirect_url = Faker::Internet.url
-        @new_user = users(:unconfirmed_email_user)
+        @new_user = create(:user)
         @new_user.send_confirmation_instructions(redirect_url: @redirect_url)
         mail = ActionMailer::Base.deliveries.last
         @token, @client_config = token_and_client_config_from(mail.body)
@@ -55,17 +57,13 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         test 'the sign_in_count should be 1' do
           assert @resource.sign_in_count == 1
         end
+
         test 'User shoud have the signed in info filled' do
           assert @resource.current_sign_in_at?
         end
+
         test 'User shoud have the Last checkin filled' do
           assert @resource.last_sign_in_at?
-        end
-        
-        test 'user already confirmed' do
-          assert @resource.sign_in_count > 0 do
-            assert expiry == (Time.now + Time.now + 1.second).to_i
-          end
         end
       end
 
@@ -92,7 +90,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
 
       before do
         @config_name = 'altUser'
-        @new_user    = mangs(:unconfirmed_email_user)
+        @new_user    = create(:mang_user)
 
         @new_user.send_confirmation_instructions(client_config: @config_name)
 
