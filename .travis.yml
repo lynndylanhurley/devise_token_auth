@@ -14,8 +14,8 @@ env:
   global:
     - RAILS_ENV=test
   matrix:
-    - DB=sqlite
-    - DB=mysql
+    #- DB=sqlite
+    #- DB=mysql
     - DB=postgresql
 
 script:
@@ -23,7 +23,7 @@ script:
   - bundle exec rake --trace
 
 before_script:
-  - mysql -e 'create database devise_token_auth_test'
+  #- mysql -e 'create database devise_token_auth_test'
   - psql -c 'create database devise_token_auth_test' -U postgres
 
 addons:
