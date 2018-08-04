@@ -12,7 +12,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::PasswordsController do
     describe 'Password reset' do
       before do
-        @resource = users(:confirmed_email_user)
+        @resource = create(:user, :confirmed)
         @redirect_url = 'http://ng-token-auth.dev'
       end
 
@@ -320,7 +320,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
       describe 'Using default_password_reset_url' do
         before do
-          @resource = users(:confirmed_email_user)
+          @resource = create(:user, :confirmed)
           @redirect_url = 'http://ng-token-auth.dev'
 
           DeviseTokenAuth.default_password_reset_url = @redirect_url
@@ -354,7 +354,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
       describe 'Using redirect_whitelist' do
         before do
-          @resource = users(:confirmed_email_user)
+          @resource = create(:user, :confirmed)
           @good_redirect_url = Faker::Internet.url
           @bad_redirect_url = Faker::Internet.url
           DeviseTokenAuth.redirect_whitelist = [@good_redirect_url]
@@ -552,7 +552,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       before do
-        @resource = mangs(:confirmed_email_user)
+        @resource = create(:mang_user, :confirmed)
         @redirect_url = 'http://ng-token-auth.dev'
 
         post :create, params: { email: @resource.email,
@@ -579,7 +579,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
     describe 'unconfirmed user' do
       before do
-        @resource = users(:unconfirmed_email_user)
+        @resource = create(:user)
         @redirect_url = 'http://ng-token-auth.dev'
 
         post :create, params: { email: @resource.email,
@@ -631,7 +631,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
     describe 'alternate user type' do
       before do
-        @resource = users(:confirmed_email_user)
+        @resource = create(:user, :confirmed)
         @redirect_url = 'http://ng-token-auth.dev'
         @config_name  = 'altUser'
 

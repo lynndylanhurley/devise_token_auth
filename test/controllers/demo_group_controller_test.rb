@@ -13,9 +13,7 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
     describe 'Token access' do
       before do
         # user
-        @resource = users(:confirmed_email_user)
-        @resource.skip_confirmation!
-        @resource.save!
+        @resource = create(:user, :confirmed)
 
         @resource_auth_headers = @resource.create_new_auth_token
 
@@ -24,9 +22,7 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
         @resource_expiry    = @resource_auth_headers['expiry']
 
         # mang
-        @mang = mangs(:confirmed_email_user)
-        @mang.skip_confirmation!
-        @mang.save!
+        @mang = create(:mang_user, :confirmed)
 
         @mang_auth_headers = @mang.create_new_auth_token
 
