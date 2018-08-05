@@ -4,6 +4,8 @@ module DeviseTokenAuth
   class InstallGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
+    class_option :primary_key_type, type: :string, desc: 'The type for primary key'
+
     source_root File.expand_path('templates', __dir__)
 
     argument :user_class, type: :string, default: 'User'
@@ -155,6 +157,19 @@ module DeviseTokenAuth
 
     def database_version
       ActiveRecord::Base.connection.select_value('SELECT VERSION()')
+    end
+
+    def rails5?
+      Rails.version.start_with? '5'
+    end
+
+    def primary_key_type
+      primary_key_string if rails5?
+    end
+
+    def primary_key_string
+      key_string = options[:primary_key_type]
+      ", id: :#{key_string}" if key_string
     end
   end
 end
