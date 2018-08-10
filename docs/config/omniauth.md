@@ -66,7 +66,7 @@ angular.module('myApp', ['ng-token-auth'])
   });
 ~~~
 
-**jToker settings for github should look like this:
+**jToker settings for github should look like this:**
 
 ~~~javascript
 $.auth.configure({
