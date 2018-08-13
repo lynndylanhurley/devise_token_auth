@@ -21,7 +21,7 @@ da-DK:
       sended: "En email er blevet sendt til '%{email}' med instruktioner for at nulstille dit kodeord."
       user_not_found: "Kan ikke finde en bruger med '%{email}'."
       password_not_required: "Denne bruger kræver ikke et kodeord. Log ind med '%{provider}' konto i stedet."
-      missing_passwords: "Du skal udfylde alle felter som indeholder 'Kodeord' og 'Gentag kodeord'."
+      missing_passwords: "Du skal udfylde alle felter med kodeord og gentagelse af kodeord."
       successfully_updated: "Dit kodeord er opdateret."
     unlocks:
       missing_email: "Du skal udfylde en email."
