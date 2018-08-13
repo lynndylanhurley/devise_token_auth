@@ -21,7 +21,7 @@ da-DK:
       sended: "En email er blevet sendt til '%{email}' med instruktioner for at nulstille dit kodeord."
       user_not_found: "Kan ikke finde en bruger med '%{email}'."
       password_not_required: "Denne bruger kræver ikke et kodeord. Log ind med '%{provider}' konto i stedet."
-      missing_passwords: "Du skal udfylde alle felter som indeholder 'Password' og 'Password confirmation'."
+      missing_passwords: "Du skal udfylde alle felter som indeholder 'Kodeord' og 'Gentag godeord'."
       successfully_updated: "Dit kodeord er opdateret."
     unlocks:
       missing_email: "Du skal udfylde en email."
@@ -41,9 +41,9 @@ da-DK:
         request_reset_link_msg: "Der er nogle der har anmodet om et link til at ændre dit kodeord. Det kan du gøre gennem linket nedenfor."
         password_change_link: "Ændre mit kodeord."
         ignore_mail_msg: "Hvis du ikke anmodede om dette, ignorer venligst denne email."
-        no_changes_msg: "Dit kodeord vil ikke ændres indtil du går ind på linket ovenfor og opretter et nyt et."
+        no_changes_msg: "Dit kodeord vil ikke ændres indtil du går ind på linket ovenfor og opretter et nyt."
       unlock_instructions:
-        account_lock_msg: "Din konto er blevet låst fordi der er for mange forkerte log ind-forsøg."
+        account_lock_msg: "Din konto er blevet låst fordi der er for mange ugyldige log ind-forsøg."
         unlock_link_msg: "Klik linket nedenfor, for at låse din konto op:"
         unlock_link: "Lås min konto op"
   hello: "hej"
