@@ -34,7 +34,7 @@ PATH
   remote: .
   specs:
     devise_token_auth (1.0.0.rc1)
-      devise (> 3.5.2, < 4.5)
+      devise (> 3.5.2, < 4.6)
       rails (< 6)
 
 GEM
@@ -96,7 +96,7 @@ GEM
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
     crass (1.0.3)
-    devise (4.4.3)
+    devise (4.5.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0, < 6.0)
@@ -159,7 +159,7 @@ GEM
       mini_mime (>= 0.1.1)
     metaclass (0.0.4)
     method_source (0.8.2)
-    mini_mime (1.0.0)
+    mini_mime (1.0.1)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
     minitest-focus (1.1.2)
@@ -329,4 +329,4 @@ DEPENDENCIES
   thor
 
 BUNDLED WITH
-   1.16.1
+   1.16.3
