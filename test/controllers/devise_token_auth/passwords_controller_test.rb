@@ -235,14 +235,14 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               assert_equal Devise.token_generator.digest(self, :reset_password_token, @mail_reset_token), @resource.reset_password_token
             end
 
-            test 'reset_password_token should be rewritten by origin mail_reset_token' do
+            test 'reset_password_token should not be rewritten by origin mail_reset_token' do
               get :edit, params: {
                 reset_password_token: @mail_reset_token,
                 redirect_url: @mail_redirect_url
               }
               @resource.reload
 
-              assert_equal @mail_reset_token, @resource.reset_password_token
+              assert_equal Devise.token_generator.digest(self, :reset_password_token, @mail_reset_token), @resource.reset_password_token
             end
 
             test 'response should return success status' do
@@ -254,26 +254,6 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               assert_equal 302, response.status
             end
 
-            test 'reset_password_token should be valid only one first time' do
-              get :edit, params: {
-                reset_password_token: @mail_reset_token,
-                redirect_url: @mail_redirect_url
-              }
-
-              @resource.reload
-              assert_equal @mail_reset_token, @resource.reset_password_token
-
-              assert_raises(ActionController::RoutingError) {
-                get :edit, params: {
-                  reset_password_token: @mail_reset_token,
-                  redirect_url: @mail_redirect_url
-                }
-              }
-
-              @resource.reload
-              assert_equal @mail_reset_token, @resource.reset_password_token
-            end
-
             test 'reset_password_sent_at should be valid' do
               assert_equal @resource.reset_password_period_valid?, true
 
@@ -283,7 +263,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               }
 
               @resource.reload
-              assert_equal @mail_reset_token, @resource.reset_password_token
+              assert_equal Devise.token_generator.digest(self, :reset_password_token, @mail_reset_token), @resource.reset_password_token
             end
 
             test 'reset_password_sent_at should be expired' do
