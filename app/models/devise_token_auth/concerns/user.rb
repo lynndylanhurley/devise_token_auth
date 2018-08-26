@@ -23,15 +23,17 @@ module DeviseTokenAuth::Concerns::User
              :recoverable, :trackable, :validatable, :confirmable
     end
 
-    serialize :tokens, JSON unless tokens_has_json_column_type?
+    if const_defined?('ActiveRecord') && ancestors.include?(ActiveRecord::Base)
+      include DeviseTokenAuth::Concerns::ActiveRecordSupport
+    end
+
+    if const_defined?('Mongoid') && ancestors.include?(Mongoid::Document)
+      include DeviseTokenAuth::Concerns::MongoidSupport
+    end
 
     if DeviseTokenAuth.default_callbacks
       include DeviseTokenAuth::Concerns::UserOmniauthCallbacks
     end
-
-    # can't set default on text fields in mysql, simulate here instead.
-    after_save :set_empty_token_hash
-    after_initialize :set_empty_token_hash
 
     # get rid of dead tokens
     before_save :destroy_expired_tokens
@@ -101,18 +103,6 @@ module DeviseTokenAuth::Concerns::User
     [client_id, token, expiry]
   end
 
-  module ClassMethods
-    protected
-
-    def tokens_has_json_column_type?
-      database_exists? && table_exists? && columns_hash['tokens'] && columns_hash['tokens'].type.in?([:json, :jsonb])
-    end
-
-    def database_exists?
-      ActiveRecord::Base.connection_pool.with_connection { |con| con.active? } rescue false
-    end
-  end
-
   def valid_token?(token, client_id = 'default')
     return false unless tokens[client_id]
     return true if token_is_current?(token, client_id)
@@ -154,7 +144,7 @@ module DeviseTokenAuth::Concerns::User
       updated_at && last_token &&
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      Time.parse(updated_at) > Time.zone.now - DeviseTokenAuth.batch_request_buffer_throttle &&
+      updated_at.to_time > Time.zone.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
       ::BCrypt::Password.new(last_token) == token
@@ -222,10 +212,6 @@ module DeviseTokenAuth::Concerns::User
   end
 
   protected
-
-  def set_empty_token_hash
-    self.tokens ||= {} if has_attribute?(:tokens)
-  end
 
   def destroy_expired_tokens
     if tokens

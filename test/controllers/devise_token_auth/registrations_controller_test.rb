@@ -305,7 +305,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should not have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do
@@ -333,7 +333,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should not have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do
@@ -362,7 +362,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do
@@ -393,7 +393,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do

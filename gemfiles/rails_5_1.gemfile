@@ -3,6 +3,9 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 5.1.6"
+gem "sqlite3"
+gem "mysql2"
+gem "pg"
 
 group :development, :test do
   gem "attr_encrypted"
@@ -12,6 +15,7 @@ group :development, :test do
   gem "omniauth-google-oauth2", git: "https://github.com/zquestz/omniauth-google-oauth2"
   gem "rack-cors", require: "rack/cors"
   gem "thor"
+  gem "database_cleaner"
   gem "factory_bot_rails"
   gem "faker"
   gem "fuzz_ball"
@@ -20,7 +24,7 @@ group :development, :test do
   gem "minitest"
   gem "minitest-focus"
   gem "minitest-rails"
-  gem "minitest-reporters", "1.1.18"
+  gem "minitest-reporters"
   gem "mocha", ">= 1.5"
   gem "pry"
   gem "pry-byebug"
@@ -29,8 +33,8 @@ group :development, :test do
 end
 
 group :test do
-  gem "codeclimate-test-reporter", require: nil
   gem "rails-controller-testing"
+  gem "simplecov", require: false
 end
 
 group :development do

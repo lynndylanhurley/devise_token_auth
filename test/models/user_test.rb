@@ -44,7 +44,7 @@ class UserTest < ActiveSupport::TestCase
         @resource = build(:user, user_attributes)
 
         refute @resource.save
-        assert @resource.errors.messages[:email] == [I18n.t('errors.messages.taken')]
+        assert @resource.errors.messages[:email].first.include? 'taken'
         assert @resource.errors.messages[:email].none? { |e| e =~ /translation missing/ }
       end
     end
