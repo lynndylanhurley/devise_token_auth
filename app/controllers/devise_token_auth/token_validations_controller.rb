@@ -2,6 +2,7 @@ module DeviseTokenAuth
   class TokenValidationsController < DeviseTokenAuth::ApplicationController
     skip_before_action :assert_is_devise_resource!, :only => [:validate_token]
     before_action :set_user_by_token, :only => [:validate_token]
+    before_action :set_user_by_refresh_token, :only => [:refresh_token]
 
     def validate_token
       # @resource will have been set by set_user_token concern
@@ -11,6 +12,20 @@ module DeviseTokenAuth
       else
         render_validate_token_error
       end
+    end
+
+    def refresh_token
+      if @resource
+        new_auth_token = @resource.create_new_auth_token(@client_id)
+        @token = new_auth_token[DeviseTokenAuth.headers_names[:"access-token"]]
+        @refresh_token = new_auth_token[DeviseTokenAuth.headers_names[:"refresh-token"]]
+
+        render_validate_token_success
+
+      else
+        render_validate_token_error
+      end
+
     end
 
     protected

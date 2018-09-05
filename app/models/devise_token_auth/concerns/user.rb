@@ -120,6 +120,18 @@ module DeviseTokenAuth::Concerns::User
     return false
   end
 
+  def valid_refresh_token?(refresh_token, client_id='default')
+    client_id ||= 'default'
+
+    return false unless self.tokens[client_id]
+
+    refresh_token_hash = self.tokens[client_id]['refresh_token'] || self.tokens[client_id][:refresh_token]
+
+    return true if DeviseTokenAuth::Concerns::User.tokens_match?(refresh_token_hash, refresh_token)
+
+    # return false if none of the above conditions are met
+    return false
+  end
 
   # this must be done from the controller so that additional params
   # can be passed on from the client
@@ -172,6 +184,8 @@ module DeviseTokenAuth::Concerns::User
     last_token ||= nil
     token        = SecureRandom.urlsafe_base64(nil, false)
     token_hash   = ::BCrypt::Password.create(token)
+    refresh_token        = SecureRandom.urlsafe_base64(nil, false)
+    refresh_token_hash   = ::BCrypt::Password.create(refresh_token)
     expiry       = (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
     if self.tokens[client_id] && self.tokens[client_id]['token']
@@ -180,16 +194,17 @@ module DeviseTokenAuth::Concerns::User
 
     self.tokens[client_id] = {
       token:      token_hash,
+      refresh_token:      refresh_token_hash,
       expiry:     expiry,
       last_token: last_token,
       updated_at: Time.now
     }
 
-    return build_auth_header(token, client_id)
+    return build_auth_header(token, client_id, refresh_token)
   end
 
 
-  def build_auth_header(token, client_id='default')
+  def build_auth_header(token, client_id='default', refresh_token=nil)
     client_id ||= 'default'
 
     # client may use expiry to prevent validation request if expired
@@ -205,11 +220,12 @@ module DeviseTokenAuth::Concerns::User
     self.save!
 
     return {
-      DeviseTokenAuth.headers_names[:"access-token"] => token,
-      DeviseTokenAuth.headers_names[:"token-type"]   => "Bearer",
-      DeviseTokenAuth.headers_names[:"client"]       => client_id,
-      DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
-      DeviseTokenAuth.headers_names[:"uid"]          => self.uid
+      DeviseTokenAuth.headers_names[:"access-token"]  => token,
+      DeviseTokenAuth.headers_names[:"refresh-token"] => refresh_token,
+      DeviseTokenAuth.headers_names[:"token-type"]    => "Bearer",
+      DeviseTokenAuth.headers_names[:"client"]        => client_id,
+      DeviseTokenAuth.headers_names[:"expiry"]        => expiry.to_s,
+      DeviseTokenAuth.headers_names[:"uid"]           => self.uid
     }
   end
 
