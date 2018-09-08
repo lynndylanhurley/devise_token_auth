@@ -17,10 +17,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @used_auth_by_token = true
 
     # initialize instance variables
-    @client_id = nil
-    @resource = nil
-    @token = nil
-    @is_batch_request = nil
+    @client_id ||= nil
+    @resource ||= nil
+    @token ||= nil
+    @is_batch_request ||= nil
   end
 
   def ensure_pristine_resource
