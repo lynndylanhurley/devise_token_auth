@@ -489,6 +489,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           test 'new password should authenticate user' do
             assert @resource.valid_password?(@new_password)
           end
+
+          test 'reset_password_token should be removed' do
+            assert_nil @resource.reset_password_token
+          end
         end
 
         describe 'password mismatch error' do
