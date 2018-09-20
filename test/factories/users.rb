@@ -13,13 +13,13 @@ FactoryBot.define do
     end
 
     trait :confirmed do
-      after(:create) { |user| user.confirm }
+      after(:create, &:confirm)
     end
 
     # confirmation period is expired
     trait :unconfirmed do
       after(:create) do |user, evaluator|
-        user.update_attribute(:confirmation_sent_at, evaluator.allow_unconfirmed_period - 1.day )
+        user.update_attribute(:confirmation_sent_at, evaluator.allow_unconfirmed_period - 1.day)
       end
     end
 
@@ -29,7 +29,7 @@ FactoryBot.define do
     end
 
     trait :locked do
-      after(:create) { |user| user.lock_access! }
+      after(:create, &:lock_access!)
     end
 
     factory :lockable_user, class: 'LockableUser'

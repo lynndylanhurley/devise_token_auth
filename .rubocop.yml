@@ -3,8 +3,11 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   Exclude:
     - 'coverage/**/*'
+    - 'test/dummy/db/**/*'
     - 'test/dummy/tmp/**/*'
     - 'test/dummy/log/**/*'
+    - 'gemfiles/*'
+  TargetRubyVersion: 2.2
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
@@ -15,9 +18,14 @@ AllCops:
 #   that span more than one line.
 #
 # https://rubocop.readthedocs.io/en/latest/cops_layout/#layoutmultilinemethodcallindentation
+Layout/ClosingHeredocIndentation:
+  Exclude:
+    - 'lib/generators/devise_token_auth/install_generator.rb'
+
 Layout/MultilineMethodCallIndentation:
   Enabled: true
   EnforcedStyle: indented_relative_to_receiver
+
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, ProceduralMethods, FunctionalMethods, IgnoredMethods.
@@ -91,6 +99,7 @@ Metrics/BlockLength:
     - 'lib/devise_token_auth/engine.rb'
     - 'test/dummy/config/**/*'
     - 'test/dummy/db/**/*'
+    - 'test/factories/*'
   ExcludedMethods:
     - describe
     - draw

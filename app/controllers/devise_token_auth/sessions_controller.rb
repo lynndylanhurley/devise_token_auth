@@ -22,10 +22,8 @@ module DeviseTokenAuth
       end
 
       if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
-        valid_password = @resource.valid_password?(resource_params[:password])
-        if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
-          return render_create_error_bad_credentials
-        end
+        return render_create_error_bad_credentials unless valid_credentials?
+
         @client_id, @token = @resource.create_token
         @resource.save
 
@@ -126,6 +124,11 @@ module DeviseTokenAuth
 
     def resource_params
       params.permit(*params_for_resource(:sign_in))
+    end
+
+    def valid_credentials?
+      valid_password = @resource.valid_password?(resource_params[:password])
+      (@resource.respond_to?(:valid_for_authentication?) && @resource.valid_for_authentication? { valid_password }) || valid_password
     end
   end
 end

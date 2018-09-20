@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir['test/**/*']
   s.test_files.reject! { |file| file.match(/[.log|.sqlite3]$/) }
 
-  s.required_ruby_version = ">= 2.2.0"
+  s.required_ruby_version = '>= 2.2.0'
 
   s.add_dependency 'rails', '>= 4.2.0', '< 6'
   s.add_dependency 'devise', '> 3.5.2', '< 4.6'
