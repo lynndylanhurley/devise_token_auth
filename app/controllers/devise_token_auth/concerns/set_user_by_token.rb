@@ -99,7 +99,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless defined?(@resource) && @resource && @resource.valid? && @client_id
+
+    return unless @resource && @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
@@ -115,54 +116,63 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       response.headers.merge!(auth_header)
 
     else
-
-      ensure_pristine_resource do
-        # Lock the user record during any auth_header updates to ensure
-        # we don't have write contention from multiple threads
-        @resource.with_lock do
-          # should not append auth header if @resource related token was
-          # cleared by sign out in the meantime
-          return if @used_auth_by_token && @resource.tokens[@client_id].nil?
-
-          # determine batch request status after request processing, in case
-          # another processes has updated it during that processing
-          @is_batch_request = is_batch_request?(@resource, @client_id)
-
-          auth_header = {}
-
-          # extend expiration of batch buffer to account for the duration of
-          # this request
-          if @is_batch_request
-            auth_header = @resource.extend_batch_buffer(@token, @client_id)
-
-            # Do not return token for batch requests to avoid invalidated
-            # tokens returned to the client in case of race conditions.
-            # Use a blank string for the header to still be present and
-            # being passed in a XHR response in case of
-            # 304 Not Modified responses.
-            auth_header[DeviseTokenAuth.headers_names[:"access-token"]] = ' '
-            auth_header[DeviseTokenAuth.headers_names[:"expiry"]] = ' '
-
-          # update Authorization response header with new token
-          else
-            auth_header = @resource.create_new_auth_token(@client_id)
-          end
-
-          # update the response header
-          response.headers.merge!(auth_header)
-
-        end # end lock
-      end # end ensure_pristine_resource
+      unless @resource.reload.valid?
+        @resource = resource_class.find(@resource.to_param) # errors remain after reload
+        # if we left the model in a bad state, something is wrong in our app
+        unless @resource.valid?
+          raise DeviseTokenAuth::Errors::InvalidModel, "Cannot set auth token in invalid model. Errors: #{@resource.errors.full_messages}"
+        end
+      end
+      refresh_headers
     end
-
   end
 
   private
+
+  def refresh_headers
+    ensure_pristine_resource do
+      # Lock the user record during any auth_header updates to ensure
+      # we don't have write contention from multiple threads
+      @resource.with_lock do
+        # should not append auth header if @resource related token was
+        # cleared by sign out in the meantime
+        return if @used_auth_by_token && @resource.tokens[@client_id].nil?
+
+        # update the response header
+        response.headers.merge!(auth_header_from_batch_request)
+      end # end lock
+    end # end ensure_pristine_resource
+  end
 
   def is_batch_request?(user, client_id)
     !params[:unbatch] &&
       user.tokens[client_id] &&
       user.tokens[client_id]['updated_at'] &&
       Time.parse(user.tokens[client_id]['updated_at']) > @request_started_at - DeviseTokenAuth.batch_request_buffer_throttle
+  end
+
+  def auth_header_from_batch_request
+    # determine batch request status after request processing, in case
+    # another processes has updated it during that processing
+    @is_batch_request = is_batch_request?(@resource, @client_id)
+
+    auth_header = {}
+    # extend expiration of batch buffer to account for the duration of
+    # this request
+    if @is_batch_request
+      auth_header = @resource.extend_batch_buffer(@token, @client_id)
+
+      # Do not return token for batch requests to avoid invalidated
+      # tokens returned to the client in case of race conditions.
+      # Use a blank string for the header to still be present and
+      # being passed in a XHR response in case of
+      # 304 Not Modified responses.
+      auth_header[DeviseTokenAuth.headers_names[:"access-token"]] = ' '
+      auth_header[DeviseTokenAuth.headers_names[:"expiry"]] = ' '
+    else
+      # update Authorization response header with new token
+      auth_header = @resource.create_new_auth_token(@client_id)
+    end
+    auth_header
   end
 end

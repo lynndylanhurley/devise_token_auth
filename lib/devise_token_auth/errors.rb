@@ -3,5 +3,6 @@
 module DeviseTokenAuth
   module Errors
     class NoResourceDefinedError < StandardError; end
+    class InvalidModel < StandardError; end
   end
 end
