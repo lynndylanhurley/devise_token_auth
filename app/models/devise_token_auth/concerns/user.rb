@@ -46,6 +46,7 @@ module DeviseTokenAuth::Concerns::User
 
     def password_required?
       return false unless provider == 'email'
+
       super
     end
 

@@ -38,3 +38,4 @@ addons:
 
 after_success:
   - bundle exec codeclimate-test-reporter
+  - bundle exec rubocop .

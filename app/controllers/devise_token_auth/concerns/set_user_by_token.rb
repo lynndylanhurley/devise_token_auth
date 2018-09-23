@@ -13,14 +13,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   # keep track of request duration
   def set_request_start
-    @request_started_at = Time.zone.now
     @used_auth_by_token = true
-
-    # initialize instance variables
     @client_id ||= nil
     @resource ||= nil
     @token ||= nil
     @is_batch_request ||= nil
+    @request_started_at = Time.zone.now
   end
 
   def ensure_pristine_resource

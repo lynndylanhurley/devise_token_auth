@@ -29,7 +29,6 @@ module DeviseTokenAuth
         # fall back to default value if provided
         @redirect_url ||= DeviseTokenAuth.default_confirm_success_url
 
-
         redirect_to(@resource.build_auth_url(@redirect_url, redirect_headers))
       else
         raise ActionController::RoutingError, 'Not Found'
