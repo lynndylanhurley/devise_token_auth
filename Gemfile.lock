@@ -35,7 +35,7 @@ PATH
   specs:
     devise_token_auth (1.0.0.rc1)
       devise (> 3.5.2, < 4.6)
-      rails (< 6)
+      rails (>= 4.2.0, < 6)
 
 GEM
   remote: https://rubygems.org/
@@ -177,7 +177,7 @@ GEM
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
-    mysql2 (0.4.6)
+    mysql2 (0.4.10)
     nenv (0.3.0)
     nio4r (2.3.1)
     nokogiri (1.8.1)
@@ -314,7 +314,7 @@ DEPENDENCIES
   minitest-rails
   minitest-reporters (= 1.1.18)
   mocha (>= 1.5)
-  mysql2
+  mysql2 (~> 0.4.10)
   omniauth-facebook!
   omniauth-github!
   omniauth-google-oauth2!
