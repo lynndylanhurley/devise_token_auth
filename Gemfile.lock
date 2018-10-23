@@ -33,9 +33,9 @@ GIT
 PATH
   remote: .
   specs:
-    devise_token_auth (1.0.0.rc1)
+    devise_token_auth (1.0.0)
       devise (> 3.5.2, < 4.6)
-      rails (< 6)
+      rails (>= 4.2.0, < 6)
 
 GEM
   remote: https://rubygems.org/
@@ -155,7 +155,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.12)
-    mail (2.7.0)
+    mail (2.7.1)
       mini_mime (>= 0.1.1)
     metaclass (0.0.4)
     method_source (0.8.2)
