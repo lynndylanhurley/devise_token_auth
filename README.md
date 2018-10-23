@@ -57,7 +57,7 @@ Please use [StackOverflow](https://stackoverflow.com/questions/tagged/devise-tok
 
 Please open GitHub issues for bugs and enhancements only, not general help requests. Please search previous issues (and Google and StackOverflow) before creating a new issue.
 
-Please read the [ISSUE_TEMPLATE.md] before posting issues.
+Please read the [issue template](https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/ISSUE_TEMPLATE.md) before posting issues.
 
 ## [FAQ](docs/faq.md)
 
