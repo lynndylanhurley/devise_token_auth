@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+unless defined?(DEVISE_TOKEN_AUTH_ORM)
+  DEVISE_TOKEN_AUTH_ORM = (ENV["DEVISE_TOKEN_AUTH_ORM"] || :active_record).to_sym
+end
+
 # Set up gems listed in the Gemfile.
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../../Gemfile', __dir__)
 

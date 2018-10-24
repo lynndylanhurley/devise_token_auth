@@ -7,11 +7,15 @@ SimpleCov.start 'rails' do
 end
 
 ENV['RAILS_ENV'] = 'test'
+DEVISE_TOKEN_AUTH_ORM = (ENV['DEVISE_TOKEN_AUTH_ORM'] || :active_record).to_sym
+
+puts "\n==> DeviseTokenAuth.orm = #{DEVISE_TOKEN_AUTH_ORM.inspect}"
 
 require File.expand_path('dummy/config/environment', __dir__)
-require 'rails/test_help'
+require 'active_support/testing/autorun'
 require 'minitest/rails'
 require 'mocha/minitest'
+require 'database_cleaner'
 
 FactoryBot.definition_file_paths = [File.expand_path('factories', __dir__)]
 FactoryBot.find_definitions
@@ -30,7 +34,13 @@ end
 class ActiveSupport::TestCase
   include FactoryBot::Syntax::Methods
 
-  ActiveRecord::Migration.check_pending!
+  ActiveRecord::Migration.check_pending! if DEVISE_TOKEN_AUTH_ORM == :active_record
+
+  strategies = { active_record: :transaction,
+                 mongoid: :truncation }
+  DatabaseCleaner.strategy = strategies[DEVISE_TOKEN_AUTH_ORM]
+  setup { DatabaseCleaner.start }
+  teardown { DatabaseCleaner.clean }
 
   # Add more helper methods to be used by all tests here...
 

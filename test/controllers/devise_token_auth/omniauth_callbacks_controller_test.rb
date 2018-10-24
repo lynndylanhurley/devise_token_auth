@@ -155,6 +155,8 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       describe 'with new user' do
         before do
           User.any_instance.expects(:new_record?).returns(true).at_least_once
+          # https://docs.mongodb.com/mongoid/master/tutorials/mongoid-documents/#notes-on-persistence
+          User.any_instance.expects(:save!).returns(true)
         end
 
         test 'response contains oauth_registration attr' do

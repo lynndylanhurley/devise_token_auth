@@ -2,11 +2,13 @@
 
 require 'test_helper'
 require 'fileutils'
-require 'generators/devise_token_auth/install_generator'
+require 'generators/devise_token_auth/install_generator' if DEVISE_TOKEN_AUTH_ORM == :active_record
+require 'generators/devise_token_auth/install_mongoid_generator' if DEVISE_TOKEN_AUTH_ORM == :mongoid
 
 module DeviseTokenAuth
   class InstallGeneratorTest < Rails::Generators::TestCase
-    tests InstallGenerator
+    tests InstallGenerator        if DEVISE_TOKEN_AUTH_ORM == :active_record
+    tests InstallMongoidGenerator if DEVISE_TOKEN_AUTH_ORM == :mongoid
     destination Rails.root.join('tmp/generators')
 
     # The namespaced user model for testing
@@ -31,28 +33,30 @@ module DeviseTokenAuth
         assert_file 'config/initializers/devise_token_auth.rb'
       end
 
-      test 'migration is created for user model with namespace' do
-        assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb"
-      end
-
-      test 'migration file for user model with namespace contains rails version' do
-        if Rails::VERSION::MAJOR >= 5
-          assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}/
-        else
-          assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb"
-        end
-      end
-
       test 'subsequent runs raise no errors' do
         run_generator %W[#{user_class} auth]
       end
 
-      test 'add primary key type with rails 5 when specified in rails generator' do
-        run_generator %W[#{user_class} auth --primary_key_type=uuid --force]
-        if Rails::VERSION::MAJOR >= 5
-          assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /create_table\(:#{table_name}, id: :uuid\) do/
-        else
-          assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /create_table\(:#{table_name}\) do/
+      if DEVISE_TOKEN_AUTH_ORM == :active_record
+        test 'migration is created for user model with namespace' do
+          assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb"
+        end
+
+        test 'migration file for user model with namespace contains rails version' do
+          if Rails::VERSION::MAJOR >= 5
+            assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}/
+          else
+            assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb"
+          end
+        end
+
+        test 'add primary key type with rails 5 when specified in rails generator' do
+          run_generator %W[#{user_class} auth --primary_key_type=uuid --force]
+          if Rails::VERSION::MAJOR >= 5
+            assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /create_table\(:#{table_name}, id: :uuid\) do/
+          else
+            assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /create_table\(:#{table_name}\) do/
+          end
         end
       end
     end
@@ -68,18 +72,32 @@ module DeviseTokenAuth
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        # account for rails version 5
-        active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
+        case DEVISE_TOKEN_AUTH_ORM
+        when :active_record
+          # account for rails version 5
+          active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
 
-        @f = File.open(@fname, 'w') do |f|
-          f.write <<-RUBY
-            class User < #{active_record_needle}
+          @f = File.open(@fname, 'w') do |f|
+            f.write <<-RUBY
+              class User < #{active_record_needle}
 
-              def whatever
-                puts 'whatever'
+                def whatever
+                  puts 'whatever'
+                end
               end
-            end
-          RUBY
+            RUBY
+          end
+        when :mongoid
+          @f = File.open(@fname, 'w') do |f|
+            f.write <<-'RUBY'
+              class User
+
+                def whatever
+                  puts 'whatever'
+                end
+              end
+            RUBY
+          end
         end
 
         run_generator
@@ -141,10 +159,6 @@ module DeviseTokenAuth
           run_generator %w[Mang mangs]
         end
 
-        test 'migration is created' do
-          assert_migration 'db/migrate/devise_token_auth_create_mangs.rb'
-        end
-
         test 'route method is appended to routes file' do
           assert_file 'config/routes.rb' do |routes|
             assert_match(/mount_devise_token_auth_for 'Mang', at: 'mangs'/, routes)
@@ -155,6 +169,12 @@ module DeviseTokenAuth
           assert_file 'config/routes.rb' do |routes|
             assert_match(/as :mang do/, routes)
             assert_match(/# Define routes for Mang within this block./, routes)
+          end
+        end
+
+        if DEVISE_TOKEN_AUTH_ORM == :active_record
+          test 'migration is created' do
+            assert_migration 'db/migrate/devise_token_auth_create_mangs.rb'
           end
         end
       end

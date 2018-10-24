@@ -34,7 +34,7 @@ module DeviseTokenAuth
     def show
       @resource = resource_class.unlock_access_by_token(params[:unlock_token])
 
-      if @resource && @resource.id
+      if @resource.persisted?
         client_id, token = @resource.create_token
         @resource.save!
         yield @resource if block_given?

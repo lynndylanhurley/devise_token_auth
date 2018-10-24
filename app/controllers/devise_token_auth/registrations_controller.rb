@@ -30,40 +30,35 @@ module DeviseTokenAuth
       # if whitelist is set, validate redirect_url against whitelist
       return render_create_error_redirect_url_not_allowed if blacklisted_redirect_url?
 
-      begin
-        # override email confirmation, must be sent manually from ctrl
-        resource_class.set_callback('create', :after, :send_on_create_confirmation_instructions)
-        resource_class.skip_callback('create', :after, :send_on_create_confirmation_instructions)
+      # override email confirmation, must be sent manually from ctrl
+      resource_class.set_callback('create', :after, :send_on_create_confirmation_instructions)
+      resource_class.skip_callback('create', :after, :send_on_create_confirmation_instructions)
 
-        if @resource.respond_to? :skip_confirmation_notification!
-          # Fix duplicate e-mails by disabling Devise confirmation e-mail
-          @resource.skip_confirmation_notification!
-        end
+      if @resource.respond_to? :skip_confirmation_notification!
+        # Fix duplicate e-mails by disabling Devise confirmation e-mail
+        @resource.skip_confirmation_notification!
+      end
 
-        if @resource.save
-          yield @resource if block_given?
+      if @resource.save
+        yield @resource if block_given?
 
-          if @resource.confirmed?
-            # email auth has been bypassed, authenticate user
-            @client_id, @token = @resource.create_token
-            @resource.save!
-            update_auth_header
-          else
-            # user will require email authentication
-            @resource.send_confirmation_instructions(
-              client_config: params[:config_name],
-              redirect_url: @redirect_url
-            )
-          end
-
-          render_create_success
+        if @resource.confirmed?
+          # email auth has been bypassed, authenticate user
+          @client_id, @token = @resource.create_token
+          @resource.save!
+          update_auth_header
         else
-          clean_up_passwords @resource
-          render_create_error
+          # user will require email authentication
+          @resource.send_confirmation_instructions(
+            client_config: params[:config_name],
+            redirect_url: @redirect_url
+          )
         end
-      rescue ActiveRecord::RecordNotUnique
+
+        render_create_success
+      else
         clean_up_passwords @resource
-        render_create_error_email_already_exists
+        render_create_error
       end
     end
 
@@ -143,15 +138,6 @@ module DeviseTokenAuth
         data:   resource_data,
         errors: resource_errors
       }, status: 422
-    end
-
-    def render_create_error_email_already_exists
-      response = {
-        status: 'error',
-        data:   resource_data
-      }
-      message = I18n.t('devise_token_auth.registrations.email_already_exists', email: @resource.email)
-      render_error(422, message, response)
     end
 
     def render_update_success
