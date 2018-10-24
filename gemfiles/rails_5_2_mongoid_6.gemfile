@@ -2,10 +2,9 @@
 
 source "https://rubygems.org"
 
-gem "rails", "~> 5.0.7"
-gem "sqlite3"
-gem "mysql2"
-gem "pg"
+gem "rails", "5.2.1"
+gem "mongoid", "6.4.1"
+gem "mongoid-locker", "~> 1"
 
 group :development, :test do
   gem "attr_encrypted"

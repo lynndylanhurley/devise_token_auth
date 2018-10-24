@@ -47,7 +47,8 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
 
     describe 'with invalid user' do
       before do
-        @resource.update_column :email, 'invalid'
+        @resource.update_column(:email, 'invalid') if DEVISE_TOKEN_AUTH_ORM == :active_record
+        @resource.set(email: 'invalid') if DEVISE_TOKEN_AUTH_ORM == :mongoid
       end
 
       test 'request should raise invalid model error' do

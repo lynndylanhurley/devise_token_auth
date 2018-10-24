@@ -5,7 +5,7 @@ module DeviseTokenAuth
     def show
       @resource = resource_class.confirm_by_token(params[:confirmation_token])
 
-      if @resource && @resource.id
+      if @resource.persisted?
         expiry = nil
         if defined?(@resource.sign_in_count) && @resource.sign_in_count > 0
           expiry = (Time.zone.now + 1.second).to_i

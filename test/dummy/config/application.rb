@@ -2,10 +2,25 @@
 
 require File.expand_path('boot', __dir__)
 
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+require 'sprockets/railtie'
+require 'rails/generators'
 require 'rack/cors'
-require 'rails/all'
 
 Bundler.require(*Rails.groups)
+
+begin
+  case DEVISE_TOKEN_AUTH_ORM
+  when :active_record
+    require 'active_record/railtie'
+  when :mongoid
+    require 'mongoid'
+    require 'mongoid-locker'
+  end
+rescue LoadError
+end
+
 require 'devise_token_auth'
 
 module Dummy
@@ -22,5 +37,12 @@ module Dummy
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     config.autoload_paths << Rails.root.join('lib')
+    config.autoload_paths += ["#{config.root}/app/#{DEVISE_TOKEN_AUTH_ORM}"]
+
+    if DEVISE_TOKEN_AUTH_ORM == :mongoid
+      Mongoid.configure do |config|
+        config.load! Rails.root.join('./config/mongoid.yml')
+      end
+    end
   end
 end

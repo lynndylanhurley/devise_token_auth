@@ -5,7 +5,7 @@ require 'test_helper'
 class Custom::ConfirmationsControllerTest < ActionController::TestCase
   describe Custom::ConfirmationsController do
     include CustomControllersRoutes
-    
+
     before do
       @redirect_url = Faker::Internet.url
       @new_user = create(:user)

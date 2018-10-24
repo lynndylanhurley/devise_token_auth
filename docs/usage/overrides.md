@@ -44,7 +44,6 @@ To customize json rendering, implement the following protected controller method
 * render_create_error_redirect_url_not_allowed
 * render_create_success
 * render_create_error
-* render_create_error_email_already_exists
 * render_update_success
 * render_update_error
 * render_update_error_user_not_found

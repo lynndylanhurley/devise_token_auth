@@ -1,13 +1,12 @@
-# frozen_string_literal: true
+module FavoriteColor
+  extend ActiveSupport::Concern
 
-class User < ActiveRecord::Base
-  include DeviseTokenAuth::Concerns::User
-
-  validates :operating_thetan, numericality: true, allow_nil: true
-  validate :ensure_correct_favorite_color
-
+  included do
+    validates :operating_thetan, numericality: true, allow_nil: true
+    validate :ensure_correct_favorite_color
+  end
+  
   def ensure_correct_favorite_color
-
     if favorite_color && (favorite_color != '')
       unless ApplicationHelper::COLOR_NAMES.any?{ |s| s.casecmp(favorite_color)==0 }
         matches = ApplicationHelper::COLOR_SEARCH.search(favorite_color)
