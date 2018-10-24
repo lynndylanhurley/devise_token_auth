@@ -44,7 +44,7 @@ module DeviseTokenAuth
     # this is where users arrive after visiting the password reset confirmation link
     def edit
       # if a user is not found, return nil
-      @resource = with_reset_password_token(resource_params[:reset_password_token])
+      @resource = resource_class.with_reset_password_token(resource_params[:reset_password_token])
 
       if @resource && @resource.reset_password_period_valid?
         client_id, token = @resource.create_token
@@ -176,13 +176,6 @@ module DeviseTokenAuth
 
     def password_resource_params
       params.permit(*params_for_resource(:account_update))
-    end
-
-    def with_reset_password_token token
-      recoverable = resource_class.with_reset_password_token(token)
-
-      recoverable.reset_password_token = token if recoverable && recoverable.reset_password_token.present?
-      recoverable
     end
 
     def render_not_found_error
