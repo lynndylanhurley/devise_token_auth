@@ -100,6 +100,10 @@ end
 
 You may be interested in [GrapeTokenAuth](https://github.com/mcordell/grape_token_auth) or [GrapeDeviseTokenAuth](https://github.com/mcordell/grape_devise_token_auth).
 
+### How can I use this gem with Solidus/Spree?
+
+You may be interested in [solidus_devise_token_auth](https://github.com/skycocker/solidus_devise_token_auth).
+
 ### What's the reset password flow?
 
 This is the overall workflow for a User to reset their password:
