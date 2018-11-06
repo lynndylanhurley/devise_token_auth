@@ -1,0 +1,11 @@
+plugins:
+  duplication:
+    enabled: true
+  brakeman:
+    enabled: true
+  rubocop:
+    enabled: false
+  flog:
+    enabled: true
+    config:
+      score_threshold: 30.0
