@@ -28,7 +28,7 @@ bundle exec guard
 
 Guard will re-run each test suite when changes are made to its corresponding files.
 
-To run **just one test**: Flavio Castelli blogged about [how to execute a single unit test (or even a single test method)](https://flavio.castelli.me/2010/05/28/rails_execute_single_test/) instead of running the complete unit test suite.
+To run **just one test**: Flavio Castelli blogged about [how to execute a single unit test (or even a single test method)](https://flavio.castelli.me/2010/05/28/how-to-run-a-single-rails-unit-test/) instead of running the complete unit test suite.
 
 To run the full **test suite** with the guard and the [appraisal](https://github.com/thoughtbot/appraisal) against `ActiveRecord`:
 
