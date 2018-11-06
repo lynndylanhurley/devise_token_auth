@@ -23,18 +23,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @is_batch_request ||= nil
   end
 
-  def ensure_pristine_resource
-    if @resource.changed?
-      # Stash pending changes in the resource before reloading.
-      changes = @resource.changes
-      @resource.reload
-    end
-    yield
-  ensure
-    # Reapply pending changes
-    @resource.assign_attributes(changes) if changes
-  end
-
   # user auth
   def set_user_by_token(mapping = nil)
     # determine target authentication class
@@ -130,18 +118,16 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   private
 
   def refresh_headers
-    ensure_pristine_resource do
-      # Lock the user record during any auth_header updates to ensure
-      # we don't have write contention from multiple threads
-      @resource.with_lock do
-        # should not append auth header if @resource related token was
-        # cleared by sign out in the meantime
-        return if @used_auth_by_token && @resource.tokens[@client_id].nil?
+    # Lock the user record during any auth_header updates to ensure
+    # we don't have write contention from multiple threads
+    @resource.with_lock do
+      # should not append auth header if @resource related token was
+      # cleared by sign out in the meantime
+      return if @used_auth_by_token && @resource.tokens[@client_id].nil?
 
-        # update the response header
-        response.headers.merge!(auth_header_from_batch_request)
-      end # end lock
-    end # end ensure_pristine_resource
+      # update the response header
+      response.headers.merge!(auth_header_from_batch_request)
+    end # end lock
   end
 
   def is_batch_request?(user, client_id)
