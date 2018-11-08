@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -7,15 +9,15 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class Overrides::RegistrationsControllerTest < ActionDispatch::IntegrationTest
+  include OverridesControllersRoutes
+
   describe Overrides::RegistrationsController do
     before do
-      @existing_user = evil_users(:confirmed_email_user)
-      @existing_user.skip_confirmation!
-      @existing_user.save!
+      @existing_user = create(:user, :confirmed)
 
       post '/evil_user_auth/sign_in',
            params: { email: @existing_user.email,
-                     password: 'secret123' }
+                     password: @existing_user.password }
 
       @resource = assigns(:resource)
       @data = JSON.parse(response.body)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -33,7 +35,7 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
 
     describe 'Unlocking user' do
       before do
-        @resource = lockable_users(:unlocked_user)
+        @resource = create(:lockable_user)
       end
 
       describe 'request unlock without email' do

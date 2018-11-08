@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -7,10 +9,12 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class Overrides::ConfirmationsControllerTest < ActionDispatch::IntegrationTest
+  include OverridesControllersRoutes
+
   describe Overrides::ConfirmationsController do
     before do
       @redirect_url = Faker::Internet.url
-      @new_user = evil_users(:unconfirmed_email_user)
+      @new_user = create(:user)
 
       # generate + send email
       @new_user.send_confirmation_instructions(redirect_url: @redirect_url)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -7,41 +9,34 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
+  include OverridesControllersRoutes
+
   describe Overrides::PasswordsController do
     before do
-      @resource = evil_users(:confirmed_email_user)
-      @redirect_url = Faker::Internet.url
+      @resource = create(:user, :confirmed)
 
       post '/evil_user_auth/password',
            params: {
              email: @resource.email,
-             redirect_url: @redirect_url
+             redirect_url: Faker::Internet.url
            }
 
-      @mail = ActionMailer::Base.deliveries.last
+      mail = ActionMailer::Base.deliveries.last
       @resource.reload
 
-      @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
-      @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=([^&]*)&/)[1])
-      @mail_reset_token  = @mail.body.match(/reset_password_token=(.*)\"/)[1]
+      mail_reset_token  = mail.body.match(/reset_password_token=(.*)\"/)[1]
+      mail_redirect_url = CGI.unescape(mail.body.match(/redirect_url=([^&]*)&/)[1])
 
       get '/evil_user_auth/password/edit',
-          params: { reset_password_token: @mail_reset_token,
-                    redirect_url: @mail_redirect_url }
+          params: {
+            reset_password_token: mail_reset_token,
+            redirect_url: mail_redirect_url
+          }
 
       @resource.reload
 
-      raw_qs = response.location.split('?')[1]
-      @qs = Rack::Utils.parse_nested_query(raw_qs)
-
-      @access_token   = @qs['access-token']
-      @client         = @qs['client']
-      @client_id      = @qs['client_id']
-      @expiry         = @qs['expiry']
-      @override_proof = @qs['override_proof']
-      @reset_password = @qs['reset_password']
-      @token          = @qs['token']
-      @uid            = @qs['uid']
+      _, raw_query_string = response.location.split('?')
+      @query_string = Rack::Utils.parse_nested_query(raw_query_string)
     end
 
     test 'response should have success redirect status' do
@@ -49,18 +44,21 @@ class Overrides::PasswordsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test 'response should contain auth params + override proof' do
-      assert @access_token
-      assert @client
-      assert @client_id
-      assert @expiry
-      assert @override_proof
-      assert @reset_password
-      assert @token
-      assert @uid
+      assert @query_string['access-token']
+      assert @query_string['client']
+      assert @query_string['client_id']
+      assert @query_string['expiry']
+      assert @query_string['override_proof']
+      assert @query_string['reset_password']
+      assert @query_string['token']
+      assert @query_string['uid']
     end
 
     test 'override proof is correct' do
-      assert_equal @override_proof, Overrides::PasswordsController::OVERRIDE_PROOF
+      assert_equal(
+        @query_string['override_proof'],
+        Overrides::PasswordsController::OVERRIDE_PROOF
+      )
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -330,7 +332,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should not have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do
@@ -358,7 +360,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should not have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do
@@ -387,7 +389,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do
@@ -401,7 +403,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
     describe 'Existing users' do
       before do
-        @existing_user = users(:confirmed_email_user)
+        @existing_user = create(:user, :confirmed)
 
         post '/auth',
              params: { email: @existing_user.email,
@@ -418,7 +420,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       end
 
       test 'user should have been created' do
-        assert_nil @resource.id
+        refute @resource.persisted?
       end
 
       test 'error should be returned in the response' do
@@ -429,7 +431,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
     describe 'Destroy user account' do
       describe 'success' do
         before do
-          @existing_user = users(:confirmed_email_user)
+          @existing_user = create(:user, :confirmed)
           @auth_headers  = @existing_user.create_new_auth_token
           @client_id     = @auth_headers['client']
 
@@ -476,7 +478,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
     describe 'Update user account' do
       describe 'existing user' do
         before do
-          @existing_user = users(:confirmed_email_user)
+          @existing_user = create(:user, :confirmed)
           @auth_headers  = @existing_user.create_new_auth_token
           @client_id     = @auth_headers['client']
 
@@ -524,13 +526,13 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
             end
 
             test 'Supply current password' do
-              @request_params[:current_password] = 'secret123'
-              @request_params[:email] = 'new.email@example.com'
+              @request_params[:current_password] = @existing_user.password
+              @request_params[:email] = @existing_user.email
 
               put '/auth', params: @request_params, headers: @auth_headers
               @data = JSON.parse(response.body)
               @existing_user.reload
-              assert_equal @existing_user.email, 'new.email@example.com'
+              assert_equal @existing_user.email, @request_params[:email]
             end
           end
 
@@ -693,7 +695,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       describe 'invalid user' do
         before do
-          @existing_user = users(:confirmed_email_user)
+          @existing_user = create(:user, :confirmed)
           @auth_headers  = @existing_user.create_new_auth_token
           @client_id     = @auth_headers['client']
 
@@ -730,7 +732,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
     describe 'Ouath user has existing email' do
       before do
-        @existing_user = users(:duplicate_email_facebook_user)
+        @existing_user = create(:user, :facebook, :confirmed)
 
         post '/auth',
              params: { email: @existing_user.email,

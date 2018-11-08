@@ -1,17 +1,24 @@
 language: ruby
 cache: bundler
 sudo: false
+services:
+  - mongodb
+bundler_args: --without development
+
+before_install:
+  - gem install bundler
 
 rvm:
-  - 2.2.8
-  - 2.3.1
-  - 2.4.2
-  - 2.5.0
+  - 2.2.10
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
 
 gemfile:
   - gemfiles/rails_4_2.gemfile
   - gemfiles/rails_5_0.gemfile
   - gemfiles/rails_5_1.gemfile
+  - gemfiles/rails_5_2.gemfile
 
 env:
   global:
@@ -21,18 +28,64 @@ env:
     - DB=mysql
     - DB=postgresql
 
-script:
-  - bundle exec rake --trace db:migrate
-  - bundle exec rake
+matrix:
+  include:
+  - rvm: 2.2.10
+    gemfile: gemfiles/rails_4_2_mongoid_5.gemfile
+    env: DEVISE_TOKEN_AUTH_ORM=mongoid
+  - rvm: 2.3.7
+    gemfile: gemfiles/rails_5_1_mongoid_6.gemfile
+    env: DEVISE_TOKEN_AUTH_ORM=mongoid
+  - rvm: 2.4.4
+    gemfile: gemfiles/rails_5_1_mongoid_7.gemfile
+    env: DEVISE_TOKEN_AUTH_ORM=mongoid
+  - rvm: 2.5.1
+    gemfile: gemfiles/rails_5_2_mongoid_6.gemfile
+    env: DEVISE_TOKEN_AUTH_ORM=mongoid
+  - rvm: 2.5.1
+    gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
+    env: DEVISE_TOKEN_AUTH_ORM=mongoid
+  - rvm: 2.5.1
+    gemfile: gemfiles/rails_5_2_stable_mongoid_6.gemfile
+    env: DEVISE_TOKEN_AUTH_ORM=mongoid
+  - name: Code Climate Test Coverage
+    rmv: 2.5.1
+    env:
+      - CC_TEST_REPORTER_ID=44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d
+      - GEMFILE_AR=gemfiles/rails_5_1.gemfile
+      - GEMFILE_MONGOID=gemfiles/rails_5_1_mongoid_7.gemfile
+    script:
+      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - chmod +x ./cc-test-reporter
+      - ./cc-test-reporter before-build
+      # with ActiveRecord
+      - bundle install --jobs=3 --retry=3 --gemfile $GEMFILE_AR
+      - BUNDLE_GEMFILE=$GEMFILE_AR bundle exec rake --trace db:migrate
+      - BUNDLE_GEMFILE=$GEMFILE_AR bundle exec rake
+      - ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.active_record.json coverage/.resultset.json
+      # with Mongoid
+      - bundle install --jobs=3 --retry=3 --gemfile $GEMFILE_MONGOID
+      - BUNDLE_GEMFILE=$GEMFILE_MONGOID DEVISE_TOKEN_AUTH_ORM=mongoid bundle exec rake
+      - ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.mongoid.json coverage/.resultset.json
+      # merge test results
+      - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then
+          ./cc-test-reporter sum-coverage coverage/codeclimate.active_record.json coverage/codeclimate.mongoid.json;
+          ./cc-test-reporter upload-coverage;
+        fi
+  exclude:
+    - rvm: 2.2.10
+      gemfile: gemfiles/rails_5_2.gemfile
+  fast_finish: true
+  allow_failures:
+    - gemfile: gemfiles/rails_5_2.gemfile
+    - gemfile: gemfiles/rails_5_2_mongoid_6.gemfile
+    - gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
+    - gemfile: gemfiles/rails_5_2_stable_mongoid_6.gemfile
 
 before_script:
-  - mysql -e 'create database devise_token_auth_test'
-  - psql -c 'create database devise_token_auth_test' -U postgres
+  - if [[ $DB == "mysql" ]]; then mysql -e 'create database devise_token_auth_test'; fi
+  - if [[ $DB == "postgresql" ]]; then psql -c 'create database devise_token_auth_test' -U postgres; fi
 
-addons:
-  postgresql: "9.4"
-  code_climate:
-    - repo_token: 44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d
-
-after_success:
-  - bundle exec codeclimate-test-reporter
+script:
+  - if [[ $DEVISE_TOKEN_AUTH_ORM == "" ]]; then bundle exec rake --trace db:migrate; fi
+  - bundle exec rake

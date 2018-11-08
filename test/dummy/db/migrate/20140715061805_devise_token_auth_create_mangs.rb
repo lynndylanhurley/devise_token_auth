@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 include MigrationDatabaseHelper
 
 class DeviseTokenAuthCreateMangs < ActiveRecord::Migration[4.2]
@@ -5,19 +7,19 @@ class DeviseTokenAuthCreateMangs < ActiveRecord::Migration[4.2]
     create_table(:mangs) do |t|
       ## Database authenticatable
       t.string :email
-      t.string :encrypted_password, :null => false, :default => ""
+      t.string :encrypted_password, null: false, default: ''
 
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
       t.string   :reset_password_redirect_url
-      t.boolean  :allow_password_change, :default => false
+      t.boolean  :allow_password_change, default: false
 
       ## Rememberable
       t.datetime :remember_created_at
 
       ## Trackable
-      t.integer  :sign_in_count, :default => 0, :null => false
+      t.integer  :sign_in_count, default: 0, null: false
       t.datetime :current_sign_in_at
       t.datetime :last_sign_in_at
       t.string   :current_sign_in_ip
@@ -41,7 +43,7 @@ class DeviseTokenAuthCreateMangs < ActiveRecord::Migration[4.2]
 
       ## unique oauth id
       t.string :provider
-      t.string :uid, :null => false, :default => ""
+      t.string :uid, null: false, default: ''
 
       ## Tokens
       if json_supported_database?
@@ -54,9 +56,9 @@ class DeviseTokenAuthCreateMangs < ActiveRecord::Migration[4.2]
     end
 
     add_index :mangs, :email
-    add_index :mangs, [:uid, :provider],     :unique => true
-    add_index :mangs, :reset_password_token, :unique => true
-    add_index :mangs, :confirmation_token,   :unique => true
+    add_index :mangs, [:uid, :provider],     unique: true
+    add_index :mangs, :reset_password_token, unique: true
+    add_index :mangs, :confirmation_token,   unique: true
     # add_index :mangs, :unlock_token,         :unique => true
   end
 end

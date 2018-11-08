@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class Custom::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
   describe Custom::OmniauthCallbacksController do
+    include CustomControllersRoutes
+
     setup do
       OmniAuth.config.test_mode = true
       OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new(

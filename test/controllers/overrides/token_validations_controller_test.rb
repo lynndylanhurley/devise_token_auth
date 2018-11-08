@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -7,11 +9,11 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class Overrides::TokenValidationsControllerTest < ActionDispatch::IntegrationTest
+  include OverridesControllersRoutes
+
   describe Overrides::TokenValidationsController do
     before do
-      @resource = evil_users(:confirmed_email_user)
-      @resource.skip_confirmation!
-      @resource.save!
+      @resource = create(:user, :confirmed)
 
       @auth_headers = @resource.create_new_auth_token
 

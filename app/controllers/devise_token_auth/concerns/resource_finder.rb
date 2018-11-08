@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth::Concerns::ResourceFinder
   extend ActiveSupport::Concern
   include DeviseTokenAuth::Controllers::Helpers
@@ -18,21 +20,20 @@ module DeviseTokenAuth::Concerns::ResourceFinder
   end
 
   def find_resource(field, value)
-    # fix for mysql default case insensitivity
-    q = "#{field.to_s} = ? AND provider='#{provider.to_s}'"
-    if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
-      q = "BINARY " + q
-    end
-
-    @resource = resource_class.where(q, value).first
+    @resource = if resource_class.try(:connection_config).try(:[], :adapter).try(:include?, 'mysql')
+                  # fix for mysql default case insensitivity
+                  resource_class.where("BINARY #{field} = ? AND provider= ?", value, provider).first
+                else
+                  resource_class.dta_find_by(field => value, 'provider' => provider)
+                end
   end
 
-  def resource_class(m=nil)
-    if m
-      mapping = Devise.mappings[m]
-    else
-      mapping = Devise.mappings[resource_name] || Devise.mappings.values.first
-    end
+  def resource_class(m = nil)
+    mapping = if m
+                Devise.mappings[m]
+              else
+                Devise.mappings[resource_name] || Devise.mappings.values.first
+              end
 
     mapping.to
   end

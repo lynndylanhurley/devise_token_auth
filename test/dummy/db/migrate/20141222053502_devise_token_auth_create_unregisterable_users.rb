@@ -1,25 +1,27 @@
+# frozen_string_literal: true
+
 include MigrationDatabaseHelper
 
 class DeviseTokenAuthCreateUnregisterableUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:unregisterable_users) do |t|
       ## Required
-      t.string :provider, :null => false
-      t.string :uid, :null => false, :default => ""
+      t.string :provider, null: false
+      t.string :uid, null: false, default: ''
 
       ## Database authenticatable
-      t.string :encrypted_password, :null => false, :default => ""
+      t.string :encrypted_password, null: false, default: ''
 
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
-      t.boolean  :allow_password_change, :default => false
+      t.boolean  :allow_password_change, default: false
 
       ## Rememberable
       t.datetime :remember_created_at
 
       ## Trackable
-      t.integer  :sign_in_count, :default => 0, :null => false
+      t.integer  :sign_in_count, default: 0, null: false
       t.datetime :current_sign_in_at
       t.datetime :last_sign_in_at
       t.string   :current_sign_in_ip
@@ -53,8 +55,8 @@ class DeviseTokenAuthCreateUnregisterableUsers < ActiveRecord::Migration[4.2]
     end
 
     add_index :unregisterable_users, :email
-    add_index :unregisterable_users, [:uid, :provider],     :unique => true
-    add_index :unregisterable_users, :reset_password_token, :unique => true
+    add_index :unregisterable_users, [:uid, :provider],     unique: true
+    add_index :unregisterable_users, :reset_password_token, unique: true
     # add_index :unregisterable_users, :confirmation_token,   :unique => true
     # add_index :unregisterable_users, :unlock_token,         :unique => true
   end

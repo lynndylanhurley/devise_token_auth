@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DemoGroupController < ApplicationController
   devise_token_auth_group :member, contains: [:user, :mang]
   before_action :authenticate_member!

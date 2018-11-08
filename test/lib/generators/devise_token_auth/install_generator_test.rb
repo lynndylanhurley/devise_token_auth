@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'fileutils'
-require 'generators/devise_token_auth/install_generator'
+require 'generators/devise_token_auth/install_generator' if DEVISE_TOKEN_AUTH_ORM == :active_record
+require 'generators/devise_token_auth/install_mongoid_generator' if DEVISE_TOKEN_AUTH_ORM == :mongoid
 
 module DeviseTokenAuth
   class InstallGeneratorTest < Rails::Generators::TestCase
-    tests InstallGenerator
+    tests InstallGenerator        if DEVISE_TOKEN_AUTH_ORM == :active_record
+    tests InstallMongoidGenerator if DEVISE_TOKEN_AUTH_ORM == :mongoid
     destination Rails.root.join('tmp/generators')
 
     describe 'default values, clean install' do
@@ -24,20 +28,31 @@ module DeviseTokenAuth
         assert_file 'config/initializers/devise_token_auth.rb'
       end
 
-      test 'migration is created' do
-        assert_migration 'db/migrate/devise_token_auth_create_users.rb'
-      end
-
-      test 'migration file contains rails version' do
-        if Rails::VERSION::MAJOR >= 5
-          assert_migration 'db/migrate/devise_token_auth_create_users.rb', /#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}/
-        else
-          assert_migration 'db/migrate/devise_token_auth_create_users.rb'
-        end
-      end
-
       test 'subsequent runs raise no errors' do
         run_generator
+      end
+
+      if DEVISE_TOKEN_AUTH_ORM == :active_record
+        test 'migration is created' do
+          assert_migration 'db/migrate/devise_token_auth_create_users.rb'
+        end
+
+        test 'migration file contains rails version' do
+          if Rails::VERSION::MAJOR >= 5
+            assert_migration 'db/migrate/devise_token_auth_create_users.rb', /#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}/
+          else
+            assert_migration 'db/migrate/devise_token_auth_create_users.rb'
+          end
+        end
+
+        test 'add primary key type with rails 5 when specified in rails generator' do
+          run_generator %w[--primary_key_type=uuid --force]
+          if Rails::VERSION::MAJOR >= 5
+            assert_migration 'db/migrate/devise_token_auth_create_users.rb', /create_table\(:users, id: :uuid\) do/
+          else
+            assert_migration 'db/migrate/devise_token_auth_create_users.rb', /create_table\(:users\) do/
+          end
+        end
       end
     end
 
@@ -45,26 +60,40 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "models")
+        @dir = File.join(destination_root, 'app', 'models')
 
-        @fname = File.join(@dir, "user.rb")
+        @fname = File.join(@dir, 'user.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        # account for rails version 5
-        active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
+        case DEVISE_TOKEN_AUTH_ORM
+        when :active_record
+          # account for rails version 5
+          active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
 
-        @f = File.open(@fname, 'w') {|f|
-          f.write <<-RUBY
-            class User < #{active_record_needle}
+          @f = File.open(@fname, 'w') do |f|
+            f.write <<-RUBY
+              class User < #{active_record_needle}
 
-              def whatever
-                puts 'whatever'
+                def whatever
+                  puts 'whatever'
+                end
               end
-            end
-          RUBY
-        }
+            RUBY
+          end
+        when :mongoid
+          @f = File.open(@fname, 'w') do |f|
+            f.write <<-'RUBY'
+              class User
+
+                def whatever
+                  puts 'whatever'
+                end
+              end
+            RUBY
+          end
+        end
 
         run_generator
       end
@@ -84,25 +113,24 @@ module DeviseTokenAuth
       end
     end
 
-
     describe 'routes' do
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "config")
+        @dir = File.join(destination_root, 'config')
 
-        @fname = File.join(@dir, "routes.rb")
+        @fname = File.join(@dir, 'routes.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             Rails.application.routes.draw do
               patch '/chong', to: 'bong#index'
             end
           RUBY
-        }
+        end
 
         run_generator
       end
@@ -123,11 +151,7 @@ module DeviseTokenAuth
 
       describe 'subsequent models' do
         before do
-          run_generator %w(Mang mangs)
-        end
-
-        test 'migration is created' do
-          assert_migration 'db/migrate/devise_token_auth_create_mangs.rb'
+          run_generator %w[Mang mangs]
         end
 
         test 'route method is appended to routes file' do
@@ -142,6 +166,12 @@ module DeviseTokenAuth
             assert_match(/# Define routes for Mang within this block./, routes)
           end
         end
+
+        if DEVISE_TOKEN_AUTH_ORM == :active_record
+          test 'migration is created' do
+            assert_migration 'db/migrate/devise_token_auth_create_mangs.rb'
+          end
+        end
       end
     end
 
@@ -149,14 +179,14 @@ module DeviseTokenAuth
       setup :prepare_destination
 
       before do
-        @dir = File.join(destination_root, "app", "controllers")
+        @dir = File.join(destination_root, 'app', 'controllers')
 
-        @fname = File.join(@dir, "application_controller.rb")
+        @fname = File.join(@dir, 'application_controller.rb')
 
         # make dir if not exists
         FileUtils.mkdir_p(@dir)
 
-        @f = File.open(@fname, 'w') {|f|
+        @f = File.open(@fname, 'w') do |f|
           f.write <<-RUBY
             class ApplicationController < ActionController::Base
               def whatever
@@ -164,7 +194,7 @@ module DeviseTokenAuth
               end
             end
           RUBY
-        }
+        end
 
         run_generator
       end

@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module DeviseTokenAuth
   class TokenValidationsController < DeviseTokenAuth::ApplicationController
-    skip_before_action :assert_is_devise_resource!, :only => [:validate_token]
-    before_action :set_user_by_token, :only => [:validate_token]
+    skip_before_action :assert_is_devise_resource!, only: [:validate_token]
+    before_action :set_user_by_token, only: [:validate_token]
 
     def validate_token
       # @resource will have been set by set_user_by_token concern
@@ -23,7 +25,7 @@ module DeviseTokenAuth
     end
 
     def render_validate_token_error
-      render_error(401, I18n.t("devise_token_auth.token_validations.invalid"))
+      render_error(401, I18n.t('devise_token_auth.token_validations.invalid'))
     end
   end
 end

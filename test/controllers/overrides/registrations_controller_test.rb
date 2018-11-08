@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -7,10 +9,12 @@ require 'test_helper'
 #  was the appropriate message delivered in the json payload?
 
 class Overrides::RegistrationsControllerTest < ActionDispatch::IntegrationTest
+  include OverridesControllersRoutes
+
   describe Overrides::RegistrationsController do
     describe 'Succesful Registration update' do
-      setup do
-        @existing_user  = evil_users(:confirmed_email_user)
+      before do
+        @existing_user  = create(:user, :confirmed)
         @auth_headers   = @existing_user.create_new_auth_token
         @client_id      = @auth_headers['client']
         @favorite_color = 'pink'

@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg?branch=master)](https://travis-ci.org/lynndylanhurley/devise_token_auth)
 [![Code Climate](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/badges/gpa.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Test Coverage](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/badges/coverage.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/coverage)
-[![Dependency Status](https://gemnasium.com/lynndylanhurley/devise_token_auth.svg)](https://gemnasium.com/lynndylanhurley/devise_token_auth)
 [![Downloads](https://img.shields.io/gem/dt/devise_token_auth.svg)](https://rubygems.org/gems/devise_token_auth)
 [![Backers on Open Collective](https://opencollective.com/devise_token_auth/backers/badge.svg)](#backers)
 [![Sponsors on Open Collective](https://opencollective.com/devise_token_auth/sponsors/badge.svg)](#sponsors)
@@ -50,7 +49,7 @@ Then install the gem using bundle:
 bundle install
 ~~~
 
-## [Docs](https://maicolben.gitbooks.io/devise-token-auth/content/docs/config/)
+## [Docs](https://devise-token-auth.gitbook.io/devise-token-auth)
 
 ## Need help?
 
@@ -58,7 +57,7 @@ Please use [StackOverflow](https://stackoverflow.com/questions/tagged/devise-tok
 
 Please open GitHub issues for bugs and enhancements only, not general help requests. Please search previous issues (and Google and StackOverflow) before creating a new issue.
 
-Please read the [ISSUE_TEMPLATE.md] before posting issues.
+Please read the [issue template](https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/ISSUE_TEMPLATE.md) before posting issues.
 
 ## [FAQ](docs/faq.md)
 

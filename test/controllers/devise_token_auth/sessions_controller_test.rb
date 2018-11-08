@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 #  was the web request successful?
@@ -10,9 +12,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::SessionsController do
     describe 'Confirmed user' do
       before do
-        @existing_user = users(:confirmed_email_user)
-        @existing_user.skip_confirmation!
-        @existing_user.save!
+        @existing_user = create(:user, :with_nickname, :confirmed)
       end
 
       describe 'success' do
@@ -26,7 +26,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           post :create,
                params: {
                  email: @existing_user.email,
-                 password: 'secret123'
+                 password: @existing_user.password
                }
 
           @resource = assigns(:resource)
@@ -82,7 +82,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
             @user_session_params = {
               email: @existing_user.email,
-              password: 'secret123'
+              password: @existing_user.password
             }
           end
 
@@ -110,7 +110,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
             end
 
             oldest_token, _ = @existing_user.reload.tokens \
-                                .min_by { |cid, v| v[:expiry] || v["expiry"] }
+                                .min_by { |cid, v| v[:expiry] || v['expiry'] }
 
             post :create, params: @user_session_params
 
@@ -128,7 +128,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           get :new,
               params: { nickname: @existing_user.nickname,
-                        password: 'secret123' }
+                        password: @existing_user.password }
           @data = JSON.parse(response.body)
         end
 
@@ -145,7 +145,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           request.headers.merge!(
             'email' => @existing_user.email,
-            'password' => 'secret123'
+            'password' => @existing_user.password
           )
 
           head :create
@@ -161,7 +161,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           post :create,
                params: { nickname: @existing_user.nickname,
-                         password: 'secret123' }
+                         password: @existing_user.password }
           @data = JSON.parse(response.body)
         end
 
@@ -273,7 +273,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @resource_class = User
           @request_params = {
             email: @existing_user.email.upcase,
-            password: 'secret123'
+            password: @existing_user.password
           }
         end
 
@@ -296,7 +296,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @request_params = {
             # adding whitespace before and after email
             email: " #{@existing_user.email}  ",
-            password: 'secret123'
+            password: @existing_user.password
           }
         end
 
@@ -316,9 +316,9 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
     describe 'Unconfirmed user' do
       before do
-        @unconfirmed_user = users(:unconfirmed_email_user)
+        @unconfirmed_user = create(:user)
         post :create, params: { email: @unconfirmed_user.email,
-                                password: 'secret123' }
+                                password: @unconfirmed_user.password }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
@@ -339,10 +339,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       before do
         @original_duration = Devise.allow_unconfirmed_access_for
         Devise.allow_unconfirmed_access_for = 3.days
-        @recent_unconfirmed_user = users(:recent_unconfirmed_email_user)
+        @recent_unconfirmed_user = create(:user)
         post :create,
              params: { email: @recent_unconfirmed_user.email,
-                       password: 'secret123' }
+                       password: @recent_unconfirmed_user.password }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
@@ -362,18 +362,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
     describe 'Unconfirmed user with expired unconfirmed access' do
       before do
-        @original_duration = Devise.allow_unconfirmed_access_for
-        Devise.allow_unconfirmed_access_for = 3.days
-        @unconfirmed_user = users(:unconfirmed_email_user)
+        @unconfirmed_user = create(:user, :unconfirmed)
         post :create,
              params: { email: @unconfirmed_user.email,
-                       password: 'secret123' }
+                       password: @unconfirmed_user.password }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
-      end
-
-      after do
-        Devise.allow_unconfirmed_access_for = @original_duration
       end
 
       test 'request should fail' do
@@ -413,13 +407,11 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       end
 
       before do
-        @existing_user = mangs(:confirmed_email_user)
-        @existing_user.skip_confirmation!
-        @existing_user.save!
+        @existing_user = create(:mang_user, :confirmed)
 
         post :create,
              params: { email: @existing_user.email,
-                       password: 'secret123' }
+                       password: @existing_user.password }
 
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
@@ -444,12 +436,11 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       end
 
       before do
-        @existing_user = only_email_users(:user)
-        @existing_user.save!
+        @existing_user = create(:only_email_user)
 
         post :create,
              params: { email: @existing_user.email,
-                       password: 'secret123' }
+                       password: @existing_user.password }
 
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
@@ -487,10 +478,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'locked user' do
         before do
-          @locked_user = lockable_users(:locked_user)
+          @locked_user = create(:lockable_user, :locked)
           post :create,
                params: { email: @locked_user.email,
-                         password: 'secret123' }
+                         password: @locked_user.password }
           @data = JSON.parse(response.body)
         end
 
@@ -506,7 +497,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'unlocked user with bad password' do
         before do
-          @unlocked_user = lockable_users(:unlocked_user)
+          @unlocked_user = create(:lockable_user)
           post :create,
                params: { email: @unlocked_user.email,
                          password: 'bad-password' }

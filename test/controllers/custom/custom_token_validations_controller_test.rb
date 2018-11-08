@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class Custom::TokenValidationsControllerTest < ActionDispatch::IntegrationTest
   describe Custom::TokenValidationsController do
+    include CustomControllersRoutes
+
     before do
-      @resource = nice_users(:confirmed_email_user)
-      @resource.skip_confirmation!
-      @resource.save!
+      @resource = create(:user, :confirmed)
 
       @auth_headers = @resource.create_new_auth_token
 

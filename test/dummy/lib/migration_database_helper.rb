@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # polyfill Rails >= 5 versioned migrations
 
 unless ActiveRecord::Migration.respond_to?(:[])

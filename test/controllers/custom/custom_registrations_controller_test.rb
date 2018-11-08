@@ -1,17 +1,17 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class Custom::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   describe Custom::RegistrationsController do
-    setup do
-      @create_params = {
-        email: Faker::Internet.email,
-        password: 'secret123',
-        password_confirmation: 'secret123',
-        confirm_success_url: Faker::Internet.url,
-        unpermitted_param: '(x_x)'
-      }
+    include CustomControllersRoutes
 
-      @existing_user = nice_users(:confirmed_email_user)
+    before do
+      @create_params = attributes_for(:user,
+        confirm_success_url: Faker::Internet.url,
+        unpermitted_param: '(x_x)')
+
+      @existing_user = create(:user, :confirmed)
       @auth_headers  = @existing_user.create_new_auth_token
       @client_id     = @auth_headers['client']
 

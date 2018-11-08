@@ -65,9 +65,9 @@ describe 'Whether access is ocurring properly', type: :request do
       login
       auth_params = get_auth_params_from_login_response_headers(response).tap do |h|
         h.each do |k, _v|
-                                                                      if k == 'access-token'
-                                                                        h[k] = '123'
-                                                                      end end
+          if k == 'access-token'
+            h[k] = '123'
+          end end
       end
       new_client = FactoryBot.create(:client)
       get api_find_client_by_name_path(new_client.name), headers: auth_params
@@ -125,7 +125,7 @@ end
 
 ```
 
-### (b) How to create an authorisation header from Scratch
+### (b) How to create an authorization header from Scratch
 
 ```ruby
 require 'rails_helper'

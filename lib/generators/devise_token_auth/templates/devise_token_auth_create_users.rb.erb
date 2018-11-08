@@ -1,7 +1,7 @@
 class DeviseTokenAuthCreate<%= user_class.pluralize.gsub("::","") %> < ActiveRecord::Migration<%= "[#{Rails::VERSION::STRING[0..2]}]" if Rails::VERSION::MAJOR > 4 %>
   def change
     <% table_name = @user_class.pluralize.gsub("::","").underscore %>
-    create_table(:<%= table_name %>) do |t|
+    create_table(:<%= table_name %><%= primary_key_type %>) do |t|
       ## Required
       t.string :provider, :null => false, :default => "email"
       t.string :uid, :null => false, :default => ""

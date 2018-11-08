@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 include MigrationDatabaseHelper
 
 class DeviseTokenAuthCreateLockableUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:lockable_users) do |t|
       ## Required
-      t.string :provider, :null => false
-      t.string :uid, :null => false, :default => ""
+      t.string :provider, null: false
+      t.string :uid, null: false, default: ''
 
       ## Database authenticatable
-      t.string :encrypted_password, :null => false, :default => ""
+      t.string :encrypted_password, null: false, default: ''
 
       ## Recoverable
       # t.string   :reset_password_token
@@ -32,7 +34,7 @@ class DeviseTokenAuthCreateLockableUsers < ActiveRecord::Migration[4.2]
       # t.string   :unconfirmed_email # Only if using reconfirmable
 
       ## Lockable
-      t.integer  :failed_attempts, :default => 0, :null => false # Only if lock strategy is :failed_attempts
+      t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts
       t.string   :unlock_token # Only if unlock strategy is :email or :both
       t.datetime :locked_at
 
@@ -53,9 +55,9 @@ class DeviseTokenAuthCreateLockableUsers < ActiveRecord::Migration[4.2]
     end
 
     add_index :lockable_users, :email
-    add_index :lockable_users, [:uid, :provider],     :unique => true
+    add_index :lockable_users, [:uid, :provider],     unique: true
     # add_index :lockable_users, :reset_password_token, :unique => true
     # add_index :lockable_users, :confirmation_token,   :unique => true
-    add_index :lockable_users, :unlock_token,         :unique => true
+    add_index :lockable_users, :unlock_token,         unique: true
   end
 end
