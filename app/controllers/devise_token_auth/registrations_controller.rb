@@ -42,17 +42,19 @@ module DeviseTokenAuth
       if @resource.save
         yield @resource if block_given?
 
-        if @resource.confirmed?
+        unless @resource.confirmed?
+          # user will require email authentication
+          @resource.send_confirmation_instructions({
+            client_config: params[:config_name],
+            redirect_url: @redirect_url
+          })
+        end
+
+        if active_for_authentication?
           # email auth has been bypassed, authenticate user
           @client_id, @token = @resource.create_token
           @resource.save!
           update_auth_header
-        else
-          # user will require email authentication
-          @resource.send_confirmation_instructions(
-            client_config: params[:config_name],
-            redirect_url: @redirect_url
-          )
         end
 
         render_create_success
@@ -193,6 +195,10 @@ module DeviseTokenAuth
 
     def validate_post_data which, message
       render_error(:unprocessable_entity, message, status: 'error') if which.empty?
+    end
+
+    def active_for_authentication?
+      !@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?
     end
   end
 end
