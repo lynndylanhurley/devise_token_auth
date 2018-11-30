@@ -34,7 +34,7 @@ ja:
         confirm_link_msg: "下記のリンクからアカウントを有効化できます:"
         confirm_account_link: "アカウントを有効化する"
       reset_password_instructions:
-        request_reset_link_msg: "パスワード変更のリクエストが送信されました。下記のリンクからパスワードの変更をできます。"
+        request_reset_link_msg: "パスワード変更のリクエストが送信されました。下記のリンクからパスワードの変更ができます。"
         password_change_link: "パスワードを変更する"
         ignore_mail_msg: "もしこの内容に覚えがない場合は、このメールを無視してください。"
         no_changes_msg: "上記のリンクにアクセスして新しいパスワードを作成するまで、現在のパスワードは変更されません。"
