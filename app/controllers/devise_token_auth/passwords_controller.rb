@@ -3,21 +3,13 @@
 module DeviseTokenAuth
   class PasswordsController < DeviseTokenAuth::ApplicationController
     before_action :set_user_by_token, only: [:update]
+    before_action :validate_redirect_url_param, only: [:create, :edit]
     skip_after_action :update_auth_header, only: [:create, :edit]
 
     # this action is responsible for generating password reset tokens and
     # sending emails
     def create
       return render_create_error_missing_email unless resource_params[:email]
-
-      # give redirect value from params priority
-      @redirect_url = params.fetch(
-        :redirect_url,
-        DeviseTokenAuth.default_password_reset_url
-      )
-
-      return render_create_error_missing_redirect_url unless @redirect_url
-      return render_create_error_not_allowed_redirect_url if blacklisted_redirect_url?
 
       @email = get_case_insensitive_field_from_resource_params(:email)
       @resource = find_resource(:uid, @email)
@@ -63,7 +55,7 @@ module DeviseTokenAuth
         redirect_headers = build_redirect_headers(token,
                                                   client_id,
                                                   redirect_header_options)
-        redirect_to(@resource.build_auth_url(params[:redirect_url],
+        redirect_to(@resource.build_auth_url(@redirect_url,
                                              redirect_headers))
       else
         render_edit_error
@@ -114,7 +106,7 @@ module DeviseTokenAuth
       render_error(401, I18n.t('devise_token_auth.passwords.missing_redirect_url'))
     end
 
-    def render_create_error_not_allowed_redirect_url
+    def render_error_not_allowed_redirect_url
       response = {
         status: 'error',
         data:   resource_data
@@ -180,6 +172,17 @@ module DeviseTokenAuth
 
     def render_not_found_error
       render_error(404, I18n.t('devise_token_auth.passwords.user_not_found', email: @email))
+    end
+
+    def validate_redirect_url_param
+      # give redirect value from params priority
+      @redirect_url = params.fetch(
+        :redirect_url,
+        DeviseTokenAuth.default_password_reset_url
+      )
+
+      return render_create_error_missing_redirect_url unless @redirect_url
+      return render_error_not_allowed_redirect_url if blacklisted_redirect_url?
     end
   end
 end

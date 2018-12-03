@@ -1,0 +1,6 @@
+plugins:
+  duplication:
+    enabled: true
+  method-count:
+    config:
+      threshold: 30
