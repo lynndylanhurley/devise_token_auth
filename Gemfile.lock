@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/SoapSeller/omniauth-facebook-access-token
+  revision: 1125e764ef8d997b20a3bedf068cc1b135cb5700
+  specs:
+    omniauth-facebook-access-token (0.1.8)
+      oauth2 (~> 1.0.0)
+      omniauth (~> 1.2)
+
+GIT
   remote: https://github.com/intridea/omniauth-github
   revision: 2e77639f32c35598e398c0c591ffab37691cdee7
   specs:
@@ -337,6 +345,7 @@ DEPENDENCIES
   mongoid-locker (~> 1.0)
   mysql2
   omniauth-facebook!
+  omniauth-facebook-access-token!
   omniauth-github!
   omniauth-google-oauth2!
   pg

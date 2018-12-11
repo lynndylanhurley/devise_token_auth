@@ -193,6 +193,10 @@ module DeviseTokenAuth
 
         # build and redirect to destination url
         redirect_to DeviseTokenAuth::Url.generate(auth_origin_url, data.merge(blank: true))
+
+      elsif using_access_token_strategy?
+        render json: { success: true, data: user_data.merge(data).merge({message: message}) }
+
       else
 
         # there SHOULD always be an auth_origin_url, but if someone does something silly
@@ -201,6 +205,10 @@ module DeviseTokenAuth
         # a generic message.
         fallback_render data[:error] || 'An error occurred'
       end
+    end
+
+    def using_access_token_strategy?
+      request.env['omniauth.strategy'] && request.env['omniauth.strategy'].class.name.match('AccessToken')
     end
 
     def fallback_render(text)
