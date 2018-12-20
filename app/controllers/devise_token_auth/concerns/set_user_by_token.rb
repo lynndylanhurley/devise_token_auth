@@ -114,7 +114,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   def update_auth_header
     # cannot save object if model has invalid params
-    return unless @resource && @resource.valid? && @client_id
+    # To walk around the issue that some users have no first, last, sex, dob fields
+    # TODO: will remove it
+    return unless @resource && (@resource.valid? || @resource.persisted?) && @client_id
 
     # Generate new client_id with existing authentication
     @client_id = nil unless @used_auth_by_token
