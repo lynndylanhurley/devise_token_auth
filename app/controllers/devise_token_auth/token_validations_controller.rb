@@ -20,12 +20,18 @@ module DeviseTokenAuth
         @token = new_auth_token[DeviseTokenAuth.headers_names[:"access-token"]]
         @refresh_token = new_auth_token[DeviseTokenAuth.headers_names[:"refresh-token"]]
 
-        render_validate_token_success
+        @resource.tokens[@client_id] = {
+          token: BCrypt::Password.create(@token),
+          refresh_token: BCrypt::Password.create(@refresh_token),
+          expiry: (Time.now + DeviseTokenAuth.token_lifespan).to_i
+        }
 
+        @resource.save
+
+        render_validate_token_success
       else
         render_validate_token_error
       end
-
     end
 
     protected
