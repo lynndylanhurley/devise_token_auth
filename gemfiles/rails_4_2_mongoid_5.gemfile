@@ -2,9 +2,9 @@
 
 source "https://rubygems.org"
 
-gem "rails", "4.2.10"
-gem "mongoid", "5.4.0"
-gem "mongoid-locker", "~> 1"
+gem "rails", "~> 4.2"
+gem "mongoid", "~> 5.4"
+gem "mongoid-locker", "~> 1.0"
 
 group :development, :test do
   gem "attr_encrypted"
