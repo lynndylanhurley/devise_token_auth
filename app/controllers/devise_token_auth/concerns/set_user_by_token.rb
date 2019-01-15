@@ -69,13 +69,14 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     # mitigate timing attacks by finding by uid instead of auth token
     user = uid && rc.dta_find_by(uid: uid)
+    scope = rc.to_s.underscore.to_sym
 
     if user && user.valid_token?(@token, @client_id)
       # sign_in with bypass: true will be deprecated in the next version of Devise
       if respond_to?(:bypass_sign_in) && DeviseTokenAuth.bypass_sign_in
-        bypass_sign_in(user, scope: :user)
+        bypass_sign_in(user, scope: scope)
       else
-        sign_in(:user, user, store: false, event: :fetch, bypass: DeviseTokenAuth.bypass_sign_in)
+        sign_in(scope, user, store: false, event: :fetch, bypass: DeviseTokenAuth.bypass_sign_in)
       end
       return @resource = user
     else
