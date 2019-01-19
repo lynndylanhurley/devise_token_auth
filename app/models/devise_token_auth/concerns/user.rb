@@ -20,7 +20,7 @@ module DeviseTokenAuth::Concerns::User
       devise_modules.delete(:omniauthable)
     else
       devise :database_authenticatable, :registerable,
-             :recoverable, :trackable, :validatable, :confirmable
+             :recoverable, :validatable, :confirmable
     end
 
     if const_defined?('ActiveRecord') && ancestors.include?(ActiveRecord::Base)

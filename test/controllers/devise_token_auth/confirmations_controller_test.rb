@@ -23,6 +23,7 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         @new_user.send_confirmation_instructions(redirect_url: @redirect_url)
         mail = ActionMailer::Base.deliveries.last
         @token, @client_config = token_and_client_config_from(mail.body)
+        @token_params = %w[access-token client client_id config expiry token uid]
       end
 
       test 'should generate raw token' do
@@ -38,32 +39,52 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
       end
 
       describe 'success' do
-        before do
-          get :show,
-              params: { confirmation_token: @token,
-                        redirect_url: @redirect_url },
-              xhr: true
-          @resource = assigns(:resource)
+        describe 'when authenticated' do
+          before do
+            sign_in(@new_user)
+            get :show,
+                params: { confirmation_token: @token,
+                          redirect_url: @redirect_url },
+                xhr: true
+            @resource = assigns(:resource)
+          end
+
+          test 'user should now be confirmed' do
+            assert @resource.confirmed?
+          end
+
+          test 'should redirect to success url' do
+            assert_redirected_to(/^#{@redirect_url}/)
+          end
+
+          test 'redirect url includes token params' do
+            assert @token_params.all? { |param| response.body.include?(param) }
+            assert response.body.include?('account_confirmation_success')
+          end
         end
 
-        test 'user should now be confirmed' do
-          assert @resource.confirmed?
-        end
+        describe 'when unauthenticated' do
+          before do
+            sign_out(@new_user)
+            get :show,
+                params: { confirmation_token: @token,
+                          redirect_url: @redirect_url },
+                xhr: true
+            @resource = assigns(:resource)
+          end
 
-        test 'should redirect to success url' do
-          assert_redirected_to(/^#{@redirect_url}/)
-        end
+          test 'user should now be confirmed' do
+            assert @resource.confirmed?
+          end
 
-        test 'the sign_in_count should be 1' do
-          assert @resource.sign_in_count == 1
-        end
+          test 'should redirect to success url' do
+            assert_redirected_to(/^#{@redirect_url}/)
+          end
 
-        test 'User shoud have the signed in info filled' do
-          assert @resource.current_sign_in_at?
-        end
-
-        test 'User shoud have the Last checkin filled' do
-          assert @resource.last_sign_in_at?
+          test 'redirect url does not include token params' do
+            refute @token_params.any? { |param| response.body.include?(param) }
+            assert response.body.include?('account_confirmation_success')
+          end
         end
       end
 
