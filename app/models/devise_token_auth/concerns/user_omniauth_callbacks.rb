@@ -23,6 +23,6 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
   end
 
   def sync_uid
-    self.uid = email if provider == 'email'
+    self.uid = email if email_provider?
   end
 end
