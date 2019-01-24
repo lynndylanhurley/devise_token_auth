@@ -12,11 +12,8 @@ module DeviseTokenAuth
 
       # derive target redirect route from 'resource_class' param, which was set
       # before authentication.
-      devise_mapping = [request.env['omniauth.params']['namespace_name'],
-                        request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
-      path = "#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
-      klass = request.scheme == 'https' ? URI::HTTPS : URI::HTTP
-      redirect_route = klass.build(host: request.host, port: request.port, path: path).to_s
+      devise_mapping = get_devise_mapping
+      redirect_route = get_redirect_route(devise_mapping)
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
       # auth response to avoid CookieOverflow.
@@ -24,6 +21,34 @@ module DeviseTokenAuth
       session['dta.omniauth.params'] = request.env['omniauth.params']
 
       redirect_to redirect_route
+    end
+
+    def get_redirect_route(devise_mapping)
+      path = "#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
+      klass = request.scheme == 'https' ? URI::HTTPS : URI::HTTP
+      redirect_route = klass.build(host: request.host, port: request.port, path: path).to_s
+    end
+
+    def get_devise_mapping
+       # derive target redirect route from 'resource_class' param, which was set
+       # before authentication.
+       devise_mapping = [request.env['omniauth.params']['namespace_name'],
+                         request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
+    rescue NoMethodError => err
+      default_devise_mapping
+    end
+
+    # This method will only be called if `get_devise_mapping` cannot
+    # find the mapping in `omniauth.params`.
+    #
+    # One example use-case here is for IDP-initiated SAML login.  In that
+    # case, there will have been no initial request in which to save 
+    # the devise mapping.  If you are in a situation like that, and
+    # your app allows for you to determine somehow what the devise
+    # mapping should be (because, for example, it is always the same),
+    # then you can handle it by overriding this method.
+    def default_devise_mapping
+      raise NotImplementedError.new('no default_devise_mapping set')
     end
 
     def omniauth_success
@@ -136,16 +161,6 @@ module DeviseTokenAuth
       true
     end
 
-    # necessary for access to devise_parameter_sanitizers
-    def devise_mapping
-      if omniauth_params
-        Devise.mappings[[omniauth_params['namespace_name'],
-                         omniauth_params['resource_class'].underscore].compact.join('_').to_sym]
-      else
-        request.env['devise.mapping']
-      end
-    end
-
     def set_random_password
       # set crazy password for new oauth users. this is only used to prevent
       # access via email sign-in.
@@ -214,6 +229,15 @@ module DeviseTokenAuth
             </html>)
     end
 
+    def handle_new_resource
+      @oauth_registration = true
+      set_random_password
+    end
+
+    def assign_whitelisted_params?
+      true
+    end
+
     def get_resource_from_auth_hash
       # find or create user by provider and provider uid
       @resource = resource_class.where(
@@ -222,16 +246,17 @@ module DeviseTokenAuth
       ).first_or_initialize
 
       if @resource.new_record?
-        @oauth_registration = true
-        set_random_password
+        handle_new_resource
       end
 
       # sync user info with provider, update/generate auth token
       assign_provider_attrs(@resource, auth_hash)
 
       # assign any additional (whitelisted) attributes
-      extra_params = whitelisted_params
-      @resource.assign_attributes(extra_params) if extra_params
+      if assign_whitelisted_params?
+        extra_params = whitelisted_params
+        @resource.assign_attributes(extra_params) if extra_params
+      end
 
       @resource
     end
