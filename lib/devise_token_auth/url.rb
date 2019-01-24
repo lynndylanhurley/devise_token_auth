@@ -4,15 +4,10 @@ module DeviseTokenAuth::Url
 
   def self.generate(url, params = {})
     uri = URI(url)
+    query_params = Hash[URI.decode_www_form(uri.query || '')].merge(params)
+    uri.query = URI.encode_www_form(query_params)
 
-    res = "#{uri.scheme}://#{uri.host}"
-    res += ":#{uri.port}" if (uri.port && uri.port != 80 && uri.port != 443)
-    res += uri.path.to_s if uri.path
-    query = [uri.query, params.to_query].reject(&:blank?).join('&')
-    res += "?#{query}"
-    res += "##{uri.fragment}" if uri.fragment
-
-    res
+    uri.to_s
   end
 
   def self.whitelisted?(url)

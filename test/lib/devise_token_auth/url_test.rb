@@ -10,6 +10,12 @@ class DeviseTokenAuth::UrlTest < ActiveSupport::TestCase
       assert_equal DeviseTokenAuth::Url.send(:generate, url, params), 'http://example.com?client_id=123#fragment'
     end
 
+    test 'relative path should be returned if url is relative' do
+      params = { client_id: 123 }
+      url = '/foobar'
+      assert_equal DeviseTokenAuth::Url.send(:generate, url, params), '/foobar?client_id=123'
+    end
+
     describe 'with existing query params' do
       test 'should preserve existing query params' do
         url = 'http://example.com?a=1'
