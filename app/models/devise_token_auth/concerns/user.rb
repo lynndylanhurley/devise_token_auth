@@ -69,6 +69,7 @@ module DeviseTokenAuth::Concerns::User
 
       # fall back to "default" config name
       opts[:client_config] ||= 'default'
+      opts[:redirect_url] ||= DeviseTokenAuth.default_password_reset_url
 
       send_devise_notification(:reset_password_instructions, token, opts)
       token
