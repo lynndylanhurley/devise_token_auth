@@ -69,7 +69,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     # user has already been found and authenticated
-    return @resource if @resource # && @resource.is_a?(rc)  #devise_token_group not work here!
+    return @resource if @resource # && @resource.is_a?(rc)  #devise_token_group not work here! force
 
     # ensure we clear the client_id
     if !@token
