@@ -68,3 +68,5 @@ if ENV['MONGOID_VERSION']
   
   gem 'mongoid-locker', '~> 1.0'
 end
+
+gem 'sqlite3', '~> 1.3.6'
