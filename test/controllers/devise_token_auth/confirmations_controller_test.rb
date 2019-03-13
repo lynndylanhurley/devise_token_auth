@@ -86,6 +86,33 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
             assert response.body.include?('account_confirmation_success')
           end
         end
+
+        describe 'resend confirmation' do
+          before do
+            post :create,
+                params: { email: @new_user.email,
+                          redirect_url: @redirect_url },
+                xhr: true
+            @resource = assigns(:resource)
+
+            @mail = ActionMailer::Base.deliveries.last
+            @token, @client_config = token_and_client_config_from(@mail.body)
+          end
+
+          test 'user should not be confirmed' do
+            assert_nil @resource.confirmed_at
+          end
+
+          test 'should generate raw token' do
+            assert @token
+            assert_equal @new_user.confirmation_token, @token
+          end
+
+          test 'user should receive confirmation email' do
+            assert_equal @resource.email, @mail['to'].to_s
+          end
+
+        end
       end
 
       describe 'failure' do
@@ -95,6 +122,18 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           end
           @resource = assigns(:resource)
           refute @resource.confirmed?
+        end
+
+        test 'bad request on resend confirmation' do
+          post :create, params: { email: nil }, xhr: true
+
+          assert_equal 400, response.status
+        end
+
+        test 'user should not be found on resend confirmation request' do
+          post :create, params: { email: 'bogus' }, xhr: true
+
+          assert_equal 404, response.status
         end
       end
     end

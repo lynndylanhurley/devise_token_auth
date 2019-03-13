@@ -2,6 +2,7 @@
 
 module DeviseTokenAuth
   class ConfirmationsController < DeviseTokenAuth::ApplicationController
+
     def show
       @resource = resource_class.confirm_by_token(params[:confirmation_token])
 
@@ -30,5 +31,29 @@ module DeviseTokenAuth
         raise ActionController::RoutingError, 'Not Found'
       end
     end
+
+    # resends confirmation instructions
+    def create
+      return head :bad_request if params[:email].blank?
+
+      if @resource = resource_class.where(uid: params[:email].downcase, provider: 'email').first
+        # give redirect value from params priority
+        redirect_url = params.fetch(
+          :confirm_success_url,
+          DeviseTokenAuth.default_confirm_success_url
+        )
+
+        @resource.send_confirmation_instructions({
+          redirect_url: redirect_url,
+          client_config: params[:config_name]
+        })
+
+        head :ok
+      else
+        head :not_found
+      end
+
+    end
+
   end
 end
