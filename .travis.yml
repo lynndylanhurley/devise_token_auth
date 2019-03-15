@@ -8,8 +8,8 @@ bundler_args: --without development
 rvm:
   - 2.3.8
   - 2.4.5
-  - 2.5.3
-  - 2.6.0
+  - 2.5.5
+  - 2.6.2
 
 gemfile:
   - gemfiles/rails_4_2.gemfile
@@ -36,17 +36,17 @@ matrix:
   - rvm: 2.4.5
     gemfile: gemfiles/rails_5_1_mongoid_7.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
-  - rvm: 2.5.3
+  - rvm: 2.5.5
     gemfile: gemfiles/rails_5_2_mongoid_6.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
-  - rvm: 2.5.3
+  - rvm: 2.5.5
     gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
-  - rvm: 2.6.0
+  - rvm: 2.6.2
     gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
   - name: Code Climate Test Coverage
-    rmv: 2.5.3
+    rmv: 2.5.5
     env:
       - CC_TEST_REPORTER_ID=44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d
       - GEMFILE_AR=gemfiles/rails_5_1.gemfile
@@ -70,7 +70,7 @@ matrix:
           ./cc-test-reporter upload-coverage;
         fi
   exclude:
-    - rvm: 2.6.0
+    - rvm: 2.6.2
       gemfile: gemfiles/rails_4_2.gemfile
   fast_finish: true
 
