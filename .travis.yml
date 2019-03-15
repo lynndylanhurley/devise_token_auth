@@ -74,6 +74,10 @@ matrix:
       gemfile: gemfiles/rails_4_2.gemfile
   fast_finish: true
 
+before_install:
+  - "[[ $BUNDLE_GEMFILE == *rails_4_2* ]] && gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true"
+  - "[[ $BUNDLE_GEMFILE == *rails_4_2* ]] && gem install bundler -v '< 2' || true"
+
 before_script:
   - if [[ $DB == "mysql" ]]; then mysql -e 'create database devise_token_auth_test'; fi
   - if [[ $DB == "postgresql" ]]; then psql -c 'create database devise_token_auth_test' -U postgres; fi
