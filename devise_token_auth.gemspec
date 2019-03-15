@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'devise', '> 3.5.2', '< 4.7'
 
   s.add_development_dependency 'appraisal'
-  s.add_development_dependency 'sqlite3', '~> 1.3'
+  s.add_development_dependency 'sqlite3', '~> 1.3.6'
   s.add_development_dependency 'pg'
   s.add_development_dependency 'mysql2'
   s.add_development_dependency 'mongoid', '>= 4', '< 8'
