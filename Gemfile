@@ -22,7 +22,6 @@ group :development, :test do
   gem 'omniauth-github',        git: 'https://github.com/intridea/omniauth-github'
   gem 'omniauth-google-oauth2', git: 'https://github.com/zquestz/omniauth-google-oauth2'
   gem 'rack-cors', require: 'rack/cors'
-  gem 'sqlite3', '~> 1.3.6'
   gem 'thor'
 
   # testing
