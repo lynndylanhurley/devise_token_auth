@@ -37,7 +37,6 @@ end
   appraise "rails-#{set[:name]}-mongoid-#{set[:mongoid][0]}" do
     gem 'rails', "~> #{set[:rails]}"
 
-    gem 'sqlite3', '~> 1.3.6'
     gem 'mongoid', "~> #{set[:mongoid]}"
     gem 'mongoid-locker', '~> 1.0'
   end
