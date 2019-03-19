@@ -11,9 +11,6 @@ module DeviseTokenAuth
 
         redirect_header_options = { account_confirmation_success: true }
 
-        # give redirect value from params priority or fall back to default value if provided
-        redirect_url = params[:redirect_url] || DeviseTokenAuth.default_confirm_success_url
-
         if signed_in?(resource_name)
           client_id, token = signed_in_resource.create_token
 
@@ -32,27 +29,29 @@ module DeviseTokenAuth
       end
     end
 
-    # resends confirmation instructions
     def create
       return head :bad_request if params[:email].blank?
 
-      if @resource = resource_class.where(uid: params[:email].downcase, provider: 'email').first
-        # give redirect value from params priority
-        redirect_url = params.fetch(
-          :confirm_success_url,
-          DeviseTokenAuth.default_confirm_success_url
-        )
+      @resource = resource_class.find_by(uid: params[:email].downcase, provider: provider)
 
-        @resource.send_confirmation_instructions({
-          redirect_url: redirect_url,
-          client_config: params[:config_name]
-        })
+      return head :not_found unless @resource
 
-        head :ok
-      else
-        head :not_found
-      end
+      @resource.send_confirmation_instructions({
+        redirect_url: redirect_url,
+        client_config: params[:config_name]
+      })
 
+      head :ok
+    end
+
+    private
+
+    # give redirect value from params priority or fall back to default value if provided
+    def redirect_url
+      params.fetch(
+        :redirect_url,
+        DeviseTokenAuth.default_confirm_success_url
+      )
     end
 
   end
