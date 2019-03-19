@@ -32,7 +32,7 @@ module DeviseTokenAuth
     def create
       return head :bad_request if params[:email].blank?
 
-      @resource = resource_class.find_by(uid: params[:email].downcase, provider: provider)
+      @resource = resource_class.dta_find_by(uid: params[:email].downcase, provider: provider)
 
       return head :not_found unless @resource
 
