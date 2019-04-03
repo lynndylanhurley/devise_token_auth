@@ -7,7 +7,7 @@ bundler_args: --without development
 
 rvm:
   - 2.3.8
-  - 2.4.5
+  - 2.4.6
   - 2.5.5
   - 2.6.2
 
@@ -33,7 +33,7 @@ matrix:
   - rvm: 2.3.8
     gemfile: gemfiles/rails_5_1_mongoid_6.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
-  - rvm: 2.4.5
+  - rvm: 2.4.6
     gemfile: gemfiles/rails_5_1_mongoid_7.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
   - rvm: 2.5.5
