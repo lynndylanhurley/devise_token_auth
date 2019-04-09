@@ -239,10 +239,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
         end
 
-        describe 'Cheking reset_password_token' do
+        describe 'Checking reset_password_token' do
           before do
             post :create, params: {
-              email:        @resource.email,
+              email: @resource.email,
               redirect_url: @redirect_url
             }
 
@@ -581,23 +581,25 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
         end
 
-        describe 'with reset password token' do
+        describe 'with valid reset password token' do
           before do
             reset_password_token = @resource.send_reset_password_instructions
             @new_password = Faker::Internet.password
             @params = { password: @new_password,
                         password_confirmation: @new_password,
-                        reset_password_token: reset_password_token  }
+                        reset_password_token: reset_password_token }
           end
 
           describe 'with require_client_password_reset_token disabled' do
             before do
+              DeviseTokenAuth.require_client_password_reset_token = false
               put :update, params: @params
+
               @data = JSON.parse(response.body)
               @resource.reload
             end
 
-            test 'request should be successful' do
+            test 'request should be not be successful' do
               assert_equal 401, response.status
             end
           end
@@ -606,6 +608,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             before do
               DeviseTokenAuth.require_client_password_reset_token = true
               put :update, params: @params
+
               @data = JSON.parse(response.body)
               @resource.reload
             end
@@ -627,6 +630,24 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
             teardown do
               DeviseTokenAuth.require_client_password_reset_token = false
             end
+          end
+        end
+
+        describe 'with invalid reset password token' do
+          before do
+            DeviseTokenAuth.require_client_password_reset_token = true
+            @resource.update reset_password_token: 'koskoskoskos'
+            put :update, params: @params
+            @data = JSON.parse(response.body)
+            @resource.reload
+          end
+
+          test 'request should fail' do
+            assert_equal 401, response.status
+          end
+
+          test 'new password should not authenticate user' do
+            assert !@resource.valid_password?(@new_password)
           end
         end
       end

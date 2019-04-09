@@ -17,7 +17,7 @@ module DeviseTokenAuth
         @resource.send_reset_password_instructions(
           email: @email,
           provider: 'email',
-          redirect_url: redirect_url,
+          redirect_url: @redirect_url,
           client_config: params[:config_name]
         )
 
@@ -39,13 +39,8 @@ module DeviseTokenAuth
       if @resource && @resource.reset_password_period_valid?
         if require_client_password_reset_token?
           update_allow_password_change(&block)
-          callback = Addressable::URI.parse(redirect_url)
-
-          # add password_reset_token while preserving existing query params
-          callback.query_values = (callback.query_values || {}).merge(
-            reset_password_token: resource_params[:reset_password_token]
-          )
-          redirect_to callback.to_s
+          callback_url = build_callback_url(resource_params[:reset_password_token])
+          redirect_to callback_url
         else
           token = @resource.create_token
           update_allow_password_change(&block)
@@ -66,9 +61,11 @@ module DeviseTokenAuth
       # make sure user is authorized
       if require_client_password_reset_token? && resource_params[:reset_password_token]
         @resource = resource_class.with_reset_password_token(resource_params[:reset_password_token])
+        return render_update_error_unauthorized unless @resource
+
         @client_id, @token = @resource.create_token
       else
-        set_user_by_token
+        @resource = set_user_by_token
       end
 
       return render_update_error_unauthorized unless @resource
@@ -192,12 +189,14 @@ module DeviseTokenAuth
       return render_error_not_allowed_redirect_url if blacklisted_redirect_url?
     end
 
-    def redirect_url
-      # give redirect value from params priority, otherwise fall back to default value if provided
-      @redirect_url ||= params.fetch(
-        :redirect_url,
-        DeviseTokenAuth.default_password_reset_url
-      )
+    def build_callback_url(reset_password_token)
+      url          = URI.parse(@redirect_url)
+      query_params = Rack::Utils.parse_nested_query(URI.parse(url).query)
+      query_params = query_params.merge(reset_password_token: reset_password_token)
+      query_string = query_params.collect { |k, v| "#{k}=#{v}" }.join('&')
+      url.query    = query_string
+
+      url.to_s
     end
 
     def update_allow_password_change
