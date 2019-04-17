@@ -49,7 +49,7 @@ module ActionDispatch::Routing
                                                      defaults: {},
                                                      options: {},
                                                      parent: nil
-        )
+                                                    )
 
         mapping_name = resource.underscore.gsub('/', '_')
         mapping_name = "#{namespace_name}_#{mapping_name}" if namespace_name
