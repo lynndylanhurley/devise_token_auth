@@ -19,7 +19,7 @@ module DeviseTokenAuth
             if File.exist?(File.join(destination_root, fname))
               if parse_file_for_line(fname, line)
                 say_status('skipped', 'Concern is already included in the application controller.')
-              elsif is_rails_api?
+              elsif rails_api?
                 inject_into_file fname, after: "class ApplicationController < ActionController::API\n" do <<-'RUBY'
         include DeviseTokenAuth::Concerns::SetUserByToken
                 RUBY
@@ -86,7 +86,7 @@ module DeviseTokenAuth
             match
           end
 
-          def is_rails_api?
+          def rails_api?
             fname = 'app/controllers/application_controller.rb'
             line = 'class ApplicationController < ActionController::API'
             parse_file_for_line(fname, line)
