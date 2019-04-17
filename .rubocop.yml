@@ -60,6 +60,17 @@ Style/HashSyntax:
   EnforcedStyle: ruby19
 
 # Cop supports --auto-correct.
+# Supported parameters are:
+#   - Enabled
+#   - EnforcedStyle
+#   - SupportedStyles
+#   - UseHashRocketsWithSymbolValues
+#   - PreferHashRocketsForNonAlnumEndingSymbols
+Style/StringLiterals:
+  Exclude:
+    - 'test/dummy/db/schema.rb'
+
+# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, MinSize.
 # SupportedStyles: percent, brackets
 #
