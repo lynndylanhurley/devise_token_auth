@@ -20,11 +20,15 @@ module DeviseTokenAuth::Concerns::ResourceFinder
   end
 
   def find_resource(field, value)
-    @resource = if resource_class.try(:connection_config).try(:[], :adapter).try(:include?, 'mysql')
+    @resource = if resource_class.try(:connection_config)
+                                 .try(:[], :adapter)
+                                 .try(:include?, 'mysql')
                   # fix for mysql default case insensitivity
-                  resource_class.where("BINARY #{field} = ? AND provider= ?", value, provider).first
+                  resource_class.where("BINARY #{field} = ? AND provider= ?", 
+                                       value, provider).first
                 else
-                  resource_class.dta_find_by(field => value, 'provider' => provider)
+                  resource_class.dta_find_by(field => value,
+                                             'provider' => provider)
                 end
   end
 

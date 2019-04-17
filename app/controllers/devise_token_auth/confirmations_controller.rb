@@ -18,9 +18,11 @@ module DeviseTokenAuth
                                                     client_id,
                                                     redirect_header_options)
 
-          redirect_to_link = signed_in_resource.build_auth_url(redirect_url, redirect_headers)
+          redirect_link = signed_in_resource.build_auth_url(redirect_url, 
+                                                            redirect_headers)
         else
-          redirect_to_link = DeviseTokenAuth::Url.generate(redirect_url, redirect_header_options)
+          redirect_link = DeviseTokenAuth::Url.generate(redirect_url, 
+                                                        redirect_header_options)
        end
 
         redirect_to(redirect_to_link)
@@ -32,7 +34,8 @@ module DeviseTokenAuth
     def create
       return head :bad_request if params[:email].blank?
 
-      @resource = resource_class.dta_find_by(uid: params[:email].downcase, provider: provider)
+      @resource = resource_class.dta_find_by(uid: params[:email].downcase, 
+                                             provider: provider)
 
       return head :not_found unless @resource
 
