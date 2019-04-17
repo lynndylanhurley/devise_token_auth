@@ -31,12 +31,12 @@ module OverridesControllersRoutes
   before do
     Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'evil_user_auth', controllers: {
-        confirmations:      'overrides/confirmations',
-        passwords:          'overrides/passwords',
+        confirmations: 'overrides/confirmations',
+        passwords: 'overrides/passwords',
         omniauth_callbacks: 'overrides/omniauth_callbacks',
-        registrations:      'overrides/registrations',
-        sessions:           'overrides/sessions',
-        token_validations:  'overrides/token_validations'
+        registrations: 'overrides/registrations',
+        sessions: 'overrides/sessions',
+        token_validations: 'overrides/token_validations'
       }
     end
   end

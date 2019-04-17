@@ -172,10 +172,10 @@ module DeviseTokenAuth::Concerns::User
 
     {
       DeviseTokenAuth.headers_names[:"access-token"] => token,
-      DeviseTokenAuth.headers_names[:"token-type"]   => 'Bearer',
-      DeviseTokenAuth.headers_names[:"client"]       => client_id,
-      DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
-      DeviseTokenAuth.headers_names[:"uid"]          => uid
+      DeviseTokenAuth.headers_names[:"token-type"] => 'Bearer',
+      DeviseTokenAuth.headers_names[:"client"] => client_id,
+      DeviseTokenAuth.headers_names[:"expiry"] => expiry.to_s,
+      DeviseTokenAuth.headers_names[:"uid"] => uid
     }
   end
 

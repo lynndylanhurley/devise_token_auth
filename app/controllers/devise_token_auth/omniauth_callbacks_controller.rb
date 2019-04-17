@@ -171,11 +171,11 @@ module DeviseTokenAuth
 
     def create_auth_params
       @auth_params = {
-        auth_token:     @token,
+        auth_token: @token,
         client_id: @client_id,
-        uid:       @resource.uid,
-        expiry:    @expiry,
-        config:    @config
+        uid: @resource.uid,
+        expiry: @expiry,
+        config: @config
       }
       @auth_params.merge!(oauth_registration: true) if @oauth_registration
       @auth_params

@@ -42,13 +42,13 @@ module ActionDispatch::Routing
         namespace_name = @scope[:as]
 
         # clear scope so controller routes aren't namespaced
-        @scope = ActionDispatch::Routing::Mapper::Scope.new(
-          path:         '',
-          shallow_path: '',
-          constraints:  {},
-          defaults:     {},
-          options:      {},
-          parent:       nil
+        @scope = 
+          ActionDispatch::Routing::Mapper::Scope.new(path: '',
+                                                     shallow_path: '',
+                                                     constraints: {},
+                                                     defaults: {},
+                                                     options: {},
+                                                     parent: nil
         )
 
         mapping_name = resource.underscore.gsub('/', '_')

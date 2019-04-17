@@ -9,7 +9,7 @@ module Overrides
         if @resource.update_attributes(account_update_params)
           render json: {
             status: 'success',
-            data:   @resource.as_json,
+            data: @resource.as_json,
             override_proof: OVERRIDE_PROOF
           }
         else

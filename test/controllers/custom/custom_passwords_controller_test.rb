@@ -13,7 +13,7 @@ class Custom::PasswordsControllerTest < ActionController::TestCase
 
     test 'yield resource to block on create success' do
       post :create,
-           params: { email:  @resource.email,
+           params: { email: @resource.email,
                      redirect_url: @redirect_url }
 
       @mail = ActionMailer::Base.deliveries.last
@@ -31,10 +31,9 @@ class Custom::PasswordsControllerTest < ActionController::TestCase
       @resource = create(:user)
       @redirect_url = 'http://ng-token-auth.dev'
 
-      post :create,
-           params: { email:  @resource.email,
-                     redirect_url: @redirect_url },
-           xhr: true
+      post :create, params: { email: @resource.email,
+                              redirect_url: @redirect_url 
+                            }, xhr: true
 
       @mail = ActionMailer::Base.deliveries.last
       @resource.reload

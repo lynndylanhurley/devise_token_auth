@@ -113,9 +113,7 @@ module DeviseTokenAuth
     end
 
     def render_destroy_success
-      render json: {
-        success:true
-      }, status: 200
+      render json: { success:true }, status: 200
     end
 
     def render_destroy_error
