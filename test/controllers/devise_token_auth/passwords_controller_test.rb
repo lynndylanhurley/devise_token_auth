@@ -652,7 +652,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         params = { email: @resource.email,
                    redirect_url: @redirect_url,
-                   config_name: @config_name 
+                   config_name: @config_name
         }
         get_reset_token params
       end

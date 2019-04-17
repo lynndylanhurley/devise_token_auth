@@ -15,7 +15,7 @@ class DeviseTokenAuthEmailValidator < ActiveModel::EachValidator
 
     if message.nil?
       # Try DeviceTokenAuth translations or fallback to ActiveModel translations
-      message = I18n.t(:'errors.messages.not_email', 
+      message = I18n.t(:'errors.messages.not_email',
                        default: :'errors.messages.invalid')
     end
 

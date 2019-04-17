@@ -32,7 +32,7 @@ class Custom::PasswordsControllerTest < ActionController::TestCase
       @redirect_url = 'http://ng-token-auth.dev'
 
       post :create, params: { email: @resource.email,
-                              redirect_url: @redirect_url 
+                              redirect_url: @redirect_url
                             }, xhr: true
 
       @mail = ActionMailer::Base.deliveries.last

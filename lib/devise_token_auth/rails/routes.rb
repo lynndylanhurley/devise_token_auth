@@ -42,7 +42,7 @@ module ActionDispatch::Routing
         namespace_name = @scope[:as]
 
         # clear scope so controller routes aren't namespaced
-        @scope = 
+        @scope =
           ActionDispatch::Routing::Mapper::Scope.new(path: '',
                                                      shallow_path: '',
                                                      constraints: {},

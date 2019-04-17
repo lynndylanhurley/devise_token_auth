@@ -65,6 +65,6 @@ if ENV['MONGOID_VERSION']
   else
     gem 'mongoid', '>= 5'
   end
-  
+
   gem 'mongoid-locker', '~> 1.0'
 end

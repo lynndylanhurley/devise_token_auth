@@ -5,7 +5,7 @@ module FavoriteColor
     validates :operating_thetan, numericality: true, allow_nil: true
     validate :ensure_correct_favorite_color
   end
-  
+
   def ensure_correct_favorite_color
     if favorite_color && (favorite_color != '')
       unless ApplicationHelper::COLOR_NAMES.any?{ |s| s.casecmp(favorite_color)==0 }
