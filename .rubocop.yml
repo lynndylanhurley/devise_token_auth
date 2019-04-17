@@ -5,6 +5,7 @@ AllCops:
     - 'coverage/**/*'
     - 'test/dummy/tmp/**/*'
     - 'test/dummy/log/**/*'
+    - 'lib/generators/devise_token_auth/install_generator_helpers.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
@@ -120,7 +121,6 @@ Metrics/LineLength:
     - 'test/**/*'
     - 'Guardfile'
     - 'devise_token_auth.gemspec'
-    - 'lib/generators/devise_token_auth/install_generator_helpers.rb'
   IgnoredPatterns:
     - '(\A|\s)#'
   Max: 80
