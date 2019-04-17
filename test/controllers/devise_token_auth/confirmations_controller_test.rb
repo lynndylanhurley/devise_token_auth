@@ -63,30 +63,6 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           end
         end
 
-        describe 'when unauthenticated' do
-          before do
-            sign_out(@new_user)
-            get :show,
-                params: { confirmation_token: @token,
-                          redirect_url: @redirect_url },
-                xhr: true
-            @resource = assigns(:resource)
-          end
-
-          test 'user should now be confirmed' do
-            assert @resource.confirmed?
-          end
-
-          test 'should redirect to success url' do
-            assert_redirected_to(/^#{@redirect_url}/)
-          end
-
-          test 'redirect url does not include token params' do
-            refute @token_params.any? { |param| response.body.include?(param) }
-            assert response.body.include?('account_confirmation_success')
-          end
-        end
-
         describe 'resend confirmation' do
           before do
             post :create,
