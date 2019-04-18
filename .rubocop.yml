@@ -124,6 +124,9 @@ Metrics/BlockLength:
     - 'lib/devise_token_auth/engine.rb'
     - 'test/dummy/config/**/*'
     - 'test/dummy/db/**/*'
+    - 'test/factories/users.rb'
+    - 'test/lib/generators/devise_token_auth/install_generator_test.rb'
+    - 'test/lib/generators/devise_token_auth/install_generator_with_namespace_test.rb'
   ExcludedMethods:
     - describe
     - draw
