@@ -48,15 +48,14 @@ module ActionDispatch::Routing
                                                      constraints: {},
                                                      defaults: {},
                                                      options: {},
-                                                     parent: nil
-                                                    )
+                                                     parent: nil)
 
         mapping_name = resource.underscore.gsub('/', '_')
         mapping_name = "#{namespace_name}_#{mapping_name}" if namespace_name
 
         devise_scope mapping_name.to_sym do
           # path to verify token validity
-          get "#{full_path}/validate_token", controller: token_validations_ctrl.to_s, action: 'validate_token' if !opts[:skip].include?(:token_validations)
+          get "#{full_path}/validate_token", controller: token_validations_ctrl.to_s, action: 'validate_token' unless opts[:skip].include?(:token_validations)
 
           # omniauth routes. only define if omniauth is installed and not skipped.
           if defined?(::OmniAuth) && !opts[:skip].include?(:omniauth_callbacks)

@@ -44,10 +44,11 @@ module DeviseTokenAuth
 
         unless @resource.confirmed?
           # user will require email authentication
-          @resource.send_confirmation_instructions({
-            client_config: params[:config_name],
-            redirect_url: @redirect_url
-          })
+          @resource.send_confirmation_instructions(
+            {
+              client_config: params[:config_name],
+              redirect_url: @redirect_url
+            })
         end
 
         if active_for_authentication?

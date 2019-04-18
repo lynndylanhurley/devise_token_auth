@@ -66,7 +66,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         describe 'for edit' do
           before do
             get_reset_token
-            get :edit, params: { reset_password_token: @mail_reset_token}
+            get :edit, params: { reset_password_token: @mail_reset_token }
             @data = JSON.parse(response.body)
           end
 
@@ -652,8 +652,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         params = { email: @resource.email,
                    redirect_url: @redirect_url,
-                   config_name: @config_name
-        }
+                   config_name: @config_name }
         get_reset_token params
       end
 

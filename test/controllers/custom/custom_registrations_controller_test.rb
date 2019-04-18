@@ -8,8 +8,8 @@ class Custom::RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
     before do
       @create_params = attributes_for(:user,
-        confirm_success_url: Faker::Internet.url,
-        unpermitted_param: '(x_x)')
+                                      confirm_success_url: Faker::Internet.url,
+                                      unpermitted_param: '(x_x)')
 
       @existing_user = create(:user, :confirmed)
       @auth_headers  = @existing_user.create_new_auth_token

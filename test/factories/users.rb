@@ -19,7 +19,7 @@ FactoryBot.define do
     # confirmation period is expired
     trait :unconfirmed do
       after(:create) do |user, evaluator|
-        user.update_attribute(:confirmation_sent_at, evaluator.allow_unconfirmed_period - 1.day )
+        user.update_attribute(:confirmation_sent_at, evaluator.allow_unconfirmed_period - 1.day)
       end
     end
 
