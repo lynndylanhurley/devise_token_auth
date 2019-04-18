@@ -245,9 +245,7 @@ module DeviseTokenAuth
         provider: auth_hash['provider']
       ).first_or_initialize
 
-      if @resource.new_record?
-        handle_new_resource
-      end
+      handle_new_resource if @resource.new_record?
 
       # sync user info with provider, update/generate auth token
       assign_provider_attrs(@resource, auth_hash)
