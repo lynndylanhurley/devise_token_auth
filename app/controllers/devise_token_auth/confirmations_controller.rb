@@ -25,7 +25,7 @@ module DeviseTokenAuth
                                                         redirect_header_options)
        end
 
-        redirect_to(redirect_to_link)
+        redirect_to(redirect_link)
       else
         raise ActionController::RoutingError, 'Not Found'
       end
