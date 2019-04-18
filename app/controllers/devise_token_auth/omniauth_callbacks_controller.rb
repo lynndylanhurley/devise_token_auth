@@ -26,15 +26,15 @@ module DeviseTokenAuth
     def get_redirect_route(devise_mapping)
       path = "#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
       klass = request.scheme == 'https' ? URI::HTTPS : URI::HTTP
-      redirect_route = klass.build(host: request.host, port: request.port, path: path).to_s
+      klass.build(host: request.host, port: request.port, path: path).to_s
     end
 
     def get_devise_mapping
        # derive target redirect route from 'resource_class' param, which was set
        # before authentication.
-       devise_mapping = [request.env['omniauth.params']['namespace_name'],
-                         request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
-    rescue NoMethodError => err
+       [request.env['omniauth.params']['namespace_name'],
+        request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
+    rescue NoMethodError
       default_devise_mapping
     end
 
