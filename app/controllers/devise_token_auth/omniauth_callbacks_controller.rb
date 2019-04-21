@@ -26,15 +26,15 @@ module DeviseTokenAuth
     def get_redirect_route(devise_mapping)
       path = "#{Devise.mappings[devise_mapping.to_sym].fullpath}/#{params[:provider]}/callback"
       klass = request.scheme == 'https' ? URI::HTTPS : URI::HTTP
-      redirect_route = klass.build(host: request.host, port: request.port, path: path).to_s
+      klass.build(host: request.host, port: request.port, path: path).to_s
     end
 
     def get_devise_mapping
        # derive target redirect route from 'resource_class' param, which was set
        # before authentication.
-       devise_mapping = [request.env['omniauth.params']['namespace_name'],
-                         request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
-    rescue NoMethodError => err
+       [request.env['omniauth.params']['namespace_name'],
+        request.env['omniauth.params']['resource_class'].underscore.gsub('/', '_')].compact.join('_')
+    rescue NoMethodError
       default_devise_mapping
     end
 
@@ -42,7 +42,7 @@ module DeviseTokenAuth
     # find the mapping in `omniauth.params`.
     #
     # One example use-case here is for IDP-initiated SAML login.  In that
-    # case, there will have been no initial request in which to save 
+    # case, there will have been no initial request in which to save
     # the devise mapping.  If you are in a situation like that, and
     # your app allows for you to determine somehow what the devise
     # mapping should be (because, for example, it is always the same),
@@ -62,7 +62,7 @@ module DeviseTokenAuth
       end
 
       sign_in(:user, @resource, store: false, bypass: false)
-      
+
       @resource.save!
 
       yield @resource if block_given?
@@ -171,11 +171,11 @@ module DeviseTokenAuth
 
     def create_auth_params
       @auth_params = {
-        auth_token:     @token,
+        auth_token: @token,
         client_id: @client_id,
-        uid:       @resource.uid,
-        expiry:    @expiry,
-        config:    @config
+        uid: @resource.uid,
+        expiry: @expiry,
+        config: @config
       }
       @auth_params.merge!(oauth_registration: true) if @oauth_registration
       @auth_params
@@ -245,9 +245,7 @@ module DeviseTokenAuth
         provider: auth_hash['provider']
       ).first_or_initialize
 
-      if @resource.new_record?
-        handle_new_resource
-      end
+      handle_new_resource if @resource.new_record?
 
       # sync user info with provider, update/generate auth token
       assign_provider_attrs(@resource, auth_hash)

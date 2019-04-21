@@ -90,9 +90,9 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         describe 'resend confirmation' do
           before do
             post :create,
-                params: { email: @new_user.email,
-                          redirect_url: @redirect_url },
-                xhr: true
+                 params: { email: @new_user.email,
+                           redirect_url: @redirect_url },
+                 xhr: true
             @resource = assigns(:resource)
 
             @mail = ActionMailer::Base.deliveries.last
@@ -111,7 +111,6 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           test 'user should receive confirmation email' do
             assert_equal @resource.email, @mail['to'].to_s
           end
-
         end
       end
 

@@ -55,7 +55,7 @@ class DeviseTokenAuth::TokenValidationsControllerTest < ActionDispatch::Integrat
         error = assert_raises DeviseTokenAuth::Errors::InvalidModel do
           get '/auth/validate_token', params: {}, headers: @auth_headers
         end
-        assert_equal(error.message, "Cannot set auth token in invalid model. Errors: [\"Email is not an email\"]")
+        assert_equal(error.message, 'Cannot set auth token in invalid model. Errors: ["Email is not an email"]')
       end
     end
 

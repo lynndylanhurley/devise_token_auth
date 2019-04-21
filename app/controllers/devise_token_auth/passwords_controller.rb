@@ -109,7 +109,7 @@ module DeviseTokenAuth
     def render_error_not_allowed_redirect_url
       response = {
         status: 'error',
-        data:   resource_data
+        data: resource_data
       }
       message = I18n.t('devise_token_auth.passwords.not_allowed_redirect_url', redirect_url: @redirect_url)
       render_error(422, message, response)

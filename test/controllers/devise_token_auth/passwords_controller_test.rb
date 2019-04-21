@@ -66,7 +66,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         describe 'for edit' do
           before do
             get_reset_token
-            get :edit, params: { reset_password_token: @mail_reset_token}
+            get :edit, params: { reset_password_token: @mail_reset_token }
             @data = JSON.parse(response.body)
           end
 
@@ -221,7 +221,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           before do
             @resource_class = User
             @request_params = {
-              email:        @resource.email.upcase,
+              email: @resource.email.upcase,
               redirect_url: @redirect_url
             }
           end
@@ -242,7 +242,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         describe 'Cheking reset_password_token' do
           before do
             post :create, params: {
-              email:        @resource.email,
+              email: @resource.email,
               redirect_url: @redirect_url
             }
 
@@ -651,8 +651,8 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
         @config_name  = 'altUser'
 
         params = { email: @resource.email,
-                                redirect_url: @redirect_url,
-                                config_name: @config_name }
+                   redirect_url: @redirect_url,
+                   config_name: @config_name }
         get_reset_token params
       end
 

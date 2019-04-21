@@ -44,10 +44,11 @@ module DeviseTokenAuth
 
         unless @resource.confirmed?
           # user will require email authentication
-          @resource.send_confirmation_instructions({
-            client_config: params[:config_name],
-            redirect_url: @redirect_url
-          })
+          @resource.send_confirmation_instructions(
+            {
+              client_config: params[:config_name],
+              redirect_url: @redirect_url
+            })
         end
 
         if active_for_authentication?
@@ -112,7 +113,7 @@ module DeviseTokenAuth
     def render_create_error_missing_confirm_success_url
       response = {
         status: 'error',
-        data:   resource_data
+        data: resource_data
       }
       message = I18n.t('devise_token_auth.registrations.missing_confirm_success_url')
       render_error(422, message, response)
@@ -121,7 +122,7 @@ module DeviseTokenAuth
     def render_create_error_redirect_url_not_allowed
       response = {
         status: 'error',
-        data:   resource_data
+        data: resource_data
       }
       message = I18n.t('devise_token_auth.registrations.redirect_url_not_allowed', redirect_url: @redirect_url)
       render_error(422, message, response)
@@ -130,14 +131,14 @@ module DeviseTokenAuth
     def render_create_success
       render json: {
         status: 'success',
-        data:   resource_data
+        data: resource_data
       }
     end
 
     def render_create_error
       render json: {
         status: 'error',
-        data:   resource_data,
+        data: resource_data,
         errors: resource_errors
       }, status: 422
     end
@@ -145,7 +146,7 @@ module DeviseTokenAuth
     def render_update_success
       render json: {
         status: 'success',
-        data:   resource_data
+        data: resource_data
       }
     end
 

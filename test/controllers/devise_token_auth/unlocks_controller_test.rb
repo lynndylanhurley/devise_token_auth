@@ -174,7 +174,7 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
           before do
             @resource_class = LockableUser
             @request_params = {
-              email:        @resource.email.upcase
+              email: @resource.email.upcase
             }
           end
 

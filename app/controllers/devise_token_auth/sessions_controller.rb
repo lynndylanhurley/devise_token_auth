@@ -26,6 +26,7 @@ module DeviseTokenAuth
         if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
           return render_create_error_bad_credentials
         end
+
         @client_id, @token = @resource.create_token
         @resource.save
 
@@ -113,9 +114,7 @@ module DeviseTokenAuth
     end
 
     def render_destroy_success
-      render json: {
-        success:true
-      }, status: 200
+      render json: { success:true }, status: 200
     end
 
     def render_destroy_error

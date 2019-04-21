@@ -5,7 +5,7 @@ if DEVISE_TOKEN_AUTH_ORM == :active_record
     let(:ts) { DeviseTokenAuth::TokensSerialization }
     let(:user) { FactoryBot.create(:user) }
     let(:tokens) do
-      # Сreate all possible token's attributes combinations
+      # Create all possible token's attributes combinations
       user.create_token
       2.times { user.create_new_auth_token(user.tokens.first[0]) }
       user.create_new_auth_token

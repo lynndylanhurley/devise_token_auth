@@ -11,7 +11,8 @@ module DeviseTokenAuth
       if File.exist?(File.join(destination_root, fname))
         inclusion = 'include DeviseTokenAuth::Concerns::User'
         unless parse_file_for_line(fname, inclusion)
-          inject_into_file fname, before: /end\s\z/ do <<-'RUBY'
+          inject_into_file fname, before: /end\s\z/ do
+            <<-'RUBY'
 
   include Mongoid::Locker
 
