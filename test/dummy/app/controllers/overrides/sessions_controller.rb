@@ -8,7 +8,7 @@ module Overrides
       @resource = resource_class.dta_find_by(email: resource_params[:email])
 
       if @resource && valid_params?(:email, resource_params[:email]) && @resource.valid_password?(resource_params[:password]) && @resource.confirmed?
-        @client_id, @token = @resource.create_token
+        @token = @resource.create_token
         @resource.save
 
         render json: {

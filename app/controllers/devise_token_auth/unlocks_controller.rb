@@ -35,13 +35,13 @@ module DeviseTokenAuth
       @resource = resource_class.unlock_access_by_token(params[:unlock_token])
 
       if @resource.persisted?
-        client_id, token = @resource.create_token
+        token = @resource.create_token
         @resource.save!
         yield @resource if block_given?
 
         redirect_header_options = { unlock: true }
-        redirect_headers = build_redirect_headers(token,
-                                                  client_id,
+        redirect_headers = build_redirect_headers(token.token,
+                                                  token.client,
                                                   redirect_header_options)
         redirect_to(@resource.build_auth_url(after_unlock_path_for(@resource),
                                              redirect_headers))

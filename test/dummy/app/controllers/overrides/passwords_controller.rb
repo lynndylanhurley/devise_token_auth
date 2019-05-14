@@ -11,7 +11,7 @@ module Overrides
       )
 
       if @resource && @resource.id
-        client_id, token = @resource.create_token
+        token = @resource.create_token
 
         # ensure that user is confirmed
         @resource.skip_confirmation! unless @resource.confirmed_at
@@ -22,8 +22,8 @@ module Overrides
           override_proof: OVERRIDE_PROOF,
           reset_password: true
         }
-        redirect_headers = build_redirect_headers(token,
-                                                  client_id,
+        redirect_headers = build_redirect_headers(token.token,
+                                                  token.client,
                                                   redirect_header_options)
         redirect_to(@resource.build_auth_url(params[:redirect_url],
                                              redirect_headers))
