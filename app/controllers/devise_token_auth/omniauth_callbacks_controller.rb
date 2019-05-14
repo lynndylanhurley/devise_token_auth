@@ -62,7 +62,7 @@ module DeviseTokenAuth
       end
 
       sign_in(:user, @resource, store: false, bypass: false)
-      
+
       @resource.save!
 
       yield @resource if block_given?
@@ -171,11 +171,11 @@ module DeviseTokenAuth
 
     def create_auth_params
       @auth_params = {
-        auth_token:     @token,
-        client_id: @client_id,
-        uid:       @resource.uid,
-        expiry:    @expiry,
-        config:    @config
+        auth_token: @token.token,
+        client_id:  @token.client,
+        uid:        @resource.uid,
+        expiry:     @token.expiry,
+        config:     @config
       }
       @auth_params.merge!(oauth_registration: true) if @oauth_registration
       @auth_params
@@ -183,7 +183,7 @@ module DeviseTokenAuth
 
     def set_token_on_resource
       @config = omniauth_params['config_name']
-      @client_id, @token, @expiry = @resource.create_token
+      @token  = @resource.create_token
     end
 
     def render_data(message, data)

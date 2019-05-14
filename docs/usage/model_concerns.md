@@ -10,22 +10,22 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
 
   **Example**:
   ~~~ruby
-  # extract token + client_id from auth header
-  client_id = request.headers['client']
+  # extract token + client from auth header
+  client = request.headers['client']
   token = request.headers['access-token']
 
-  @resource.valid_token?(token, client_id)
+  @resource.valid_token?(token, client)
   ~~~
 
 * **`create_new_auth_token`**: creates a new auth token with all of the necessary metadata. Accepts `client` as an optional argument. Will generate a new `client` if none is provided. Returns the authentication headers that should be sent by the client as an object.
 
   **Example**:
   ~~~ruby
-  # extract client_id from auth header
-  client_id = request.headers['client']
+  # extract client from auth header
+  client = request.headers['client']
 
   # update token, generate updated auth headers for response
-  new_auth_header = @resource.create_new_auth_token(client_id)
+  new_auth_header = @resource.create_new_auth_token(client)
 
   # update response with the header that will be required by the next request
   response.headers.merge!(new_auth_header)
@@ -35,18 +35,17 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
 
   **Example**:
   ~~~ruby
-  # create client id and token
-  client_id = SecureRandom.urlsafe_base64(nil, false)
-  token     = SecureRandom.urlsafe_base64(nil, false)
+  # create token
+  token = DeviseTokenAuth::TokenFactory.create
 
   # store client + token in user's token hash
-  @resource.tokens[client_id] = {
-    token: BCrypt::Password.create(token),
-    expiry: (Time.zone.now + @resource.token_lifespan).to_i
+  @resource.tokens[token.client] = {
+    token:  token.token_hash,
+    expiry: token.expiry
   }
 
   # generate auth headers for response
-  new_auth_header = @resource.build_auth_header(token, client_id)
+  new_auth_header = @resource.build_auth_header(token.token, token.client)
 
   # update response with the header that will be required by the next request
   response.headers.merge!(new_auth_header)

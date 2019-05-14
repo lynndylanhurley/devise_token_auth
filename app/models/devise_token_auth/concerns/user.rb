@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'bcrypt'
-
 module DeviseTokenAuth::Concerns::User
   extend ActiveSupport::Concern
 
@@ -9,7 +7,7 @@ module DeviseTokenAuth::Concerns::User
     @token_equality_cache ||= {}
 
     key = "#{token_hash}/#{token}"
-    result = @token_equality_cache[key] ||= (::BCrypt::Password.new(token_hash) == token)
+    result = @token_equality_cache[key] ||= DeviseTokenAuth::TokenFactory.token_hash_is_token?(token_hash, token)
     @token_equality_cache = {} if @token_equality_cache.size > 10000
     result
   end
@@ -86,27 +84,25 @@ module DeviseTokenAuth::Concerns::User
       send_devise_notification(:unlock_instructions, raw, opts)
       raw
     end
+
+    def create_token(client: nil, lifespan: nil, cost: nil, **token_extras)
+      token = DeviseTokenAuth::TokenFactory.create(client: client, lifespan: lifespan, cost: cost)
+
+      tokens[token.client] = {
+        token:  token.token_hash,
+        expiry: token.expiry
+      }.merge!(token_extras)
+
+      clean_old_tokens
+
+      token
+    end
   end
 
-  def create_token(client_id: nil, token: nil, expiry: nil, **token_extras)
-    client_id ||= SecureRandom.urlsafe_base64(nil, false)
-    token     ||= SecureRandom.urlsafe_base64(nil, false)
-    expiry    ||= (Time.zone.now + token_lifespan).to_i
-
-    tokens[client_id] = {
-      token: BCrypt::Password.create(token),
-      expiry: expiry
-    }.merge!(token_extras)
-
-    clean_old_tokens
-
-    [client_id, token, expiry]
-  end
-
-  def valid_token?(token, client_id = 'default')
-    return false unless tokens[client_id]
-    return true if token_is_current?(token, client_id)
-    return true if token_can_be_reused?(token, client_id)
+  def valid_token?(token, client = 'default')
+    return false unless tokens[client]
+    return true if token_is_current?(token, client)
+    return true if token_can_be_reused?(token, client)
 
     # return false if none of the above conditions are met
     false
@@ -116,10 +112,10 @@ module DeviseTokenAuth::Concerns::User
   # can be passed on from the client
   def send_confirmation_notification?; false; end
 
-  def token_is_current?(token, client_id)
+  def token_is_current?(token, client)
     # ghetto HashWithIndifferentAccess
-    expiry     = tokens[client_id]['expiry'] || tokens[client_id][:expiry]
-    token_hash = tokens[client_id]['token'] || tokens[client_id][:token]
+    expiry     = tokens[client]['expiry'] || tokens[client][:expiry]
+    token_hash = tokens[client]['token'] || tokens[client][:token]
 
     return true if (
       # ensure that expiry and token are set
@@ -134,10 +130,10 @@ module DeviseTokenAuth::Concerns::User
   end
 
   # allow batch requests to use the previous token
-  def token_can_be_reused?(token, client_id)
+  def token_can_be_reused?(token, client)
     # ghetto HashWithIndifferentAccess
-    updated_at = tokens[client_id]['updated_at'] || tokens[client_id][:updated_at]
-    last_token = tokens[client_id]['last_token'] || tokens[client_id][:last_token]
+    updated_at = tokens[client]['updated_at'] || tokens[client][:updated_at]
+    last_token = tokens[client]['last_token'] || tokens[client][:last_token]
 
     return true if (
       # ensure that the last token and its creation time exist
@@ -147,40 +143,39 @@ module DeviseTokenAuth::Concerns::User
       updated_at.to_time > Time.zone.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
-      ::BCrypt::Password.new(last_token) == token
+      DeviseTokenAuth::TokenFactory.valid_token_hash?(last_token)
     )
   end
 
   # update user's auth token (should happen on each request)
-  def create_new_auth_token(client_id = nil)
+  def create_new_auth_token(client = nil)
     now = Time.zone.now
 
-    client_id, token = create_token(
-      client_id: client_id,
-      expiry: (now + token_lifespan).to_i,
-      last_token: tokens.fetch(client_id, {})['token'],
+    token = create_token(
+      client: client,
+      last_token: tokens.fetch(client, {})['token'],
       updated_at: now
     )
 
-    update_auth_header(token, client_id)
+    update_auth_header(token.token, token.client)
   end
 
-  def build_auth_header(token, client_id = 'default')
+  def build_auth_header(token, client = 'default')
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
-    expiry = tokens[client_id]['expiry'] || tokens[client_id][:expiry]
+    expiry = tokens[client]['expiry'] || tokens[client][:expiry]
 
     {
       DeviseTokenAuth.headers_names[:"access-token"] => token,
       DeviseTokenAuth.headers_names[:"token-type"]   => 'Bearer',
-      DeviseTokenAuth.headers_names[:"client"]       => client_id,
+      DeviseTokenAuth.headers_names[:"client"]       => client,
       DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
       DeviseTokenAuth.headers_names[:"uid"]          => uid
     }
   end
 
-  def update_auth_header(token, client_id = 'default')
-    headers = build_auth_header(token, client_id)
+  def update_auth_header(token, client = 'default')
+    headers = build_auth_header(token, client)
     clean_old_tokens
     save!
 
@@ -194,9 +189,9 @@ module DeviseTokenAuth::Concerns::User
     DeviseTokenAuth::Url.generate(base_url, args)
   end
 
-  def extend_batch_buffer(token, client_id)
-    tokens[client_id]['updated_at'] = Time.zone.now
-    update_auth_header(token, client_id)
+  def extend_batch_buffer(token, client)
+    tokens[client]['updated_at'] = Time.zone.now
+    update_auth_header(token, client)
   end
 
   def confirmed?
@@ -205,10 +200,6 @@ module DeviseTokenAuth::Concerns::User
 
   def token_validation_response
     as_json(except: %i[tokens created_at updated_at])
-  end
-
-  def token_lifespan
-    DeviseTokenAuth.token_lifespan
   end
 
   protected
@@ -236,8 +227,8 @@ module DeviseTokenAuth::Concerns::User
     return unless should_remove_tokens_after_password_reset?
 
     if tokens.present? && tokens.many?
-      client_id, token_data = tokens.max_by { |cid, v| v[:expiry] || v['expiry'] }
-      self.tokens = { client_id => token_data }
+      client, token_data = tokens.max_by { |cid, v| v[:expiry] || v['expiry'] }
+      self.tokens = { client => token_data }
     end
   end
 
