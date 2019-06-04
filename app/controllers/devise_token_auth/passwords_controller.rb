@@ -63,7 +63,7 @@ module DeviseTokenAuth
         @resource = resource_class.with_reset_password_token(resource_params[:reset_password_token])
         return render_update_error_unauthorized unless @resource
 
-        @client_id, @token = @resource.create_token
+        @token = @resource.create_token
       else
         @resource = set_user_by_token
       end
