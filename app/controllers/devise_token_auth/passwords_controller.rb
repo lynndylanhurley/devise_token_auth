@@ -191,7 +191,7 @@ module DeviseTokenAuth
 
     def build_callback_url(reset_password_token)
       url          = URI.parse(@redirect_url)
-      query_params = Rack::Utils.parse_nested_query(URI.parse(url).query)
+      query_params = Rack::Utils.parse_nested_query(url.query)
       query_params = query_params.merge(reset_password_token: reset_password_token)
       query_string = query_params.collect { |k, v| "#{k}=#{v}" }.join('&')
       url.query    = query_string
