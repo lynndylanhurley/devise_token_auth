@@ -103,9 +103,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     else
       unless @resource.valid?
-        @resource = resource_class.find(@resource.to_param) # errors remain after reload
+        # errors remain after reload
         # if we left the model in a bad state, something is wrong in our app
-        unless @resource.valid?
+        unless @resource.reload.valid?
           raise DeviseTokenAuth::Errors::InvalidModel, "Cannot set auth token in invalid model. Errors: #{@resource.errors.full_messages}"
         end
       end
