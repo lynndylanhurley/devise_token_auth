@@ -102,7 +102,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       response.headers.merge!(auth_header)
 
     else
-      unless @resource.reload.valid?
+      unless @resource.valid?
         @resource = resource_class.find(@resource.to_param) # errors remain after reload
         # if we left the model in a bad state, something is wrong in our app
         unless @resource.valid?
