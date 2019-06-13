@@ -39,8 +39,11 @@ class ActiveSupport::TestCase
   strategies = { active_record: :transaction,
                  mongoid: :truncation }
   DatabaseCleaner.strategy = strategies[DEVISE_TOKEN_AUTH_ORM]
+  DatabaseCleaner.clean_with(:truncation)
   setup { DatabaseCleaner.start }
   teardown { DatabaseCleaner.clean }
+
+
 
   # Add more helper methods to be used by all tests here...
 
