@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rails', '>= 4.2.0', '< 6'
   s.add_dependency 'devise', '> 3.5.2', '< 4.7'
-  s.add_dependency 'bcrypt', '3.1.12'
+  s.add_dependency 'bcrypt', '3.1.13'
 
   s.add_development_dependency 'appraisal'
   s.add_development_dependency 'sqlite3', '~> 1.3.6'
