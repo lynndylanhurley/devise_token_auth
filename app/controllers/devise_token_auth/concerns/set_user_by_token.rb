@@ -94,7 +94,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     if @used_auth_by_token && !DeviseTokenAuth.change_headers_on_each_request
       # should not append auth header if @resource related token was
       # cleared by sign out in the meantime
-      return if @resource.reload.tokens[@token.client].nil?
+      return if @resource.tokens[@token.client].nil?
 
       auth_header = @resource.build_auth_header(@token.token, @token.client)
 
