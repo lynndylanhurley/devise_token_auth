@@ -17,11 +17,11 @@ gemspec
 
 group :development, :test do
   gem 'attr_encrypted'
-  gem 'figaro', git: 'https://github.com/laserlemon/figaro'
-  gem 'omniauth-facebook', git: 'https://github.com/mkdynamic/omniauth-facebook'
-  gem 'omniauth-github',        git: 'https://github.com/intridea/omniauth-github'
-  gem 'omniauth-google-oauth2', git: 'https://github.com/zquestz/omniauth-google-oauth2'
-  gem 'rack-cors', require: 'rack/cors'
+  gem 'figaro'
+  gem 'omniauth-facebook'
+  gem 'omniauth-github'
+  gem 'omniauth-google-oauth2'
+  gem 'rack-cors'
   gem 'thor'
 
   # testing
@@ -65,6 +65,6 @@ if ENV['MONGOID_VERSION']
   else
     gem 'mongoid', '>= 5'
   end
-  
+
   gem 'mongoid-locker', '~> 1.0'
 end
