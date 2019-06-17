@@ -62,7 +62,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # ensure we clear the client
     unless @token.present?
       @token.client = nil
-      return false
+      return
     end
 
     # mitigate timing attacks by finding by uid instead of auth token
