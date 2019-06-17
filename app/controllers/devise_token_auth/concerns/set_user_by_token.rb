@@ -94,7 +94,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     if @used_auth_by_token && !DeviseTokenAuth.change_headers_on_each_request
       # should not append auth header if @resource related token was
       # cleared by sign out in the meantime
-      return if @resource.reload.tokens[@token.client].nil?
+      return if @resource.tokens[@token.client].nil?
 
       auth_header = @resource.build_auth_header(@token.token, @token.client)
 
@@ -102,7 +102,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       response.headers.merge!(auth_header)
 
     else
-      unless @resource.reload.valid?
+      unless @resource.valid?
         @resource = resource_class.find(@resource.to_param) # errors remain after reload
         # if we left the model in a bad state, something is wrong in our app
         unless @resource.valid?
@@ -116,6 +116,11 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   private
 
   def refresh_headers
+    # At this point restore the attributes so we can obtain the lock
+    # otherwise an exception is thrown while trying to obtain the lock
+    # with unsaved data on the resource.
+    @resource.restore_attributes
+
     # Lock the user record during any auth_header updates to ensure
     # we don't have write contention from multiple threads
     @resource.with_lock do
