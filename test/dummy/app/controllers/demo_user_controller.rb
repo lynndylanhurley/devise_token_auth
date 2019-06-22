@@ -13,7 +13,7 @@ class DemoUserController < ApplicationController
   end
 
   def members_only_remove_token
-    u = User.find(current_user.id)
+    u = current_user
     u.tokens = {}
     u.save!
 
