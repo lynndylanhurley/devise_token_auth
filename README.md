@@ -65,6 +65,8 @@ Please read the [issue template](https://github.com/lynndylanhurley/devise_token
 
 See our [Contribution Guidelines](https://github.com/lynndylanhurley/devise_token_auth/blob/master/.github/CONTRIBUTING.md). Feel free to submit pull requests, review pull requests, or review open issues. If you'd like to get in contact, [Zach Feldman](https://github.com/zachfeldman) has been wrangling this effort, you can reach him with his name @gmail. Further discussion of this in [this issue](https://github.com/lynndylanhurley/devise_token_auth/issues/969).
 
+We have some bounties for some issues, [check them out](https://github.com/lynndylanhurley/devise_token_auth/issues?q=is%3Aopen+is%3Aissue+label%3Abounty)!
+
 ## Live Demos
 
 [Here is a demo](http://ng-token-auth-demo.herokuapp.com/) of this app running with the [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) module and [AngularJS](https://github.com/angular/angular.js).

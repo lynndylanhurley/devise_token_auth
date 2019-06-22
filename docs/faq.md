@@ -1,5 +1,9 @@
 ## FAQ
 
+### I have missing headers or issues with batch requests
+
+Try disabling `change_headers_on_each_request`, it's a nice to have security enhancement but not crucial. If you are curious, you can check how we [manage the tokens and batch requests](docs/conceptual.md)
+
 ### Can I use this gem alongside standard Devise?
 
 Yes! But you will need to enable the support of separate routes for standard Devise. So do something like this:

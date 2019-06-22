@@ -27,6 +27,7 @@ This gem provides access to all of the following [devise helpers](https://github
 | **`current_user`** | Returns the currently signed-in `User`, or `nil` if unavailable. |
 | **`user_signed_in?`** | Returns `true` if a `User` is signed in, otherwise `false`. |
 | **`devise_token_auth_group`** | Operate on multiple user classes as a group. [Read more](#group-access) |
+| **`update_auth_header`** | After action that updates the header with the new token, it's included by default, you should skip it if you are destroying the user |
 
 Note that if the model that you're trying to access isn't called `User`, the helper method names will change. For example, if the user model is called `Admin`, the methods would look like this:
 
