@@ -116,6 +116,7 @@ module DeviseTokenAuth::Concerns::User
     # ghetto HashWithIndifferentAccess
     expiry     = tokens[client]['expiry'] || tokens[client][:expiry]
     token_hash = tokens[client]['token'] || tokens[client][:token]
+    previous_token_hash = tokens[client]['previous_token'] || tokens[client][:previous_token]
 
     return true if (
       # ensure that expiry and token are set
@@ -125,7 +126,10 @@ module DeviseTokenAuth::Concerns::User
       DateTime.strptime(expiry.to_s, '%s') > Time.zone.now &&
 
       # ensure that the token is valid
-      DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)
+      (
+        (token_hash.present? && DeviseTokenAuth::Concerns::User.tokens_match?(token_hash, token)) or
+        (previous_token_hash.present? && DeviseTokenAuth::Concerns::User.tokens_match?(previous_token_hash, token))
+      )
     )
   end
 
@@ -153,7 +157,8 @@ module DeviseTokenAuth::Concerns::User
 
     token = create_token(
       client: client,
-      last_token: tokens.fetch(client, {})['token'],
+      previous_token: tokens.fetch(client, {})['token'],
+      last_token: tokens.fetch(client, {})['previous_token'],
       updated_at: now
     )
 
