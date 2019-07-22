@@ -1,6 +1,5 @@
 language: ruby
 cache: bundler
-sudo: false
 services:
   - mongodb
 bundler_args: --without development
@@ -9,7 +8,7 @@ rvm:
   - 2.3.8
   - 2.4.6
   - 2.5.5
-  - 2.6.2
+  - 2.6.3
 
 gemfile:
   - gemfiles/rails_4_2.gemfile
@@ -42,7 +41,7 @@ matrix:
   - rvm: 2.5.5
     gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
-  - rvm: 2.6.2
+  - rvm: 2.6.3
     gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
     env: DEVISE_TOKEN_AUTH_ORM=mongoid
   - name: Code Climate Test Coverage
@@ -70,7 +69,7 @@ matrix:
           ./cc-test-reporter upload-coverage;
         fi
   exclude:
-    - rvm: 2.6.2
+    - rvm: 2.6.3
       gemfile: gemfiles/rails_4_2.gemfile
   fast_finish: true
 
