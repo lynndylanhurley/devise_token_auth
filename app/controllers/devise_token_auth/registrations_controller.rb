@@ -181,7 +181,7 @@ module DeviseTokenAuth
       elsif account_update_params.key?(:current_password)
         'update_with_password'
       else
-        'update_attributes'
+        'update'
       end
     end
 

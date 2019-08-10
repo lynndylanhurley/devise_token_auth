@@ -92,7 +92,7 @@ module DeviseTokenAuth
     def resource_update_method
       allow_password_change = recoverable_enabled? && @resource.allow_password_change == true
       if DeviseTokenAuth.check_current_password_before_update == false || allow_password_change
-        'update_attributes'
+        'update'
       else
         'update_with_password'
       end

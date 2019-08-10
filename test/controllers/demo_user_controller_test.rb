@@ -321,8 +321,8 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           assert @resource.tokens.count > 1
 
           # password changed from new device
-          @resource.update_attributes(password: 'newsecret123',
-                                      password_confirmation: 'newsecret123')
+          @resource.update(password: 'newsecret123',
+                           password_confirmation: 'newsecret123')
 
           get '/demo/members_only',
               params: {},
