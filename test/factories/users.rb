@@ -24,7 +24,7 @@ FactoryBot.define do
     end
 
     trait :facebook do
-      uid { Faker::Number.number(10) }
+      uid { Faker::Number.number }
       provider { 'facebook' }
     end
 
