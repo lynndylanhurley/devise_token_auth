@@ -6,7 +6,7 @@ module Overrides
 
     def update
       if @resource
-        if @resource.update_attributes(account_update_params)
+        if @resource.update(account_update_params)
           render json: {
             status: 'success',
             data:   @resource.as_json,
