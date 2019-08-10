@@ -2,6 +2,8 @@ language: ruby
 cache: bundler
 services:
   - mongodb
+  - mysql
+  - postgresql
 bundler_args: --without development
 
 rvm:
