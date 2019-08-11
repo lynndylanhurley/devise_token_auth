@@ -4,7 +4,7 @@ module DeviseTokenAuth
   class ConfirmationsController < DeviseTokenAuth::ApplicationController
 
     def show
-      @resource = resource_class.confirm_by_token(params[:confirmation_token])
+      @resource = resource_class.confirm_by_token(resource_params[:confirmation_token])
 
       if @resource.errors.empty?
         yield @resource if block_given?
@@ -30,21 +30,27 @@ module DeviseTokenAuth
     end
 
     def create
-      return head :bad_request if params[:email].blank?
+      return render_create_error_missing_email if resource_params[:email].blank?
 
-      @resource = resource_class.dta_find_by(uid: params[:email].downcase, provider: provider)
+      @email = get_case_insensitive_field_from_resource_params(:email)
+
+      @resource = resource_class.dta_find_by(uid: @email, provider: provider)
 
       return render_not_found_error unless @resource
 
       @resource.send_confirmation_instructions({
         redirect_url: redirect_url,
-        client_config: params[:config_name]
+        client_config: resource_params[:config_name]
       })
 
       return render_create_success
     end
 
     protected
+
+    def render_create_error_missing_email
+      render_error(401, I18n.t('devise_token_auth.confirmations.missing_email'))
+    end
 
     def render_create_success
       render json: {
@@ -58,6 +64,10 @@ module DeviseTokenAuth
     end
 
     private
+
+    def resource_params
+      params.permit(:email, :confirmation_token, :config_name)
+    end
 
     # give redirect value from params priority or fall back to default value if provided
     def redirect_url

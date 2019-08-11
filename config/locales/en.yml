@@ -30,6 +30,7 @@ en:
     confirmations:
       sended: "An email has been sent to '%{email}' containing instructions for confirming your account."
       user_not_found: "Unable to find user with email '%{email}'."
+      missing_email: "You must provide an email address."
 
   errors:
     messages:
