@@ -34,14 +34,27 @@ module DeviseTokenAuth
 
       @resource = resource_class.dta_find_by(uid: params[:email].downcase, provider: provider)
 
-      return head :not_found unless @resource
+      return render_not_found_error unless @resource
 
       @resource.send_confirmation_instructions({
         redirect_url: redirect_url,
         client_config: params[:config_name]
       })
 
-      head :ok
+      return render_create_success
+    end
+
+    protected
+
+    def render_create_success
+      render json: {
+          success: true,
+          message: I18n.t('devise_token_auth.confirmations.sended', email: @email)
+      }
+    end
+
+    def render_not_found_error
+      render_error(404, I18n.t('devise_token_auth.confirmations.user_not_found', email: @email))
     end
 
     private

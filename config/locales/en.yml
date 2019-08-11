@@ -27,6 +27,10 @@ en:
       missing_email: "You must provide an email address."
       sended: "An email has been sent to '%{email}' containing instructions for unlocking your account."
       user_not_found: "Unable to find user with email '%{email}'."
+    confirmations:
+      sended: "An email has been sent to '%{email}' containing instructions for confirming your account."
+      user_not_found: "Unable to find user with email '%{email}'."
+
   errors:
     messages:
       validate_sign_up_params: "Please submit proper sign up data in request body."
