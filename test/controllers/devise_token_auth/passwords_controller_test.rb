@@ -440,6 +440,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'success' do
           before do
+            DeviseTokenAuth.require_client_password_reset_token = false
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
@@ -504,6 +505,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'current password mismatch error' do
           before do
+            DeviseTokenAuth.require_client_password_reset_token = false
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
@@ -648,6 +650,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
           test 'new password should not authenticate user' do
             assert !@resource.valid_password?(@new_password)
+          end
+
+          teardown do
+            DeviseTokenAuth.require_client_password_reset_token = false
           end
         end
       end

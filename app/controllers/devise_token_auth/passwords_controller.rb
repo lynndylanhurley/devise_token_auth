@@ -32,19 +32,25 @@ module DeviseTokenAuth
     end
 
     # this is where users arrive after visiting the password reset confirmation link
-    def edit(&block)
+    def edit
       # if a user is not found, return nil
       @resource = resource_class.with_reset_password_token(resource_params[:reset_password_token])
 
       if @resource && @resource.reset_password_period_valid?
-        if require_client_password_reset_token?
-          update_allow_password_change(&block)
-          callback_url = build_callback_url(resource_params[:reset_password_token])
-          redirect_to callback_url
-        else
-          token = @resource.create_token
-          update_allow_password_change(&block)
+        token = @resource.create_token unless require_client_password_reset_token?
 
+        # ensure that user is confirmed
+        @resource.skip_confirmation! if confirmable_enabled? && !@resource.confirmed_at
+        # allow user to change password once without current_password
+        @resource.allow_password_change = true if recoverable_enabled?
+
+        @resource.save!
+
+        yield @resource if block_given?
+
+        if require_client_password_reset_token?
+          redirect_to build_callback_url(resource_params[:reset_password_token])
+        else
           redirect_header_options = { reset_password: true }
           redirect_headers = build_redirect_headers(token.token,
                                                     token.client,
@@ -94,7 +100,7 @@ module DeviseTokenAuth
     protected
 
     def resource_update_method
-      allow_password_change = recoverable_enabled? && ( @resource.allow_password_change || require_client_password_reset_token? )
+      allow_password_change = recoverable_enabled? && @resource.allow_password_change == true || require_client_password_reset_token?
       if DeviseTokenAuth.check_current_password_before_update == false || allow_password_change
         'update'
       else
@@ -197,18 +203,6 @@ module DeviseTokenAuth
       url.query    = query_string
 
       url.to_s
-    end
-
-    def update_allow_password_change
-      # ensure that user is confirmed
-      @resource.skip_confirmation! if confirmable_enabled? && !@resource.confirmed_at
-
-      # allow user to change password once without current_password
-      @resource.allow_password_change = true if recoverable_enabled?
-
-      @resource.save!
-
-      yield @resource if block_given?
     end
 
     def reset_password_token_as_raw?(recoverable)
