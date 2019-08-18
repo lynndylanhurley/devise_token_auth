@@ -74,6 +74,11 @@ To customize json rendering, implement the following protected controller method
 * render_validate_token_success
 * render_validate_token_error
 
+### Confirmations Controller
+* render_create_error_missing_email
+* render_create_success
+* render_not_found_error
+
 ##### Example: all :controller options with default settings:
 
 ~~~ruby
