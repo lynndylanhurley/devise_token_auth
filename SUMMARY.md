@@ -17,6 +17,6 @@
   * [Testing](docs/usage/testing.md)
 * [FAQ](docs/faq.md)
 * [Conceptual Diagrams](docs/conceptual.md)
-  * [Token Management](docs/conceptual.md#about-token-management)
-  * [Batch Requests](docs/conceptual.md#about-batch-requests)
+  * [Token Management](docs/conceptual#about-token-management)
+  * [Batch Requests](docs/conceptual#about-batch-requests)
 * [Security](docs/security.md)
