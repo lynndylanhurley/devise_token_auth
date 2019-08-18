@@ -124,10 +124,10 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           refute @resource.confirmed?
         end
 
-        test 'bad request on resend confirmation' do
+        test 'request resend confirmation without email' do
           post :create, params: { email: nil }, xhr: true
 
-          assert_equal 400, response.status
+          assert_equal 401, response.status
         end
 
         test 'user should not be found on resend confirmation request' do
