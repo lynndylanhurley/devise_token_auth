@@ -218,7 +218,7 @@ module DeviseTokenAuth::Concerns::User
       encrypted_password_changed? &&
         DeviseTokenAuth.remove_tokens_after_password_reset
     else
-      saved_change_to_encrypted_password? &&
+      saved_change_to_attribute?(:encrypted_password) &&
         DeviseTokenAuth.remove_tokens_after_password_reset
     end
   end
