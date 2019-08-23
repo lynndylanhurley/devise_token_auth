@@ -1,8 +1,8 @@
 require 'test_helper'
 
 if DEVISE_TOKEN_AUTH_ORM == :active_record
-  describe 'DeviseTokenAuth::TokensSerialization' do
-    let(:ts) { DeviseTokenAuth::TokensSerialization }
+  describe 'DeviseTokenAuth::Concerns::TokensSerialization' do
+    let(:ts) { DeviseTokenAuth::Concerns::TokensSerialization }
     let(:user) { FactoryBot.create(:user) }
     let(:tokens) do
       # Сreate all possible token's attributes combinations
