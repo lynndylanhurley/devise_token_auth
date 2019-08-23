@@ -1,4 +1,4 @@
-module DeviseTokenAuth::TokensSerialization
+module DeviseTokenAuth::Concerns::TokensSerialization
   # Serialization hash to json
   def self.dump(object)
     object.each_value(&:compact!) unless object.nil?
