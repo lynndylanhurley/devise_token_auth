@@ -31,8 +31,9 @@ module DeviseTokenAuth
       return render_create_error_redirect_url_not_allowed if blacklisted_redirect_url?
 
       # override email confirmation, must be sent manually from ctrl
-      resource_class.set_callback('create', :after, :send_on_create_confirmation_instructions)
-      resource_class.skip_callback('create', :after, :send_on_create_confirmation_instructions)
+      callback_name = defined?(ActiveRecord) && resource_class < ActiveRecord::Base ? :commit : :create
+      resource_class.set_callback(callback_name, :after, :send_on_create_confirmation_instructions)
+      resource_class.skip_callback(callback_name, :after, :send_on_create_confirmation_instructions)
 
       if @resource.respond_to? :skip_confirmation_notification!
         # Fix duplicate e-mails by disabling Devise confirmation e-mail
