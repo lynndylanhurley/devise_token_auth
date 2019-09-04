@@ -522,6 +522,34 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       describe 'change password' do
+        describe 'using reset token' do
+          before do
+            DeviseTokenAuth.require_client_password_reset_token = true
+            @redirect_url = 'http://client-app.dev'
+            get_reset_token
+            edit_url = CGI.unescape(@mail.body.match(/href=\"(.+)\"/)[1])
+            query_parts = Rack::Utils.parse_nested_query(URI.parse(edit_url).query)
+            get :edit, params: query_parts
+          end
+
+          test 'request should be redirect' do
+            assert_equal 302, response.status
+          end
+
+          test 'request should redirect to correct redirect url' do
+            host = URI.parse(response.location).host
+            query_parts = Rack::Utils.parse_nested_query(URI.parse(response.location).query)
+
+            assert_equal 'client-app.dev', host
+            assert_equal @mail_reset_token, query_parts['reset_password_token']
+            assert_equal 1, query_parts.keys.size
+          end
+
+          teardown do
+            DeviseTokenAuth.require_client_password_reset_token = false
+          end
+        end
+
         describe 'with valid headers' do
           before do
             @auth_headers = @resource.create_new_auth_token

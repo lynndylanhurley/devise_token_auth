@@ -49,7 +49,7 @@ module DeviseTokenAuth
         yield @resource if block_given?
 
         if require_client_password_reset_token?
-          redirect_to build_callback_url(resource_params[:reset_password_token])
+          redirect_to DeviseTokenAuth::Url.generate(@redirect_url, reset_password_token: resource_params[:reset_password_token])
         else
           redirect_header_options = { reset_password: true }
           redirect_headers = build_redirect_headers(token.token,
@@ -193,16 +193,6 @@ module DeviseTokenAuth
 
       return render_create_error_missing_redirect_url unless @redirect_url
       return render_error_not_allowed_redirect_url if blacklisted_redirect_url?
-    end
-
-    def build_callback_url(reset_password_token)
-      url          = URI.parse(@redirect_url)
-      query_params = Rack::Utils.parse_nested_query(url.query)
-      query_params = query_params.merge(reset_password_token: reset_password_token)
-      query_string = query_params.collect { |k, v| "#{k}=#{v}" }.join('&')
-      url.query    = query_string
-
-      url.to_s
     end
 
     def reset_password_token_as_raw?(recoverable)
