@@ -119,7 +119,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # At this point restore the attributes so we can obtain the lock
     # otherwise an exception is thrown while trying to obtain the lock
     # with unsaved data on the resource.
-    unless const_defined?('Mongoid') do
+    unless const_defined?('Mongoid')
       @resource.restore_attributes
     end
     
