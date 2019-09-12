@@ -14,6 +14,7 @@
   * [Using Multiple User Classes](docs/usage/multiple_models.md)
   * [Excluding Modules](docs/usage/excluding_models.md)
   * [Custom Controller/Email Overrides](docs/usage/overrides.md)
+  * [Reset password flow](docs/usage/reset_password.md)
   * [Testing](docs/usage/testing.md)
 * [FAQ](docs/faq.md)
 * [Conceptual Diagrams](docs/conceptual.md)

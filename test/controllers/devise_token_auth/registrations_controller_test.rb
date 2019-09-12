@@ -492,7 +492,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               # test valid update param
               @resource_class = User
               @new_operating_thetan = 1_000_000
-              @email = 'AlternatingCase2@example.com'
+              @email = Faker::Internet.safe_email
               @request_params = {
                 operating_thetan: @new_operating_thetan,
                 email: @email
@@ -599,7 +599,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               # test valid update param
               @resource_class = User
               @new_operating_thetan = 1_000_000
-              @email = 'AlternatingCase2@example.com'
+              @email = Faker::Internet.safe_email
               @request_params = {
                 operating_thetan: @new_operating_thetan,
                 email: @email
@@ -650,7 +650,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           before do
             DeviseTokenAuth.check_current_password_before_update = :password
             @new_operating_thetan = 1_000_000
-            @email = 'AlternatingCase2@example.com'
+            @email = Faker::Internet.safe_email
           end
 
           after do
