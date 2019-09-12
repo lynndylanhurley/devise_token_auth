@@ -239,10 +239,10 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
         end
 
-        describe 'Cheking reset_password_token' do
+        describe 'Checking reset_password_token' do
           before do
             post :create, params: {
-              email:        @resource.email,
+              email: @resource.email,
               redirect_url: @redirect_url
             }
 
@@ -440,6 +440,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'success' do
           before do
+            DeviseTokenAuth.require_client_password_reset_token = false
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
@@ -504,6 +505,7 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
 
         describe 'current password mismatch error' do
           before do
+            DeviseTokenAuth.require_client_password_reset_token = false
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
             @new_password = Faker::Internet.password
@@ -520,7 +522,35 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       describe 'change password' do
-        describe 'success' do
+        describe 'using reset token' do
+          before do
+            DeviseTokenAuth.require_client_password_reset_token = true
+            @redirect_url = 'http://client-app.dev'
+            get_reset_token
+            edit_url = CGI.unescape(@mail.body.match(/href=\"(.+)\"/)[1])
+            query_parts = Rack::Utils.parse_nested_query(URI.parse(edit_url).query)
+            get :edit, params: query_parts
+          end
+
+          test 'request should be redirect' do
+            assert_equal 302, response.status
+          end
+
+          test 'request should redirect to correct redirect url' do
+            host = URI.parse(response.location).host
+            query_parts = Rack::Utils.parse_nested_query(URI.parse(response.location).query)
+
+            assert_equal 'client-app.dev', host
+            assert_equal @mail_reset_token, query_parts['reset_password_token']
+            assert_equal 1, query_parts.keys.size
+          end
+
+          teardown do
+            DeviseTokenAuth.require_client_password_reset_token = false
+          end
+        end
+
+        describe 'with valid headers' do
           before do
             @auth_headers = @resource.create_new_auth_token
             request.headers.merge!(@auth_headers)
@@ -567,17 +597,91 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
         end
 
-        describe 'unauthorized user' do
+        describe 'without valid headers' do
           before do
-            @auth_headers = @resource.create_new_auth_token
-            @new_password = Faker::Internet.password
+            @resource.create_new_auth_token
+            new_password = Faker::Internet.password
 
-            put :update, params: { password: @new_password,
-                                   password_confirmation: @new_password }
+            put :update, params: { password: new_password,
+                                   password_confirmation: new_password }
           end
 
           test 'response should fail' do
             assert_equal 401, response.status
+          end
+        end
+
+        describe 'with valid reset password token' do
+          before do
+            reset_password_token = @resource.send_reset_password_instructions
+            @new_password = Faker::Internet.password
+            @params = { password: @new_password,
+                        password_confirmation: @new_password,
+                        reset_password_token: reset_password_token }
+          end
+
+          describe 'with require_client_password_reset_token disabled' do
+            before do
+              DeviseTokenAuth.require_client_password_reset_token = false
+              put :update, params: @params
+
+              @data = JSON.parse(response.body)
+              @resource.reload
+            end
+
+            test 'request should be not be successful' do
+              assert_equal 401, response.status
+            end
+          end
+
+          describe 'with require_client_password_reset_token enabled' do
+            before do
+              DeviseTokenAuth.require_client_password_reset_token = true
+              put :update, params: @params
+
+              @data = JSON.parse(response.body)
+              @resource.reload
+            end
+
+            test 'request should be successful' do
+              assert_equal 200, response.status
+            end
+
+            test 'request should return success message' do
+              assert @data['message']
+              assert_equal @data['message'],
+                           I18n.t('devise_token_auth.passwords.successfully_updated')
+            end
+
+            test 'new password should authenticate user' do
+              assert @resource.valid_password?(@new_password)
+            end
+
+            teardown do
+              DeviseTokenAuth.require_client_password_reset_token = false
+            end
+          end
+        end
+
+        describe 'with invalid reset password token' do
+          before do
+            DeviseTokenAuth.require_client_password_reset_token = true
+            @resource.update reset_password_token: 'koskoskoskos'
+            put :update, params: @params
+            @data = JSON.parse(response.body)
+            @resource.reload
+          end
+
+          test 'request should fail' do
+            assert_equal 401, response.status
+          end
+
+          test 'new password should not authenticate user' do
+            assert !@resource.valid_password?(@new_password)
+          end
+
+          teardown do
+            DeviseTokenAuth.require_client_password_reset_token = false
           end
         end
       end
