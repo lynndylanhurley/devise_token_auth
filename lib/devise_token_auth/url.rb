@@ -11,6 +11,9 @@ module DeviseTokenAuth::Url
     query = [uri.query, params.to_query].reject(&:blank?).join('&')
     res += "?#{query}"
     res += "##{uri.fragment}" if uri.fragment
+    # repeat any query params after the fragment to deal with Angular eating any pre fragment query params, used
+    # in the reset password redirect url
+    res += "?#{query}" if uri.fragment
 
     res
   end
