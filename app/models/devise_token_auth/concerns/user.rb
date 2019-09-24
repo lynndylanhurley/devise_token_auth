@@ -44,6 +44,28 @@ module DeviseTokenAuth::Concerns::User
     def email_changed?; false; end
     def will_save_change_to_email?; false; end
 
+    if Devise.rails51?
+      def postpone_email_change?
+        postpone = self.class.reconfirmable &&
+          will_change_email? &&
+          !@bypass_confirmation_postpone &&
+          self.email.present? &&
+          (!@skip_reconfirmation_in_callback || !self.email_in_database.nil?)
+        @bypass_confirmation_postpone = false
+        postpone
+      end
+    else
+      def postpone_email_change?
+        postpone = self.class.reconfirmable &&
+          will_change_email? &&
+          !@bypass_confirmation_postpone &&
+          self.email.present? &&
+          (!@skip_reconfirmation_in_callback || !self.email_was.nil?)
+        @bypass_confirmation_postpone = false
+        postpone
+      end
+    end
+
     def password_required?
       return false unless provider == 'email'
       super
@@ -248,6 +270,14 @@ module DeviseTokenAuth::Concerns::User
       # Since the tokens are sorted by expiry, shift the oldest client token
       #   off the Hash until it no longer exceeds the maximum number of clients
       tokens.shift while max_client_tokens_exceeded?
+    end
+  end
+
+  def will_change_email?
+    if Devise.rails51?
+      email_in_database != email
+    else
+      email_was != email
     end
   end
 end
