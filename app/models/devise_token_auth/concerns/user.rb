@@ -45,7 +45,7 @@ module DeviseTokenAuth::Concerns::User
     def will_save_change_to_email?; false; end
 
     if DeviseTokenAuth.send_confirmation_email && devise_modules.include?(:confirmable)
-      if Devise.rails51?
+      if Devise.rails51? && self.respond_to?(:email_in_database)
         def postpone_email_change?
           postpone = self.class.reconfirmable &&
             will_change_email? &&
@@ -276,7 +276,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def will_change_email?
-    if Devise.rails51?
+    if Devise.rails51? && self.respond_to?(:email_in_database)
       email_in_database != email
     else
       email_was != email
