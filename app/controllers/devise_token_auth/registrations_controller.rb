@@ -28,7 +28,7 @@ module DeviseTokenAuth
       end
 
       # if whitelist is set, validate redirect_url against whitelist
-      return render_create_error_redirect_url_not_allowed if blacklisted_redirect_url?
+      return render_create_error_redirect_url_not_allowed if blacklisted_redirect_url?(@redirect_url)
 
       # override email confirmation, must be sent manually from ctrl
       callback_name = defined?(ActiveRecord) && resource_class < ActiveRecord::Base ? :commit : :create

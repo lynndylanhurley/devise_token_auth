@@ -14,6 +14,8 @@ vi:
       account_with_uid_destroyed: "Tài khoản với UID '%{uid}' vừa bị phá hủy."
       account_to_destroy_not_found: "Không thể xác định tài khoản cho việc phá hủy."
       user_not_found: "Người dùng không tìm thấy."
+    omniauth:
+      not_allowed_redirect_url: "Chuyển hướng tới '%{redirect_url}' không được phép."
     passwords:
       missing_email: "Bạn cần cung cấp địa chỉ email."
       missing_redirect_url: "Thiếu đường đẫn URL."
