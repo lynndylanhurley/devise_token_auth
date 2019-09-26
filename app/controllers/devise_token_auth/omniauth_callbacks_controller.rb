@@ -145,8 +145,16 @@ module DeviseTokenAuth
       omniauth_params['omniauth_window_type']
     end
 
-    def auth_origin_url
+    def unsafe_auth_origin_url
       omniauth_params['auth_origin_url'] || omniauth_params['origin']
+    end
+
+
+    def auth_origin_url
+      if unsafe_auth_origin_url && blacklisted_redirect_url?(unsafe_auth_origin_url)
+        return nil
+      end
+      return unsafe_auth_origin_url
     end
 
     # in the success case, omniauth_window_type is in the omniauth_params.
@@ -195,8 +203,7 @@ module DeviseTokenAuth
     end
 
     def render_error_not_allowed_auth_origin_url
-      message = I18n.t('devise_token_auth.omniauth.not_allowed_redirect_url', redirect_url: auth_origin_url)
-      omniauth_params['auth_origin_url'] = omniauth_params['origin'] = nil # unset for render_data_or_redirect fallthrough
+      message = I18n.t('devise_token_auth.omniauth.not_allowed_redirect_url', redirect_url: unsafe_auth_origin_url)
       render_data_or_redirect('authFailure', error: message)
     end
 
