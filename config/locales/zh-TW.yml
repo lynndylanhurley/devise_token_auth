@@ -16,6 +16,8 @@ zh-TW:
       account_with_uid_destroyed: "帳號 '%{uid}' 已被移除。"
       account_to_destroy_not_found: "無法找到目標帳號。"
       user_not_found: "找不到帳號。"
+    omniauth:
+      not_allowed_redirect_url: "不支援轉向到 '%{redirect_url}'"
     passwords:
       missing_email: "必需提供電郵。"
       missing_redirect_url: "欠缺 redirect URL."

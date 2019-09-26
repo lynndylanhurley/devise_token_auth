@@ -14,6 +14,8 @@ nl:
       account_with_uid_destroyed: "Account met id '%{uid}' is verwijderd."
       account_to_destroy_not_found: "Te verwijderen account niet gevonden."
       user_not_found: "Gebruiker niet gevonden."
+    omniauth:
+      not_allowed_redirect_url: "Redirect naar '%{redirect_url}' niet toegestaan."
     passwords:
       missing_email: "Je moet een e-mailadres opgeven."
       missing_redirect_url: "Redirect URL ontbreekt."

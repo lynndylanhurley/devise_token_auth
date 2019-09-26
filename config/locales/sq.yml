@@ -14,6 +14,8 @@ sq:
       account_with_uid_destroyed: "Llogaria me UID-në '%{uid}' është fshirë."
       account_to_destroy_not_found: "Nuk u gjet llogaria për fshirje."
       user_not_found: "Përdoruesi nuk u gjet."
+    omniauth:
+      not_allowed_redirect_url: "Nuk lejohet shkuarja tek URL-ja '%{redirect_url}'."
     passwords:
       missing_email: "Ju duhet të jepni një email adresë."
       missing_redirect_url: "Mungon URL-ja për ridërgim."

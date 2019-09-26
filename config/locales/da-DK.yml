@@ -14,6 +14,8 @@ da-DK:
       account_with_uid_destroyed: "Kontoen med UID '%{uid}' er slettet."
       account_to_destroy_not_found: "Kan ikke finde kontoen som skal slettes."
       user_not_found: "Brugeren ikke fundet."
+    omniauth:
+      not_allowed_redirect_url: "Omdirigering til '%{redirect_url}' er ikke tilladt."
     passwords:
       missing_email: "Du skal udfylde email feltet."
       missing_redirect_url: "Der er ingen omdirigeringsadresse."

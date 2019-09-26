@@ -3,6 +3,9 @@
 module DeviseTokenAuth
   class OmniauthCallbacksController < DeviseTokenAuth::ApplicationController
     attr_reader :auth_params
+
+    before_action :validate_auth_origin_url_param
+
     skip_before_action :set_user_by_token, raise: false
     skip_after_action :update_auth_header
 
@@ -75,6 +78,11 @@ module DeviseTokenAuth
       render_data_or_redirect('authFailure', error: @error)
     end
 
+    def validate_auth_origin_url_param 
+      return render_error_not_allowed_auth_origin_url if auth_origin_url && blacklisted_redirect_url?(auth_origin_url)
+    end
+  
+
     protected
 
     # this will be determined differently depending on the action that calls
@@ -137,8 +145,16 @@ module DeviseTokenAuth
       omniauth_params['omniauth_window_type']
     end
 
-    def auth_origin_url
+    def unsafe_auth_origin_url
       omniauth_params['auth_origin_url'] || omniauth_params['origin']
+    end
+
+
+    def auth_origin_url
+      if unsafe_auth_origin_url && blacklisted_redirect_url?(unsafe_auth_origin_url)
+        return nil
+      end
+      return unsafe_auth_origin_url
     end
 
     # in the success case, omniauth_window_type is in the omniauth_params.
@@ -186,8 +202,13 @@ module DeviseTokenAuth
       @token  = @resource.create_token
     end
 
+    def render_error_not_allowed_auth_origin_url
+      message = I18n.t('devise_token_auth.omniauth.not_allowed_redirect_url', redirect_url: unsafe_auth_origin_url)
+      render_data_or_redirect('authFailure', error: message)
+    end
+
     def render_data(message, data)
-      @data = data.merge(message: message)
+      @data = data.merge(message: ActionController::Base.helpers.sanitize(message))
       render layout: nil, template: 'devise_token_auth/omniauth_external_window'
     end
 
@@ -224,7 +245,7 @@ module DeviseTokenAuth
             <html>
                     <head></head>
                     <body>
-                            #{text}
+                            #{ActionController::Base.helpers.sanitize(text)}
                     </body>
             </html>)
     end
@@ -261,4 +282,5 @@ module DeviseTokenAuth
       @resource
     end
   end
+
 end
