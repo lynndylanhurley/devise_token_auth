@@ -192,7 +192,7 @@ module DeviseTokenAuth
       )
 
       return render_create_error_missing_redirect_url unless @redirect_url
-      return render_error_not_allowed_redirect_url if blacklisted_redirect_url?
+      return render_error_not_allowed_redirect_url if blacklisted_redirect_url?(@redirect_url)
     end
 
     def reset_password_token_as_raw?(recoverable)

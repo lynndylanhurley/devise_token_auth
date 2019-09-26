@@ -14,6 +14,8 @@ he:
       account_with_uid_destroyed: "חשבון עם UID '%{uid}' הושמד."
       account_to_destroy_not_found: "לא ניתן לאתר חשבון להשמדה."
       user_not_found: "המשתמש לא נמצא."
+    omniauth:
+      not_allowed_redirect_url: "הפניה אל '%{redirect_url}' אינה מותרת."
     passwords:
       missing_email: "עליך לספק כתובת דוא\"ל."
       missing_redirect_url: "כתובת אתר להפניה מחדש חסרה."

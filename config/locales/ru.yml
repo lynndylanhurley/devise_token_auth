@@ -14,6 +14,8 @@ ru:
       account_with_uid_destroyed: "Учетная запись с uid '%{uid}' удалена."
       account_to_destroy_not_found: "Не удается найти учетную запись для удаления."
       user_not_found: "Пользователь не найден."
+    omniauth:
+      not_allowed_redirect_url: "Переадресация на '%{redirect_url}' не разрешена."
     passwords:
       missing_email: "Вы должны указать адрес электронной почты."
       missing_redirect_url: "Отсутствует адрес переадресации."

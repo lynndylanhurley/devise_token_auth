@@ -14,6 +14,8 @@ ja:
       account_with_uid_destroyed: "'%{uid}' のアカウントは削除されました。"
       account_to_destroy_not_found: "削除するアカウントが見つかりません。"
       user_not_found: "ユーザーが見つかりません。"
+    omniauth:
+      not_allowed_redirect_url:  "'%{redirect_url}' へのリダイレクトは許可されていません。"
     passwords:
       missing_email: "メールアドレスが与えられていません。"
       missing_redirect_url: "リダイレクト URL が与えられていません。"

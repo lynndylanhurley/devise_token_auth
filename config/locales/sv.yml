@@ -14,6 +14,8 @@ sv:
       account_with_uid_destroyed: "Kontot med UID '%{uid}' har tagits bort."
       account_to_destroy_not_found: "Kunde inte hitta kontot för borttagning."
       user_not_found: "Användaren hittades ej."
+    omniauth:
+      not_allowed_redirect_url: "Omdirigering till '%{redirect_url}' ej tillåten."
     passwords:
       missing_email: "Du måste ange en emailadress."
       missing_redirect_url: "Saknar en omdirigerings-URL."

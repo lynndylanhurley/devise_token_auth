@@ -14,6 +14,8 @@ es:
       account_with_uid_destroyed: "La cuenta con el identificador '%{uid}' se ha eliminado."
       account_to_destroy_not_found: "No se puede encontrar la cuenta a borrar."
       user_not_found: "Usuario no encontrado."
+    omniauth:
+      not_allowed_redirect_url: "Redirección hacia '%{redirect_url}' no esta permitida."
     passwords:
       missing_email: "Debe incluir un correo electrónico."
       missing_redirect_url: "Falta el Url de redirección."

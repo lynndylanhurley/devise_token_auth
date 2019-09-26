@@ -14,6 +14,8 @@ fr:
       account_with_uid_destroyed: "Le compte avec l'identifiant '%{uid}' a été supprimé."
       account_to_destroy_not_found: "Le compte à supprimer est introuvable."
       user_not_found: "Utilisateur introuvable."
+    omniauth:
+      not_allowed_redirect_url: "Redirection vers '%{redirect_url}' n'est pas autorisée."
     passwords:
       missing_email: "Vous devez soumettre un e-mail."
       missing_redirect_url: "URL de redirection manquante."

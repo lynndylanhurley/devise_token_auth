@@ -14,6 +14,8 @@ pt-BR:
       account_with_uid_destroyed: "A conta com uid '%{uid}' foi excluída."
       account_to_destroy_not_found: "Não foi possível encontrar a conta para exclusão."
       user_not_found: "Usuário não encontrado."
+    omniauth:
+      not_allowed_redirect_url: "Redirecionamento para '%{redirect_url}' não permitido."
     passwords:
       missing_email: "Informe o endereço de e-mail."
       missing_redirect_url: "URL para redirecionamento não informada."

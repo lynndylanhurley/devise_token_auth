@@ -14,6 +14,8 @@ en:
       account_with_uid_destroyed: "Account with UID '%{uid}' has been destroyed."
       account_to_destroy_not_found: "Unable to locate account for destruction."
       user_not_found: "User not found."
+    omniauth:
+      not_allowed_redirect_url: "Redirect to '%{redirect_url}' not allowed."
     passwords:
       missing_email: "You must provide an email address."
       missing_redirect_url: "Missing redirect URL."

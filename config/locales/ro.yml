@@ -14,6 +14,8 @@ ro:
       account_with_uid_destroyed: "Contul cu UID '%{uid}' a fost șters."
       account_to_destroy_not_found: "Nu se poate localiza contul pentru ștergere."
       user_not_found: "Utilizatorul nu a fost găsit."
+    omniauth:
+      not_allowed_redirect_url: "Redirecționarea către '%{redirect_url}' nu este permisă."
     passwords:
       missing_email: "Trebuie să introduci o adresă de e-mail."
       missing_redirect_url: "URL-ul pentru redirecționare lipsește."

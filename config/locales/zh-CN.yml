@@ -14,6 +14,8 @@ zh-CN:
       account_with_uid_destroyed: "账号 '%{uid}' 已被移除。"
       account_to_destroy_not_found: "无法找到目标帐号。"
       user_not_found: "找不到帐号。"
+    omniauth:
+      not_allowed_redirect_url: "不支持转向到 '%{redirect_url}'"
     passwords:
       missing_email: "必需提供邮箱。"
       missing_redirect_url: "欠缺 redirect URL."
