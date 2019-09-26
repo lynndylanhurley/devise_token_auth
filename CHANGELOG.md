@@ -1,13 +1,62 @@
 # Change Log
 
-## [Unreleased](https://github.com/lynndylanhurley/devise_token_auth/tree/HEAD)
+## [v1.1.3](https://github.com/lynndylanhurley/devise_token_auth/tree/v1.1.3) (2019-09-26)
+[Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v1.1.2...v1.1.3)
 
-[Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v1.1.0...HEAD)
+**Fixed bugs:**
+
+- XSS and Open Redirect [\#1332](https://github.com/lynndylanhurley/devise_token_auth/issues/1332)
+- fix\(omniauth\): fix CVE-2019-16751 [\#1342](https://github.com/lynndylanhurley/devise_token_auth/pull/1342) ([booleanbetrayal](https://github.com/booleanbetrayal))
 
 **Closed issues:**
 
+- Rails 6.0 [\#1334](https://github.com/lynndylanhurley/devise_token_auth/issues/1334)
+- CookieOverflow with  [\#1322](https://github.com/lynndylanhurley/devise_token_auth/issues/1322)
+-  Confirmations controller route error not found [\#1316](https://github.com/lynndylanhurley/devise_token_auth/issues/1316)
+- render\_create\_error not called when no json is provided [\#929](https://github.com/lynndylanhurley/devise_token_auth/issues/929)
+
+**Merged pull requests:**
+
+- CI: Use ruby 2.4.7 [\#1337](https://github.com/lynndylanhurley/devise_token_auth/pull/1337) ([olleolleolle](https://github.com/olleolleolle))
+- CI: Use 2.5.6, 2.6.4 [\#1336](https://github.com/lynndylanhurley/devise_token_auth/pull/1336) ([olleolleolle](https://github.com/olleolleolle))
+- Allow password reset with token alone [\#1295](https://github.com/lynndylanhurley/devise_token_auth/pull/1295) ([jkeen](https://github.com/jkeen))
+
+## [v1.1.2](https://github.com/lynndylanhurley/devise_token_auth/tree/v1.1.2) (2019-08-24)
+[Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v1.1.1...v1.1.2)
+
+**Closed issues:**
+
+- Make compatible with devise 4.7 [\#1331](https://github.com/lynndylanhurley/devise_token_auth/issues/1331)
+-  Error after upgrade to Rails 6.0.0 [\#1329](https://github.com/lynndylanhurley/devise_token_auth/issues/1329)
+- Documentation link on sidebar is incorrect [\#1325](https://github.com/lynndylanhurley/devise_token_auth/issues/1325)
+- Unable to create user with mongodb as ORM [\#1293](https://github.com/lynndylanhurley/devise_token_auth/issues/1293)
+- Missing user credential in confirmation redirect url querystring [\#1292](https://github.com/lynndylanhurley/devise_token_auth/issues/1292)
+
+**Merged pull requests:**
+
+- Fix devise version [\#1333](https://github.com/lynndylanhurley/devise_token_auth/pull/1333) ([laerciosb](https://github.com/laerciosb))
+- Skip callback when active record [\#1330](https://github.com/lynndylanhurley/devise_token_auth/pull/1330) ([enomotodev](https://github.com/enomotodev))
+- Use param-way version of saved\_change\_to\_encrypted\_password [\#1328](https://github.com/lynndylanhurley/devise_token_auth/pull/1328) ([MaicolBen](https://github.com/MaicolBen))
+
+## [v1.1.1](https://github.com/lynndylanhurley/devise_token_auth/tree/v1.1.1) (2019-08-18)
+[Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v1.1.0...v1.1.1)
+
+**Closed issues:**
+
+- I'm noticing that validate token requests are taking a long time - is there any way to turn down the cost in bcrypt for devise token auth so that the validate token requests are faster? [\#1326](https://github.com/lynndylanhurley/devise_token_auth/issues/1326)
+- How do I update a user without a token while using Devise token Auth? [\#1318](https://github.com/lynndylanhurley/devise_token_auth/issues/1318)
+- How to register with phone number instead of email as default [\#1313](https://github.com/lynndylanhurley/devise_token_auth/issues/1313)
+- uninitialized constant DeviseTokenAuth::Concerns in development. [\#1312](https://github.com/lynndylanhurley/devise_token_auth/issues/1312)
+- Change how to update existing user migration [\#1311](https://github.com/lynndylanhurley/devise_token_auth/issues/1311)
+- Huge performance downgrade from v0.1.43 to v1.1.0 [\#1301](https://github.com/lynndylanhurley/devise_token_auth/issues/1301)
+- Cant log in - \#\<NoMethodError: undefined method `current\_sign\_in\_at' for \#\<User:0x000055e053c79c58\>\> [\#1300](https://github.com/lynndylanhurley/devise_token_auth/issues/1300)
+- Generate authorization headers without the need for an email and password. [\#1298](https://github.com/lynndylanhurley/devise_token_auth/issues/1298)
 - Any way to "become" user? [\#1291](https://github.com/lynndylanhurley/devise_token_auth/issues/1291)
 - Can't find documentation, can't omniauth login [\#1290](https://github.com/lynndylanhurley/devise_token_auth/issues/1290)
+- undefined method `tokens' for \#\<Hash:0x00007fe4698ea648\> [\#1288](https://github.com/lynndylanhurley/devise_token_auth/issues/1288)
+- Possible Phishing Attack Vulnerability [\#1287](https://github.com/lynndylanhurley/devise_token_auth/issues/1287)
+- Unable to sign\_in even if user confirmation is success [\#1285](https://github.com/lynndylanhurley/devise_token_auth/issues/1285)
+- Changelog? [\#1275](https://github.com/lynndylanhurley/devise_token_auth/issues/1275)
 - devise\_token\_auth depends on vulnerable devise version [\#1273](https://github.com/lynndylanhurley/devise_token_auth/issues/1273)
 - Database index question [\#1272](https://github.com/lynndylanhurley/devise_token_auth/issues/1272)
 - Reset Password Must Be Done in 5 Seconds [\#1265](https://github.com/lynndylanhurley/devise_token_auth/issues/1265)
@@ -15,19 +64,30 @@
 - devise\_token\_auth is not working in rails 6 ruby 2.6 [\#1259](https://github.com/lynndylanhurley/devise_token_auth/issues/1259)
 - undefined method '\[\]' for nil:NilClass when confirming email [\#1224](https://github.com/lynndylanhurley/devise_token_auth/issues/1224)
 - Unable to sign\_out a user that is being deleted which causes 404 as devise\_token\_auth attempts to find to create headers. [\#1205](https://github.com/lynndylanhurley/devise_token_auth/issues/1205)
-- DB serialization issue in Rails 5.2.0 [\#1079](https://github.com/lynndylanhurley/devise_token_auth/issues/1079)
 - API Does Not Use Api\_Controller  [\#887](https://github.com/lynndylanhurley/devise_token_auth/issues/887)
 - Use issue for "real" issue with the gem, and stackoverflow for integration problem [\#756](https://github.com/lynndylanhurley/devise_token_auth/issues/756)
 - User tokens don't properly deserialize [\#121](https://github.com/lynndylanhurley/devise_token_auth/issues/121)
 
 **Merged pull requests:**
 
+- Fix token doc links [\#1327](https://github.com/lynndylanhurley/devise_token_auth/pull/1327) ([MaicolBen](https://github.com/MaicolBen))
+- Confirmations controller rendering methods added [\#1324](https://github.com/lynndylanhurley/devise_token_auth/pull/1324) ([ilhanadiyaman](https://github.com/ilhanadiyaman))
+- Add mysql & psql service to travis because it isn't by default anymore [\#1323](https://github.com/lynndylanhurley/devise_token_auth/pull/1323) ([MaicolBen](https://github.com/MaicolBen))
+- Fix "manage the tokens" broken link in FAQ [\#1320](https://github.com/lynndylanhurley/devise_token_auth/pull/1320) ([brateq](https://github.com/brateq))
+- CI: Use 2.6.3, drop unused directive sudo: false [\#1317](https://github.com/lynndylanhurley/devise_token_auth/pull/1317) ([olleolleolle](https://github.com/olleolleolle))
+- updates: use update instead of update\_attributes [\#1314](https://github.com/lynndylanhurley/devise_token_auth/pull/1314) ([moray95](https://github.com/moray95))
+- fix\(current\_user\): revert false return in set\_user\_by\_token when token is not present [\#1306](https://github.com/lynndylanhurley/devise_token_auth/pull/1306) ([booleanbetrayal](https://github.com/booleanbetrayal))
+- Update changelog [\#1297](https://github.com/lynndylanhurley/devise_token_auth/pull/1297) ([MaicolBen](https://github.com/MaicolBen))
+- Relax bcrypt version [\#1296](https://github.com/lynndylanhurley/devise_token_auth/pull/1296) ([MaicolBen](https://github.com/MaicolBen))
 - CI: Update matrix [\#1277](https://github.com/lynndylanhurley/devise_token_auth/pull/1277) ([olleolleolle](https://github.com/olleolleolle))
 - Skip token\_validations route [\#1271](https://github.com/lynndylanhurley/devise_token_auth/pull/1271) ([yasuman](https://github.com/yasuman))
 - Resend confirmation instructions [\#1267](https://github.com/lynndylanhurley/devise_token_auth/pull/1267) ([lpsBetty](https://github.com/lpsBetty))
 - Tokens serialization [\#1250](https://github.com/lynndylanhurley/devise_token_auth/pull/1250) ([dks17](https://github.com/dks17))
 - Delete namespece and fix file name change to prevent override behavior of the default email validator [\#1242](https://github.com/lynndylanhurley/devise_token_auth/pull/1242) ([ihatov08](https://github.com/ihatov08))
+- Minor updates to docs [\#1236](https://github.com/lynndylanhurley/devise_token_auth/pull/1236) ([MaicolBen](https://github.com/MaicolBen))
 - new TokenFactory module [\#1085](https://github.com/lynndylanhurley/devise_token_auth/pull/1085) ([dks17](https://github.com/dks17))
+
+# Change Log
 
 ## [v1.1.0](https://github.com/lynndylanhurley/devise_token_auth/tree/v1.1.0) (2019-03-18)
 [Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v1.0.0...v1.1.0)
@@ -2857,5 +2917,10 @@
 - README and travis config tweaks [\#7](https://github.com/lynndylanhurley/devise_token_auth/pull/7) ([guilhermesimoes](https://github.com/guilhermesimoes))
 
 
+
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+
+
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
 
 \* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
