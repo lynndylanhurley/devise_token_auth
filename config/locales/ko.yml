@@ -13,6 +13,8 @@ ko:
       account_with_uid_destroyed: " UID가 '%{uid}'인 계정을 삭제했습니다."
       account_to_destroy_not_found: "삭제할 계정을 찾을 수 없습니다."
       user_not_found: "유저를 찾을 수 없습니다."
+    omniauth:
+      not_allowed_redirect_url: "'%{redirect_url}' 주소로 리다이렉트는 허용하지 않습니다."
     passwords:
       missing_email: "이메일 주소를 입력해야 합니다."
       missing_redirect_url: "redirect URL이 없습니다."
