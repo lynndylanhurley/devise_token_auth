@@ -23,11 +23,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.2.0"
 
   s.add_dependency 'rails', '>= 4.2.0', '< 6.1'
+  s.add_dependency 'sprockets', '3.7.2' # FIXME: breaking changes in 4.0.0
   s.add_dependency 'devise', '> 3.5.2', '< 5'
   s.add_dependency 'bcrypt', '~> 3.0'
 
   s.add_development_dependency 'appraisal'
-  s.add_development_dependency 'sqlite3', '~> 1.3.6'
+  s.add_development_dependency 'sqlite3', '~> 1.4'
   s.add_development_dependency 'pg'
   s.add_development_dependency 'mysql2'
   s.add_development_dependency 'mongoid', '>= 4', '< 8'
