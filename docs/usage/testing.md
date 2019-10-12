@@ -48,11 +48,6 @@ describe 'Whether access is ocurring properly', type: :request do
       expect(response.status).to eq(200)
     end
 
-    it 'gives you an authentication code if you are an existing user and you satisfy the password' do
-      login
-      expect(response.has_header?('access-token')).to eq(true)
-    end
-
     it 'first get a token, then access a restricted page' do
       login
       auth_params = get_auth_params_from_login_response_headers(response)
