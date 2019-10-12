@@ -4,10 +4,10 @@ require 'test_helper'
 
 class DeviseTokenAuth::UrlTest < ActiveSupport::TestCase
   describe 'DeviseTokenAuth::Url#generate' do
-    test 'URI fragment should appear at the end of URL' do
+    test 'URI fragment should appear at the end of URL with repeat of query params' do
       params = { client_id: 123 }
       url = 'http://example.com#fragment'
-      assert_equal DeviseTokenAuth::Url.send(:generate, url, params), 'http://example.com?client_id=123#fragment'
+      assert_equal DeviseTokenAuth::Url.send(:generate, url, params), 'http://example.com?client_id=123#fragment?client_id=123'
     end
 
     describe 'with existing query params' do
