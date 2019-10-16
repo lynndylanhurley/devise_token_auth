@@ -4,11 +4,12 @@
 
 If you wish to use omniauth authentication, add all of your desired authentication provider gems to your `Gemfile`.
 
-**OmniAuth example using github, facebook, and google**:
+**OmniAuth example using GitHub, Facebook, Google, and Apple**:
 ~~~ruby
 gem 'omniauth-github'
 gem 'omniauth-facebook'
 gem 'omniauth-google-oauth2'
+gem 'omniauth-apple'
 ~~~
 
 Then run `bundle install`.
@@ -21,13 +22,14 @@ In `config/initializers/omniauth.rb`, add the settings for each of your provider
 
 These settings must be obtained from the providers themselves.
 
-**Example using github, facebook, and google**:
+**Example using Github, Facebook, Google, and Apple**:
 ~~~ruby
 # config/initializers/omniauth.rb
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :github,        ENV['GITHUB_KEY'],   ENV['GITHUB_SECRET'],   scope: 'email,profile'
   provider :facebook,      ENV['FACEBOOK_KEY'], ENV['FACEBOOK_SECRET']
   provider :google_oauth2, ENV['GOOGLE_KEY'],   ENV['GOOGLE_SECRET']
+  provider :apple,         ENV['APPLE_CLIENT_ID'], '', { scope: 'email name', team_id: ENV['APPLE_TEAM_ID'], key_id: ENV['APPLE_KEY'], pem: ENV['APPLE_PEM'] }
 end
 ~~~
 

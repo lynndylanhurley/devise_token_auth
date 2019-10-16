@@ -21,6 +21,7 @@ group :development, :test do
   gem 'omniauth-facebook'
   gem 'omniauth-github'
   gem 'omniauth-google-oauth2'
+  gem 'omniauth-apple'
   gem 'rack-cors'
   gem 'thor'
 
