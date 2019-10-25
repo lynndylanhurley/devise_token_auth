@@ -44,6 +44,10 @@ module DeviseTokenAuth::Concerns::User
     def email_changed?; false; end
     def will_save_change_to_email?; false; end
 
+    if DeviseTokenAuth.send_confirmation_email && devise_modules.include?(:confirmable)
+      include DeviseTokenAuth::Concerns::ConfirmableSupport
+    end
+
     def password_required?
       return false unless provider == 'email'
       super
