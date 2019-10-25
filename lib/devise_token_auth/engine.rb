@@ -26,6 +26,7 @@ module DeviseTokenAuth
                  :default_callbacks,
                  :headers_names,
                  :bypass_sign_in,
+                 :send_confirmation_email,
                  :require_client_password_reset_token
 
   self.change_headers_on_each_request       = true
@@ -47,6 +48,7 @@ module DeviseTokenAuth
                                                 'uid': 'uid',
                                                 'token-type': 'token-type' }
   self.bypass_sign_in                       = true
+  self.send_confirmation_email              = false
   self.require_client_password_reset_token  = false
 
   def self.setup(&block)

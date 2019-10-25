@@ -20,6 +20,8 @@ Rails.application.routes.draw do
 
   mount_devise_token_auth_for 'LockableUser', at: 'lockable_user_auth'
 
+  mount_devise_token_auth_for 'ConfirmableUser', at: 'confirmable_user_auth'
+
   # test namespacing
   namespace :api do
     scope :v1 do
