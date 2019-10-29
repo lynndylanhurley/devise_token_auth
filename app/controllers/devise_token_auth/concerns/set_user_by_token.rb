@@ -119,8 +119,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # At this point restore the attributes so we can obtain the lock
     # otherwise an exception is thrown while trying to obtain the lock
     # with unsaved data on the resource.
-    @resource.restore_attributes unless const_defined?('Mongoid')      
-    
+    @resource.restore_attributes unless defined?('Mongoid')
+
     # Lock the user record during any auth_header updates to ensure
     # we don't have write contention from multiple threads
     @resource.with_lock do
