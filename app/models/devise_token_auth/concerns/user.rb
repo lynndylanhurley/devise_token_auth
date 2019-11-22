@@ -218,7 +218,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def should_remove_tokens_after_password_reset?
-    if Rails::VERSION::MAJOR <= 5 || defined?(Mongoid)
+    if Rails::VERSION::MAJOR <= 5 ||defined?('Mongoid')
       encrypted_password_changed? &&
         DeviseTokenAuth.remove_tokens_after_password_reset
     else
