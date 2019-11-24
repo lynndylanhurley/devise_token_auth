@@ -43,9 +43,9 @@ class <%= user_class %>
   field :tokens, type: Hash, default: {}
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
 
   index({ email: 1 }, { name: 'email_index', unique: true, background: true })
