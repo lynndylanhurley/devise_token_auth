@@ -167,7 +167,7 @@ module DeviseTokenAuth::Concerns::User
   def build_auth_header(token, client = 'default')
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
-    expiry = tokens[client]['expiry'] || tokens[client][:expiry]
+    expiry = tokens[client]['expiry'] || tokens[client][:expiry] || (Time.now + DeviseTokenAuth.token_lifespan).to_i
 
     {
       DeviseTokenAuth.headers_names[:"access-token"] => token,
@@ -196,8 +196,9 @@ module DeviseTokenAuth::Concerns::User
   def extend_batch_buffer(token, client)
     if tokens[client] != nil
       tokens[client]['updated_at'] = Time.zone.now
-      update_auth_header(token, client)      
     end
+
+    update_auth_header(token, client) 
   end
 
   def confirmed?
