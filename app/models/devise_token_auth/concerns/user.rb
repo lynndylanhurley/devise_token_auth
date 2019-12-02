@@ -196,8 +196,8 @@ module DeviseTokenAuth::Concerns::User
   def extend_batch_buffer(token, client)
     if tokens[client] != nil
       tokens[client]['updated_at'] = Time.zone.now
+      update_auth_header(token, client)      
     end
-    update_auth_header(token, client)
   end
 
   def confirmed?
