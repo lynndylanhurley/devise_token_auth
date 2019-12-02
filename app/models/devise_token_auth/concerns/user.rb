@@ -168,7 +168,7 @@ module DeviseTokenAuth::Concerns::User
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
     
-    if  tokens[client]['expiry'].nil? || tokens[client][:expiry].nil?
+    if tokens[client].nil?
       expiry = (Time.now + DeviseTokenAuth.token_lifespan).to_i
     else
       expiry = tokens[client]['expiry'] || tokens[client][:expiry]
