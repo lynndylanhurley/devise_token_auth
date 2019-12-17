@@ -97,16 +97,17 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     # parse header for values necessary for authentication
     uid        = request.headers[uid_name] || params[uid_name]
-    @refresh_token     ||= request.headers[refresh_token_name] || params[refresh_token_name]
-    @client_id ||= request.headers[client_name] || params[client_name]
+    @token           = DeviseTokenAuth::TokenFactory.new unless @token
+    @token.refresh_token     ||= request.headers[refresh_token_name] || params[refresh_token_name]
+    @token.client ||= request.headers[client_name] || params[client_name]
 
     # client_id isn't required, set to 'default' if absent
-    @client_id ||= 'default'
+    @token.client ||= 'default'
 
     # mitigate timing attacks by finding by uid instead of auth token
     user = uid && rc.find_by(uid: uid)
 
-    if user && user.valid_refresh_token?(@refresh_token, @client_id)
+    if user && user.valid_refresh_token?(@token.refresh_token, @token.client)
       # sign_in with bypass: true will be deprecated in the next version of Devise
       if self.respond_to? :bypass_sign_in
         bypass_sign_in(user, scope: :user)
@@ -116,17 +117,15 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       return @resource = user
     else
       # zero all values previously set values
-      @client_id = nil
+      @token.client = nil
       return @resource = nil
     end
   end
 
   def update_auth_header
     # cannot save object if model has invalid params
-    # To walk around the issue that some users have no first, last, sex, dob fields
-    # TODO: will remove it
-    return unless @resource && (@resource.valid? || @resource.persisted?) && @client_id
-    
+    return unless @resource && @token.client
+
     # Generate new client with existing authentication
     @token.client = nil unless @used_auth_by_token
 
@@ -135,10 +134,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # cleared by sign out in the meantime
       return if @resource.reload.tokens[@token.client].nil?
 
-      auth_header = @resource.build_auth_header(@token, @client_id, @refresh_token)
-
+      @auth_header ||= @resource.build_auth_header(@token.token, @token.client, @token.refresh_token)
       # update the response header
-      response.headers.merge!(auth_header)
+      response.headers.merge!(@auth_header)
 
     else
       unless @resource.reload.valid?

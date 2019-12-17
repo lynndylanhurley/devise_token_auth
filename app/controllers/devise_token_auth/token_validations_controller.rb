@@ -16,6 +16,16 @@ module DeviseTokenAuth
       end
     end
 
+    def refresh_token
+      if @resource
+        @auth_header = @resource.create_new_auth_token(@token.client)
+
+        render_validate_token_success
+      else
+        render_validate_token_error
+      end
+    end
+
     protected
 
     def render_validate_token_success
