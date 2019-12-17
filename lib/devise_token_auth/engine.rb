@@ -43,7 +43,7 @@ module DeviseTokenAuth
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
   self.headers_names                        = { 'access-token': 'access-token',
-                                                'refresh-token': 'refresh-token'
+                                                'refresh-token': 'refresh-token',
                                                 'client': 'client',
                                                 'expiry': 'expiry',
                                                 'uid': 'uid',
