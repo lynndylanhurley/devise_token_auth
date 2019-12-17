@@ -25,7 +25,7 @@ module DeviseTokenAuth
 
         redirect_to(redirect_to_link)
       else
-        raise ActionController::RoutingError, 'Not Found'
+        render_error(401, resource.errors.full_messages)
       end
     end
 
