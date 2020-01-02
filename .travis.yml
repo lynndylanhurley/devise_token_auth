@@ -75,6 +75,8 @@ matrix:
   exclude:
     - rvm: 2.6.4
       gemfile: gemfiles/rails_4_2.gemfile
+    - rvm: 2.7.0
+      gemfile: gemfiles/rails_4_2.gemfile
     - rvm: 2.3.8
       gemfile: gemfiles/rails_6_0.gemfile
     - rvm: 2.4.7
