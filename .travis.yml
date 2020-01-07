@@ -48,8 +48,11 @@ matrix:
     - rvm: 2.6.4
       gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
       env: DEVISE_TOKEN_AUTH_ORM=mongoid
+    - rvm: 2.7.0
+      gemfile: gemfiles/rails_6_0_mongoid_7.gemfile
+      env: DEVISE_TOKEN_AUTH_ORM=mongoid
     - name: Code Climate Test Coverage
-      rmv: 2.5.6
+      rvm: 2.5.6
       env:
         - CC_TEST_REPORTER_ID=44d7688de8e1b567b4af25ec5083c2cc0a355ab911192a7cbefd1ea25b2ffd3d
         - GEMFILE_AR=gemfiles/rails_5_1.gemfile
