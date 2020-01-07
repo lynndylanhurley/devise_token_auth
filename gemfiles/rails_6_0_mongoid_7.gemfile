@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 6.0"
 gem "mongoid", "~> 7.0"
-gem "mongoid-locker", "~> 2.0"
+gem "mongoid-locker", "~> 1.0"
 
 group :development, :test do
   gem "attr_encrypted"
