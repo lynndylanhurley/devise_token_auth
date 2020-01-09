@@ -52,7 +52,7 @@ module DeviseTokenAuth
 
         test 'add primary key type with rails 5 when specified in rails generator' do
           run_generator %W[#{user_class} auth --primary_key_type=uuid --force]
-          if Rails::VERSION::MAJOR == 5
+          if Rails::VERSION::MAJOR >= 5
             assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /create_table\(:#{table_name}, id: :uuid\) do/
           else
             assert_migration "db/migrate/devise_token_auth_create_#{table_name}.rb", /create_table\(:#{table_name}\) do/
