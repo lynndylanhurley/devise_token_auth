@@ -30,6 +30,7 @@ en:
     unlocks:
       missing_email: "You must provide an email address."
       sended: "An email has been sent to '%{email}' containing instructions for unlocking your account."
+      sended_paranoid: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
       user_not_found: "Unable to find user with email '%{email}'."
     confirmations:
       sended: "An email has been sent to '%{email}' containing instructions for confirming your account."
