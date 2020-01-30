@@ -75,12 +75,12 @@ module DeviseTokenAuth
       ActiveRecord::Base.connection.select_value('SELECT VERSION()')
     end
 
-    def rails5?
-      Rails.version.start_with? '5'
+    def rails_5_or_newer?
+      Rails::VERSION::MAJOR >= 5
     end
 
     def primary_key_type
-      primary_key_string if rails5?
+      primary_key_string if rails_5_or_newer?
     end
 
     def primary_key_string
