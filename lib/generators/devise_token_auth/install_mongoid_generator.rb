@@ -29,9 +29,9 @@ module DeviseTokenAuth
   field :tokens, type: Hash, default: {}
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
 
   index({ uid: 1, provider: 1}, { name: 'uid_provider_index', unique: true, background: true })
