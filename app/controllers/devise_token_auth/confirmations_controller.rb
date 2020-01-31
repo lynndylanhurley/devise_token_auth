@@ -54,14 +54,9 @@ module DeviseTokenAuth
     end
 
     def render_create_success
-      message = if Devise.paranoid
-                  I18n.t('devise_token_auth.confirmations.sended_paranoid')
-                else
-                  I18n.t('devise_token_auth.confirmations.sended', email: @email)
-                end
       render json: {
                success: true,
-               message: message
+               message: success_message('confirmations', @email)
              }
     end
 
