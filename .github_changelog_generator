@@ -1,0 +1,7 @@
+bug-labels=bug,Bug,fix,Fix
+enhancement-labels=enhancement,Enhancement,feat,Feat
+since-tag=v1.1.3
+unreleased-label=Unreleased
+user=lynndylanhurley
+project=devise_token_auth
+base=CHANGELOG.md

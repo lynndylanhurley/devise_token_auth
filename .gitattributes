@@ -1,0 +1,2 @@
+test/dummy/config/application.yml filter=git-crypt diff=git-crypt
+test/dummy/config/application.yml.bk filter=git-crypt diff=git-crypt

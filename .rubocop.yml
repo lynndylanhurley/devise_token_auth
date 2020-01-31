@@ -1,0 +1,114 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  Exclude:
+    - 'coverage/**/*'
+    - 'test/dummy/tmp/**/*'
+    - 'test/dummy/log/**/*'
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, IndentationWidth.
+# SupportedStyles: aligned, indented, indented_relative_to_receiver
+#
+# Description from Rubocop Manual:
+#   This cop checks the indentation of the method name part in method calls
+#   that span more than one line.
+#
+# https://rubocop.readthedocs.io/en/latest/cops_layout/#layoutmultilinemethodcallindentation
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented_relative_to_receiver
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, ProceduralMethods, FunctionalMethods, IgnoredMethods.
+# SupportedStyles: line_count_based, semantic, braces_for_chaining
+# ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
+# FunctionalMethods: let, let!, subject, watch
+# IgnoredMethods: lambda, proc, it
+Style/BlockDelimiters:
+  IgnoredMethods:
+    - assert_output
+    - assert_raises
+    - assert_silent
+    - assert_throws
+    - refute_output
+    - refute_raises
+    - refute_silent
+    - refute_throws
+
+# Offense count: 34
+# Cop supports --auto-correct.
+# Configuration parameters: AutoCorrect, EnforcedStyle.
+# SupportedStyles: nested, compact
+#
+# Description from Rubocop Manual:
+# https://rubocop.readthedocs.io/en/latest/cops_style/#styleclassandmodulechildren
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, UseHashRocketsWithSymbolValues,
+#   PreferHashRocketsForNonAlnumEndingSymbols.
+# SupportedStyles: ruby19, hash_rockets, no_mixed_keys, ruby19_no_mixed_keys
+#
+# Description from Rubocop Manual:
+#   This cop checks hash literal syntax
+#
+# https://rubocop.readthedocs.io/en/latest/cops_style/#stylehashsyntax
+Style/HashSyntax:
+  Enabled: true
+  EnforcedStyle: ruby19
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, MinSize.
+# SupportedStyles: percent, brackets
+#
+# Description from Rubocop Manual:
+#   Check for array literals made up of symbols that are not using
+#   the `%i()` syntax.
+#
+# https://rubocop.readthedocs.io/en/latest/cops_style/#stylesymbolarray
+Style/SymbolArray:
+  Enabled: true
+  EnforcedStyle: percent
+  MinSize: 3
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, MinSize, WordRegex.
+# SupportedStyles: percent, brackets
+Style/WordArray:
+  Enabled: true
+  EnforcedStyle: percent
+  MinSize: 3
+
+# Configuration parameters: CountComments, ExcludedMethods.
+Metrics/BlockLength:
+  inherit_mode:
+    merge:
+      - Exclude
+      - ExcludedMethod
+  Exclude:
+    - 'lib/devise_token_auth/engine.rb'
+    - 'test/dummy/config/**/*'
+    - 'test/dummy/db/**/*'
+  ExcludedMethods:
+    - describe
+    - draw
+    - namespace
+    - devise_scope
+    - unnest_namespace
+  Max: 25
+
+# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
+# URISchemes: http, https
+Metrics/LineLength:
+  inherit_mode:
+    merge:
+      - Exclude
+  Exclude:
+    - 'test/**/*'
+    - 'Guardfile'
+    - 'devise_token_auth.gemspec'
+  IgnoredPatterns:
+    - '(\A|\s)#'
+  Max: 80

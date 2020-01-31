@@ -1,0 +1,20 @@
+.bundle/
+log/*.log
+pkg/
+test/dummy/db/*.sqlite3
+test/dummy/db/*.sqlite3-journal
+test/dummy/log/*.log
+test/dummy/tmp/
+test/dummy/.sass-cache
+test/dummy/config/application.yml
+coverage
+.idea
+.irb_history
+.ruby-version
+.ruby-gemset
+tags
+
+Gemfile.lock
+
+# appraisal
+gemfiles/*.lock
