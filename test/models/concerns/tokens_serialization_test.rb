@@ -65,6 +65,35 @@ if DEVISE_TOKEN_AUTH_ORM == :active_record
 
         assert_equal(ts.dump(tokens), ts.dump(new_tokens))
       end
+
+      describe 'updated_at' do
+        before do
+          @default_format = ::Time::DATE_FORMATS[:default]
+          ::Time::DATE_FORMATS[:default] = 'imprecise format'
+        end
+
+        after do
+          ::Time::DATE_FORMATS[:default] = @default_format
+        end
+
+        let(:updated_ats) { tokens.values.flat_map { |token| [:updated_at, 'updated_at'].map { |key| token[key] } }.compact.map(&:to_s) }
+
+        it 'is defined' do
+          refute_empty updated_ats
+        end
+
+        it 'uses iso8601' do
+          as_json = updated_ats.map do |time_string|
+            Time.zone.parse(time_string).iso8601
+          end
+
+          assert_equal(updated_ats, as_json)
+        end
+
+        it 'does not rely on Time#to_s' do
+          refute_includes(updated_ats, 'imprecise format')
+        end
+      end
     end
   end
 end
