@@ -13,7 +13,6 @@ if DEVISE_TOKEN_AUTH_ORM == :active_record
 
       user.tokens
     end
-    let(:json) { JSON.generate(tokens) }
 
     it 'is defined' do
       assert_equal(ts.present?, true)
@@ -21,6 +20,9 @@ if DEVISE_TOKEN_AUTH_ORM == :active_record
     end
 
     describe '.load(json)' do
+
+      let(:json) { JSON.generate(tokens) }
+
       let(:default) { {} }
 
       it 'is defined' do
@@ -55,10 +57,6 @@ if DEVISE_TOKEN_AUTH_ORM == :active_record
         assert_equal(ts.dump({}), '{}')
       end
 
-      it 'deserialize tokens' do
-        assert_equal(ts.dump(tokens), json)
-      end
-
       it 'removes nil values' do
         new_tokens = tokens.dup
         new_tokens[new_tokens.first[0]][:kos] = nil
@@ -76,22 +74,29 @@ if DEVISE_TOKEN_AUTH_ORM == :active_record
           ::Time::DATE_FORMATS[:default] = @default_format
         end
 
-        let(:updated_ats) { tokens.values.flat_map { |token| [:updated_at, 'updated_at'].map { |key| token[key] } }.compact.map(&:to_s) }
+        def updated_ats(tokens)
+          tokens.
+            values.
+            flat_map do |token|
+            [:updated_at, 'updated_at'].map do |key|
+              token[key]
+            end
+          end.
+          compact
+        end
 
         it 'is defined' do
-          refute_empty updated_ats
+          refute_empty updated_ats(tokens)
         end
 
         it 'uses iso8601' do
-          as_json = updated_ats.map do |time_string|
-            Time.zone.parse(time_string).iso8601
+          updated_ats(JSON.parse(ts.dump(tokens))).each do |updated_at|
+            Time.strptime(updated_at, "%Y-%m-%dT%H:%M:%SZ")
           end
-
-          assert_equal(updated_ats, as_json)
         end
 
         it 'does not rely on Time#to_s' do
-          refute_includes(updated_ats, 'imprecise format')
+          refute_includes(updated_ats(tokens), 'imprecise format')
         end
       end
     end
