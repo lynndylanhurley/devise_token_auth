@@ -24,10 +24,8 @@ module DeviseTokenAuth::Concerns::TokensSerialization
   def serialize_updated_at(token)
     updated_at_key = ['updated_at', :updated_at].find(&token.method(:[]))
 
-    if token[updated_at_key].respond_to?(:iso8601)
-      token.merge updated_at_key => token[updated_at_key].iso8601
-    else
-      token
-    end
+    return token unless token[updated_at_key].respond_to?(:iso8601)
+
+    token.merge updated_at_key => token[updated_at_key].iso8601
   end
 end

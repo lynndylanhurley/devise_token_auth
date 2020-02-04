@@ -91,7 +91,7 @@ if DEVISE_TOKEN_AUTH_ORM == :active_record
 
         it 'uses iso8601' do
           updated_ats(JSON.parse(ts.dump(tokens))).each do |updated_at|
-            Time.strptime(updated_at, "%Y-%m-%dT%H:%M:%SZ")
+            Time.strptime(updated_at, '%Y-%m-%dT%H:%M:%SZ')
           end
         end
 
