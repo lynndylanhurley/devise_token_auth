@@ -11,6 +11,7 @@ This is the overall workflow for a User to reset their password:
 - that form submission sends a request to the API: `POST /auth/password` with some parameters: `email` (the email supplied in the field) & `redirect_url` (a page in the front end site that will contain a form with `password` and `password_confirmation` fields)
 
 - the API responds to this request by generating a `reset_password_token` and sending an email (the `reset_password_instructions.html.erb` file from devise) to the email address provided within the `email` parameter
+
   - we need to modify the `reset_password_instructions.html.erb` file to point to the API: `GET /auth/password/edit`
   - for example, if you have your API under the `api/v1` namespaces: `<%= link_to 'Change my password', edit_api_v1_user_password_url(reset_password_token: @token, config: message['client-config'].to_s, redirect_url: message['redirect-url'].to_s) %>` (I came up with this `link_to` by referring to [this line](https://github.com/lynndylanhurley/devise_token_auth/blob/15bf7857eca2d33602c7a9cb9d08db8a160f8ab8/app/views/devise/mailer/reset_password_instructions.html.erb#L5))
 
@@ -21,6 +22,7 @@ This is the overall workflow for a User to reset their password:
 - this `redirect_url` is a page on the frontend which contains a `password` and `password_confirmation` field
 
 - the user submits the form on this frontend page, which sends a request to API: `PUT /auth/password` with the `password` and `password_confirmation` parameters. In addition headers need to be included from the url params (you get these from the url as query params). A side note, ensure that the header names follow the convention outlined in `config/initializers/devise_token_auth.rb`; at this time of writing it is: `uid`, `client` and `access-token`.
+
   - _Ensure that the `uid` sent in the headers is not URL-escaped. e.g. it should be bob@example.com, not bob%40example.com_
 
 - the API changes the user's password and responds back with a success message
@@ -31,7 +33,7 @@ This is the overall workflow for a User to reset their password:
 
 The next diagram shows how it works:
 
-![password reset flow](password_diagram_reset.jpg)
+![password reset flow](../password_diagram_reset.jpg)
 
 If you get in any trouble configuring or overriding the behavior, you can check the [issue #604](https://github.com/lynndylanhurley/devise_token_auth/issues/604).
 
