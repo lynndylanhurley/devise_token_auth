@@ -217,6 +217,24 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           it 'should not return auth headers for second (batched) requests' do
             assert_equal ' ', @second_access_token
           end
+
+          describe 'invalid token in second request' do
+            before do
+              age_token(@resource, @client_id)
+
+              get '/demo/members_only',
+                  params: {},
+                  headers: @auth_headers
+
+              get '/demo/members_only',
+                  params: {},
+                  headers: @auth_headers.merge('access-token' => 'bogus')
+            end
+
+            it 'should return error: unauthorized status' do
+              assert_equal 401, response.status
+            end
+          end
         end
 
         describe 'unbatch' do

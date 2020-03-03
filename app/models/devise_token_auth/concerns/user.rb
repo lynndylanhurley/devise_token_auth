@@ -147,7 +147,7 @@ module DeviseTokenAuth::Concerns::User
       updated_at.to_time > Time.zone.now - DeviseTokenAuth.batch_request_buffer_throttle &&
 
       # ensure that the token is valid
-      DeviseTokenAuth::TokenFactory.valid_token_hash?(last_token)
+      DeviseTokenAuth::Concerns::User.tokens_match?(last_token, token)
     )
   end
 

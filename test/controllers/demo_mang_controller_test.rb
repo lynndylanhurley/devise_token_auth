@@ -218,6 +218,24 @@ class DemoMangControllerTest < ActionDispatch::IntegrationTest
           end
         end
 
+        describe 'invalid token in second request' do
+          before do
+            age_token(@resource, @client_id)
+
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers
+
+            get '/demo/members_only',
+                params: {},
+                headers: @auth_headers.merge('access-token' => 'bogus')
+          end
+
+          it 'should return error: unauthorized status' do
+            assert_equal 401, response.status
+          end
+        end
+
         describe 'time out' do
           before do
             @resource.reload
