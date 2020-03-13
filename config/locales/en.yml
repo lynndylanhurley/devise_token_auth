@@ -5,6 +5,7 @@ en:
       bad_credentials: "Invalid login credentials. Please try again."
       not_supported: "Use POST /sign_in to sign in. GET is not supported."
       user_not_found: "User was not found or was not logged in."
+      user_can_not_access: "You are not authorized to access this API."
     token_validations:
       invalid: "Invalid login credentials"
     registrations:

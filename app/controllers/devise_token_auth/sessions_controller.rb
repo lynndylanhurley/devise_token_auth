@@ -26,6 +26,12 @@ module DeviseTokenAuth
         if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
           return render_create_error_bad_credentials
         end
+
+        #Resource is validated, now we need to check whether this user has access to our api's or not.
+        unless policy(@resource).access_apis?
+          return render_api_access_error
+        end
+
         @token = @resource.create_token
         @resource.save
 
@@ -120,6 +126,10 @@ module DeviseTokenAuth
 
     def render_destroy_error
       render_error(404, I18n.t('devise_token_auth.sessions.user_not_found'))
+    end
+
+    def render_api_access_error
+      render_error(404, I18n.t('devise_token_auth.sessions.user_can_not_access'))
     end
 
     private
