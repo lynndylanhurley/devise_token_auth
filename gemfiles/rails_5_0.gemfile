@@ -27,7 +27,7 @@ group :development, :test do
   gem "minitest-rails"
   gem "minitest-reporters"
   gem "mocha", ">= 1.5"
-  gem "pry"
+  gem "pry", "< 0.13"
   gem "pry-byebug"
   gem "pry-remote"
   gem "rubocop", require: false
