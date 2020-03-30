@@ -53,6 +53,10 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
             assert @resource.confirmed?
           end
 
+          test 'should save the authentication token' do
+            assert @resource.reload.tokens.present?
+          end
+
           test 'should redirect to success url' do
             assert_redirected_to(/^#{@redirect_url}/)
           end
