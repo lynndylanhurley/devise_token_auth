@@ -113,7 +113,7 @@ describe 'Whether access is ocurring properly', type: :request do
       'client' => client,
       'uid' => uid,
       'expiry' => expiry,
-      'token_type' => token_type
+      'token-type' => token_type
     }
     auth_params
   end
