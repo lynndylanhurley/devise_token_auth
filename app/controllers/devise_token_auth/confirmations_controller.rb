@@ -13,6 +13,7 @@ module DeviseTokenAuth
 
         if signed_in?(resource_name)
           token = signed_in_resource.create_token
+          signed_in_resource.save!
 
           redirect_headers = build_redirect_headers(token.token,
                                                     token.client,
