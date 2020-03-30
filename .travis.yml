@@ -65,11 +65,11 @@ matrix:
         - bundle install --jobs=3 --retry=3 --gemfile $GEMFILE_AR
         - BUNDLE_GEMFILE=$GEMFILE_AR bundle exec rake --trace db:migrate
         - BUNDLE_GEMFILE=$GEMFILE_AR bundle exec rake
-        - ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.active_record.json coverage/.resultset.json
+        - ./cc-test-reporter format-coverage coverage/.resultset.json -t simplecov -o coverage/codeclimate.active_record.json
         # with Mongoid
         - bundle install --jobs=3 --retry=3 --gemfile $GEMFILE_MONGOID
         - BUNDLE_GEMFILE=$GEMFILE_MONGOID DEVISE_TOKEN_AUTH_ORM=mongoid bundle exec rake
-        - ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.mongoid.json coverage/.resultset.json
+        - ./cc-test-reporter format-coverage coverage/.resultset.json -t simplecov -o coverage/codeclimate.mongoid.json
         # merge test results
         - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then
           ./cc-test-reporter sum-coverage coverage/codeclimate.active_record.json coverage/codeclimate.mongoid.json;

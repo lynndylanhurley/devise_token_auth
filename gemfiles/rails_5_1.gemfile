@@ -27,7 +27,7 @@ group :development, :test do
   gem "minitest-rails"
   gem "minitest-reporters"
   gem "mocha", ">= 1.5"
-  gem "pry"
+  gem "pry", "< 0.13"
   gem "pry-byebug"
   gem "pry-remote"
   gem "rubocop", require: false
@@ -35,7 +35,11 @@ end
 
 group :test do
   gem "rails-controller-testing"
-  gem "simplecov", require: false
+
+  # Workaround for cc-test-reporter with SimpleCov 0.18.
+  # Stop upgrading SimpleCov until the following issue will be resolved.
+  # https://github.com/codeclimate/test-reporter/issues/418
+  gem 'simplecov', '~> 0.10', '< 0.18', require: false
 end
 
 group :development do
