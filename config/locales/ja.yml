@@ -29,7 +29,7 @@ ja:
     messages:
       validate_sign_up_params: "リクエストボディに適切なアカウント新規登録データを送信してください。"
       validate_account_update_params: "リクエストボディに適切なアカウント更新のデータを送信してください。"
-      not_email: "はメールアドレスではありません"
+      not_email: "は有効ではありません"
   devise:
     mailer:
       confirmation_instructions:
