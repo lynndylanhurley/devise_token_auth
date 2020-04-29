@@ -39,7 +39,7 @@ In this case, it's impossible to update the `access-token` header for the second
 
 ![batch request overview](https://github.com/lynndylanhurley/ng-token-auth/raw/master/test/app/images/flow/batch-request-overview.jpg)
 
-The "5 second" buffer in the diagram is the default used this gem.
+The "5 second" buffer in the diagram is the default used by this gem.
 
 The following diagram details the relationship between the client, server, and access tokens used over time when dealing with batch requests:
 
