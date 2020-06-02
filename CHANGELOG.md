@@ -1,3 +1,47 @@
+# Changelog
+
+## [v1.1.4](https://github.com/lynndylanhurley/devise_token_auth/tree/v1.1.4) (2020-06-02)
+
+[Full Changelog](https://github.com/lynndylanhurley/devise_token_auth/compare/v1.1.3...v1.1.4)
+
+**Closed issues:**
+
+- possible to disable the self-registration endpoint? [\#1402](https://github.com/lynndylanhurley/devise_token_auth/issues/1402)
+- Axios formatting and Rails controller validation? [\#1380](https://github.com/lynndylanhurley/devise_token_auth/issues/1380)
+- NoMethodError \(undefined method `client' for "\<token\>":String\) [\#1375](https://github.com/lynndylanhurley/devise_token_auth/issues/1375)
+- mation\_instruction [\#1373](https://github.com/lynndylanhurley/devise_token_auth/issues/1373)
+- Unpermitted parameter :session when signing in using javascript fetch [\#1361](https://github.com/lynndylanhurley/devise_token_auth/issues/1361)
+- How do i authenticate with graphql-ruby? [\#1360](https://github.com/lynndylanhurley/devise_token_auth/issues/1360)
+- Using DeviseTokenAuth::Concerns::User breaks Devise::confirmable and Devise::reconfirmable [\#1013](https://github.com/lynndylanhurley/devise_token_auth/issues/1013)
+
+**Merged pull requests:**
+
+- Update faq.md [\#1401](https://github.com/lynndylanhurley/devise_token_auth/pull/1401) ([mdjamal](https://github.com/mdjamal))
+- Update assign\_provider\_attrs to strip 'name' field [\#1398](https://github.com/lynndylanhurley/devise_token_auth/pull/1398) ([SpLouk](https://github.com/SpLouk))
+- Fix grammar [\#1396](https://github.com/lynndylanhurley/devise_token_auth/pull/1396) ([arku](https://github.com/arku))
+- \[Refactor\] fixed "not\_email" setting in ja.yml [\#1395](https://github.com/lynndylanhurley/devise_token_auth/pull/1395) ([h-sada](https://github.com/h-sada))
+- CI build fix: Pin to pry \< 0.13 for 2.3 support, workaround CodeClimate reporter issue [\#1393](https://github.com/lynndylanhurley/devise_token_auth/pull/1393) ([olleolleolle](https://github.com/olleolleolle))
+- Fix broken link [\#1392](https://github.com/lynndylanhurley/devise_token_auth/pull/1392) ([dlederle](https://github.com/dlederle))
+- Fix: Save user authentication token after email confirmation [\#1391](https://github.com/lynndylanhurley/devise_token_auth/pull/1391) ([gabrielbursztein2](https://github.com/gabrielbursztein2))
+- Fix token-type header key in testing example docs [\#1390](https://github.com/lynndylanhurley/devise_token_auth/pull/1390) ([goalaleo](https://github.com/goalaleo))
+- Issue - 1358 Argument error when converting token updated\_at using to… [\#1388](https://github.com/lynndylanhurley/devise_token_auth/pull/1388) ([saichander17](https://github.com/saichander17))
+- Validate that token is valid for patch request last token [\#1386](https://github.com/lynndylanhurley/devise_token_auth/pull/1386) ([ahmedmagdy711](https://github.com/ahmedmagdy711))
+- Fix docs/usage/reset\_password.md [\#1382](https://github.com/lynndylanhurley/devise_token_auth/pull/1382) ([K-Sato1995](https://github.com/K-Sato1995))
+- Fix missing polish and portugese missing translation errors [\#1377](https://github.com/lynndylanhurley/devise_token_auth/pull/1377) ([woochaq](https://github.com/woochaq))
+- \[Documentation\] write complete path for authentication\_test\_spec.rb [\#1376](https://github.com/lynndylanhurley/devise_token_auth/pull/1376) ([cprodhomme](https://github.com/cprodhomme))
+- Add case sensitive option required to prevent deprecation warning in … [\#1368](https://github.com/lynndylanhurley/devise_token_auth/pull/1368) ([niciliketo](https://github.com/niciliketo))
+- Add rails 6.0 config to travis [\#1366](https://github.com/lynndylanhurley/devise_token_auth/pull/1366) ([brateq](https://github.com/brateq))
+- Add docs for confirmation endpoint [\#1365](https://github.com/lynndylanhurley/devise_token_auth/pull/1365) ([brateq](https://github.com/brateq))
+- Remove Trackable option from generator [\#1362](https://github.com/lynndylanhurley/devise_token_auth/pull/1362) ([SugiKent](https://github.com/SugiKent))
+- Please merge again [\#1350](https://github.com/lynndylanhurley/devise_token_auth/pull/1350) ([exocode](https://github.com/exocode))
+- Fix dead link [\#1349](https://github.com/lynndylanhurley/devise_token_auth/pull/1349) ([tegandbiscuits](https://github.com/tegandbiscuits))
+- detect Mongoid \(till Mongoid will implement it\) [\#1348](https://github.com/lynndylanhurley/devise_token_auth/pull/1348) ([exocode](https://github.com/exocode))
+- feat\(oauth-apple\): support Sign in with Apple as a documented OmniAuth provider [\#1347](https://github.com/lynndylanhurley/devise_token_auth/pull/1347) ([booleanbetrayal](https://github.com/booleanbetrayal))
+- Add Korean locale [\#1346](https://github.com/lynndylanhurley/devise_token_auth/pull/1346) ([sdu6342](https://github.com/sdu6342))
+- doc: remove duplicated test case on ./docs/usage/testing.md [\#1344](https://github.com/lynndylanhurley/devise_token_auth/pull/1344) ([miyataka](https://github.com/miyataka))
+- Fix to be able to use Devise::confirmable module [\#1343](https://github.com/lynndylanhurley/devise_token_auth/pull/1343) ([makicamel](https://github.com/makicamel))
+- repeat any query params after a fragment [\#1341](https://github.com/lynndylanhurley/devise_token_auth/pull/1341) ([colmben](https://github.com/colmben))
+
 # Change Log
 
 ## [v1.1.3](https://github.com/lynndylanhurley/devise_token_auth/tree/v1.1.3) (2019-09-26)
@@ -2924,3 +2968,5 @@
 \* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
 
 \* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
