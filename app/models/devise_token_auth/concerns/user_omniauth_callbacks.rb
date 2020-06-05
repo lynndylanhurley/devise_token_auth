@@ -12,7 +12,7 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
     validates :email, uniqueness: { case_sensitive: false, scope: :provider }, on: :create, if: :email_provider?
 
     # keep uid in sync with email
-    before_save :sync_uid
+    before_save :sync_uid, unless: :postpone_email_change?
     before_create :sync_uid
   end
 
