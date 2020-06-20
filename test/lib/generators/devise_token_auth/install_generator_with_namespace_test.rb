@@ -75,7 +75,7 @@ module DeviseTokenAuth
         case DEVISE_TOKEN_AUTH_ORM
         when :active_record
           # account for rails version 5
-          active_record_needle = (Rails::VERSION::MAJOR == 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
+          active_record_needle = (Rails::VERSION::MAJOR >= 5) ? 'ApplicationRecord' : 'ActiveRecord::Base'
 
           @f = File.open(@fname, 'w') do |f|
             f.write <<-RUBY
