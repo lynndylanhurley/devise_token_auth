@@ -88,19 +88,19 @@ module DeviseTokenAuth::Concerns::User
       send_devise_notification(:unlock_instructions, raw, opts)
       raw
     end
+  end
 
-    def create_token(client: nil, lifespan: nil, cost: nil, **token_extras)
-      token = DeviseTokenAuth::TokenFactory.create(client: client, lifespan: lifespan, cost: cost)
+  def create_token(client: nil, lifespan: nil, cost: nil, **token_extras)
+    token = DeviseTokenAuth::TokenFactory.create(client: client, lifespan: lifespan, cost: cost)
 
-      tokens[token.client] = {
-        token:  token.token_hash,
-        expiry: token.expiry
-      }.merge!(token_extras)
+    tokens[token.client] = {
+      token:  token.token_hash,
+      expiry: token.expiry
+    }.merge!(token_extras)
 
-      clean_old_tokens
+    clean_old_tokens
 
-      token
-    end
+    token
   end
 
   def valid_token?(token, client = 'default')
