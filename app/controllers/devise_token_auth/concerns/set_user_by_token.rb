@@ -17,7 +17,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @used_auth_by_token = true
 
     # initialize instance variables
-    @token = DeviseTokenAuth::TokenFactory.new
+    @token ||= DeviseTokenAuth::TokenFactory.new
     @resource ||= nil
     @is_batch_request ||= nil
   end
