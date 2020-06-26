@@ -17,10 +17,12 @@ module ActionDispatch::Routing
       unlocks_ctrl           = opts[:controllers][:unlocks] || 'devise_token_auth/unlocks'
 
       # define devise controller mappings
-      controllers = { sessions: sessions_ctrl,
-                      registrations: registrations_ctrl,
-                      passwords: passwords_ctrl,
-                      confirmations: confirmations_ctrl }
+      controllers = opts[:controllers].merge(
+        sessions: sessions_ctrl,
+        registrations: registrations_ctrl,
+        passwords: passwords_ctrl,
+        confirmations: confirmations_ctrl
+      )
 
       controllers[:unlocks] = unlocks_ctrl if unlocks_ctrl
 

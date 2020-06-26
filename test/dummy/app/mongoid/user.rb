@@ -46,4 +46,6 @@ class User
 
   include DeviseTokenAuth::Concerns::User
   include FavoriteColor
+
+  devise :omniauthable
 end

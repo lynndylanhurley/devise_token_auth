@@ -6,4 +6,6 @@ class ScopedUser < ActiveRecord::Base
          :recoverable, :rememberable,
          :validatable, :confirmable, :omniauthable
   include DeviseTokenAuth::Concerns::User
+
+  devise :omniauthable
 end
