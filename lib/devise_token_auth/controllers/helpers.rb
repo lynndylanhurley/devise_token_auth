@@ -34,12 +34,6 @@ module DeviseTokenAuth
           class_eval <<-METHODS, __FILE__, __LINE__ + 1
             def authenticate_#{group_name}!(favourite=nil, opts={})
               unless #{group_name}_signed_in?
-                mappings = #{mappings}
-                mappings.unshift mappings.delete(favourite.to_sym) if favourite
-                mappings.each do |mapping|
-                  set_user_by_token(mapping)
-                end
-
                 unless current_#{group_name}
                   render_authenticate_error
                 end
@@ -47,12 +41,14 @@ module DeviseTokenAuth
             end
 
             def #{group_name}_signed_in?
-              #{mappings}.any? do |mapping|
-                set_user_by_token(mapping)
-              end
+              !!current_#{group_name}
             end
 
             def current_#{group_name}(favourite=nil)
+              @current_#{group_name} ||= set_group_user_by_token(favourite)
+            end
+            
+            def set_group_user_by_token(favourite)
               mappings = #{mappings}
               mappings.unshift mappings.delete(favourite.to_sym) if favourite
               mappings.each do |mapping|
