@@ -158,7 +158,7 @@ module DeviseTokenAuth::Concerns::User
     token = create_token(
       client: client,
       last_token: tokens.fetch(client, {})['token'],
-      updated_at: now.to_s(:rfc822)
+      updated_at: now
     )
 
     update_auth_header(token.token, token.client)
@@ -194,7 +194,7 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def extend_batch_buffer(token, client)
-    tokens[client]['updated_at'] = Time.zone.now.to_s(:rfc822)
+    tokens[client]['updated_at'] = Time.zone.now
     update_auth_header(token, client)
   end
 
