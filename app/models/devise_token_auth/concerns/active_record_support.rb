@@ -1,5 +1,3 @@
-require_relative 'tokens_serialization'
-
 module DeviseTokenAuth::Concerns::ActiveRecordSupport
   extend ActiveSupport::Concern
 
