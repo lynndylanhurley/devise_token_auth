@@ -48,7 +48,7 @@ module DeviseTokenAuth
     def destroy
       # remove auth instance variables so that after_action does not run
       user = remove_instance_variable(:@resource) if @resource
-      client = @token.client if @token.client
+      client = @token.client
       @token.clear!
 
       if user && client && user.tokens[client]
