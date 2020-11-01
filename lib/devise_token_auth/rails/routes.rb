@@ -16,6 +16,9 @@ module ActionDispatch::Routing
       omniauth_ctrl          = opts[:controllers][:omniauth_callbacks] || 'devise_token_auth/omniauth_callbacks'
       unlocks_ctrl           = opts[:controllers][:unlocks] || 'devise_token_auth/unlocks'
 
+      # check for resource override
+      route                  = opts[:as] || resource.pluralize.underscore.gsub('/', '_')
+
       # define devise controller mappings
       controllers = { sessions: sessions_ctrl,
                       registrations: registrations_ctrl,
@@ -27,7 +30,7 @@ module ActionDispatch::Routing
       # remove any unwanted devise modules
       opts[:skip].each{ |item| controllers.delete(item) }
 
-      devise_for resource.pluralize.underscore.gsub('/', '_').to_sym,
+      devise_for route.to_sym,
                  class_name: resource,
                  module: :devise,
                  path: opts[:at].to_s,
