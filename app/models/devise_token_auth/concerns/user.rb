@@ -90,6 +90,7 @@ module DeviseTokenAuth::Concerns::User
     end
 
     def create_token(client: nil, lifespan: nil, cost: nil, **token_extras)
+      lifespan ||= token_lifespan
       token = DeviseTokenAuth::TokenFactory.create(client: client, lifespan: lifespan, cost: cost)
 
       tokens[token.client] = {
@@ -253,5 +254,9 @@ module DeviseTokenAuth::Concerns::User
       #   off the Hash until it no longer exceeds the maximum number of clients
       tokens.shift while max_client_tokens_exceeded?
     end
+  end
+
+  def token_lifespan
+    DeviseTokenAuth.token_lifespan
   end
 end
