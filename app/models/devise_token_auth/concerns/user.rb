@@ -112,10 +112,6 @@ module DeviseTokenAuth::Concerns::User
     false
   end
 
-  # this must be done from the controller so that additional params
-  # can be passed on from the client
-  def send_confirmation_notification?; false; end
-
   def token_is_current?(token, client)
     # ghetto HashWithIndifferentAccess
     expiry     = tokens[client]['expiry'] || tokens[client][:expiry]
