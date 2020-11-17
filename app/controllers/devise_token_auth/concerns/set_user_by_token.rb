@@ -46,7 +46,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     # check for an existing user, authenticated via warden/devise, if enabled
     if DeviseTokenAuth.enable_standard_devise_support
-      devise_warden_user = warden.user(rc.to_s.underscore.to_sym)
+      devise_warden_user = warden.user(mapping)
       if devise_warden_user && devise_warden_user.tokens[@token.client].nil?
         @used_auth_by_token = false
         @resource = devise_warden_user
