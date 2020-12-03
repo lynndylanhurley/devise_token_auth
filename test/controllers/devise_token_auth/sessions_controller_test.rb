@@ -35,6 +35,26 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           assert_equal @existing_user.email, @data['data']['email']
         end
 
+        test 'request should not return created_at data' do
+          assert_nil @data['data']['created_at']
+        end
+
+        test 'request should not return updated_at data' do
+          assert_nil @data['data']['updated_at']
+        end
+
+        test 'request should not return tokens data' do
+          assert_nil @data['data']['tokens']
+        end
+
+        test 'request should return auth data in the body' do
+          assert_equal @existing_user.uid, @data['auth_data']['uid']
+        end
+
+        test 'request should not return auth data in the headers' do
+          assert_nil response.headers['uid']
+        end
+
         describe "with multiple clients and headers don't change in each request" do
           before do
             # Set the max_number_of_devices to a lower number

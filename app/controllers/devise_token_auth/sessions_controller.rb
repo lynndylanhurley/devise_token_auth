@@ -6,6 +6,8 @@ module DeviseTokenAuth
     before_action :set_user_by_token, only: [:destroy]
     after_action :reset_session, only: [:destroy]
 
+    skip_after_action :update_auth_header, only: [:create]
+
     def new
       render_new_error
     end
@@ -95,8 +97,11 @@ module DeviseTokenAuth
     end
 
     def render_create_success
+      # Auth headers should be included in the response body the
+      # first time according to https://tools.ietf.org/html/rfc6750#page-10
       render json: {
-        data: resource_data(resource_json: @resource.token_validation_response)
+        data: resource_data(resource_json: @resource.token_validation_response),
+        auth_data: @resource.build_auth_header(@token.token, @token.client)
       }
     end
 
