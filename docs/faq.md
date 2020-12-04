@@ -124,7 +124,7 @@ You may be interested in [solidus_devise_token_auth](https://github.com/skycocke
     add_column :users, :tokens, :text
 
     # if your existing User model does not have an existing **encrypted_password** column uncomment below line.
-    # add_column :users, :encrypted_password, null: false, default: ''
+    # add_column :users, :encrypted_password, :string, null: false, default: ''
 
     # if your existing User model does not have an existing **allow_password_change** column uncomment below line.
     # add_column :users, :allow_password_change, :boolean, default: false
