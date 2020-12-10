@@ -8,26 +8,31 @@ module ActionDispatch::Routing
       opts[:skip]        ||= []
 
       # check for ctrl overrides, fall back to defaults
-      sessions_ctrl          = opts[:controllers][:sessions] || 'devise_token_auth/sessions'
-      registrations_ctrl     = opts[:controllers][:registrations] || 'devise_token_auth/registrations'
-      passwords_ctrl         = opts[:controllers][:passwords] || 'devise_token_auth/passwords'
-      confirmations_ctrl     = opts[:controllers][:confirmations] || 'devise_token_auth/confirmations'
-      token_validations_ctrl = opts[:controllers][:token_validations] || 'devise_token_auth/token_validations'
-      omniauth_ctrl          = opts[:controllers][:omniauth_callbacks] || 'devise_token_auth/omniauth_callbacks'
-      unlocks_ctrl           = opts[:controllers][:unlocks] || 'devise_token_auth/unlocks'
+      sessions_ctrl          = opts[:controllers].delete(:sessions) || 'devise_token_auth/sessions'
+      registrations_ctrl     = opts[:controllers].delete(:registrations) || 'devise_token_auth/registrations'
+      passwords_ctrl         = opts[:controllers].delete(:passwords) || 'devise_token_auth/passwords'
+      confirmations_ctrl     = opts[:controllers].delete(:confirmations) || 'devise_token_auth/confirmations'
+      token_validations_ctrl = opts[:controllers].delete(:token_validations) || 'devise_token_auth/token_validations'
+      omniauth_ctrl          = opts[:controllers].delete(:omniauth_callbacks) || 'devise_token_auth/omniauth_callbacks'
+      unlocks_ctrl           = opts[:controllers].delete(:unlocks) || 'devise_token_auth/unlocks'
+
+      # check for resource override
+      route                  = opts[:as] || resource.pluralize.underscore.gsub('/', '_')
 
       # define devise controller mappings
-      controllers = { sessions: sessions_ctrl,
+      controllers = opts[:controllers].merge(
+                      sessions: sessions_ctrl,
                       registrations: registrations_ctrl,
                       passwords: passwords_ctrl,
-                      confirmations: confirmations_ctrl }
+                      confirmations: confirmations_ctrl
+                    )
 
       controllers[:unlocks] = unlocks_ctrl if unlocks_ctrl
 
       # remove any unwanted devise modules
       opts[:skip].each{ |item| controllers.delete(item) }
 
-      devise_for resource.pluralize.underscore.gsub('/', '_').to_sym,
+      devise_for route.to_sym,
                  class_name: resource,
                  module: :devise,
                  path: opts[:at].to_s,
