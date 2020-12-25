@@ -46,10 +46,6 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             assert @controller.user_signed_in?
           end
 
-          it 'should not define current_mang' do
-            refute_equal @resource, @controller.current_mang
-          end
-
           it 'should define render_authenticate_error' do
             assert @controller.methods.include?(:render_authenticate_error)
           end
@@ -539,11 +535,6 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
           it 'should define user_signed_in?' do
             assert @controller.user_signed_in?
           end
-
-          it 'should not define current_mang' do
-            refute_equal @resource, @controller.current_mang
-          end
-
         end
 
         it 'should return success status' do
@@ -589,10 +580,6 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
 
           it 'should define user_signed_in?' do
             assert @controller.user_signed_in?
-          end
-
-          it 'should not define current_mang' do
-            refute_equal @resource, @controller.current_mang
           end
         end
 
