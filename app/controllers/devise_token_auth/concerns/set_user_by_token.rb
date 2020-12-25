@@ -24,6 +24,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   # user auth
   def set_user_by_token(mapping = nil)
+    # Avoid checking resources multi times
+    return @resource if resource_is_checked?(mapping)
+
     # determine target authentication class
     rc = resource_class(mapping)
 
@@ -76,12 +79,13 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       else
         sign_in(scope, user, store: false, event: :fetch, bypass: DeviseTokenAuth.bypass_sign_in)
       end
-      return @resource = user
+      @resource = user
     else
       # zero all values previously set values
       @token.client = nil
-      return @resource = nil
+      @resource = nil
     end
+    @resource
   end
 
   def update_auth_header
@@ -158,5 +162,11 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       auth_header = @resource.create_new_auth_token(@token.client)
     end
     auth_header
+  end
+
+  def resource_is_checked?(mapping)
+    return true if @resource || eval("@has_checked_#{mapping}") == true
+    eval("@has_checked_#{mapping} = true")
+    return false
   end
 end
