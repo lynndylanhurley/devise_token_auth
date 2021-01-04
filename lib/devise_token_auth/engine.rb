@@ -25,6 +25,7 @@ module DeviseTokenAuth
                  :remove_tokens_after_password_reset,
                  :default_callbacks,
                  :headers_names,
+                 :cookie_config,
                  :bypass_sign_in,
                  :send_confirmation_email,
                  :require_client_password_reset_token
@@ -47,6 +48,11 @@ module DeviseTokenAuth
                                                 'expiry': 'expiry',
                                                 'uid': 'uid',
                                                 'token-type': 'token-type' }
+  self.cookie_config                        = {
+                                                enabled: false,
+                                                name: 'auth_cookie',
+                                                attributes: {}
+                                              }
   self.bypass_sign_in                       = true
   self.send_confirmation_email              = false
   self.require_client_password_reset_token  = false

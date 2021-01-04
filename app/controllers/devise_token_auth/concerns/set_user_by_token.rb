@@ -35,11 +35,18 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
 
+    # gets values from cookie if configured
+    auth_cookie_name = DeviseTokenAuth.cookie_config[:name]
+    auth_cookie = {}
+    if DeviseTokenAuth.cookie_config[:enabled] && request.cookies[auth_cookie_name].present?
+      auth_cookie = JSON.parse(request.cookies[auth_cookie_name])
+    end
+
     # parse header for values necessary for authentication
-    uid              = request.headers[uid_name] || params[uid_name]
+    uid              = request.headers[uid_name] || params[uid_name] || auth_cookie[uid_name]
     @token           = DeviseTokenAuth::TokenFactory.new unless @token
-    @token.token     ||= request.headers[access_token_name] || params[access_token_name]
-    @token.client ||= request.headers[client_name] || params[client_name]
+    @token.token     ||= request.headers[access_token_name] || params[access_token_name] || auth_cookie[access_token_name]
+    @token.client ||= request.headers[client_name] || params[client_name] || auth_cookie[client_name]
 
     # client isn't required, set to 'default' if absent
     @token.client ||= 'default'
@@ -101,6 +108,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # update the response header
       response.headers.merge!(auth_header)
 
+      # set a server cookie if configured
+      if DeviseTokenAuth.cookie_config[:enabled]
+        auth_cookie_name = DeviseTokenAuth.cookie_config[:name]
+        cookies[auth_cookie_name] = DeviseTokenAuth.cookie_config[:attributes].merge(value: auth_header.to_json)
+      end
+
     else
       unless @resource.reload.valid?
         @resource = @resource.class.find(@resource.to_param) # errors remain after reload
@@ -123,8 +136,16 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # cleared by sign out in the meantime
       return if @used_auth_by_token && @resource.tokens[@token.client].nil?
 
+      _auth_header_from_batch_request = auth_header_from_batch_request
+
       # update the response header
-      response.headers.merge!(auth_header_from_batch_request)
+      response.headers.merge!(_auth_header_from_batch_request)
+
+      # set a server cookie if configured
+      if DeviseTokenAuth.cookie_config[:enabled]
+        auth_cookie_name = DeviseTokenAuth.cookie_config[:name]
+        cookies[auth_cookie_name] = DeviseTokenAuth.cookie_config[:attributes].merge(value: _auth_header_from_batch_request.to_json)
+      end
     end # end lock
   end
 
