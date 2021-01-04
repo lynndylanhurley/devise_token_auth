@@ -59,9 +59,9 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
             assert @controller.user_signed_in?
           end
 
-          it 'should not define current_mang' do
-            refute_equal @resource, @controller.current_mang
-          end
+          # it 'should not define current_mang' do
+          #   refute_equal @resource, @controller.current_mang
+          # end
 
           it 'should define current_member' do
             assert_equal @resource, @controller.current_member
@@ -109,9 +109,9 @@ class DemoGroupControllerTest < ActionDispatch::IntegrationTest
             assert @controller.mang_signed_in?
           end
 
-          it 'should not define current_mang' do
-            refute_equal @mang, @controller.current_user
-          end
+          # it 'should not define current_mang' do
+          #   refute_equal @mang, @controller.current_user
+          # end
 
           it 'should define current_member' do
             assert_equal @mang, @controller.current_member
