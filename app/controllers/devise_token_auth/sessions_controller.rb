@@ -55,7 +55,7 @@ module DeviseTokenAuth
         user.tokens.delete(client)
         user.save!
 
-        if DeviseTokenAuth.cookie_config[:enabled]
+        if DeviseTokenAuth.cookie_enabled
           if DeviseTokenAuth.cookie_config[:attributes][:domain]
             # If a cookie is set with a domain specified then it must be deleted with that domain specified
             # See https://stackoverflow.com/a/6244724/1747491

@@ -36,9 +36,9 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     client_name = DeviseTokenAuth.headers_names[:'client']
 
     # gets values from cookie if configured
-    auth_cookie_name = DeviseTokenAuth.cookie_config[:name]
     auth_cookie = {}
-    if DeviseTokenAuth.cookie_config[:enabled] && request.cookies[auth_cookie_name].present?
+    if DeviseTokenAuth.cookie_enabled && request.cookies[auth_cookie_name].present?
+      auth_cookie_name = DeviseTokenAuth.cookie_config[:name]
       auth_cookie = JSON.parse(request.cookies[auth_cookie_name])
     end
 
@@ -109,7 +109,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       response.headers.merge!(auth_header)
 
       # set a server cookie if configured
-      if DeviseTokenAuth.cookie_config[:enabled]
+      if DeviseTokenAuth.cookie_enabled
         auth_cookie_name = DeviseTokenAuth.cookie_config[:name]
         cookies[auth_cookie_name] = DeviseTokenAuth.cookie_config[:attributes].merge(value: auth_header.to_json)
       end
@@ -142,7 +142,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       response.headers.merge!(_auth_header_from_batch_request)
 
       # set a server cookie if configured
-      if DeviseTokenAuth.cookie_config[:enabled]
+      if DeviseTokenAuth.cookie_enabled
         auth_cookie_name = DeviseTokenAuth.cookie_config[:name]
         cookies[auth_cookie_name] = DeviseTokenAuth.cookie_config[:attributes].merge(value: _auth_header_from_batch_request.to_json)
       end
