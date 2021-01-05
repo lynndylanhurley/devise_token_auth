@@ -35,17 +35,20 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
 
-    # gets values from cookie if configured
-    auth_cookie = {}
+    # gets values from cookie if configured and present
+    parsed_auth_cookie = {}
     if DeviseTokenAuth.cookie_enabled
-      auth_cookie = JSON.parse(request.cookies[DeviseTokenAuth.cookie_name])
+      auth_cookie = request.cookies[DeviseTokenAuth.cookie_name]
+      if auth_cookie.present?
+        parsed_auth_cookie = JSON.parse(auth_cookie)
+      end
     end
 
     # parse header for values necessary for authentication
-    uid              = request.headers[uid_name] || params[uid_name] || auth_cookie[uid_name]
+    uid              = request.headers[uid_name] || params[uid_name] || parsed_auth_cookie[uid_name]
     @token           = DeviseTokenAuth::TokenFactory.new unless @token
-    @token.token     ||= request.headers[access_token_name] || params[access_token_name] || auth_cookie[access_token_name]
-    @token.client ||= request.headers[client_name] || params[client_name] || auth_cookie[client_name]
+    @token.token     ||= request.headers[access_token_name] || params[access_token_name] || parsed_auth_cookie[access_token_name]
+    @token.client ||= request.headers[client_name] || params[client_name] || parsed_auth_cookie[client_name]
 
     # client isn't required, set to 'default' if absent
     @token.client ||= 'default'
