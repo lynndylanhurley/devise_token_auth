@@ -26,7 +26,8 @@ module DeviseTokenAuth
                  :default_callbacks,
                  :headers_names,
                  :cookie_enabled,
-                 :cookie_config,
+                 :cookie_name,
+                 :cookie_attributes,
                  :bypass_sign_in,
                  :send_confirmation_email,
                  :require_client_password_reset_token
@@ -50,7 +51,8 @@ module DeviseTokenAuth
                                                 'uid': 'uid',
                                                 'token-type': 'token-type' }
   self.cookie_enabled                       = false
-  self.cookie_config                        = { name: 'auth_cookie', attributes: {} }
+  self.cookie_name                          = 'auth_cookie'
+  self.cookie_attributes                    = {}
   self.bypass_sign_in                       = true
   self.send_confirmation_email              = false
   self.require_client_password_reset_token  = false
