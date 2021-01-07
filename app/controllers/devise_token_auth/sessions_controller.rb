@@ -58,7 +58,7 @@ module DeviseTokenAuth
         if DeviseTokenAuth.cookie_enabled
           # If a cookie is set with a domain specified then it must be deleted with that domain specified
           # See https://api.rubyonrails.org/classes/ActionDispatch/Cookies.html
-          cookies.delete(DeviseTokenAuth.cookie_name, domain: get_cookie_domain)
+          cookies.delete(DeviseTokenAuth.cookie_name, domain: DeviseTokenAuth.cookie_attributes[:domain])
         end
 
         yield user if block_given?

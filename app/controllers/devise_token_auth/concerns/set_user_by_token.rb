@@ -126,18 +126,6 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
   end
 
-  def get_cookie_domain
-    # Most people will just set a string for the domain attribute config. But if you need
-    # more flexibility, such as to dynamically choose the domain when serving multiple domains
-    # from a single server, you can set a Proc that will be passed the request.
-    config_value = DeviseTokenAuth.cookie_attributes[:domain]
-    if config_value.is_a?(String)
-      config_value
-    elsif config_value.is_a?(Proc)
-      config_value.call(request)
-    end
-  end
-
   private
 
   def refresh_headers
@@ -161,8 +149,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   end
 
   def set_cookie(auth_header)
-    cookies[DeviseTokenAuth.cookie_name] = DeviseTokenAuth.cookie_attributes
-      .merge(value: auth_header.to_json, domain: get_cookie_domain)
+    cookies[DeviseTokenAuth.cookie_name] = DeviseTokenAuth.cookie_attributes.merge(value: auth_header.to_json)
   end
 
   def is_batch_request?(user, client)
