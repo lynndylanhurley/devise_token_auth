@@ -161,15 +161,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   end
 
   def set_cookie(auth_header)
-    cookie_attributes = DeviseTokenAuth.cookie_attributes
-    cookie_attributes.merge!(value: auth_header.to_json)
-
-    cookie_domain = get_cookie_domain
-    if cookie_domain.present?
-      cookie_attributes.merge!(domain: cookie_domain)
-    end
-
-    cookies[DeviseTokenAuth.cookie_name] = cookie_attributes
+    cookies[DeviseTokenAuth.cookie_name] = DeviseTokenAuth.cookie_attributes
+      .merge(value: auth_header.to_json, domain: get_cookie_domain)
   end
 
   def is_batch_request?(user, client)
