@@ -28,6 +28,7 @@ group :development, :test do
   # testing
   # gem 'spring'
   gem 'database_cleaner'
+  gem 'devise-multi_email'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'fuzz_ball'
@@ -43,6 +44,7 @@ group :development, :test do
   gem 'pry-remote'
 
   gem 'rubocop', require: false
+  gem 'solargraph', require: false
 end
 
 # code coverage, metrics

@@ -20,7 +20,15 @@ module DeviseTokenAuth::Concerns::ResourceFinder
   end
 
   def find_resource(field, value)
-    @resource = if :email == field && Gem.loaded_specs[ 'devise-multi_email' ]
+    @@multi_email_field = if( defined? @@multi_email_field )
+      @@multi_email_field = if( defined?( Devise::MultiEmail.emails_association_name ).nil? )
+                              Devise::MultiEmail.emails_association_name.to_s.singularize.to_sym
+                            else
+                              false
+                            end
+                          end
+
+    @resource = if :email == field && !@@multi_email_field
                   resource_class.find_by_email value
                 elsif resource_class.try(:connection_config).try(:[], :adapter).try(:include?, 'mysql')
                   # fix for mysql default case insensitivity
