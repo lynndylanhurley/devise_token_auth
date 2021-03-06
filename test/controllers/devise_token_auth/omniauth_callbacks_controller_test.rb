@@ -346,7 +346,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         follow_all_redirects!
 
         data = get_parsed_data_json
-        assert_equal "Redirect to &#39;#{@bad_redirect_url}&#39; not allowed.",
+        assert_equal "Redirect to '#{@bad_redirect_url}' not allowed.",
                     data['error']
       end
 
