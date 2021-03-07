@@ -16,7 +16,7 @@ group :development, :test do
   gem "omniauth-apple"
   gem "rack-cors"
   gem "thor"
-  gem "database_cleaner"
+  gem "database_cleaner-mongoid"
   gem "factory_bot_rails"
   gem "faker"
   gem "fuzz_ball"

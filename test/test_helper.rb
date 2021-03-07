@@ -15,7 +15,11 @@ require File.expand_path('dummy/config/environment', __dir__)
 require 'active_support/testing/autorun'
 require 'minitest/rails'
 require 'mocha/minitest'
-require 'database_cleaner'
+if DEVISE_TOKEN_AUTH_ORM == :active_record
+  require 'database_cleaner'
+else
+  require 'database_cleaner/mongoid'
+end
 
 FactoryBot.definition_file_paths = [File.expand_path('factories', __dir__)]
 FactoryBot.find_definitions
@@ -37,7 +41,7 @@ class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending! if DEVISE_TOKEN_AUTH_ORM == :active_record
 
   strategies = { active_record: :transaction,
-                 mongoid: :truncation }
+                 mongoid: :deletion }
   DatabaseCleaner.strategy = strategies[DEVISE_TOKEN_AUTH_ORM]
   setup { DatabaseCleaner.start }
   teardown { DatabaseCleaner.clean }
