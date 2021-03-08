@@ -15,7 +15,7 @@
             Cordova / PhoneGap)
       */
 
-      var data = JSON.parse(decodeURIComponent('<%= URI::escape( @data.to_json ) %>'));
+      var data = JSON.parse(decodeURIComponent('<%= ERB::Util.url_encode( @data.to_json ) %>'));
 
       window.addEventListener("message", function(ev) {
         if (ev.data === "requestCredentials") {

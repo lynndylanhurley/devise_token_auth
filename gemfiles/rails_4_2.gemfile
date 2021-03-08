@@ -2,6 +2,7 @@
 
 source "https://rubygems.org"
 
+gem "omniauth", "~> 1.9"
 gem "rails", "~> 4.2"
 gem "sqlite3", "~> 1.3.6"
 gem "mysql2", "~> 0.4.10"
@@ -9,12 +10,12 @@ gem "pg", "~> 0.21"
 
 group :development, :test do
   gem "attr_encrypted"
-  gem "figaro", git: "https://github.com/laserlemon/figaro"
-  gem "omniauth-facebook", git: "https://github.com/mkdynamic/omniauth-facebook"
-  gem "omniauth-github", git: "https://github.com/intridea/omniauth-github"
-  gem "omniauth-google-oauth2", git: "https://github.com/zquestz/omniauth-google-oauth2"
-  gem 'omniauth-apple'
-  gem "rack-cors", require: "rack/cors"
+  gem "figaro"
+  gem "omniauth-facebook"
+  gem "omniauth-github"
+  gem "omniauth-google-oauth2"
+  gem "omniauth-apple"
+  gem "rack-cors"
   gem "thor"
   gem "database_cleaner"
   gem "factory_bot_rails"
@@ -27,7 +28,7 @@ group :development, :test do
   gem "minitest-rails"
   gem "minitest-reporters"
   gem "mocha", ">= 1.5"
-  gem "pry", "< 0.13"
+  gem "pry"
   gem "pry-byebug"
   gem "pry-remote"
   gem "rubocop", require: false
@@ -35,7 +36,7 @@ end
 
 group :test do
   gem "rails-controller-testing"
-  gem "simplecov", "< 0.18", require: false
+  gem "simplecov", require: false
 end
 
 group :development do

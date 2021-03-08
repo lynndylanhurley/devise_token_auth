@@ -3,7 +3,7 @@
 The following settings are available for configuration in `config/initializers/devise_token_auth.rb`:
 
 | Name (default) | Description|
-|---|---|---|
+|---|---|
 | **`change_headers_on_each_request`** (`true`) | By default the access-token header will change after each request. The client is responsible for keeping track of the changing tokens. Both [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) and [jToker](https://github.com/lynndylanhurley/j-toker) do this out of the box. While this implementation is more secure, it can be difficult to manage. Set this to false to prevent the `access-token` header from changing after each request. [Read more](/conceptual#about-token-management). |
 | **`token_lifespan`** (`2.weeks`) | Set the length of your tokens' lifespans. Users will need to re-authenticate after this duration of time has passed since their last login. |
 | **`token_cost`** (`10`) | Set the cost of your tokens' cost. The possible cost value is within range from 4 to 31. It is recommended to not use a value more than 10. For details see [BCrypt Cost Factors](https://github.com/codahale/bcrypt-ruby#cost-factors). |
