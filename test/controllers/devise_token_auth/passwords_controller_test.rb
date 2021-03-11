@@ -85,37 +85,89 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
       end
 
       describe 'request password reset' do
-        describe 'unknown user should return 404' do
-          before do
-            post :create,
-                 params: { email: 'chester@cheet.ah',
-                           redirect_url: @redirect_url }
-            @data = JSON.parse(response.body)
+        describe 'unknown user' do
+          describe 'without paranoid mode' do
+            before do
+              post :create,
+                   params: { email: 'chester@cheet.ah',
+                             redirect_url: @redirect_url }
+              @data = JSON.parse(response.body)
+            end
+
+            test 'unknown user should return 404' do
+              assert_equal 404, response.status
+            end
+
+            test 'errors should be returned' do
+              assert @data['errors']
+              assert_equal @data['errors'],
+              [I18n.t('devise_token_auth.passwords.user_not_found',
+                      email: 'chester@cheet.ah')]
+            end
           end
 
-          test 'unknown user should return 404' do
-            assert_equal 404, response.status
-          end
+          describe 'with paranoid mode' do
+            before do
+              swap Devise, paranoid: true do
+                post :create,
+                     params: { email: 'chester@cheet.ah',
+                               redirect_url: @redirect_url }
+                @data = JSON.parse(response.body)
+              end
+            end
 
-          test 'errors should be returned' do
-            assert @data['errors']
-            assert_equal @data['errors'],
-                         [I18n.t('devise_token_auth.passwords.user_not_found',
-                                 email: 'chester@cheet.ah')]
+            test 'unknown user should return 404' do
+              assert_equal 404, response.status
+            end
+
+            test 'errors should be returned' do
+              assert @data['errors']
+              assert_equal @data['errors'],
+              [I18n.t('devise_token_auth.passwords.sended_paranoid')]
+            end
           end
         end
 
         describe 'successfully requested password reset' do
-          before do
-            post :create,
-                 params: { email: @resource.email,
-                           redirect_url: @redirect_url }
+          describe 'without paranoid mode' do
+            before do
+              post :create,
+                   params: { email: @resource.email,
+                             redirect_url: @redirect_url }
 
-            @data = JSON.parse(response.body)
+              @data = JSON.parse(response.body)
+            end
+
+            test 'response should not contain extra data' do
+              assert_nil @data['data']
+            end
+
+            test 'response should contains message' do
+              assert_equal \
+                @data['message'],
+              I18n.t('devise_token_auth.passwords.sended', email: @resource.email)
+            end
           end
 
-          test 'response should not contain extra data' do
-            assert_nil @data['data']
+          describe 'with paranoid mode' do
+            before do
+              swap Devise, paranoid: true do
+                post :create,
+                     params: { email: @resource.email,
+                               redirect_url: @redirect_url }
+                @data = JSON.parse(response.body)
+              end
+            end
+
+            test 'response should return success status' do
+              assert_equal 200, response.status
+            end
+
+            test 'response should contain message' do
+              assert_equal \
+                @data['message'],
+              I18n.t('devise_token_auth.passwords.sended_paranoid')
+            end
           end
         end
 

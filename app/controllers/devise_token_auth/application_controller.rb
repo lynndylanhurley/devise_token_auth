@@ -75,5 +75,13 @@ module DeviseTokenAuth
       response = response.merge(data) if data
       render json: response, status: status
     end
+
+    def success_message(name, email)
+      if Devise.paranoid
+        I18n.t("devise_token_auth.#{name}.sended_paranoid")
+      else
+        I18n.t("devise_token_auth.#{name}.sended", email: email)
+      end
+    end
   end
 end
