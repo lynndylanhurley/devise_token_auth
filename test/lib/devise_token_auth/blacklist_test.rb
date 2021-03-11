@@ -3,9 +3,9 @@
 require 'test_helper'
 
 class DeviseTokenAuth::BlacklistTest < ActiveSupport::TestCase
-  describe Devise::Models::Authenticatable::BLACKLIST_FOR_SERIALIZATION do
+  describe Devise::Models::Authenticatable::UNSAFE_ATTRIBUTES_FOR_SERIALIZATION do
     test 'should include :tokens' do
-      assert Devise::Models::Authenticatable::BLACKLIST_FOR_SERIALIZATION.include?(:tokens)
+      assert Devise::Models::Authenticatable::UNSAFE_ATTRIBUTES_FOR_SERIALIZATION.include?(:tokens)
     end
   end
 end
