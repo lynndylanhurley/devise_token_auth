@@ -9,6 +9,7 @@ test/dummy/.sass-cache
 test/dummy/config/application.yml
 coverage
 .idea
+.byebug_history
 .irb_history
 .ruby-version
 .ruby-gemset
