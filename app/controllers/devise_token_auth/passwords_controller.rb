@@ -128,7 +128,7 @@ module DeviseTokenAuth
     def render_create_success
       render json: {
         success: true,
-        message: I18n.t('devise_token_auth.passwords.sended', email: @email)
+        message: success_message('passwords', @email)
       }
     end
 
@@ -181,7 +181,11 @@ module DeviseTokenAuth
     end
 
     def render_not_found_error
-      render_error(404, I18n.t('devise_token_auth.passwords.user_not_found', email: @email))
+      if Devise.paranoid
+        render_error(404, I18n.t('devise_token_auth.passwords.sended_paranoid'))
+      else
+        render_error(404, I18n.t('devise_token_auth.passwords.user_not_found', email: @email))
+      end
     end
 
     def validate_redirect_url_param

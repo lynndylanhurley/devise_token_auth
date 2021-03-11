@@ -63,7 +63,7 @@ module DeviseTokenAuth
     def render_create_success
       render json: {
         success: true,
-        message: I18n.t('devise_token_auth.unlocks.sended', email: @email)
+        message: success_message('unlocks', @email)
       }
     end
 
@@ -79,7 +79,11 @@ module DeviseTokenAuth
     end
 
     def render_not_found_error
-      render_error(404, I18n.t('devise_token_auth.unlocks.user_not_found', email: @email))
+      if Devise.paranoid
+        render_error(404, I18n.t('devise_token_auth.unlocks.sended_paranoid'))
+      else
+        render_error(404, I18n.t('devise_token_auth.unlocks.user_not_found', email: @email))
+      end
     end
 
     def resource_params

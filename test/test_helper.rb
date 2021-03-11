@@ -48,6 +48,33 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 
+  # Execute the block setting the given values and restoring old values after
+  # the block is executed.
+  # shamelessly copied from devise test_helper.
+  def swap(object, new_values)
+    old_values = {}
+    new_values.each do |key, value|
+      old_values[key] = object.send key
+      object.send :"#{key}=", value
+    end
+    clear_cached_variables(new_values)
+    yield
+  ensure
+    clear_cached_variables(new_values)
+    old_values.each do |key, value|
+      object.send :"#{key}=", value
+    end
+  end
+
+  # shamelessly copied from devise test_helper.
+  def clear_cached_variables(options)
+    if options.key?(:case_insensitive_keys) || options.key?(:strip_whitespace_keys)
+      Devise.mappings.each do |_, mapping|
+        mapping.to.instance_variable_set(:@devise_parameter_filter, nil)
+      end
+    end
+  end
+
   def age_token(user, client_id)
     if user.tokens[client_id]
       user.tokens[client_id]['updated_at'] = (Time.zone.now - (DeviseTokenAuth.batch_request_buffer_throttle + 10.seconds))
