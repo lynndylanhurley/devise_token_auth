@@ -23,8 +23,8 @@ module DeviseTokenAuth::Concerns::UserOmniauthCallbacks
   end
 
   def sync_uid
-    if devise_modules.include?(:confirmable) && !@bypass_confirmation_postpone
-      return if postpone_email_change?
+    unless self.new_record?
+      return if devise_modules.include?(:confirmable) && !@bypass_confirmation_postpone && postpone_email_change?
     end
     self.uid = email if email_provider?
   end
