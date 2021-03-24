@@ -15,6 +15,7 @@ group :development, :test do
   gem "omniauth-github"
   gem "omniauth-google-oauth2"
   gem 'omniauth-apple'
+  gem 'devise', git: 'git://github.com/heartcombo/devise.git'
   gem "rack-cors", require: "rack/cors"
   gem "thor"
   gem "database_cleaner"
