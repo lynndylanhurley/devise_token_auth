@@ -25,6 +25,7 @@ group :development, :test do
   gem 'omniauth-apple'
   gem 'rack-cors'
   gem 'thor'
+  gem 'devise', git: 'git://github.com/heartcombo/devise.git'
 
   # testing
   # gem 'spring'
