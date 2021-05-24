@@ -218,8 +218,8 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def should_remove_tokens_after_password_reset?
-    encrypted_password_changed? &&
-        DeviseTokenAuth.remove_tokens_after_password_reset
+    DeviseTokenAuth.remove_tokens_after_password_reset &&
+      (respond_to?(:encrypted_password_changed?) && encrypted_password_changed?)
   end
 
   def remove_tokens_after_password_reset
