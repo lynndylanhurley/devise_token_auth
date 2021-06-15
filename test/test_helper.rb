@@ -116,7 +116,7 @@ module Rails
         %w[get post patch put head delete get_via_redirect post_via_redirect].each do |method|
           define_method(method) do |path_or_action, **args|
             if Rails::VERSION::MAJOR >= 5
-              super path_or_action, args
+              super path_or_action, **args
             else
               super path_or_action, args[:params], args[:headers]
             end

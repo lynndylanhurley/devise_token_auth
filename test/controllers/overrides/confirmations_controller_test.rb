@@ -38,7 +38,7 @@ class Overrides::ConfirmationsControllerTest < ActionDispatch::IntegrationTest
       override_proof_str = '(^^,)'
 
       # ensure present in redirect URL
-      override_proof_param = URI.unescape(response.headers['Location']
+      override_proof_param = CGI.unescape(response.headers['Location']
                                 .match(/override_proof=([^&]*)&/)[1])
 
       assert_equal override_proof_str, override_proof_param
