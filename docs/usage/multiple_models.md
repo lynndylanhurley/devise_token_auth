@@ -47,6 +47,24 @@ This gem supports the use of multiple user models. One possible use case is to a
   * `current_admin`
   * `admin_signed_in?`
 
+1. (Optional) Configure custom token lifespan
+  **Example**:
+
+  ~~~ruby
+  Class Admin
+    # Devise configuration
+    devise :invitable, :database_authenticatable, :recoverable, :rememberable, :validatable
+    include DeviseTokenAuth::Concerns::User
+
+    protected
+
+    def token_lifespan
+      1.day
+    end
+  end
+  ~~~
+
+
 
 ### Group access
 
