@@ -6,7 +6,7 @@ module DeviseTokenAuth::Concerns::ResourceFinder
 
   def get_case_insensitive_field_from_resource_params(field)
     # honor Devise configuration for case_insensitive keys
-    q_value = resource_params[field.to_sym]
+    q_value = resource_params[field.to_sym].to_s
 
     if resource_class.case_insensitive_keys.include?(field.to_sym)
       q_value.downcase!
