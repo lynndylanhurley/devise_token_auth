@@ -123,7 +123,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   end
 
   def update_auth_header
-    Rails.logger.error("update_auth_header resource: #{@resource&.uuid}, client: #{@token.client}")
+    Rails.logger.error("update_auth_header resource: #{@resource&.uuid}, client: #{@token.client}, @token: #{@token}")
     # cannot save object if model has invalid params
     return unless @resource && @token.client
 
@@ -135,7 +135,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # should not append auth header if @resource related token was
       # cleared by sign out in the meantime
       Rails.logger.error("update_auth_header(#{@resource&.uuid}) tokens #{@resource.reload.tokens}")
-      Rails.logger.error("fail to update_auth_header(#{@resource&.uuid})") if @resource.reload.tokens[@token.client].nil?
+      Rails.logger.error("fail to update_auth_header2(#{@resource&.uuid})") if @resource.reload.tokens[@token.client].nil?
       return if @resource.reload.tokens[@token.client].nil?
 
       @auth_header ||= @resource.build_auth_header(@token.token, @token.client, @token.refresh_token)

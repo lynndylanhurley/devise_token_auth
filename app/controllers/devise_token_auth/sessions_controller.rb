@@ -27,6 +27,7 @@ module DeviseTokenAuth
           return render_create_error_bad_credentials
         end
         @token = @resource.create_token
+        Rails.logger.error("create_session @token: #{@token}")
         @resource.save
 
         sign_in(:user, @resource, store: false, bypass: false)
