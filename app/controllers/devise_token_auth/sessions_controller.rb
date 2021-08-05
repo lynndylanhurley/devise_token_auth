@@ -26,9 +26,10 @@ module DeviseTokenAuth
         if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
           return render_create_error_bad_credentials
         end
-        @token = @resource.create_token
-        @resource.save
-
+        @resource.with_lock do
+          @token = @resource.create_token
+          @resource.save
+        end
         sign_in(:user, @resource, store: false, bypass: false)
 
         yield @resource if block_given?
