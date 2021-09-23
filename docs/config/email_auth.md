@@ -21,6 +21,4 @@ Devise.setup do |config|
 end
 ~~~
 
-
-
 If you wish to send custom e-mails instead of using the default devise templates, you can [do that too](/docs/usage/overrides.md#email-template-overrides).
