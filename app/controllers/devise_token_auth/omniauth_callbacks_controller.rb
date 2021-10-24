@@ -23,7 +23,7 @@ module DeviseTokenAuth
       session['dta.omniauth.auth'] = request.env['omniauth.auth'].except('extra')
       session['dta.omniauth.params'] = request.env['omniauth.params']
 
-      redirect_to redirect_route
+      redirect_to redirect_route, status: 307
     end
 
     def get_redirect_route(devise_mapping)
@@ -45,7 +45,7 @@ module DeviseTokenAuth
     # find the mapping in `omniauth.params`.
     #
     # One example use-case here is for IDP-initiated SAML login.  In that
-    # case, there will have been no initial request in which to save 
+    # case, there will have been no initial request in which to save
     # the devise mapping.  If you are in a situation like that, and
     # your app allows for you to determine somehow what the devise
     # mapping should be (because, for example, it is always the same),
@@ -78,10 +78,10 @@ module DeviseTokenAuth
       render_data_or_redirect('authFailure', error: @error)
     end
 
-    def validate_auth_origin_url_param 
+    def validate_auth_origin_url_param
       return render_error_not_allowed_auth_origin_url if auth_origin_url && blacklisted_redirect_url?(auth_origin_url)
     end
-  
+
 
     protected
 
