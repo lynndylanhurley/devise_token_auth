@@ -17,7 +17,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     @used_auth_by_token = true
 
     # initialize instance variables
-    @token = DeviseTokenAuth::TokenFactory.new
+    @token ||= DeviseTokenAuth::TokenFactory.new
     @resource ||= nil
     @is_batch_request ||= nil
   end
@@ -46,7 +46,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     # check for an existing user, authenticated via warden/devise, if enabled
     if DeviseTokenAuth.enable_standard_devise_support
-      devise_warden_user = warden.user(rc.to_s.underscore.to_sym)
+      devise_warden_user = warden.user(mapping)
       if devise_warden_user && devise_warden_user.tokens[@token.client].nil?
         @used_auth_by_token = false
         @resource = devise_warden_user
@@ -140,7 +140,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     else
       unless @resource.reload.valid?
-        @resource = resource_class.find(@resource.to_param) # errors remain after reload
+        @resource = @resource.class.find(@resource.to_param) # errors remain after reload
         # if we left the model in a bad state, something is wrong in our app
         unless @resource.valid?
           raise DeviseTokenAuth::Errors::InvalidModel, "Cannot set auth token in invalid model. Errors: #{@resource.errors.full_messages}"

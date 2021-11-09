@@ -44,6 +44,6 @@ class DeviseTokenAuthCreate<%= user_class.pluralize.gsub("::","") %> < ActiveRec
     add_index :<%= table_name %>, [:uid, :provider],     unique: true
     add_index :<%= table_name %>, :reset_password_token, unique: true
     add_index :<%= table_name %>, :confirmation_token,   unique: true
-    # add_index :<%= table_name %>, :unlock_token,       unique: true
+    # add_index :<%= table_name %>, :unlock_token,         unique: true
   end
 end
