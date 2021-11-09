@@ -2,20 +2,21 @@
 
 source "https://rubygems.org"
 
+gem "omniauth", "~> 1.9"
 gem "rails", "~> 5.1"
 gem "mongoid", "~> 6.4"
 gem "mongoid-locker", "~> 1.0"
 
 group :development, :test do
   gem "attr_encrypted"
-  gem "figaro", git: "https://github.com/laserlemon/figaro"
-  gem "omniauth-facebook", git: "https://github.com/mkdynamic/omniauth-facebook"
-  gem "omniauth-github", git: "https://github.com/intridea/omniauth-github"
-  gem "omniauth-google-oauth2", git: "https://github.com/zquestz/omniauth-google-oauth2"
-  gem 'omniauth-apple'
-  gem "rack-cors", require: "rack/cors"
+  gem "figaro"
+  gem "omniauth-facebook"
+  gem "omniauth-github"
+  gem "omniauth-google-oauth2"
+  gem "omniauth-apple"
+  gem "rack-cors"
   gem "thor"
-  gem "database_cleaner"
+  gem "database_cleaner-mongoid"
   gem "factory_bot_rails"
   gem "faker"
   gem "fuzz_ball"
@@ -34,7 +35,7 @@ end
 
 group :test do
   gem "rails-controller-testing"
-  gem "simplecov", require: false
+  gem "simplecov", "~> 0.10", "< 0.18", require: false
 end
 
 group :development do

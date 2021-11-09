@@ -53,6 +53,10 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
             assert @resource.confirmed?
           end
 
+          test 'should save the authentication token' do
+            assert @resource.reload.tokens.present?
+          end
+
           test 'should redirect to success url' do
             assert_redirected_to(/^#{@redirect_url}/)
           end
@@ -88,30 +92,102 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
         end
 
         describe 'resend confirmation' do
-          before do
-            post :create,
-                params: { email: @new_user.email,
-                          redirect_url: @redirect_url },
-                xhr: true
-            @resource = assigns(:resource)
+          describe 'without paranoid mode' do
 
-            @mail = ActionMailer::Base.deliveries.last
-            @token, @client_config = token_and_client_config_from(@mail.body)
+            describe 'on success' do
+              before do
+                post :create,
+                     params: { email: @new_user.email,
+                               redirect_url: @redirect_url },
+                     xhr: true
+                @resource = assigns(:resource)
+                @data = JSON.parse(response.body)
+                @mail = ActionMailer::Base.deliveries.last
+                @token, @client_config = token_and_client_config_from(@mail.body)
+              end
+
+              test 'user should not be confirmed' do
+                assert_nil @resource.confirmed_at
+              end
+
+              test 'should generate raw token' do
+                assert @token
+                assert_equal @new_user.confirmation_token, @token
+              end
+
+              test 'user should receive confirmation email' do
+                assert_equal @resource.email, @mail['to'].to_s
+              end
+
+              test 'response should contain message' do
+                assert_equal @data['message'], I18n.t('devise_token_auth.confirmations.sended', email: @resource.email)
+              end
+            end
+
+            describe 'on failure' do
+              before do
+                post :create,
+                     params: { email: 'chester@cheet.ah',
+                               redirect_url: @redirect_url },
+                     xhr: true
+                @data = JSON.parse(response.body)
+              end
+
+              test 'response should contain errors' do
+                assert_equal @data['errors'], [I18n.t('devise_token_auth.confirmations.user_not_found', email: 'chester@cheet.ah')]
+              end
+            end
+          end
+        end
+
+        describe 'with paranoid mode' do
+          describe 'on success' do
+            before do
+              swap Devise, paranoid: true do
+                post :create,
+                     params: { email: @new_user.email,
+                               redirect_url: @redirect_url },
+                     xhr: true
+                @resource = assigns(:resource)
+                @data = JSON.parse(response.body)
+                @mail = ActionMailer::Base.deliveries.last
+                @token, @client_config = token_and_client_config_from(@mail.body)
+              end
+            end
+
+            test 'user should not be confirmed' do
+              assert_nil @resource.confirmed_at
+            end
+
+            test 'should generate raw token' do
+              assert @token
+              assert_equal @new_user.confirmation_token, @token
+            end
+
+            test 'user should receive confirmation email' do
+              assert_equal @resource.email, @mail['to'].to_s
+            end
+
+            test 'response should contain message' do
+              assert_equal @data['message'], I18n.t('devise_token_auth.confirmations.sended_paranoid', email: @resource.email)
+            end
           end
 
-          test 'user should not be confirmed' do
-            assert_nil @resource.confirmed_at
-          end
+          describe 'on failure' do
+            before do
+              swap Devise, paranoid: true do
+                post :create,
+                     params: { email: 'chester@cheet.ah',
+                               redirect_url: @redirect_url },
+                     xhr: true
+                @data = JSON.parse(response.body)
+              end
+            end
 
-          test 'should generate raw token' do
-            assert @token
-            assert_equal @new_user.confirmation_token, @token
+            test 'response should contain errors' do
+              assert_equal @data['errors'], [I18n.t('devise_token_auth.confirmations.sended_paranoid')]
+            end
           end
-
-          test 'user should receive confirmation email' do
-            assert_equal @resource.email, @mail['to'].to_s
-          end
-
         end
       end
 

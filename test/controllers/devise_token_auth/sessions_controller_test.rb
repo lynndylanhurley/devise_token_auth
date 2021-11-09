@@ -17,11 +17,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'success' do
         before do
-          post :create,
-               params: {
-                 email: @existing_user.email,
-                 password: @existing_user.password
-               }
+          @user_session_params = {
+            email: @existing_user.email,
+            password: @existing_user.password
+          }
+
+          post :create, params: @user_session_params
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -35,17 +36,27 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           assert_equal @existing_user.email, @data['data']['email']
         end
 
+        describe 'using auth cookie' do
+          before do
+            DeviseTokenAuth.cookie_enabled = true
+          end
+
+          test 'request should return auth cookie' do
+            post :create, params: @user_session_params
+            assert response.cookies[DeviseTokenAuth.cookie_name]
+          end
+
+          after do
+            DeviseTokenAuth.cookie_enabled = false
+          end
+        end
+
         describe "with multiple clients and headers don't change in each request" do
           before do
             # Set the max_number_of_devices to a lower number
             #  to expedite tests! (Default is 10)
             DeviseTokenAuth.max_number_of_devices = 2
             DeviseTokenAuth.change_headers_on_each_request = false
-
-            @user_session_params = {
-              email: @existing_user.email,
-              password: @existing_user.password
-            }
           end
 
           test 'should limit the maximum number of concurrent devices' do
@@ -158,6 +169,24 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
         test 'session was destroyed' do
           assert_equal true, @controller.reset_session_called
+        end
+
+        describe 'using auth cookie' do
+          before do
+            DeviseTokenAuth.cookie_enabled = true
+            @auth_token = @existing_user.create_new_auth_token
+            @controller.send(:cookies)[DeviseTokenAuth.cookie_name] = { value: @auth_token.to_json }
+          end
+
+          test 'auth cookie was destroyed' do
+            assert_equal @auth_token.to_json, @controller.send(:cookies)[DeviseTokenAuth.cookie_name] # sanity check
+            delete :destroy, format: :json
+            assert_nil @controller.send(:cookies)[DeviseTokenAuth.cookie_name]
+          end
+
+          after do
+            DeviseTokenAuth.cookie_enabled = false
+          end
         end
       end
 

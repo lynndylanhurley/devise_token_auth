@@ -124,7 +124,10 @@ You may be interested in [solidus_devise_token_auth](https://github.com/skycocke
     add_column :users, :tokens, :text
 
     # if your existing User model does not have an existing **encrypted_password** column uncomment below line.
-    # add_column :users, :encrypted_password, :null => false, :default => ""
+    # add_column :users, :encrypted_password, :string, null: false, default: ''
+
+    # if your existing User model does not have an existing **allow_password_change** column uncomment below line.
+    # add_column :users, :allow_password_change, :boolean, default: false
 
     # the following will update your models so that when you run your migration
 
@@ -145,7 +148,31 @@ You may be interested in [solidus_devise_token_auth](https://github.com/skycocke
 
   def down
     # if you added **encrypted_password** above, add here to successfully rollback
+    # if you added **allow_password_change** above, add here to successfully rollback
     remove_columns :users, :provider, :uid, :tokens
   end
 
+```
+
+### I want to add a new param for sign up and account update
+
+[Override the controller](https://devise-token-auth.gitbook.io/devise-token-auth/usage/overrides#custom-controller-overrides) and describe the new parameters you want to add in the configure_permitted_parameters method.
+
+When creating an account, add params under `sign_up`.
+
+When updating your account, add params under `account_update`.
+
+For example:
+
+```ruby
+class RegistrationsController < DeviseTokenAuth::RegistrationsController
+  before_action :configure_permitted_parameters
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i(name))
+    devise_parameter_sanitizer.permit(:account_update, keys: %i(name))
+  end
+end
 ```

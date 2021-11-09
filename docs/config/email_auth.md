@@ -12,5 +12,13 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = { address: 'your-dev-host.dev', port: 1025 }
 end
 ~~~
+You also may want to configure `mail_sender` at devise initializer if you don't use your own mailer class
+##### devise configuration:
+~~~ruby
+# config/initializers/devise.rb
+Devise.setup do |config|
+  config.mailer_sender = "example@example.com"
+end
+~~~
 
 If you wish to send custom e-mails instead of using the default devise templates, you can [do that too](/docs/usage/overrides.md#email-template-overrides).

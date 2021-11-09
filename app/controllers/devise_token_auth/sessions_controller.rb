@@ -26,8 +26,8 @@ module DeviseTokenAuth
         if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
           return render_create_error_bad_credentials
         end
-        @token = @resource.create_token
-        @resource.save
+
+        create_and_assign_token
 
         sign_in(:user, @resource, store: false, bypass: false)
 
@@ -48,12 +48,18 @@ module DeviseTokenAuth
     def destroy
       # remove auth instance variables so that after_action does not run
       user = remove_instance_variable(:@resource) if @resource
-      client = @token.client if @token.client
+      client = @token.client
       @token.clear!
 
       if user && client && user.tokens[client]
         user.tokens.delete(client)
         user.save!
+
+        if DeviseTokenAuth.cookie_enabled
+          # If a cookie is set with a domain specified then it must be deleted with that domain specified
+          # See https://api.rubyonrails.org/classes/ActionDispatch/Cookies.html
+          cookies.delete(DeviseTokenAuth.cookie_name, domain: DeviseTokenAuth.cookie_attributes[:domain])
+        end
 
         yield user if block_given?
 
@@ -126,6 +132,18 @@ module DeviseTokenAuth
 
     def resource_params
       params.permit(*params_for_resource(:sign_in))
+    end
+
+    def create_and_assign_token
+      if @resource.respond_to?(:with_lock)
+        @resource.with_lock do
+          @token = @resource.create_token
+          @resource.save!
+        end
+      else
+        @token = @resource.create_token
+        @resource.save!
+      end
     end
   end
 end

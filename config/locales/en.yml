@@ -21,6 +21,7 @@ en:
       missing_redirect_url: "Missing redirect URL."
       not_allowed_redirect_url: "Redirect to '%{redirect_url}' not allowed."
       sended: "An email has been sent to '%{email}' containing instructions for resetting your password."
+      sended_paranoid: "If your email address exists in our database, you will receive a password recovery link at your email address in a few minutes."
       user_not_found: "Unable to find user with email '%{email}'."
       password_not_required: "This account does not require a password. Sign in using your '%{provider}' account instead."
       missing_passwords: "You must fill out the fields labeled 'Password' and 'Password confirmation'."
@@ -28,9 +29,11 @@ en:
     unlocks:
       missing_email: "You must provide an email address."
       sended: "An email has been sent to '%{email}' containing instructions for unlocking your account."
+      sended_paranoid: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
       user_not_found: "Unable to find user with email '%{email}'."
     confirmations:
       sended: "An email has been sent to '%{email}' containing instructions for confirming your account."
+      sended_paranoid: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
       user_not_found: "Unable to find user with email '%{email}'."
       missing_email: "You must provide an email address."
 

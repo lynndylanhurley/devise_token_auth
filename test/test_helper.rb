@@ -15,7 +15,11 @@ require File.expand_path('dummy/config/environment', __dir__)
 require 'active_support/testing/autorun'
 require 'minitest/rails'
 require 'mocha/minitest'
-require 'database_cleaner'
+if DEVISE_TOKEN_AUTH_ORM == :active_record
+  require 'database_cleaner'
+else
+  require 'database_cleaner/mongoid'
+end
 
 FactoryBot.definition_file_paths = [File.expand_path('factories', __dir__)]
 FactoryBot.find_definitions
@@ -37,16 +41,43 @@ class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending! if DEVISE_TOKEN_AUTH_ORM == :active_record
 
   strategies = { active_record: :transaction,
-                 mongoid: :truncation }
+                 mongoid: :deletion }
   DatabaseCleaner.strategy = strategies[DEVISE_TOKEN_AUTH_ORM]
   setup { DatabaseCleaner.start }
   teardown { DatabaseCleaner.clean }
 
   # Add more helper methods to be used by all tests here...
 
+  # Execute the block setting the given values and restoring old values after
+  # the block is executed.
+  # shamelessly copied from devise test_helper.
+  def swap(object, new_values)
+    old_values = {}
+    new_values.each do |key, value|
+      old_values[key] = object.send key
+      object.send :"#{key}=", value
+    end
+    clear_cached_variables(new_values)
+    yield
+  ensure
+    clear_cached_variables(new_values)
+    old_values.each do |key, value|
+      object.send :"#{key}=", value
+    end
+  end
+
+  # shamelessly copied from devise test_helper.
+  def clear_cached_variables(options)
+    if options.key?(:case_insensitive_keys) || options.key?(:strip_whitespace_keys)
+      Devise.mappings.each do |_, mapping|
+        mapping.to.instance_variable_set(:@devise_parameter_filter, nil)
+      end
+    end
+  end
+
   def age_token(user, client_id)
     if user.tokens[client_id]
-      user.tokens[client_id]['updated_at'] = Time.zone.now - (DeviseTokenAuth.batch_request_buffer_throttle + 10.seconds)
+      user.tokens[client_id]['updated_at'] = (Time.zone.now - (DeviseTokenAuth.batch_request_buffer_throttle + 10.seconds))
       user.save!
     end
   end
@@ -85,7 +116,7 @@ module Rails
         %w[get post patch put head delete get_via_redirect post_via_redirect].each do |method|
           define_method(method) do |path_or_action, **args|
             if Rails::VERSION::MAJOR >= 5
-              super path_or_action, args
+              super path_or_action, **args
             else
               super path_or_action, args[:params], args[:headers]
             end

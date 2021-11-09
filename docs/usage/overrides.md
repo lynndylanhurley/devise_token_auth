@@ -47,6 +47,8 @@ To customize json rendering, implement the following protected controller method
 * render_update_success
 * render_update_error
 * render_update_error_user_not_found
+* render_destroy_success
+* render_destroy_error
 
 
 ### Sessions Controller

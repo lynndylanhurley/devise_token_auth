@@ -13,6 +13,7 @@ module DeviseTokenAuth
 
         if signed_in?(resource_name)
           token = signed_in_resource.create_token
+          signed_in_resource.save!
 
           redirect_headers = build_redirect_headers(token.token,
                                                     token.client,
@@ -54,13 +55,17 @@ module DeviseTokenAuth
 
     def render_create_success
       render json: {
-          success: true,
-          message: I18n.t('devise_token_auth.confirmations.sended', email: @email)
-      }
+               success: true,
+               message: success_message('confirmations', @email)
+             }
     end
 
     def render_not_found_error
-      render_error(404, I18n.t('devise_token_auth.confirmations.user_not_found', email: @email))
+      if Devise.paranoid
+        render_error(404, I18n.t('devise_token_auth.confirmations.sended_paranoid'))
+      else
+        render_error(404, I18n.t('devise_token_auth.confirmations.user_not_found', email: @email))
+      end
     end
 
     def render_token_error

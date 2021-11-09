@@ -10,6 +10,17 @@ require 'test_helper'
 
 class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   describe DeviseTokenAuth::RegistrationsController do
+
+    def mock_registration_params
+      {
+        email: Faker::Internet.email,
+        password: 'secret123',
+        password_confirmation: 'secret123',
+        confirm_success_url: Faker::Internet.url,
+        unpermitted_param: '(x_x)'
+      }
+    end
+
     describe 'Validate non-empty body' do
       before do
         # need to post empty data
@@ -41,13 +52,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @mails_sent = ActionMailer::Base.deliveries.count
 
         post '/auth',
-             params: {
-               email: Faker::Internet.email,
-               password: 'secret123',
-               password_confirmation: 'secret123',
-               confirm_success_url: Faker::Internet.url,
-               unpermitted_param: '(x_x)'
-             }
+             params: mock_registration_params
 
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
@@ -87,22 +92,30 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       before do
         @original_duration = Devise.allow_unconfirmed_access_for
         Devise.allow_unconfirmed_access_for = nil
-        post '/auth',
-             params: {
-               email: Faker::Internet.email,
-               password: 'secret123',
-               password_confirmation: 'secret123',
-               confirm_success_url: Faker::Internet.url,
-               unpermitted_param: '(x_x)'
-             }
       end
 
       test 'auth headers were returned in response' do
+        post '/auth', params: mock_registration_params
         assert response.headers['access-token']
         assert response.headers['token-type']
         assert response.headers['client']
         assert response.headers['expiry']
         assert response.headers['uid']
+      end
+
+      describe 'using auth cookie' do
+        before do
+          DeviseTokenAuth.cookie_enabled = true
+        end
+
+        test 'auth cookie was returned in response' do
+          post '/auth', params: mock_registration_params
+          assert response.cookies[DeviseTokenAuth.cookie_name]
+        end
+
+        after do
+          DeviseTokenAuth.cookie_enabled = false
+        end
       end
 
       after do
