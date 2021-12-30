@@ -11,14 +11,14 @@ mysql: &mysql
 postgresql: &postgresql
   adapter: postgresql
   username: postgres
-  password:
+  password: postgres
   database: "devise_token_auth_<%= Rails.env %>"
   min_messages: ERROR
 
 defaults: &defaults
   pool: 5
   timeout: 5000
-  host: localhost
+  host: 127.0.0.1
   <<: *<%= ENV['DB'] || "sqlite" %>
 
 development:
