@@ -265,7 +265,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             @resource.reload
             age_token(@resource, @client_id)
 
-            # use expired auth header
+            # use previous auth header
             get '/demo/members_only',
                 params: {},
                 headers: @auth_headers
