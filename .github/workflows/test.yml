@@ -1,0 +1,104 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - 2.4
+          - 2.5
+          - 2.6
+          - 2.7
+        gemfile:
+          - gemfiles/rails_4_2.gemfile
+          - gemfiles/rails_5_0.gemfile
+          - gemfiles/rails_5_1.gemfile
+          - gemfiles/rails_5_2.gemfile
+          - gemfiles/rails_6_0.gemfile
+        db:
+          - sqlite
+          - mysql
+          - postgresql
+        devise-token-auth-orm:
+          - active_record
+        include:
+          - ruby: 2.4
+            gemfile: gemfiles/rails_5_1_mongoid_7.gemfile
+            devise-token-auth-orm: mongoid
+          - ruby: 2.5
+            gemfile: gemfiles/rails_5_2_mongoid_6.gemfile
+            devise-token-auth-orm: mongoid
+          - ruby: 2.5
+            gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
+            devise-token-auth-orm: mongoid
+          - ruby: 2.6
+            gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
+            devise-token-auth-orm: mongoid
+          - ruby: 2.7
+            gemfile: gemfiles/rails_6_0_mongoid_7.gemfile
+            devise-token-auth-orm: mongoid
+          # Waiting for mongoid to support Rails 7.0
+          # - ruby: '3.0'
+          #   gemfile: gemfiles/rails_7_0.gemfile
+          # - ruby: '3.0'
+          #   gemfile: gemfiles/rails_7_0_mongoid_7.gemfile
+          #   devise-token-auth-orm: mongoid
+        exclude:
+          - ruby: 2.6
+            gemfile: gemfiles/rails_4_2.gemfile
+          - ruby: 2.7
+            gemfile: gemfiles/rails_4_2.gemfile
+          - ruby: 2.4
+            gemfile: gemfiles/rails_6_0.gemfile
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      postgresql:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Bundler 1.x for Rails 4.x
+        if: ${{ matrix.gemfile == 'gemfiles/rails_4_2.gemfile' || matrix.gemfile == 'gemfiles/rails_4_2_mongoid_5.gemfile' }}
+        run: echo "BUNDLER_VERSION=1.17.3" >> $GITHUB_ENV
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          bundler: ${{ env.BUNDLER_VERSION || 'latest' }}
+      - uses: supercharge/mongodb-github-action@1.3.0
+        if: ${{ matrix.devise-token-auth-orm == 'mongoid' }}
+      - name: Setup Database
+        run: |
+          bundle exec rake db:create
+          bundle exec rake --trace db:migrate
+        env:
+          RAILS_ENV: test
+          DB: ${{ matrix.db }}
+          DEVISE_TOKEN_AUTH_ORM: ${{ matrix.devise-token-auth-orm }}
+        if: ${{ matrix.devise-token-auth-orm == 'active_record' }}
+      - run: bundle exec rake
+        env:
+          RAILS_ENV: test
+          DB: ${{ matrix.db }}
+          DEVISE_TOKEN_AUTH_ORM: ${{ matrix.devise-token-auth-orm }}
