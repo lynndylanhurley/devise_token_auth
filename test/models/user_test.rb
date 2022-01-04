@@ -76,6 +76,28 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+    describe 'previous token' do
+      before do
+        @resource = create(:user, :confirmed)
+
+        @auth_headers1 = @resource.create_new_auth_token
+      end
+
+      test 'should properly indicate whether previous token is current' do
+        assert @resource.token_is_current?(@auth_headers1['access-token'], @auth_headers1['client'])
+        # create another token, emulating a new request
+        @auth_headers2 = @resource.create_new_auth_token
+
+        # should work for previous token
+        assert @resource.token_is_current?(@auth_headers1['access-token'], @auth_headers1['client'])
+        # should work for latest token as well
+        assert @resource.token_is_current?(@auth_headers2['access-token'], @auth_headers2['client'])
+
+        # after using latest token, previous token should not work
+        assert @resource.token_is_current?(@auth_headers1['access-token'], @auth_headers1['client'])
+      end
+    end
+
     describe 'expired tokens are destroyed on save' do
       before do
         @resource = create(:user, :confirmed)
