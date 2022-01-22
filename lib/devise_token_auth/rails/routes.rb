@@ -73,7 +73,7 @@ module ActionDispatch::Routing
 
             # preserve the resource class thru oauth authentication by setting name of
             # resource as "resource_class" param
-            match "#{full_path}/:provider", to: redirect{ |params, request|
+            match "#{full_path}/:provider", to: redirect(status: 307) { |params, request|
               # get the current querystring
               qs = CGI::parse(request.env['QUERY_STRING'])
 
@@ -99,7 +99,7 @@ module ActionDispatch::Routing
 
               # re-construct the path for omniauth
               "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{redirect_params.to_param}"
-            }, via: [:get]
+            }, via: [:get, :post]
           end
         end
       end
