@@ -171,21 +171,30 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
             test 'response should contain message' do
               assert_equal @data['message'], I18n.t('devise_token_auth.confirmations.sended_paranoid', email: @resource.email)
             end
+
+            test 'response should return success status' do
+              assert_equal 200, response.status
+            end
           end
 
           describe 'on failure' do
             before do
               swap Devise, paranoid: true do
+                @email = 'chester@cheet.ah'
                 post :create,
-                     params: { email: 'chester@cheet.ah',
+                     params: { email: @email,
                                redirect_url: @redirect_url },
                      xhr: true
                 @data = JSON.parse(response.body)
               end
             end
 
-            test 'response should contain errors' do
-              assert_equal @data['errors'], [I18n.t('devise_token_auth.confirmations.sended_paranoid')]
+            test 'response should not contain errors' do
+              assert_equal @data['message'], I18n.t('devise_token_auth.confirmations.sended_paranoid', email: @email)
+            end
+
+            test 'response should return success status' do
+              assert_equal 200, response.status
             end
           end
         end
