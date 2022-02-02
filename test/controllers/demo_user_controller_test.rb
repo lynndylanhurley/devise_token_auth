@@ -265,7 +265,7 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             @resource.reload
             age_token(@resource, @client_id)
 
-            # use expired auth header
+            # use previous auth header
             get '/demo/members_only',
                 params: {},
                 headers: @auth_headers
@@ -274,38 +274,67 @@ class DemoUserControllerTest < ActionDispatch::IntegrationTest
             @second_user = assigns(:resource)
             @second_access_token = response.headers['access-token']
             @second_response_status = response.status
+
+            @resource.reload
+            age_token(@resource, @client_id)
+
+            # use expired auth headers
+            get '/demo/members_only_mang',
+                params: {},
+                headers: @auth_headers
+
+            @third_is_batch_request = assigns(:is_batch_request)
+            @third_user = assigns(:resource)
+            @third_access_token = response.headers['access-token']
+            @third_response_status = response.status
           end
 
           it 'should allow the first request through' do
             assert_equal 200, @first_response_status
           end
 
+          it 'should allow the second request through' do
+            assert_equal 200, @second_response_status
+          end
+
           it 'should not allow the second request through' do
-            assert_equal 401, @second_response_status
+            assert_equal 401, @third_response_status
           end
 
           it 'should not treat first request as batch request' do
-            refute @second_is_batch_request
-          end
-
-          it 'should return auth headers from the first request' do
-            assert @first_access_token
+            refute @first_is_batch_request
           end
 
           it 'should not treat second request as batch request' do
             refute @second_is_batch_request
           end
 
-          it 'should not return auth headers from the second request' do
-            refute @second_access_token
+          it 'should not treat third request as batch request' do
+            refute @third_is_batch_request
+          end
+
+          it 'should return auth headers from the first request' do
+            assert @first_access_token
+          end
+
+          it 'should return auth headers from the second request' do
+            assert @second_access_token
+          end
+
+          it 'should not return auth headers from the third request' do
+            refute @third_access_token
           end
 
           it 'should define user during first request' do
             assert @first_user
           end
 
-          it 'should not define user during second request' do
-            refute @second_user
+          it 'should define user during second request' do
+            assert @second_user
+          end
+
+          it 'should not define user during third request' do
+            refute @third_user
           end
         end
       end
