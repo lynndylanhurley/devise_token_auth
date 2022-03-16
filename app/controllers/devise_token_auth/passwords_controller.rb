@@ -182,7 +182,7 @@ module DeviseTokenAuth
 
     def render_not_found_error
       if Devise.paranoid
-        render_error(404, I18n.t('devise_token_auth.passwords.sended_paranoid'))
+        render_create_success
       else
         render_error(404, I18n.t('devise_token_auth.passwords.user_not_found', email: @email))
       end
