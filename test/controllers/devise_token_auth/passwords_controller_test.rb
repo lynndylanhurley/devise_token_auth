@@ -116,14 +116,14 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
               end
             end
 
-            test 'unknown user should return 404' do
-              assert_equal 404, response.status
+            test 'response should return success status' do
+              assert_equal 200, response.status
             end
 
-            test 'errors should be returned' do
-              assert @data['errors']
-              assert_equal @data['errors'],
-              [I18n.t('devise_token_auth.passwords.sended_paranoid')]
+            test 'response should contain message' do
+              assert_equal \
+                @data['message'],
+              I18n.t('devise_token_auth.passwords.sended_paranoid')
             end
           end
         end

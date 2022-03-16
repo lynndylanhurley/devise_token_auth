@@ -81,17 +81,19 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
             end
           end
 
-          test 'unknown user should return 404' do
-            assert_equal 404, response.status
+          test 'should always return success' do
+            assert_equal 200, response.status
           end
 
-          test 'errors should be returned' do
-            assert @data['errors']
-            assert_equal @data['errors'], [I18n.t('devise_token_auth.unlocks.sended_paranoid')]
+          test 'errors should not be returned' do
+            assert @data['success']
+            assert_equal \
+              @data['message'],
+            I18n.t('devise_token_auth.unlocks.sended_paranoid')
           end
         end
 
-        describe 'successfully requested unlock' do
+        describe 'successfully requested unlock without paranoid mode' do
           before do
             post :create, params: { email: @resource.email }
 
@@ -100,6 +102,26 @@ class DeviseTokenAuth::UnlocksControllerTest < ActionController::TestCase
 
           test 'response should not contain extra data' do
             assert_nil @data['data']
+          end
+        end
+
+        describe 'successfully requested unlock with paranoid mode' do
+          before do
+            swap Devise, paranoid: true do
+              post :create, params: { email: @resource.email }
+              @data = JSON.parse(response.body)
+            end
+          end
+
+          test 'should always return success' do
+            assert_equal 200, response.status
+          end
+
+          test 'errors should not be returned' do
+            assert @data['success']
+            assert_equal \
+              @data['message'],
+            I18n.t('devise_token_auth.unlocks.sended_paranoid')
           end
         end
 
