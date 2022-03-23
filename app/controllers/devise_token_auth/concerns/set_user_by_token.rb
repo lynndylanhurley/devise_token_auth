@@ -136,7 +136,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     return {} if bearer_token.blank?
 
     encoded_token = bearer_token.split.last # Removes the 'Bearer' from the string
-    JSON.parse(Base64.strict_decode64(encoded_token))
+    JSON.parse(Base64.strict_decode64(encoded_token)) rescue {}
   end
 
   def refresh_headers
