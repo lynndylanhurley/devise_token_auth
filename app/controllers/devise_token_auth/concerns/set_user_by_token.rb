@@ -34,6 +34,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     uid_name = DeviseTokenAuth.headers_names[:'uid']
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
+    authorization_name = DeviseTokenAuth.headers_names[:"authorization"]
+
+    # Read Authorization token and decode it if present
+    decoded_authorization_token = decode_bearer_token(request.headers[authorization_name])
 
     # gets values from cookie if configured and present
     parsed_auth_cookie = {}
@@ -45,10 +49,10 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     # parse header for values necessary for authentication
-    uid              = request.headers[uid_name] || params[uid_name] || parsed_auth_cookie[uid_name]
+    uid              = request.headers[uid_name] || params[uid_name] || parsed_auth_cookie[uid_name] || decoded_authorization_token[uid_name]
     @token           = DeviseTokenAuth::TokenFactory.new unless @token
-    @token.token     ||= request.headers[access_token_name] || params[access_token_name] || parsed_auth_cookie[access_token_name]
-    @token.client ||= request.headers[client_name] || params[client_name] || parsed_auth_cookie[client_name]
+    @token.token     ||= request.headers[access_token_name] || params[access_token_name] || parsed_auth_cookie[access_token_name] || decoded_authorization_token[access_token_name]
+    @token.client ||= request.headers[client_name] || params[client_name] || parsed_auth_cookie[client_name] || decoded_authorization_token[client_name]
 
     # client isn't required, set to 'default' if absent
     @token.client ||= 'default'
@@ -127,6 +131,13 @@ module DeviseTokenAuth::Concerns::SetUserByToken
   end
 
   private
+
+  def decode_bearer_token(bearer_token)
+    return {} if bearer_token.blank?
+
+    encoded_token = bearer_token.split.last # Removes the 'Bearer' from the string
+    JSON.parse(Base64.strict_decode64(encoded_token))
+  end
 
   def refresh_headers
     # Lock the user record during any auth_header updates to ensure
