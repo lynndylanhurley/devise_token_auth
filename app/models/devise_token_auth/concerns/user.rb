@@ -183,14 +183,20 @@ module DeviseTokenAuth::Concerns::User
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
     expiry = tokens[client]['expiry'] || tokens[client][:expiry]
-
-    {
+    headers = {
       DeviseTokenAuth.headers_names[:"access-token"] => token,
       DeviseTokenAuth.headers_names[:"token-type"]   => 'Bearer',
       DeviseTokenAuth.headers_names[:"client"]       => client,
       DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
       DeviseTokenAuth.headers_names[:"uid"]          => uid
     }
+    headers.merge!(build_bearer_token(headers))
+  end
+
+  def build_bearer_token(auth)
+    encoded_token = Base64.strict_encode64(auth.to_json)
+    bearer_token = "Bearer #{encoded_token}"
+    {DeviseTokenAuth.headers_names[:"authorization"] => bearer_token}
   end
 
   def update_auth_header(token, client = 'default')

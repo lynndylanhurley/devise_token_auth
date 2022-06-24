@@ -45,7 +45,8 @@ module DeviseTokenAuth
   self.enable_standard_devise_support       = false
   self.remove_tokens_after_password_reset   = false
   self.default_callbacks                    = true
-  self.headers_names                        = { 'access-token': 'access-token',
+  self.headers_names                        = { 'authorization': 'Authorization',
+                                                'access-token': 'access-token',
                                                 'client': 'client',
                                                 'expiry': 'expiry',
                                                 'uid': 'uid',
