@@ -59,6 +59,14 @@ module DeviseTokenAuth
       set_token_on_resource
       create_auth_params
 
+      # If using a cookie to transport the token then we can set that cookie now, rather than making
+      # the client scrape the token from query params to then send in the initial validate_token request.
+      # TODO: We should be able to stop exposing the token in query params when using a cookie
+      if DeviseTokenAuth.cookie_enabled
+        auth_header = @resource.build_auth_header(@token.token, @token.client)
+        cookies[DeviseTokenAuth.cookie_name] = DeviseTokenAuth.cookie_attributes.merge(value: auth_header.to_json)
+      end
+
       if confirmable_enabled?
         # don't send confirmation email!!!
         @resource.skip_confirmation!
