@@ -83,5 +83,14 @@ module DeviseTokenAuth
         I18n.t("devise_token_auth.#{name}.sended", email: email)
       end
     end
+
+    # When using a cookie to transport the auth token we can set it immediately in flows such as
+    # reset password and OmniAuth success, rather than making the client scrape the token from
+    # query params (to then send in the initial validate_token request).
+    # TODO: We should be able to stop exposing the token in query params when this method is used
+    def set_token_in_cookie(resource, token)
+      auth_header = resource.build_auth_header(token.token, token.client)
+      cookies[DeviseTokenAuth.cookie_name] = DeviseTokenAuth.cookie_attributes.merge(value: auth_header.to_json)
+    end
   end
 end
