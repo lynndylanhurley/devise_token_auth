@@ -21,7 +21,7 @@ ja:
       missing_redirect_url: "リダイレクト URL が与えられていません。"
       not_allowed_redirect_url: "'%{redirect_url}' へのリダイレクトは許可されていません。"
       sended: "'%{email}' にパスワードリセットの案内が送信されました。"
-      sended_paranoid: ""すでにメールアドレスがデータベースに登録されている場合、 数分後にパスワード再発行用のリンクを記載したメールをお送りします。"
+      sended_paranoid: "すでにメールアドレスがデータベースに登録されている場合、 数分後にパスワード再発行用のリンクを記載したメールをお送りします。"
       user_not_found: "メールアドレス '%{email}' のユーザーが見つかりません。"
       password_not_required: "このアカウントはパスワードを要求していません。'%{provider}' を利用してログインしてください。"
       missing_passwords: "'Password', 'Password confirmation' パラメータが与えられていません。"
