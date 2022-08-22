@@ -70,6 +70,10 @@ module DeviseTokenAuth
 
       yield @resource if block_given?
 
+      if DeviseTokenAuth.cookie_enabled
+        set_token_in_cookie(@resource, @token)
+      end
+
       render_data_or_redirect('deliverCredentials', @auth_params.as_json, @resource.as_json)
     end
 
