@@ -32,6 +32,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     # gets the headers names, which was set in the initialize file
     uid_name = DeviseTokenAuth.headers_names[:'uid']
+    other_uid_name = DeviseTokenAuth.other_uid && DeviseTokenAuth.headers_names[DeviseTokenAuth.other_uid.to_sym]
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
     authorization_name = DeviseTokenAuth.headers_names[:"authorization"]
@@ -50,6 +51,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
     # parse header for values necessary for authentication
     uid              = request.headers[uid_name] || params[uid_name] || parsed_auth_cookie[uid_name] || decoded_authorization_token[uid_name]
+    other_uid        = other_uid_name && request.headers[other_uid_name] || params[other_uid_name] || parsed_auth_cookie[other_uid_name]
     @token           = DeviseTokenAuth::TokenFactory.new unless @token
     @token.token     ||= request.headers[access_token_name] || params[access_token_name] || parsed_auth_cookie[access_token_name] || decoded_authorization_token[access_token_name]
     @token.client ||= request.headers[client_name] || params[client_name] || parsed_auth_cookie[client_name] || decoded_authorization_token[client_name]
@@ -79,7 +81,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     end
 
     # mitigate timing attacks by finding by uid instead of auth token
-    user = uid && rc.dta_find_by(uid: uid)
+    user = (uid && rc.dta_find_by(uid: uid)) || (other_uid && rc.dta_find_by("#{DeviseTokenAuth.other_uid}": other_uid))
     scope = rc.to_s.underscore.to_sym
 
     if user && user.valid_token?(@token.token, @token.client)
