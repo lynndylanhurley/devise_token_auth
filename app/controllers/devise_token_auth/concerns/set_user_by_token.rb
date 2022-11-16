@@ -106,10 +106,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # Generate new client with existing authentication
     @token.client = nil unless @used_auth_by_token
 
-    if @used_auth_by_token && !DeviseTokenAuth.change_headers_on_each_request
+    if !DeviseTokenAuth.change_headers_on_each_request
       # should not append auth header if @resource related token was
       # cleared by sign out in the meantime
       return if @resource.reload.tokens[@token.client].nil?
+
+      return if !@used_auth_by_token
 
       auth_header = @resource.build_auth_header(@token.token, @token.client)
 
