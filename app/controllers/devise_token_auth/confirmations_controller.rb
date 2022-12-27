@@ -26,7 +26,7 @@ module DeviseTokenAuth
 
         redirect_to(redirect_to_link)
       else
-        raise ActionController::RoutingError, 'Not Found'
+        redirect_to DeviseTokenAuth::Url.generate(redirect_url, account_confirmation_success: false)
       end
     end
 
