@@ -45,7 +45,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   }
 
   # generate auth headers for response
-  new_auth_header = @resource.build_auth_header(token.token, token.client)
+  new_auth_header = @resource.build_auth_headers(token.token, token.client)
 
   # update response with the header that will be required by the next request
   response.headers.merge!(new_auth_header)
