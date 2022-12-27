@@ -148,7 +148,7 @@ def create_auth_header_from_scratch
   # The following assumes that the user has received those headers
   # and that they are then using those headers to make a request
 
-  new_auth_header = @current_user.build_auth_header(token.token, token.client)
+  new_auth_header = @current_user.build_auth_headers(token.token, token.client)
 
   puts 'This is the new auth header'
   puts new_auth_header.to_s
