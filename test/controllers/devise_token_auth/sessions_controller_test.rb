@@ -18,8 +18,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       describe 'success' do
         before do
           @user_session_params = {
-            email: @existing_user.email,
-            password: @existing_user.password
+            session: {
+              email: @existing_user.email,
+              password: @existing_user.password
+            }
           }
 
           post :create, params: @user_session_params
@@ -99,9 +101,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'get sign_in is not supported' do
         before do
-          get :new,
-              params: { nickname: @existing_user.nickname,
-                        password: @existing_user.password }
+          get :new, params: {
+                session: {
+                  nickname: @existing_user.nickname,
+                  password: @existing_user.password
+                }
+              }
           @data = JSON.parse(response.body)
         end
 
@@ -211,8 +216,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       describe 'failure' do
         before do
           post :create,
-               params: { email: @existing_user.email,
-                         password: 'bogus' }
+              params: {
+                session: {
+                  email: @existing_user.email,
+                  password: 'bogus'
+                }
+              }
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -238,8 +247,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           @controller.current_user
 
           post :create,
-               params: { email: @existing_user.email,
-                         password: 'bogus' }
+              params: {
+                session: {
+                  email: @existing_user.email,
+                  password: 'bogus'
+                }
+              }
 
           @resource = assigns(:resource)
           @data = JSON.parse(response.body)
@@ -263,8 +276,10 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           @resource_class = User
           @request_params = {
-            email: @existing_user.email.upcase,
-            password: @existing_user.password
+            session: {
+              email: @existing_user.email.upcase,
+              password: @existing_user.password
+            }
           }
         end
 
@@ -285,9 +300,11 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           @resource_class = User
           @request_params = {
-            # adding whitespace before and after email
-            email: " #{@existing_user.email}  ",
-            password: @existing_user.password
+            session: {
+              # adding whitespace before and after email
+              email: " #{@existing_user.email}  ",
+              password: @existing_user.password
+            }
           }
         end
 
@@ -308,8 +325,13 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
     describe 'Unconfirmed user' do
       before do
         @unconfirmed_user = create(:user)
-        post :create, params: { email: @unconfirmed_user.email,
-                                password: @unconfirmed_user.password }
+        post :create,
+            params: {
+              session: {
+                  email: @unconfirmed_user.email,
+                  password: @unconfirmed_user.password
+                }
+              }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
@@ -332,8 +354,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         Devise.allow_unconfirmed_access_for = 3.days
         @recent_unconfirmed_user = create(:user)
         post :create,
-             params: { email: @recent_unconfirmed_user.email,
-                       password: @recent_unconfirmed_user.password }
+            params: {
+              session: {
+                email: @recent_unconfirmed_user.email,
+                password: @recent_unconfirmed_user.password
+              }
+            }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
@@ -355,8 +381,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       before do
         @unconfirmed_user = create(:user, :unconfirmed)
         post :create,
-             params: { email: @unconfirmed_user.email,
-                       password: @unconfirmed_user.password }
+            params: {
+              session: {
+                email: @unconfirmed_user.email,
+                password: @unconfirmed_user.password
+              }
+            }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
@@ -373,8 +403,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
     describe 'Non-existing user' do
       before do
         post :create,
-             params: { email: -> { Faker::Internet.email },
-                       password: -> { Faker::Number.number(10) } }
+            params: {
+              session: {
+                email: -> { Faker::Internet.email },
+                password: -> { Faker::Number.number(10) }
+              }
+            }
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
       end
@@ -401,8 +435,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         @existing_user = create(:mang_user, :confirmed)
 
         post :create,
-             params: { email: @existing_user.email,
-                       password: @existing_user.password }
+            params: {
+              session: {
+                email: @existing_user.email,
+                password: @existing_user.password
+              }
+            }
 
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
@@ -430,8 +468,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         @existing_user = create(:only_email_user)
 
         post :create,
-             params: { email: @existing_user.email,
-                       password: @existing_user.password }
+            params: { 
+              session: {
+                email: @existing_user.email,
+                password: @existing_user.password
+              }
+            }
 
         @resource = assigns(:resource)
         @data = JSON.parse(response.body)
@@ -471,8 +513,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           @locked_user = create(:lockable_user, :locked)
           post :create,
-               params: { email: @locked_user.email,
-                         password: @locked_user.password }
+              params: { 
+                session: {
+                  email: @locked_user.email,
+                  password: @locked_user.password
+                }
+              }
           @data = JSON.parse(response.body)
         end
 
@@ -490,8 +536,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         before do
           @unlocked_user = create(:lockable_user)
           post :create,
-               params: { email: @unlocked_user.email,
-                         password: 'bad-password' }
+              params: {
+                session: {
+                  email: @unlocked_user.email,
+                  password: 'bad-password'
+                }
+              }
           @data = JSON.parse(response.body)
         end
 
@@ -512,8 +562,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
           before do
             4.times do
               post :create,
-                   params: { email: @unlocked_user.email,
-                             password: 'bad-password' }
+                  params: {
+                    session: {
+                      email: @unlocked_user.email,
+                      password: 'bad-password'
+                    }
+                  }
             end
             @data = JSON.parse(response.body)
           end

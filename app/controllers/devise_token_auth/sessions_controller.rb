@@ -131,7 +131,8 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(*params_for_resource(:sign_in))
+      # params.permit(*params_for_resource(:sign_in))
+      params.require(:session).permit(*params_for_resource(:sign_in))
     end
 
     def create_and_assign_token
