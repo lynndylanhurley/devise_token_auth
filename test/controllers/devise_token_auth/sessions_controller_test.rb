@@ -101,9 +101,12 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'get sign_in is not supported' do
         before do
-          get :new,
-              params: { nickname: @existing_user.nickname,
-                        password: @existing_user.password }
+          get :new, params: {
+                session: {
+                  nickname: @existing_user.nickname,
+                  password: @existing_user.password
+                }
+              }
           @data = JSON.parse(response.body)
         end
 
