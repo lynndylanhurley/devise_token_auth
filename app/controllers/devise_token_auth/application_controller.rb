@@ -89,7 +89,7 @@ module DeviseTokenAuth
     # query params (to then send in the initial validate_token request).
     # TODO: We should be able to stop exposing the token in query params when this method is used
     def set_token_in_cookie(resource, token)
-      auth_header = resource.build_auth_headers(token.token, token.client)
+      auth_header = resource.build_auth_header(token.token, token.client)
       cookies[DeviseTokenAuth.cookie_name] = DeviseTokenAuth.cookie_attributes.merge(value: auth_header.to_json)
     end
   end
