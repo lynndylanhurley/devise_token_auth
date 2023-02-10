@@ -18,6 +18,7 @@ Also, it maintains a session for each client/device, so you can have as many ses
 ## Main features
 
 * Seamless integration with:
+  * [vanilla-token-auth](https://github.com/theblang/vanilla-token-auth) for an unopinionated client
   * [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for [AngularJS](https://github.com/angular/angular.js)
   * [Angular-Token](https://github.com/neroniaky/angular-token) for [Angular](https://github.com/angular/angular)
   * [redux-token-auth](https://github.com/kylecorbelli/redux-token-auth) for [React with Redux](https://github.com/reactjs/react-redux)
