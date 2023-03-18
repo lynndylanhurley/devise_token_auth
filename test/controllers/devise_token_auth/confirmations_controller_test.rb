@@ -11,7 +11,7 @@ require 'test_helper'
 class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
   describe DeviseTokenAuth::ConfirmationsController do
     def token_and_client_config_from(body)
-      token         = body.match(/confirmation_token=([^&]*)&/)[1]
+      token         = body.match(/confirmation_token=([^&]*)[&"]/)[1]
       client_config = body.match(/config=([^&]*)&/)[1]
       [token, client_config]
     end

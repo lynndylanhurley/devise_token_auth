@@ -111,7 +111,6 @@ module DeviseTokenAuth
         end
       end
       @_omniauth_params
-
     end
 
     # break out provider attribute assignment for easy method extension
@@ -133,21 +132,17 @@ module DeviseTokenAuth
     end
 
     def resource_class(mapping = nil)
-      return @resource_class if defined?(@resource_class)
-
-      constant_name = omniauth_params['resource_class'] || params['resource_class']
-      @resource_class = ObjectSpace.each_object(Class).detect { |cls| cls.name == constant_name }
-      raise 'No resource_class found' if @resource_class.nil?
-
-      @resource_class
+      if omniauth_params['resource_class']
+        omniauth_params['resource_class'].constantize
+      elsif params['resource_class']
+        params['resource_class'].constantize
+      else
+        raise 'No resource_class found'
+      end
     end
 
     def resource_name
       resource_class
-    end
-
-    def omniauth_window_type
-      omniauth_params['omniauth_window_type']
     end
 
     def unsafe_auth_origin_url

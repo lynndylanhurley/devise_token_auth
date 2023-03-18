@@ -75,7 +75,8 @@ module ActionDispatch::Routing
             # resource as "resource_class" param
             match "#{full_path}/:provider", to: redirect(status: 307) { |params, request|
               # get the current querystring
-              qs = CGI::parse(request.env['QUERY_STRING'])
+              # TODO: deprecate in favor of using params
+              qs = CGI::parse(request.env['QUERY_STRING'].empty? ? request.body.read : request.env['QUERY_STRING'] )
 
               # append name of current resource
               qs['resource_class'] = [resource]
