@@ -12,6 +12,9 @@ rvm:
   - 2.5.6
   - 2.6.4
   - 2.7.0
+  - 3.0.0
+  - 3.1.0
+  - 3.2.0
 
 gemfile:
   - gemfiles/rails_4_2.gemfile
@@ -19,6 +22,7 @@ gemfile:
   - gemfiles/rails_5_1.gemfile
   - gemfiles/rails_5_2.gemfile
   - gemfiles/rails_6_0.gemfile
+  - gemfiles/rails_7_0.gemfile
 
 env:
   global:
@@ -54,6 +58,16 @@ matrix:
     - rvm: 3.0.0
       gemfile: gemfiles/rails_7_0.gemfile
     - rvm: 3.0.0
+      gemfile: gemfiles/rails_7_0_mongoid_7.gemfile
+      env: DEVISE_TOKEN_AUTH_ORM=mongoid
+    - rvm: 3.1.0
+      gemfile: gemfiles/rails_7_0.gemfile
+    - rvm: 3.1.0
+      gemfile: gemfiles/rails_7_0_mongoid_7.gemfile
+      env: DEVISE_TOKEN_AUTH_ORM=mongoid
+    - rvm: 3.2.0
+      gemfile: gemfiles/rails_7_0.gemfile
+    - rvm: 3.2.0
       gemfile: gemfiles/rails_7_0_mongoid_7.gemfile
       env: DEVISE_TOKEN_AUTH_ORM=mongoid
     - name: Code Climate Test Coverage
