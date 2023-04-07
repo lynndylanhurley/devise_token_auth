@@ -8,11 +8,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    permitted_parameters = devise_parameter_sanitizer.instance_values['permitted']
-    permitted_parameters[:sign_up] << :operating_thetan
-    permitted_parameters[:sign_up] << :favorite_color
-    permitted_parameters[:account_update] << :operating_thetan
-    permitted_parameters[:account_update] << :favorite_color
-    permitted_parameters[:account_update] << :current_password
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:operating_thetan, :favorite_color])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:operating_thetan, :favorite_color, :current_password])
   end
 end

@@ -306,7 +306,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @data = JSON.parse(response.body)
         @mail = ActionMailer::Base.deliveries.last
 
-        @mail_reset_token  = @mail.body.match(/confirmation_token=([^&]*)&/)[1]
+        @mail_reset_token  = @mail.body.match(/confirmation_token=([^&]*)[&"]/)[1]
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)\"/)[1])
         @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
       end
@@ -826,7 +826,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
         @resource.reload
 
-        @mail_reset_token  = @mail.body.match(/confirmation_token=([^&]*)&/)[1]
+        @mail_reset_token  = @mail.body.match(/confirmation_token=([^&]*)[&"]/)[1]
         @mail_redirect_url = CGI.unescape(@mail.body.match(/redirect_url=(.*)\"/)[1])
         @mail_config_name  = CGI.unescape(@mail.body.match(/config=([^&]*)&/)[1])
       end

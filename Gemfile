@@ -7,6 +7,7 @@ source 'https://rubygems.org'
 # development dependencies will be added by default to the :development group.
 gemspec
 gem 'omniauth', '~> 2.0'
+gem 'omniauth-rails_csrf_protection'
 
 # Declare any dependencies that are still in development here instead of in
 # your gemspec. These might include edge Rails or gems from your path or
@@ -16,27 +17,26 @@ gem 'omniauth', '~> 2.0'
 # To use debugger
 # gem 'debugger'
 
+
 group :development, :test do
   gem 'attr_encrypted'
-  gem 'figaro'
+  gem 'figaro', '~> 1.2'
   gem 'omniauth-facebook'
   gem 'omniauth-github'
   gem 'omniauth-google-oauth2'
   gem 'omniauth-apple'
   gem 'rack-cors'
-  gem 'thor'
+  gem 'thor', '~> 1.2'
 
   # testing
   # gem 'spring'
   gem 'database_cleaner'
   gem 'factory_bot_rails'
-  gem 'faker'
+  gem 'faker', '~> 2.16'
   gem 'fuzz_ball'
-  gem 'guard'
-  gem 'guard-minitest'
   gem 'minitest'
   gem 'minitest-focus'
-  gem 'minitest-rails'
+  gem 'minitest-rails', '~> 7'
   gem 'minitest-reporters'
   gem 'mocha', '>= 1.5'
   gem 'pry'
@@ -70,3 +70,5 @@ if ENV['MONGOID_VERSION']
 
   gem 'mongoid-locker', '~> 1.0'
 end
+
+gem "rails", "~> 7"
