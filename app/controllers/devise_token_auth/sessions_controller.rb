@@ -29,7 +29,7 @@ module DeviseTokenAuth
 
         create_and_assign_token
 
-        sign_in(:user, @resource, store: false, bypass: false)
+        sign_in(@resource, scope: :user, store: false, bypass: false)
 
         yield @resource if block_given?
 
