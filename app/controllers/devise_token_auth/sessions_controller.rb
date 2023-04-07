@@ -78,7 +78,6 @@ module DeviseTokenAuth
     def get_auth_params
       auth_key = nil
       auth_val = nil
-
       # iterate thru allowed auth keys, use first found
       resource_class.authentication_keys.each do |k|
         if resource_params[k]
