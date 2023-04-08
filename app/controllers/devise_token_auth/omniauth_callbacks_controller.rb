@@ -135,7 +135,7 @@ module DeviseTokenAuth
       return @resource_class if defined?(@resource_class)
 
       constant_name = omniauth_params['resource_class'].presence || params['resource_class'].presence
-      @resource_class = ObjectSpace.each_object(Class).detect { |cls| cls.name == constant_name && cls.pretty_print_inspect.starts_with?(constant_name) }
+      @resource_class = ObjectSpace.each_object(Class).detect { |cls| cls.to_s == constant_name && cls.pretty_print_inspect.starts_with?(constant_name) }
       raise 'No resource_class found' if @resource_class.nil?
 
       @resource_class
