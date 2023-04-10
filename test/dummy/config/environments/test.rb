@@ -23,6 +23,10 @@ Rails.application.configure do
       (config.public_file_server.headers = { 'Cache-Control' => 'public, max-age=3600' }) :
       (config.static_cache_control = 'public, max-age=3600')
 
+  if Rails::VERSION::MAJOR > 6
+    config.active_record.legacy_connection_handling = false
+  end
+
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
