@@ -163,12 +163,11 @@ module DeviseTokenAuth
       omniauth_params.nil? ? params['omniauth_window_type'] : omniauth_params['omniauth_window_type']
     end
 
-    # this sesison value is set by the redirect_callbacks method. its purpose
+    # this session value is set by the redirect_callbacks method. its purpose
     # is to persist the omniauth auth hash value thru a redirect. the value
-    # must be destroyed immediatly after it is accessed by omniauth_success
+    # must be destroyed immediately after it is accessed by omniauth_success
     def auth_hash
       @_auth_hash ||= session.delete('dta.omniauth.auth')
-      @_auth_hash
     end
 
     # ensure that this controller responds to :devise_controller? conditionals.
@@ -282,5 +281,4 @@ module DeviseTokenAuth
       @resource
     end
   end
-
 end
