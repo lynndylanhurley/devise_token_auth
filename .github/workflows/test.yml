@@ -131,7 +131,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Bundler 1.x for Rails 4.x
         if: ${{ matrix.gemfile == 'gemfiles/rails_4_2.gemfile' || matrix.gemfile == 'gemfiles/rails_4_2_mongoid_5.gemfile' }}
         run: echo "BUNDLER_VERSION=1.17.3" >> $GITHUB_ENV
