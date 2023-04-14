@@ -3,6 +3,7 @@
 source "https://rubygems.org"
 
 gem "omniauth", "~> 2.0"
+gem "omniauth-rails_csrf_protection"
 gem "rails", "~> 7.0"
 gem "sqlite3", "~> 1.4.1"
 gem "mysql2"
@@ -10,25 +11,25 @@ gem "pg"
 
 group :development, :test do
   gem "attr_encrypted"
-  gem "figaro"
+  gem "figaro", "~> 1.2"
   gem "omniauth-facebook"
   gem "omniauth-github"
   gem "omniauth-google-oauth2"
   gem 'omniauth-apple'
-  gem "rack-cors", require: "rack/cors"
-  gem "thor"
+  gem "rack-cors"
+  gem "thor", "~> 1.2"
   gem "database_cleaner"
   gem "factory_bot_rails"
-  gem "faker"
+  gem "faker", "~> 2.16"
   gem "fuzz_ball"
   gem "guard"
   gem "guard-minitest"
   gem "minitest"
   gem "minitest-focus"
-  gem "minitest-rails"
+  gem "minitest-rails", "~> 7"
   gem "minitest-reporters"
   gem "mocha", ">= 1.5"
-  gem "pry", "< 0.13"
+  gem "pry"
   gem "pry-byebug"
   gem "pry-remote"
   gem "rubocop", require: false
@@ -36,7 +37,7 @@ end
 
 group :test do
   gem "rails-controller-testing"
-  gem "simplecov", "~> 0.10", "< 0.18", require: false
+  gem "simplecov", require: false
 end
 
 group :development do
