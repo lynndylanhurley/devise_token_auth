@@ -23,7 +23,7 @@ Rails.application.configure do
       (config.public_file_server.headers = { 'Cache-Control' => 'public, max-age=3600' }) :
       (config.static_cache_control = 'public, max-age=3600')
 
-  if Rails::VERSION::MAJOR > 6
+  if Rails::VERSION::MAJOR > 6 && ENV['DEVISE_TOKEN_AUTH_ORM'] != 'mongoid'
     config.active_record.legacy_connection_handling = false
   end
 
