@@ -31,7 +31,7 @@ Models that include the `DeviseTokenAuth::Concerns::User` concern will have acce
   response.headers.merge!(new_auth_header)
   ~~~
 
-* **`build_auth_header`**: generates the auth header that should be sent to the client with the next request. Accepts `token` and `client` as arguments. Returns a string.
+* **`build_auth_headers`**: generates the auth header that should be sent to the client with the next request. Accepts `token` and `client` as arguments. Returns a string.
 
   **Example**:
   ~~~ruby
