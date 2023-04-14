@@ -13,7 +13,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
   end
 
   before do
-    @redirect_url = 'http://ng-token-auth.dev/'
+    @redirect_url = 'https://ng-token-auth.dev/'
   end
 
   def get_parsed_data_json
