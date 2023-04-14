@@ -1,7 +1,7 @@
 # Devise Token Auth
 
 [![Gem Version](https://badge.fury.io/rb/devise_token_auth.svg)](http://badge.fury.io/rb/devise_token_auth)
-[![Build Status](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg?branch=master)](https://travis-ci.org/lynndylanhurley/devise_token_auth)
+[![Build Status](https://github.com/lynndylanhurley/devise_token_auth/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/lynndylanhurley/devise_token_auth/actions/workflows/test.yml)
 [![Code Climate](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/badges/gpa.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Test Coverage](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/badges/coverage.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/coverage)
 [![Downloads](https://img.shields.io/gem/dt/devise_token_auth.svg)](https://rubygems.org/gems/devise_token_auth)
