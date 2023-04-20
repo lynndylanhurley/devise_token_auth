@@ -13,7 +13,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
   end
 
   before do
-    @redirect_url = 'http://ng-token-auth.dev/'
+    @redirect_url = 'https://ng-token-auth.dev/'
   end
 
   def get_parsed_data_json
@@ -98,7 +98,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     describe 'with alternate user model' do
       before do
-        get '/mangs/facebook',
+        post '/mangs/facebook',
             params: {
               auth_origin_url: @redirect_url,
               omniauth_window_type: 'newWindow'
@@ -123,7 +123,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       before do
         @fav_color = 'alizarin crimson'
         @unpermitted_param = 'M. Bison'
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: { auth_origin_url: @redirect_url,
                       favorite_color: @fav_color,
                       name: @unpermitted_param,
@@ -160,7 +160,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         end
 
         test 'response contains oauth_registration attr' do
-          get '/auth/facebook',
+          post '/auth/facebook',
               params: { auth_origin_url: @redirect_url,
                         omniauth_window_type: 'newWindow' }
 
@@ -176,7 +176,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         end
 
         test 'response does not contain oauth_registration attr' do
-          get '/auth/facebook',
+          post '/auth/facebook',
               params: { auth_origin_url: @redirect_url,
                         omniauth_window_type: 'newWindow' }
 
@@ -189,7 +189,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     describe 'using namespaces' do
       before do
-        get '/api/v1/auth/facebook',
+        post '/api/v1/auth/facebook',
             params: { auth_origin_url: @redirect_url,
                       omniauth_window_type: 'newWindow' }
 
@@ -234,7 +234,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     describe 'with omniauth_window_type=sameWindow' do
       test 'redirects to auth_origin_url with all expected query params' do
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: { auth_origin_url: '/auth_origin',
                       omniauth_window_type: 'sameWindow' }
 
@@ -258,7 +258,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
     end
 
     def get_success(params = {})
-      get '/auth/facebook',
+      post '/auth/facebook',
           params: {
             auth_origin_url: @redirect_url,
             omniauth_window_type: 'newWindow'
@@ -282,7 +282,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     test 'renders expected data' do
       silence_omniauth do
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: { auth_origin_url: @redirect_url,
                       omniauth_window_type: 'newWindow' }
 
@@ -298,7 +298,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
     test 'renders something with no auth_origin_url' do
       silence_omniauth do
-        get '/auth/facebook'
+        post '/auth/facebook'
         follow_all_redirects!
       end
       assert_equal 200, response.status
@@ -339,7 +339,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request using non-whitelisted redirect fail' do
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: { auth_origin_url: @bad_redirect_url,
                       omniauth_window_type: 'newWindow' }
 
@@ -351,7 +351,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request to whitelisted redirect should succeed' do
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: {
               auth_origin_url: @good_redirect_url,
               omniauth_window_type: 'newWindow'
@@ -365,7 +365,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
       test 'should support wildcards' do
         DeviseTokenAuth.redirect_whitelist = ["#{@good_redirect_url[0..8]}*"]
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: { auth_origin_url: @good_redirect_url,
                       omniauth_window_type: 'newWindow' }
 
@@ -397,7 +397,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request using non-whitelisted redirect fail' do
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: { auth_origin_url: @bad_redirect_url,
                       omniauth_window_type: 'sameWindow' }
 
@@ -408,7 +408,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
       end
 
       test 'request to whitelisted redirect should succeed' do
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: {
               auth_origin_url: '/auth_origin',
               omniauth_window_type: 'sameWindow'
@@ -422,7 +422,7 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
       test 'should support wildcards' do
         DeviseTokenAuth.redirect_whitelist = ["#{@good_redirect_url[0..8]}*"]
-        get '/auth/facebook',
+        post '/auth/facebook',
             params: {
               auth_origin_url: '/auth_origin',
               omniauth_window_type: 'sameWindow'
@@ -433,9 +433,6 @@ class OmniauthTest < ActionDispatch::IntegrationTest
         assert_equal 200, response.status
         assert_equal false, response.body.include?("Redirect to '#{@good_redirect_url}' not allowed")
       end
-
-
     end
-
   end
 end

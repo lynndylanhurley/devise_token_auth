@@ -1,7 +1,7 @@
 # Devise Token Auth
 
 [![Gem Version](https://badge.fury.io/rb/devise_token_auth.svg)](http://badge.fury.io/rb/devise_token_auth)
-[![Build Status](https://travis-ci.org/lynndylanhurley/devise_token_auth.svg?branch=master)](https://travis-ci.org/lynndylanhurley/devise_token_auth)
+[![Build Status](https://github.com/lynndylanhurley/devise_token_auth/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/lynndylanhurley/devise_token_auth/actions/workflows/test.yml)
 [![Code Climate](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/badges/gpa.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth)
 [![Test Coverage](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/badges/coverage.svg)](https://codeclimate.com/github/lynndylanhurley/devise_token_auth/coverage)
 [![Downloads](https://img.shields.io/gem/dt/devise_token_auth.svg)](https://rubygems.org/gems/devise_token_auth)
@@ -22,6 +22,7 @@ Also, it maintains a session for each client/device, so you can have as many ses
   * [Angular-Token](https://github.com/neroniaky/angular-token) for [Angular](https://github.com/angular/angular)
   * [redux-token-auth](https://github.com/kylecorbelli/redux-token-auth) for [React with Redux](https://github.com/reactjs/react-redux)
   * [jToker](https://github.com/lynndylanhurley/j-toker) for [jQuery](https://jquery.com/)
+  * [vanilla-token-auth](https://github.com/theblang/vanilla-token-auth) for an unopinionated client
 * Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
 * Email authentication using [Devise](https://github.com/plataformatec/devise), including:
   * User registration, update and deletion

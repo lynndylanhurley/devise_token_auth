@@ -29,7 +29,7 @@ module DeviseTokenAuth
 
         create_and_assign_token
 
-        sign_in(:user, @resource, store: false, bypass: false)
+        sign_in(@resource, scope: :user, store: false, bypass: false)
 
         yield @resource if block_given?
 
@@ -78,7 +78,6 @@ module DeviseTokenAuth
     def get_auth_params
       auth_key = nil
       auth_val = nil
-
       # iterate thru allowed auth keys, use first found
       resource_class.authentication_keys.each do |k|
         if resource_params[k]

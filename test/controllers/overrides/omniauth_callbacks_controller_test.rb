@@ -25,7 +25,7 @@ class Overrides::OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTe
 
       @favorite_color = 'gray'
 
-      get '/evil_user_auth/facebook',
+      post '/evil_user_auth/facebook',
           params: {
             auth_origin_url: Faker::Internet.url,
             favorite_color: @favorite_color,

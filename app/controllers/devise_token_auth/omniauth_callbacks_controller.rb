@@ -111,7 +111,6 @@ module DeviseTokenAuth
         end
       end
       @_omniauth_params
-
     end
 
     # break out provider attribute assignment for easy method extension
@@ -133,21 +132,17 @@ module DeviseTokenAuth
     end
 
     def resource_class(mapping = nil)
-      if omniauth_params['resource_class']
-        omniauth_params['resource_class'].constantize
-      elsif params['resource_class']
-        params['resource_class'].constantize
-      else
-        raise 'No resource_class found'
-      end
+      return @resource_class if defined?(@resource_class)
+
+      constant_name = omniauth_params['resource_class'].presence || params['resource_class'].presence
+      @resource_class = ObjectSpace.each_object(Class).detect { |cls| cls.to_s == constant_name && cls.pretty_print_inspect.starts_with?(constant_name) }
+      raise 'No resource_class found' if @resource_class.nil?
+
+      @resource_class
     end
 
     def resource_name
       resource_class
-    end
-
-    def omniauth_window_type
-      omniauth_params['omniauth_window_type']
     end
 
     def unsafe_auth_origin_url
@@ -168,12 +163,11 @@ module DeviseTokenAuth
       omniauth_params.nil? ? params['omniauth_window_type'] : omniauth_params['omniauth_window_type']
     end
 
-    # this sesison value is set by the redirect_callbacks method. its purpose
+    # this session value is set by the redirect_callbacks method. its purpose
     # is to persist the omniauth auth hash value thru a redirect. the value
-    # must be destroyed immediatly after it is accessed by omniauth_success
+    # must be destroyed immediately after it is accessed by omniauth_success
     def auth_hash
       @_auth_hash ||= session.delete('dta.omniauth.auth')
-      @_auth_hash
     end
 
     # ensure that this controller responds to :devise_controller? conditionals.
@@ -287,5 +281,4 @@ module DeviseTokenAuth
       @resource
     end
   end
-
 end
