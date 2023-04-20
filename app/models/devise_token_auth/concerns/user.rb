@@ -198,7 +198,7 @@ module DeviseTokenAuth::Concerns::User
 
     encoded_token = Base64.strict_encode64(auth.to_json)
     bearer_token = "Bearer #{encoded_token}"
-    {DeviseTokenAuth.headers_names[:"authorization"] => bearer_token}
+    { DeviseTokenAuth.headers_names[:"authorization"] => bearer_token }
   end
 
   def update_auth_headers(token, client = 'default')
