@@ -194,9 +194,11 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def build_bearer_token(auth)
+    return {} if DeviseTokenAuth.cookie_enabled # There is no need for the bearer token if it is using cookies
+
     encoded_token = Base64.strict_encode64(auth.to_json)
     bearer_token = "Bearer #{encoded_token}"
-    {DeviseTokenAuth.headers_names[:"authorization"] => bearer_token}
+    { DeviseTokenAuth.headers_names[:"authorization"] => bearer_token }
   end
 
   def update_auth_headers(token, client = 'default')
