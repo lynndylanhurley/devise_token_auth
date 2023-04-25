@@ -68,7 +68,7 @@ if ENV['MONGOID_VERSION']
     gem 'mongoid', '>= 5'
   end
 
-  gem 'mongoid-locker', '~> 1.0'
+  gem 'mongoid-locker', '~> 2.0'
 end
 
 gem "rails", "~> 7"
