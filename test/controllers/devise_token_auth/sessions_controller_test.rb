@@ -39,11 +39,15 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
         describe 'using auth cookie' do
           before do
             DeviseTokenAuth.cookie_enabled = true
+            post :create, params: @user_session_params
           end
 
           test 'request should return auth cookie' do
-            post :create, params: @user_session_params
             assert response.cookies[DeviseTokenAuth.cookie_name]
+          end
+
+          test 'request should not include bearer token' do
+            assert_nil response.headers["Authorization"]
           end
 
           after do
