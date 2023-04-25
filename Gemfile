@@ -32,7 +32,7 @@ group :development, :test do
   # gem 'spring'
   gem 'database_cleaner'
   gem 'factory_bot_rails'
-  gem 'faker', '~> 2.16'
+  gem 'faker', '~> 3.2'
   gem 'fuzz_ball'
   gem 'minitest'
   gem 'minitest-focus'
