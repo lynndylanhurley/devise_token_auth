@@ -23,7 +23,7 @@ module DeviseTokenAuth
       session['dta.omniauth.auth'] = request.env['omniauth.auth'].except('extra')
       session['dta.omniauth.params'] = request.env['omniauth.params']
 
-      redirect_to redirect_route, status: 307
+      redirect_to redirect_route, {status: 307}.merge(redirect_options)
     end
 
     def get_redirect_route(devise_mapping)
@@ -227,7 +227,7 @@ module DeviseTokenAuth
       elsif auth_origin_url # default to same-window implementation, which forwards back to auth_origin_url
 
         # build and redirect to destination url
-        redirect_to DeviseTokenAuth::Url.generate(auth_origin_url, data.merge(blank: true))
+        redirect_to DeviseTokenAuth::Url.generate(auth_origin_url, data.merge(blank: true).merge(redirect_options))
       else
 
         # there SHOULD always be an auth_origin_url, but if someone does something silly
