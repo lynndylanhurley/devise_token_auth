@@ -44,7 +44,8 @@ module DeviseTokenAuth
                                                   token.client,
                                                   redirect_header_options)
         redirect_to(@resource.build_auth_url(after_unlock_path_for(@resource),
-                                             redirect_headers))
+                                             redirect_headers),
+                                             redirect_options)
       else
         render_show_error
       end

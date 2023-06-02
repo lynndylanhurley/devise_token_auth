@@ -84,6 +84,10 @@ module DeviseTokenAuth
       end
     end
 
+    def redirect_options
+      {}
+    end
+
     # When using a cookie to transport the auth token we can set it immediately in flows such as
     # reset password and OmniAuth success, rather than making the client scrape the token from
     # query params (to then send in the initial validate_token request).

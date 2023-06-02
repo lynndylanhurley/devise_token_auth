@@ -26,7 +26,8 @@ module Overrides
                                                   token.client,
                                                   redirect_header_options)
         redirect_to(@resource.build_auth_url(params[:redirect_url],
-                                             redirect_headers))
+                                             redirect_headers),
+                                             redirect_options)
       else
         raise ActionController::RoutingError, 'Not Found'
       end
