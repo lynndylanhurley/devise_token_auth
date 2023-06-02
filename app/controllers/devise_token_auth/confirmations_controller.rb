@@ -22,7 +22,7 @@ module DeviseTokenAuth
           redirect_to_link = signed_in_resource.build_auth_url(redirect_url, redirect_headers)
         else
           redirect_to_link = DeviseTokenAuth::Url.generate(redirect_url, redirect_header_options)
-       end
+        end
 
         redirect_to(redirect_to_link)
       else
