@@ -11,11 +11,7 @@ module DeviseTokenAuth
     end
 
     def create
-      # Check
-      field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
-
-      @resource = nil
-      if field
+      if field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
         q_value = get_case_insensitive_field_from_resource_params(field)
 
         @resource = find_resource(field, q_value)
@@ -41,12 +37,7 @@ module DeviseTokenAuth
           render_create_error_not_confirmed
         end
       else
-        # In order to avoid timing attacks in paranoid mode, we want the password hash to be
-        # calculated even if no resource has been found. Devise's DatabaseAuthenticatable warden
-        # strategy handles this case similarly:
-        # https://github.com/heartcombo/devise/blob/main/lib/devise/strategies/database_authenticatable.rb
-        resource_class.new.password = resource_params[:password] if Devise.paranoid
-      
+        hash_password_in_paranoid_mode
         render_create_error_bad_credentials
       end
     end
@@ -149,6 +140,14 @@ module DeviseTokenAuth
         @token = @resource.create_token
         @resource.save!
       end
+    end
+
+    def hash_password_in_paranoid_mode
+      # In order to avoid timing attacks in paranoid mode, we want the password hash to be
+      # calculated even if no resource has been found. Devise's DatabaseAuthenticatable warden
+      # strategy handles this case similarly:
+      # https://github.com/heartcombo/devise/blob/main/lib/devise/strategies/database_authenticatable.rb
+      resource_class.new.password = resource_params[:password] if Devise.paranoid
     end
   end
 end
