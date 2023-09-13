@@ -420,7 +420,7 @@ class DeviseTokenAuth::SessionsControllerTest < ActionController::TestCase
       describe 'With paranoid mode' do
         before do
           mock_hash = '$2a$04$MUWADkfA6MHXDdWHoep6QOvX1o0Y56pNqt3NMWQ9zCRwKSp1HZJba'
-          @bcrypt_mock = MiniTest::Mock.new
+          @bcrypt_mock = Minitest::Mock.new
           @bcrypt_mock.expect(:call, mock_hash, [Object, String])
 
           swap Devise, paranoid: true do
