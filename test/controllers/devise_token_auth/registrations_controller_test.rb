@@ -13,7 +13,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
     def mock_registration_params
       {
-        email: Faker::Internet.email,
+        email: Faker::Internet.unique.email,
         password: 'secret123',
         password_confirmation: 'secret123',
         confirm_success_url: Faker::Internet.url,
@@ -152,7 +152,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       test 'request to whitelisted redirect should be successful' do
         post '/auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        confirm_success_url: @good_redirect_url,
@@ -163,7 +163,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       test 'request to non-whitelisted redirect should fail' do
         post '/auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        confirm_success_url: @bad_redirect_url,
@@ -181,7 +181,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
     describe 'failure if not redirecturl' do
       test 'request should fail if not redirect_url' do
         post '/auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        unpermitted_param: '(x_x)' }
@@ -191,7 +191,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
 
       test 'request to non-whitelisted redirect should fail' do
         post '/auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        unpermitted_param: '(x_x)' }
@@ -210,7 +210,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         DeviseTokenAuth.default_confirm_success_url = @redirect_url
 
         assert_difference 'ActionMailer::Base.deliveries.size', 1 do
-          post '/auth', params: { email: Faker::Internet.email,
+          post '/auth', params: { email: Faker::Internet.unique.email,
                                   password: 'secret123',
                                   password_confirmation: 'secret123',
                                   unpermitted_param: '(x_x)' }
@@ -240,7 +240,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @mails_sent = ActionMailer::Base.deliveries.count
 
         post '/api/v1/auth', params: {
-          email: Faker::Internet.email,
+          email: Faker::Internet.unique.email,
           password: 'secret123',
           password_confirmation: 'secret123',
           confirm_success_url: Faker::Internet.url,
@@ -295,7 +295,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @operating_thetan = 2
 
         post '/auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        confirm_success_url: @redirect_url,
@@ -388,7 +388,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
     describe 'Mismatched passwords' do
       before do
         post '/auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'bogus',
                        confirm_success_url: Faker::Internet.url }
@@ -505,7 +505,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               # test valid update param
               @resource_class = User
               @new_operating_thetan = 1_000_000
-              @email = Faker::Internet.email
+              @email = Faker::Internet.unique.email
               @request_params = {
                 operating_thetan: @new_operating_thetan,
                 email: @email
@@ -612,7 +612,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
               # test valid update param
               @resource_class = User
               @new_operating_thetan = 1_000_000
-              @email = Faker::Internet.email
+              @email = Faker::Internet.unique.email
               @request_params = {
                 operating_thetan: @new_operating_thetan,
                 email: @email
@@ -663,7 +663,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
           before do
             DeviseTokenAuth.check_current_password_before_update = :password
             @new_operating_thetan = 1_000_000
-            @email = Faker::Internet.email
+            @email = Faker::Internet.unique.email
           end
 
           after do
@@ -773,7 +773,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
     describe 'Alternate user class' do
       before do
         post '/mangs',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        confirm_success_url: Faker::Internet.url }
@@ -814,7 +814,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @config_name = 'altUser'
 
         post '/mangs',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        confirm_success_url: Faker::Internet.url,
@@ -840,7 +840,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
       test 'UnregisterableUser should not be able to access registration routes' do
         assert_raises(ActionController::RoutingError) do
           post '/unregisterable_user_auth',
-               params: { email: Faker::Internet.email,
+               params: { email: Faker::Internet.unique.email,
                          password: 'secret123',
                          password_confirmation: 'secret123',
                          confirm_success_url: Faker::Internet.url }
@@ -853,7 +853,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         User.set_callback(:create, :before, :skip_confirmation!)
 
         post '/auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        confirm_success_url: Faker::Internet.url }
@@ -893,7 +893,7 @@ class DeviseTokenAuth::RegistrationsControllerTest < ActionDispatch::Integration
         @mails_sent = ActionMailer::Base.deliveries.count
 
         post '/only_email_auth',
-             params: { email: Faker::Internet.email,
+             params: { email: Faker::Internet.unique.email,
                        password: 'secret123',
                        password_confirmation: 'secret123',
                        confirm_success_url: Faker::Internet.url,
