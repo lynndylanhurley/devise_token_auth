@@ -10,8 +10,6 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
-          - 2.5
-          - 2.6
           - 2.7
           - '3.0'
           - 3.1
@@ -30,15 +28,6 @@ jobs:
         devise-token-auth-orm:
           - active_record
         include:
-          - ruby: 2.5
-            gemfile: gemfiles/rails_5_2_mongoid_6.gemfile
-            devise-token-auth-orm: mongoid
-          - ruby: 2.5
-            gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
-            devise-token-auth-orm: mongoid
-          - ruby: 2.6
-            gemfile: gemfiles/rails_5_2_mongoid_7.gemfile
-            devise-token-auth-orm: mongoid
           - ruby: 2.7
             gemfile: gemfiles/rails_6_0_mongoid_7.gemfile
             devise-token-auth-orm: mongoid
@@ -63,12 +52,6 @@ jobs:
             gemfile: gemfiles/rails_7_0_mongoid_7.gemfile
             devise-token-auth-orm: mongoid
         exclude:
-          - ruby: 2.5
-            gemfile: gemfiles/rails_7_0.gemfile
-          - ruby: 2.6
-            gemfile: gemfiles/rails_4_2.gemfile
-          - ruby: 2.6
-            gemfile: gemfiles/rails_7_0.gemfile
           - ruby: 2.7
             gemfile: gemfiles/rails_4_2.gemfile
           - ruby: 2.7
