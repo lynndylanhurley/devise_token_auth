@@ -28,6 +28,8 @@ jobs:
         devise-token-auth-orm:
           - active_record
         include:
+          - ruby: 2.6
+            gemfile: gemfiles/rails_6_0.gemfile
           - ruby: 2.7
             gemfile: gemfiles/rails_6_0_mongoid_7.gemfile
             devise-token-auth-orm: mongoid
