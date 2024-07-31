@@ -48,6 +48,7 @@ module DeviseTokenAuth
   self.default_callbacks                    = true
   self.headers_names                        = { 'authorization': 'Authorization',
                                                 'access-token': 'access-token',
+                                                'refresh-token': 'refresh-token',
                                                 'client': 'client',
                                                 'expiry': 'expiry',
                                                 'uid': 'uid',

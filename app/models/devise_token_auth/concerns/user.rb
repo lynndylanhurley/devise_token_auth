@@ -94,7 +94,8 @@ module DeviseTokenAuth::Concerns::User
 
       tokens[token.client] = {
         token:  token.token_hash,
-        expiry: token.expiry
+        expiry: token.expiry,
+        refresh_token: token.refresh_token_hash
       }.merge!(token_extras)
 
       clean_old_tokens
@@ -110,6 +111,14 @@ module DeviseTokenAuth::Concerns::User
 
     # return false if none of the above conditions are met
     false
+  end
+
+  def valid_refresh_token?(refresh_token, client = 'default')
+    return false unless tokens[client]
+    return true if refresh_token_is_current?(refresh_token, client)
+
+    # return false if none of the above conditions are met
+    return false
   end
 
   # this must be done from the controller so that additional params
@@ -137,6 +146,23 @@ module DeviseTokenAuth::Concerns::User
         # check if the previous token matches
         does_token_match?(previous_token_hash, token)
       )
+    )
+  end
+
+  def refresh_token_is_current?(refresh_token, client)
+    # ghetto HashWithIndifferentAccess
+    expiry     = tokens[client]['expiry'] || tokens[client][:expiry]
+    refresh_token_hash = tokens[client]['refresh_token'] || tokens[client][:refresh_token]
+
+    return true if (
+      # ensure that expiry and token are set
+      expiry && refresh_token_hash &&
+
+      # ensure that the token has not yet expired
+      DateTime.strptime(expiry.to_s, '%s') > Time.zone.now &&
+
+      # ensure that the token is valid
+      DeviseTokenAuth::Concerns::User.tokens_match?(refresh_token_hash, refresh_token)
     )
   end
 
@@ -176,10 +202,10 @@ module DeviseTokenAuth::Concerns::User
       updated_at: now
     )
 
-    update_auth_headers(token.token, token.client)
+    update_auth_header(token.token, token.client, token.refresh_token)
   end
 
-  def build_auth_headers(token, client = 'default')
+  def build_auth_headers(token, client = 'default', refresh_token = nil)
     # client may use expiry to prevent validation request if expired
     # must be cast as string or headers will break
     expiry = tokens[client]['expiry'] || tokens[client][:expiry]
@@ -188,7 +214,8 @@ module DeviseTokenAuth::Concerns::User
       DeviseTokenAuth.headers_names[:"token-type"]   => 'Bearer',
       DeviseTokenAuth.headers_names[:"client"]       => client,
       DeviseTokenAuth.headers_names[:"expiry"]       => expiry.to_s,
-      DeviseTokenAuth.headers_names[:"uid"]          => uid
+      DeviseTokenAuth.headers_names[:"uid"]          => uid,
+      DeviseTokenAuth.headers_names[:"refresh-token"] => refresh_token
     }
     headers.merge(build_bearer_token(headers))
   end
@@ -201,8 +228,8 @@ module DeviseTokenAuth::Concerns::User
     { DeviseTokenAuth.headers_names[:"authorization"] => bearer_token }
   end
 
-  def update_auth_headers(token, client = 'default')
-    headers = build_auth_headers(token, client)
+  def update_auth_headers(token, client = 'default', refresh_token = nil)
+    headers = build_auth_headers(token, client, refresh_token)
     clean_old_tokens
     save!
 
@@ -216,9 +243,9 @@ module DeviseTokenAuth::Concerns::User
     DeviseTokenAuth::Url.generate(base_url, args)
   end
 
-  def extend_batch_buffer(token, client)
+  def extend_batch_buffer(token, client, refresh_token = nil)
     tokens[client]['updated_at'] = Time.zone.now
-    update_auth_headers(token, client)
+    update_auth_header(token, client, refresh_token)
   end
 
   def confirmed?
