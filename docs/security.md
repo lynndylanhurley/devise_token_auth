@@ -3,7 +3,7 @@
 This gem takes the following steps to ensure security.
 
 This gem uses auth tokens that are:
-* [changed after every request](/docs/conceptual.md#about-token-management) (can be [turned off](https://github.com/lynndylanhurley/devise_token_auth/#initializer-settings)),
+* [changed after every request](/docs/conceptual.md#about-token-management) (can be [turned off](https://devise-token-auth.gitbook.io/devise-token-auth/config/initialization)),
 * [of cryptographic strength](https://ruby-doc.org/stdlib-2.1.0/libdoc/securerandom/rdoc/SecureRandom.html),
 * hashed using [BCrypt](https://github.com/codahale/bcrypt-ruby) (not stored in plain-text),
 * securely compared (to protect against timing attacks),
