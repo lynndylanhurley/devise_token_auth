@@ -63,13 +63,10 @@ module DeviseTokenAuth
         # don't send confirmation email!!!
         @resource.skip_confirmation!
       end
-
       sign_in(:user, @resource, store: false, bypass: false)
-
       @resource.save!
 
       yield @resource if block_given?
-
       if DeviseTokenAuth.cookie_enabled
         set_token_in_cookie(@resource, @token)
       end
@@ -105,6 +102,7 @@ module DeviseTokenAuth
           @_omniauth_params ||= session.delete('dta.omniauth.params')
           @_omniauth_params
         elsif params['omniauth_window_type']
+
           @_omniauth_params = params.slice('omniauth_window_type', 'auth_origin_url', 'resource_class', 'origin')
         else
           @_omniauth_params = {}
@@ -221,7 +219,12 @@ module DeviseTokenAuth
       # See app/views/devise_token_auth/omniauth_external_window.html.erb to understand
       # why we can handle these both the same.  The view is setup to handle both cases
       # at the same time.
+      puts "render_data_or_redirect #{omniauth_window_type}"
+      puts request.params
       if ['inAppBrowser', 'newWindow'].include?(omniauth_window_type)
+        # puts "new window"
+        # puts message
+        # puts user_data
         render_data(message, user_data.merge(data))
 
       elsif auth_origin_url # default to same-window implementation, which forwards back to auth_origin_url
