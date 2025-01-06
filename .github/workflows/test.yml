@@ -116,6 +116,8 @@ jobs:
       - name: Setup Bundler 1.x for Rails 4.x
         if: ${{ matrix.gemfile == 'gemfiles/rails_4_2.gemfile' || matrix.gemfile == 'gemfiles/rails_4_2_mongoid_5.gemfile' }}
         run: echo "BUNDLER_VERSION=1.17.3" >> $GITHUB_ENV
+      - name: Setup SQLite
+        run: sudo apt-get install libsqlite3-dev
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
