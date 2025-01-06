@@ -92,9 +92,12 @@ module DeviseTokenAuth::Concerns::User
     def create_token(client: nil, lifespan: nil, cost: nil, **token_extras)
       token = DeviseTokenAuth::TokenFactory.create(client: client, lifespan: lifespan, cost: cost)
 
+      max_expiration_token = tokens.max_by { |_, token_info| token_info['expiry'] }
+      max_expiry = max_expiration_token&.dig(1, 'expiry') || 0
+
       tokens[token.client] = {
-        token:  token.token_hash,
-        expiry: token.expiry
+        token: token.token_hash,
+        expiry: [token.expiry, max_expiry + 1].max
       }.merge!(token_extras)
 
       clean_old_tokens
