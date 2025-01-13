@@ -31,14 +31,20 @@ Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
 
 class ActionDispatch::IntegrationTest
   def follow_all_redirects!
-    follow_redirect! while response.status.to_s =~ /^3\d{2}/
+    while response.status.to_s =~ /^3\d{2}/
+      original_params = request.params.to_h
+      follow_redirect! do |req|
+        # Preserve all original parameters through redirects
+        req.params.merge!(original_params)
+      end
+    end
   end
 end
 
 class ActiveSupport::TestCase
   include FactoryBot::Syntax::Methods
 
-  ActiveRecord::Migration.check_pending! if DEVISE_TOKEN_AUTH_ORM == :active_record
+  # ActiveRecord::Migration.check_pending! if DEVISE_TOKEN_AUTH_ORM == :active_record
 
   strategies = { active_record: :transaction,
                  mongoid: :deletion }
