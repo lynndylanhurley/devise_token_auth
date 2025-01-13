@@ -340,8 +340,10 @@ class OmniauthTest < ActionDispatch::IntegrationTest
 
       test 'request using non-whitelisted redirect fail' do
         post '/auth/facebook',
-            params: { auth_origin_url: @bad_redirect_url,
-                      omniauth_window_type: 'newWindow' }
+             params: {
+               auth_origin_url: @bad_redirect_url,
+               omniauth_window_type: 'newWindow'
+             }
 
         follow_all_redirects!
 
