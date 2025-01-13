@@ -111,6 +111,8 @@ module DeviseTokenAuth::Concerns::SetUserByToken
       # cleared by sign out in the meantime
       return if @resource.reload.tokens[@token.client].nil?
 
+      puts "entering headers merge"
+
       auth_header = @resource.build_auth_headers(@token.token, @token.client)
 
       # update the response header
