@@ -23,7 +23,7 @@ Rails.application.configure do
       (config.public_file_server.headers = { 'Cache-Control' => 'public, max-age=3600' }) :
       (config.static_cache_control = 'public, max-age=3600')
 
-  if Rails::VERSION::MAJOR > 6 && ENV['DEVISE_TOKEN_AUTH_ORM'] != 'mongoid'
+  if Rails::VERSION::MAJOR < 7 && ENV['DEVISE_TOKEN_AUTH_ORM'] != 'mongoid'
     config.active_record.legacy_connection_handling = false
   end
 
@@ -32,7 +32,11 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
 
   # Raise exceptions instead of rendering exception templates.
-  config.action_dispatch.show_exceptions = false
+  if Rails::VERSION::MAJOR >= 7 && Rails::VERSION::MINOR > 0
+    config.action_dispatch.show_exceptions = :none
+  else
+    config.action_dispatch.show_exceptions = false
+  end
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
