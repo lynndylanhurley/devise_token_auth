@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-OmniAuth.config.path_prefix = '/auth'
-OmniAuth.config.request_validation_phase = nil  # This might be needed for Rails 7.1
+# OmniAuth.config.path_prefix = '/auth'
+# OmniAuth.config.request_validation_phase = nil  # This might be needed for Rails 7.1
 
 Rails.application.config.middleware.use OmniAuth::Builder do |b|
   provider :github,        ENV['GITHUB_KEY'],   ENV['GITHUB_SECRET'],   scope: 'email,profile'

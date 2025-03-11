@@ -31,13 +31,14 @@ Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
 
 class ActionDispatch::IntegrationTest
   def follow_all_redirects!
-    while response.status.to_s =~ /^3\d{2}/
-      original_params = request.params.to_h
-      follow_redirect! do |req|
-        # Preserve all original parameters through redirects
-        req.params.merge!(original_params)
-      end
-    end
+    follow_redirect! while response.status.to_s =~ /^3\d{2}/
+    # while response.status.to_s =~ /^3\d{2}/
+    #   original_params = request.params.to_h
+    #   follow_redirect! do |req|
+    #     # Preserve all original parameters through redirects
+    #     req.params.merge!(original_params)
+    #   end
+    # end
   end
 end
 
