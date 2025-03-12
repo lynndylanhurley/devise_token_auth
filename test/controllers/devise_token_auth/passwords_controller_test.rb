@@ -229,42 +229,73 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
 
           describe 'password reset link success' do
-            before do
-              get :edit,
-                  params: { reset_password_token: @mail_reset_token,
-                            redirect_url: @mail_redirect_url }
+            describe 'with require_client_password_reset_token is enabled' do
+              before do
+                DeviseTokenAuth.require_client_password_reset_token = true
+                get :edit,
+                    params: { reset_password_token: @mail_reset_token,
+                              redirect_url: @mail_redirect_url }
 
-              @resource.reload
+                @resource.reload
 
-              raw_qs = response.location.split('?')[1]
-              @qs = Rack::Utils.parse_nested_query(raw_qs)
+                raw_qs = response.location.split('?')[1]
+                @qs = Rack::Utils.parse_nested_query(raw_qs)
 
-              @access_token   = @qs['access-token']
-              @client_id      = @qs['client_id']
-              @client         = @qs['client']
-              @expiry         = @qs['expiry']
-              @reset_password = @qs['reset_password']
-              @token          = @qs['token']
-              @uid            = @qs['uid']
+                @reset_password_token = @qs['reset_password_token']
+              end
+
+              test 'response should have success redirect status' do
+                assert_equal 302, response.status
+              end
+
+              test 'response should contain reset_password_token param' do
+                assert_equal @mail_reset_token, @qs['reset_password_token']
+              end
             end
 
-            test 'response should have success redirect status' do
-              assert_equal 302, response.status
-            end
+            describe 'require_client_password_reset_token is disabled' do
+              before do
+                DeviseTokenAuth.require_client_password_reset_token = false
+                get :edit,
+                    params: { reset_password_token: @mail_reset_token,
+                              redirect_url: @mail_redirect_url }
 
-            test 'response should contain auth params' do
-              assert @access_token
-              assert @client
-              assert @client_id
-              assert @expiry
-              assert @reset_password
-              assert @token
-              assert @uid
-            end
+                @resource.reload
 
-            test 'response auth params should be valid' do
-              assert @resource.valid_token?(@token, @client_id)
-              assert @resource.valid_token?(@access_token, @client)
+                raw_qs = response.location.split('?')[1]
+                @qs = Rack::Utils.parse_nested_query(raw_qs)
+
+                @access_token   = @qs['access-token']
+                @client_id      = @qs['client_id']
+                @client         = @qs['client']
+                @expiry         = @qs['expiry']
+                @reset_password = @qs['reset_password']
+                @token          = @qs['token']
+                @uid            = @qs['uid']
+              end
+
+              test 'response should have success redirect status' do
+                assert_equal 302, response.status
+              end
+
+              test 'response should contain auth params' do
+                assert @access_token
+                assert @client
+                assert @client_id
+                assert @expiry
+                assert @reset_password
+                assert @token
+                assert @uid
+              end
+
+              test 'response auth params should be valid' do
+                assert @resource.valid_token?(@token, @client_id)
+                assert @resource.valid_token?(@access_token, @client)
+              end
+
+              test 'response should contain reset_password_token param' do
+                assert_equal @mail_reset_token, @qs['reset_password_token']
+              end
             end
           end
         end

@@ -56,7 +56,7 @@ module DeviseTokenAuth
             set_token_in_cookie(@resource, token)
           end
 
-          redirect_header_options = { reset_password: true }
+          redirect_header_options = { reset_password: true, reset_password_token: resource_params[:reset_password_token] }
           redirect_headers = build_redirect_headers(token.token,
                                                     token.client,
                                                     redirect_header_options)
