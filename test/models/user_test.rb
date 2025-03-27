@@ -76,6 +76,23 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+    describe 'token with extra data' do
+      let(:extra_data) { { scope: "write:profile" } }
+      before do
+        @resource = create(:user, :confirmed)
+
+        @auth_headers = @resource.create_new_auth_token(extra_data)
+
+        @token     = @auth_headers['access-token']
+        @client_id = @auth_headers['client']
+      end
+
+      test 'should extra data will be stored with token info' do
+        assert @resource.token_is_current?(@token, @client_id)
+        assert @resource.tokens[@client_id]["scope"], extra_data["scope"]
+      end
+    end
+
     describe 'previous token' do
       before do
         @resource = create(:user, :confirmed)
