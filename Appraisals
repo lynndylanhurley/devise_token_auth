@@ -35,7 +35,8 @@ end
   { name: '5-2', ruby: '2.6.2', rails: '5.2', mongoid: '7.0' },
   { name: '6-0', ruby: '2.7.0', rails: '6.0', mongoid: '7.0' },
   { name: '6-0', ruby: '3.1.2', rails: '6.0', mongoid: '7.0' },
-  { name: '7-0', ruby: '3.1.2', rails: '7.0', mongoid: '7.0' }
+  { name: '7-0', ruby: '3.1.2', rails: '7.0', mongoid: '7.0' },
+  { name: '7-1', ruby: '3.1.2', rails: '7.1', mongoid: '7.0' }
 ].each do |set|
   appraise "rails-#{set[:name]}-mongoid-#{set[:mongoid][0]}" do
     gem 'rails', "~> #{set[:rails]}"

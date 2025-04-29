@@ -17,6 +17,7 @@ gem 'omniauth-rails_csrf_protection'
 # To use debugger
 # gem 'debugger'
 
+gem 'concurrent-ruby', '1.3.4'
 
 group :development, :test do
   gem 'attr_encrypted'
