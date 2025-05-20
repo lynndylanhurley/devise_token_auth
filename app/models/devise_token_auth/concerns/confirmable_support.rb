@@ -3,7 +3,7 @@ module DeviseTokenAuth::Concerns::ConfirmableSupport
 
   included do
     # Override standard devise `postpone_email_change?` method
-    # for not to use `will_save_change_to_email?` & `email_changed?` methods.
+    # for not to use `devise_will_save_change_to_email?` & `email_changed?` methods.
     def postpone_email_change?
       postpone = self.class.reconfirmable &&
         email_value_in_database != email &&
