@@ -41,7 +41,6 @@ module DeviseTokenAuth::Concerns::User
 
     # don't use default devise email validation
     def email_required?; false; end
-    def email_changed?; false; end
     def devise_will_save_change_to_email?; false; end
 
     if DeviseTokenAuth.send_confirmation_email && devise_modules.include?(:confirmable)
