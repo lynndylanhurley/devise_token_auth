@@ -23,6 +23,7 @@ Also, it maintains a session for each client/device, so you can have as many ses
   * [redux-token-auth](https://github.com/kylecorbelli/redux-token-auth) for [React with Redux](https://github.com/reactjs/react-redux)
   * [jToker](https://github.com/lynndylanhurley/j-toker) for [jQuery](https://jquery.com/)
   * [vanilla-token-auth](https://github.com/theblang/vanilla-token-auth) for an unopinionated client
+  * [flutter_token_auth](https://github.com/diarmuidr3d/flutter_token_auth) for Flutter
 * Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
 * Email authentication using [Devise](https://github.com/plataformatec/devise), including:
   * User registration, update and deletion
