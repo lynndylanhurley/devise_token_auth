@@ -126,5 +126,58 @@ class UserTest < ActiveSupport::TestCase
         assert @resource.save
       end
     end
+
+    describe 'create_token method' do
+      before do
+        @resource = create(:user, :confirmed)
+      end
+
+      test 'creates token with default parameters' do
+        token = @resource.create_token
+        
+        assert_not_nil token
+        assert_not_nil token.client
+        assert_not_nil token.token
+        assert_not_nil token.token_hash
+        assert_not_nil token.expiry
+        assert @resource.tokens[token.client].present?
+        assert_equal @resource.tokens[token.client]['token'], token.token_hash
+        assert_equal @resource.tokens[token.client]['expiry'], token.expiry
+      end
+
+      test 'creates token with custom client' do
+        custom_client = 'custom_client_id'
+        token = @resource.create_token(client: custom_client)
+        
+        assert_equal custom_client, token.client
+        assert @resource.tokens[custom_client].present?
+      end
+
+      test 'creates token with custom lifespan' do
+        custom_lifespan = 1.hour
+        token = @resource.create_token(lifespan: custom_lifespan)
+        
+        expected_expiry = (Time.zone.now + custom_lifespan).to_i
+        assert_in_delta expected_expiry, token.expiry, 2
+      end
+
+      test 'creates token with token extras' do
+        extras = { custom_field: 'custom_value' }
+        token = @resource.create_token(**extras)
+        
+        assert_equal 'custom_value', @resource.tokens[token.client]['custom_field']
+      end
+
+      test 'cleans old tokens when creating new token' do
+        # Create maximum number of tokens plus one more
+        max_tokens = DeviseTokenAuth.max_number_of_devices
+        (max_tokens + 1).times do |i|
+          @resource.create_token(client: "client_#{i}")
+        end
+        
+        # Should not exceed max number of tokens
+        assert_operator @resource.tokens.length, :<=, max_tokens
+      end
+    end
   end
 end
