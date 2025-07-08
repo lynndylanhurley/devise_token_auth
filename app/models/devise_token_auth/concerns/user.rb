@@ -258,17 +258,25 @@ module DeviseTokenAuth::Concerns::User
   end
 
   def clean_old_tokens
-    if tokens.present? && max_client_tokens_exceeded?
-      # Using Enumerable#sort_by on a Hash will typecast it into an associative
-      #   Array (i.e. an Array of key-value Array pairs). However, since Hashes
-      #   have an internal order in Ruby 1.9+, the resulting sorted associative
-      #   Array can be converted back into a Hash, while maintaining the sorted
-      #   order.
-      self.tokens = tokens.sort_by { |_cid, v| v[:expiry] || v['expiry'] }.to_h
+    return if tokens.blank? || !max_client_tokens_exceeded?
 
-      # Since the tokens are sorted by expiry, shift the oldest client token
-      #   off the Hash until it no longer exceeds the maximum number of clients
-      tokens.shift while max_client_tokens_exceeded?
+    # First, remove any tokens with expiry greater than current max allowed lifespan
+    #   this handles the case where token lifespan was reduced and old tokens exist
+    max_lifespan_expiry = Time.now.to_i + DeviseTokenAuth.token_lifespan.to_i
+    tokens_to_keep = tokens.select do |_cid, v|
+      expiry = (v[:expiry] || v['expiry']).to_i
+      expiry <= max_lifespan_expiry
     end
+
+    # Using Enumerable#sort_by on a Hash will typecast it into an associative
+    #   Array (i.e. an Array of key-value Array pairs). However, since Hashes
+    #   have an internal order in Ruby 1.9+, the resulting sorted associative
+    #   Array can be converted back into a Hash, while maintaining the sorted
+    #   order.
+    self.tokens = tokens_to_keep.sort_by { |_cid, v| v[:expiry] || v['expiry'] }.to_h
+
+    # Since the tokens are sorted by expiry, shift the oldest client token
+    #   off the Hash until it no longer exceeds the maximum number of clients
+    tokens.shift while max_client_tokens_exceeded?
   end
 end
