@@ -73,7 +73,7 @@ module DeviseTokenAuth
       # make sure user is authorized
       if require_client_password_reset_token? && resource_params[:reset_password_token]
         @resource = resource_class.with_reset_password_token(resource_params[:reset_password_token])
-        return render_update_error_unauthorized if @resource.blank? || (@resource && !@resource.reset_password_period_valid?)
+        return render_update_error_unauthorized unless @resource && @resource.reset_password_period_valid?
 
         @token = @resource.create_token
       else
