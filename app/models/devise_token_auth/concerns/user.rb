@@ -165,14 +165,15 @@ module DeviseTokenAuth::Concerns::User
   end
 
   # update user's auth token (should happen on each request)
-  def create_new_auth_token(client = nil)
+  def create_new_auth_token(client = nil, extra_data: {})
     now = Time.zone.now
 
     token = create_token(
       client: client,
       previous_token: tokens.fetch(client, {})['token'],
       last_token: tokens.fetch(client, {})['previous_token'],
-      updated_at: now
+      updated_at: now,
+      **extra_data
     )
 
     update_auth_headers(token.token, token.client)
