@@ -5,7 +5,8 @@ If your API and client live on different domains, you will need to configure you
 The following **dangerous** example will allow cross domain requests from **any** domain. Make sure to whitelist only the needed domains.
 
 ##### Example rack-cors configuration:
-~~~ruby
+
+```ruby
 # gemfile
 gem 'rack-cors', :require => 'rack/cors'
 
@@ -23,7 +24,7 @@ module YourApp
     end
   end
 end
-~~~
+```
 
 Make extra sure that the `Access-Control-Expose-Headers` includes `access-token`, `expiry`, `token-type`, `uid`, and `client` (as is set in the example above by the`:expose` param). If your client experiences erroneous 401 responses, this is likely the cause.
 
