@@ -2,12 +2,12 @@
 
 Add the following to your `Gemfile`:
 
-~~~ruby
+```ruby
 gem 'devise_token_auth'
-~~~
+```
 
 Then install the gem using bundle:
 
-~~~bash
+```bash
 bundle install
-~~~
+```

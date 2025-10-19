@@ -17,39 +17,60 @@ Also, it maintains a session for each client/device, so you can have as many ses
 
 ## Main features
 
-* Seamless integration with:
-  * [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for [AngularJS](https://github.com/angular/angular.js)
-  * [Angular-Token](https://github.com/neroniaky/angular-token) for [Angular](https://github.com/angular/angular)
-  * [redux-token-auth](https://github.com/kylecorbelli/redux-token-auth) for [React with Redux](https://github.com/reactjs/react-redux)
-  * [jToker](https://github.com/lynndylanhurley/j-toker) for [jQuery](https://jquery.com/)
-  * [vanilla-token-auth](https://github.com/theblang/vanilla-token-auth) for an unopinionated client
-  * [flutter_token_auth](https://github.com/diarmuidr3d/flutter_token_auth) for Flutter
-* Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
-* Email authentication using [Devise](https://github.com/plataformatec/devise), including:
-  * User registration, update and deletion
-  * Login and logout
-  * Password reset, account confirmation
-* Support for [multiple user models](./docs/usage/multiple_models.md).
-* It is [secure](docs/security.md).
+- Seamless integration with:
+  - [ng-token-auth](https://github.com/lynndylanhurley/ng-token-auth) for [AngularJS](https://github.com/angular/angular.js)
+  - [Angular-Token](https://github.com/neroniaky/angular-token) for [Angular](https://github.com/angular/angular)
+  - [redux-token-auth](https://github.com/kylecorbelli/redux-token-auth) for [React with Redux](https://github.com/reactjs/react-redux)
+  - [jToker](https://github.com/lynndylanhurley/j-toker) for [jQuery](https://jquery.com/)
+  - [vanilla-token-auth](https://github.com/theblang/vanilla-token-auth) for an unopinionated client
+  - [flutter_token_auth](https://github.com/diarmuidr3d/flutter_token_auth) for Flutter
+- Oauth2 authentication using [OmniAuth](https://github.com/intridea/omniauth).
+- Email authentication using [Devise](https://github.com/plataformatec/devise), including:
+  - User registration, update and deletion
+  - Login and logout
+  - Password reset, account confirmation
+- Support for [multiple user models](./docs/usage/multiple_models.md).
+- It is [secure](docs/security.md).
 
 This project leverages the following gems:
 
-* [Devise](https://github.com/plataformatec/devise)
-* [OmniAuth](https://github.com/intridea/omniauth)
+- [Devise](https://github.com/plataformatec/devise)
+- [OmniAuth](https://github.com/intridea/omniauth)
 
 ## Installation
 
 Add the following to your `Gemfile`:
 
-~~~ruby
+```ruby
+gem 'devise'
 gem 'devise_token_auth'
-~~~
+```
 
-Then install the gem using bundle:
+Install the gem using bundle:
 
-~~~bash
+```bash
 bundle install
-~~~
+```
+
+Then run standard devise install command. You must install and configure Devise before running the Devise Token Auth installer.
+
+```bash
+rails g devise:install
+```
+
+This command will:
+• Create the file config/initializers/devise.rb with Devise configuration.
+• Add default URL options for the mailer.
+• Provide setup instructions for the development environment.
+
+💡 Even though devise_token_auth is designed for JSON APIs instead of HTML views,
+Devise still requires its initializer to configure mailer URLs, secret keys, and encryption settings.
+
+Example of one-step-install to create devise_token_auth authentication for User model:
+
+```bash
+mount_devise_token_auth_for 'User', at: 'auth'
+```
 
 ## [Docs](https://devise-token-auth.gitbook.io/devise-token-auth)
 
@@ -75,7 +96,6 @@ We have some bounties for some issues, [check them out](https://github.com/lynnd
 
 The fully configured api used in these demos can be found [here](https://github.com/lynndylanhurley/devise_token_auth_demo).
 
-
 ## Contributors
 
 <a href="graphs/contributors"><img src="https://opencollective.com/devise_token_auth/contributors.svg?width=890&button=false" /></a>
@@ -86,7 +106,6 @@ Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com
 
 [![](https://opencollective.com/devise_token_auth/backers.svg?width=890)](https://opencollective.com/devise_token_auth#backers)
 
-
 ## Sponsors
 
 Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/devise_token_auth#sponsor)]
@@ -94,4 +113,5 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 [![](https://opencollective.com/devise_token_auth/sponsor/0/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/0/website) [![](https://opencollective.com/devise_token_auth/sponsor/1/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/1/website) [![](https://opencollective.com/devise_token_auth/sponsor/2/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/2/website) [![](https://opencollective.com/devise_token_auth/sponsor/3/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/3/website) [![](https://opencollective.com/devise_token_auth/sponsor/4/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/4/website) [![](https://opencollective.com/devise_token_auth/sponsor/5/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/5/website) [![](https://opencollective.com/devise_token_auth/sponsor/6/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/6/website) [![](https://opencollective.com/devise_token_auth/sponsor/7/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/7/website) [![](https://opencollective.com/devise_token_auth/sponsor/8/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/8/website) [![](https://opencollective.com/devise_token_auth/sponsor/9/avatar.svg)](https://opencollective.com/devise_token_auth/sponsor/9/website)
 
 ## License
+
 This project uses the WTFPL
