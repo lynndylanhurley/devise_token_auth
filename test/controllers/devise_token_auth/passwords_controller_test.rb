@@ -746,6 +746,36 @@ class DeviseTokenAuth::PasswordsControllerTest < ActionController::TestCase
           end
         end
 
+        describe 'with expired reset password token' do
+          before do
+            DeviseTokenAuth.require_client_password_reset_token = true
+            reset_password_token = @resource.send_reset_password_instructions
+            @resource.update! reset_password_sent_at: 2.days.ago
+
+            @new_password = Faker::Internet.password
+            @params = { password: @new_password,
+                        password_confirmation: @new_password,
+                        reset_password_token: reset_password_token }
+
+            put :update, params: @params
+
+            @data = JSON.parse(response.body)
+            @resource.reload
+          end
+
+          test 'request should fail' do
+            assert_equal 401, response.status
+          end
+
+          test 'new password should not authenticate user' do
+            assert !@resource.valid_password?(@new_password)
+          end
+
+          teardown do
+            DeviseTokenAuth.require_client_password_reset_token = false
+          end
+        end
+
         describe 'with invalid reset password token' do
           before do
             DeviseTokenAuth.require_client_password_reset_token = true
