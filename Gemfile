@@ -59,13 +59,13 @@ end
 if ENV['MONGOID_VERSION']
   case ENV['MONGOID_VERSION']
   when /^7/
-    gem 'mongoid', '~> 7'
+    gem 'mongoid', '>= 4', '< 10'
   when /^6/
-    gem 'mongoid', '~> 6'
+    gem 'mongoid', '>= 4', '< 10'
   when /^5/
-    gem 'mongoid', '~> 5'
+    gem 'mongoid', '>= 4', '< 10'
   else
-    gem 'mongoid', '>= 5'
+    gem 'mongoid', '>= 4', '< 10'
   end
 
   gem 'mongoid-locker', '~> 2.0'

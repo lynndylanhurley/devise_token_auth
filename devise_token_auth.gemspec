@@ -30,6 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sqlite3', '~> 1.4'
   s.add_development_dependency 'pg'
   s.add_development_dependency 'mysql2'
-  s.add_development_dependency 'mongoid', '>= 4', '< 8'
+  s.add_development_dependency 'mongoid', '>= 4', '< 10'
   s.add_development_dependency 'mongoid-locker', '~> 2.0'
 end
