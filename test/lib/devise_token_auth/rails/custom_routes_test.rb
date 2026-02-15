@@ -7,11 +7,12 @@ class DeviseTokenAuth::CustomRoutesTest < ActiveSupport::TestCase
     Rails.application.reload_routes!
   end
   test 'custom controllers' do
-    class ActionDispatch::Routing::Mapper
-        include Mocha::ParameterMatchers
-    end
     Rails.application.routes.draw do
-      self.expects(:devise_for).with(
+      mapper = self
+      mapper.singleton_class.include(Mocha::API)
+      mapper.singleton_class.include(Mocha::ParameterMatchers)
+
+      mapper.expects(:devise_for).with(
         :users,
         has_entries(
           controllers: has_entries(
