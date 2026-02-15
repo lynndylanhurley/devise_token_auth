@@ -1,0 +1,23 @@
+test/lib/devise_token_auth/rails/custom_routes_test.rb
+  f61166e3601f9148 11-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.3",
+  "base_commit_sha": "bff8063af9b815b17a2d4ee5fe29afa6c7fb975f",
+  "prompts": {
+    "f61166e3601f9148": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54fa1206-bd03-4a07-ae84-beb1154d768b",
+        "model": "claude-sonnet-4-5-20250929"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 5,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  }
+}
