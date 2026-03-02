@@ -262,7 +262,7 @@ module DeviseTokenAuth::Concerns::User
 
     # First, remove any tokens with expiry greater than current max allowed lifespan
     #   this handles the case where token lifespan was reduced and old tokens exist
-    max_lifespan_expiry = Time.now.to_i + DeviseTokenAuth.token_lifespan.to_i
+    max_lifespan_expiry = (Time.zone.now + DeviseTokenAuth.token_lifespan).to_i
     tokens_to_keep = tokens.select do |_cid, v|
       expiry = (v[:expiry] || v['expiry']).to_i
       expiry <= max_lifespan_expiry
