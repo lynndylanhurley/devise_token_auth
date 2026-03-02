@@ -220,5 +220,36 @@ class UserTest < ActiveSupport::TestCase
       # We should have exactly 2 tokens: the new one and client_3
       assert_equal 2, @resource.tokens.length
     end
+
+    test 'newly created token survives cleanup with variable-length duration' do
+      # This test demonstrates the bug with variable-length durations like 6.months
+      # Use time travel to March 1st to maximize the calendar vs fixed-second mismatch
+      travel_to Time.zone.parse('2026-03-01 12:00:00 UTC') do
+        DeviseTokenAuth.token_lifespan = 6.months
+        DeviseTokenAuth.max_number_of_devices = 2
+
+        # Create first token
+        token1 = @resource.create_token
+        @resource.save!
+        assert_equal 1, @resource.tokens.length
+
+        # Create second token
+        token2 = @resource.create_token
+        @resource.save!
+        assert_equal 2, @resource.tokens.length
+
+        # Create third token (triggers cleanup)
+        token3 = @resource.create_token
+        @resource.save!
+
+        # The newly created token should survive cleanup
+        assert @resource.tokens.key?(token3.client),
+               'Newly created token should not be filtered out by clean_old_tokens'
+        
+        # Should have 2 tokens (oldest removed, new one kept)
+        assert_equal 2, @resource.tokens.length,
+                     'Should have exactly 2 tokens after cleanup'
+      end
+    end
   end
 end
