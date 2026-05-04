@@ -44,3 +44,18 @@ end
     gem 'mongoid-locker', '~> 1.0'
   end
 end
+
+[
+  { name: '8-0', version: '8.0' },
+  { name: '8-1', version: '8.1' }
+].each do |rails|
+  appraise "rails-#{rails[:name]}" do
+    gem 'rails', "~> #{rails[:version]}"
+    gem 'sqlite3', '~> 2.1'
+    gem 'mysql2'
+    gem 'pg'
+    group :development, :test do
+      gem 'minitest-rails', "~> #{rails[:version]}"
+    end
+  end
+end    
