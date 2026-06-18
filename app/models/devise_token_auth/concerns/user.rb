@@ -261,8 +261,13 @@ module DeviseTokenAuth::Concerns::User
     return if tokens.blank? || !max_client_tokens_exceeded?
 
     # First, remove any tokens with expiry greater than current max allowed lifespan
-    #   this handles the case where token lifespan was reduced and old tokens exist
-    max_lifespan_expiry = Time.now.to_i + DeviseTokenAuth.token_lifespan.to_i
+    #   this handles the case where token lifespan was reduced and old tokens exist.
+    #   The threshold MUST be computed the same way TokenFactory.expiry writes
+    #   expiries — calendar advance (Time.zone.now + lifespan) — otherwise a
+    #   calendar Duration (e.g. 2.months) and its average-seconds form
+    #   (token_lifespan.to_i) disagree by hours, and the freshly minted token
+    #   gets purged out from under the response.
+    max_lifespan_expiry = (Time.zone.now + DeviseTokenAuth.token_lifespan).to_i
     tokens_to_keep = tokens.select do |_cid, v|
       expiry = (v[:expiry] || v['expiry']).to_i
       expiry <= max_lifespan_expiry
