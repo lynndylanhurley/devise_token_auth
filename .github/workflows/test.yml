@@ -23,6 +23,8 @@ jobs:
           - gemfiles/rails_5_2.gemfile
           - gemfiles/rails_6_0.gemfile
           - gemfiles/rails_7_0.gemfile
+          - gemfiles/rails_8_0.gemfile
+          - gemfiles/rails_8_1.gemfile
         db:
           - sqlite
           - mysql
@@ -122,6 +124,19 @@ jobs:
             gemfile: gemfiles/rails_5_2.gemfile
           - ruby: 3.4
             gemfile: gemfiles/rails_6_0.gemfile
+          # Rails 8 requires Ruby >= 3.2
+          - ruby: 2.7
+            gemfile: gemfiles/rails_8_0.gemfile
+          - ruby: 2.7
+            gemfile: gemfiles/rails_8_1.gemfile
+          - ruby: '3.0'
+            gemfile: gemfiles/rails_8_0.gemfile
+          - ruby: '3.0'
+            gemfile: gemfiles/rails_8_1.gemfile
+          - ruby: 3.1
+            gemfile: gemfiles/rails_8_0.gemfile
+          - ruby: 3.1
+            gemfile: gemfiles/rails_8_1.gemfile
 
     services:
       mysql:
