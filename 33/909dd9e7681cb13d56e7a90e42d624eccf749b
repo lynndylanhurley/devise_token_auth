@@ -1,0 +1,21 @@
+gemfiles/rails_7_0.gemfile
+  s_a52c3d49d51c0f::t_723b980ab5e13c 7
+gemfiles/rails_7_0_mongoid_7.gemfile
+  s_a52c3d49d51c0f::t_6fbf9133b240e2 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.17",
+  "base_commit_sha": "33909dd9e7681cb13d56e7a90e42d624eccf749b",
+  "prompts": {},
+  "sessions": {
+    "s_a52c3d49d51c0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64230b9b-cb76-4dc7-bea9-88dffaf8ceb9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "MaicolBen <maicol.bentancor@gmail.com>"
+    }
+  }
+}
