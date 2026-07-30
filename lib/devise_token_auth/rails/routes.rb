@@ -80,7 +80,15 @@ module ActionDispatch::Routing
               # (pulled in by Rails 8.1). `Rack::Utils.parse_query` returns a bare
               # value for single occurrences, so normalize to arrays to keep the
               # shape `CGI.parse` returned.
-              query_string = request.env['QUERY_STRING'].empty? ? request.body.read : request.env['QUERY_STRING']
+              # As of Rails 7.1 the request body may already have been read when
+              # this runs, in which case `read` returns "" and every param is
+              # silently dropped. Rewind first so POSTed params survive.
+              query_string = if request.env['QUERY_STRING'].empty?
+                               request.body.rewind if request.body.respond_to?(:rewind)
+                               request.body.read
+                             else
+                               request.env['QUERY_STRING']
+                             end
               qs = Rack::Utils.parse_query(query_string).transform_values { |v| Array(v) }
 
               # append name of current resource
