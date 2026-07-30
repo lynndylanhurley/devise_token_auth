@@ -32,7 +32,10 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
 
   # Raise exceptions instead of rendering exception templates.
-  if Rails::VERSION::MAJOR >= 7 && Rails::VERSION::MINOR > 0
+  # Rails 7.1 turned this into an enum; `false` is no longer recognised and
+  # falls through to the "show everything" default. Note the version check must
+  # not be `MAJOR >= 7 && MINOR > 0`, which is false on Rails 8.0.
+  if Rails.gem_version >= Gem::Version.new('7.1')
     config.action_dispatch.show_exceptions = :none
   else
     config.action_dispatch.show_exceptions = false
