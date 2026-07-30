@@ -4,7 +4,7 @@
   { name: '4-2', version: '4.2' }
 ].each do |rails|
   appraise "rails-#{rails[:name]}" do
-    gem 'rails', "~> #{rails[:version]}"
+    gem 'rails', "~> #{rails[:version]}.0"
 
     gem 'sqlite3', '~> 1.3.6'
     gem 'mysql2', '~> 0.4.10'
@@ -18,7 +18,7 @@ end
   { name: '5-2', version: '5.2' }
 ].each do |rails|
   appraise "rails-#{rails[:name]}" do
-    gem 'rails', "~> #{rails[:version]}"
+    gem 'rails', "~> #{rails[:version]}.0"
 
     gem 'sqlite3', '~> 1.3.6'
     gem 'mysql2'
@@ -38,7 +38,7 @@ end
   { name: '7-0', ruby: '3.1.2', rails: '7.0', mongoid: '7.0' }
 ].each do |set|
   appraise "rails-#{set[:name]}-mongoid-#{set[:mongoid][0]}" do
-    gem 'rails', "~> #{set[:rails]}"
+    gem 'rails', "~> #{set[:rails]}.0"
 
     gem 'mongoid', "~> #{set[:mongoid]}"
     gem 'mongoid-locker', '~> 1.0'

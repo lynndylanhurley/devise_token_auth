@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "omniauth", "~> 1.9"
-gem "rails", "~> 5.2"
+gem "rails", "~> 5.2.0"
 gem "mongoid", "~> 6.4"
 gem "mongoid-locker", "~> 1.0"
 
