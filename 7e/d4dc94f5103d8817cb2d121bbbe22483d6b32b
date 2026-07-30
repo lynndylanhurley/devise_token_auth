@@ -1,0 +1,19 @@
+lib/devise_token_auth/rails/routes.rb
+  s_a52c3d49d51c0f::t_e9fd738c8d56ab 79-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.17",
+  "base_commit_sha": "7ed4dc94f5103d8817cb2d121bbbe22483d6b32b",
+  "prompts": {},
+  "sessions": {
+    "s_a52c3d49d51c0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64230b9b-cb76-4dc7-bea9-88dffaf8ceb9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "MaicolBen <maicol.bentancor@gmail.com>"
+    }
+  }
+}
