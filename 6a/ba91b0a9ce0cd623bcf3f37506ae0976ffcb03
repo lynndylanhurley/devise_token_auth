@@ -1,0 +1,45 @@
+Appraisals
+  s_a52c3d49d51c0f::t_0cd2d1d4b38762 7,21,41
+gemfiles/rails_4_2.gemfile
+  s_a52c3d49d51c0f::t_a65d2b55b2e900 6
+gemfiles/rails_4_2_mongoid_5.gemfile
+  s_a52c3d49d51c0f::t_79038e8097ef4e 6
+gemfiles/rails_5_0.gemfile
+  s_a52c3d49d51c0f::t_fd56aca189784a 6
+gemfiles/rails_5_1.gemfile
+  s_a52c3d49d51c0f::t_92333384d58760 6
+gemfiles/rails_5_1_mongoid_6.gemfile
+  s_a52c3d49d51c0f::t_7572c94f988595 6
+gemfiles/rails_5_1_mongoid_7.gemfile
+  s_a52c3d49d51c0f::t_844bee8bc7e419 6
+gemfiles/rails_5_2.gemfile
+  s_a52c3d49d51c0f::t_d259c950584889 6
+gemfiles/rails_5_2_mongoid_6.gemfile
+  s_a52c3d49d51c0f::t_61d35daa3e6f63 6
+gemfiles/rails_5_2_mongoid_7.gemfile
+  s_a52c3d49d51c0f::t_113c8b9bbaa95a 6
+gemfiles/rails_6_0.gemfile
+  s_a52c3d49d51c0f::t_b9e4a4be949e30 6
+gemfiles/rails_6_0_mongoid_7.gemfile
+  s_a52c3d49d51c0f::t_466c0c600f277c 6
+gemfiles/rails_7_0.gemfile
+  s_a52c3d49d51c0f::t_7e9a0cea3cf59e 7
+gemfiles/rails_7_0_mongoid_7.gemfile
+  s_a52c3d49d51c0f::t_ae8b426362fa81 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.17",
+  "base_commit_sha": "6aba91b0a9ce0cd623bcf3f37506ae0976ffcb03",
+  "prompts": {},
+  "sessions": {
+    "s_a52c3d49d51c0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64230b9b-cb76-4dc7-bea9-88dffaf8ceb9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "MaicolBen <maicol.bentancor@gmail.com>"
+    }
+  }
+}
