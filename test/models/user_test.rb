@@ -220,5 +220,32 @@ class UserTest < ActiveSupport::TestCase
       # We should have exactly 2 tokens: the new one and client_3
       assert_equal 2, @resource.tokens.length
     end
+
+    # Regression: with a calendar ActiveSupport::Duration lifespan, the token
+    #   expiry is advanced by calendar (Time.zone.now + 2.months) while the old
+    #   eager purge compared against an average-seconds threshold
+    #   (token_lifespan.to_i). The freshly minted token's expiry sat just past
+    #   that threshold and was silently dropped, leaving a 200 response whose
+    #   advertised access-token no longer existed in user.tokens.
+    test 'keeps the freshly created token at the device cap with a calendar lifespan' do
+      DeviseTokenAuth.max_number_of_devices = 2
+      DeviseTokenAuth.token_lifespan = 2.months
+
+      # Fill the cap with tokens created a few hours ago (calendar expiry).
+      old_time = 4.hours.ago
+      @resource.tokens = {}
+      %w[client_1 client_2].each do |client|
+        @resource.tokens[client] = {
+          'token' => 'x',
+          'expiry' => (old_time + DeviseTokenAuth.token_lifespan).to_i
+        }
+      end
+
+      tok = @resource.create_token
+
+      assert @resource.tokens.key?(tok.client),
+             'Freshly created token must survive clean_old_tokens'
+      assert_equal DeviseTokenAuth.max_number_of_devices, @resource.tokens.length
+    end
   end
 end
