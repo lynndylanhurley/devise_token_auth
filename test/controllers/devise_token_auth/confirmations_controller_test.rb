@@ -62,8 +62,8 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           end
 
           test 'redirect url includes token params' do
-            assert @token_params.all? { |param| response.body.include?(param) }
-            assert response.body.include?('account_confirmation_success')
+            assert @token_params.all? { |param| response.location.include?(param) }
+            assert response.location.include?('account_confirmation_success')
           end
         end
 
@@ -86,8 +86,8 @@ class DeviseTokenAuth::ConfirmationsControllerTest < ActionController::TestCase
           end
 
           test 'redirect url does not include token params' do
-            refute @token_params.any? { |param| response.body.include?(param) }
-            assert response.body.include?('account_confirmation_success')
+            refute @token_params.any? { |param| response.location.include?(param) }
+            assert response.location.include?('account_confirmation_success')
           end
         end
 

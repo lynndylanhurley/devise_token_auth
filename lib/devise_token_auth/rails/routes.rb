@@ -76,7 +76,20 @@ module ActionDispatch::Routing
             match "#{full_path}/:provider", to: redirect(status: 307) { |params, request|
               # get the current querystring
               # TODO: deprecate in favor of using params
-              qs = CGI::parse(request.env['QUERY_STRING'].empty? ? request.body.read : request.env['QUERY_STRING'] )
+              # `CGI.parse` is unavailable as of the cgi gem shipped with Ruby 3.5
+              # (pulled in by Rails 8.1). `Rack::Utils.parse_query` returns a bare
+              # value for single occurrences, so normalize to arrays to keep the
+              # shape `CGI.parse` returned.
+              # As of Rails 7.1 the request body may already have been read when
+              # this runs, in which case `read` returns "" and every param is
+              # silently dropped. Rewind first so POSTed params survive.
+              query_string = if request.env['QUERY_STRING'].empty?
+                               request.body.rewind if request.body.respond_to?(:rewind)
+                               request.body.read
+                             else
+                               request.env['QUERY_STRING']
+                             end
+              qs = Rack::Utils.parse_query(query_string).transform_values { |v| Array(v) }
 
               # append name of current resource
               qs['resource_class'] = [resource]
