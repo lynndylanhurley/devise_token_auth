@@ -75,7 +75,7 @@ module DeviseTokenAuth
     private
 
     def resource_params
-      params.permit(:email, :confirmation_token, :config_name)
+      params.permit(:email, :confirmation_token, :config_name, :redirect_url)
     end
 
     # give redirect value from params priority or fall back to default value if provided
